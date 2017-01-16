@@ -14,7 +14,7 @@ CLEANFILES = $(genfiles)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway handlerpq
+bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
 
 #
 # Headers
@@ -22,7 +22,7 @@ bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway handlerpq
 nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
-tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h \
+tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -84,6 +84,19 @@ handlerpq_SOURCES= \
 
 handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg
 handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# tcptransmitter
+#
+tcptransmitter_SOURCES = \
+	tcptransmitter.cpp  tcptransmitter-config.cpp  \
+	daemonize.cpp  ieee754.cpp  
+	json.cpp \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.

@@ -91,7 +91,8 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
-	pkt2gateway$(EXEEXT) handlerpq$(EXEEXT)
+	pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
+	tcptransmitter$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -152,6 +153,12 @@ nodist_tcpreceiver_OBJECTS = $(am__objects_1)
 tcpreceiver_OBJECTS = $(am_tcpreceiver_OBJECTS) \
 	$(nodist_tcpreceiver_OBJECTS)
 tcpreceiver_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
+	tcptransmitter-tcptransmitter-config.$(OBJEXT) \
+	tcptransmitter-daemonize.$(OBJEXT) \
+	tcptransmitter-ieee754.$(OBJEXT)
+tcptransmitter_OBJECTS = $(am_tcptransmitter_OBJECTS)
+tcptransmitter_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -188,9 +195,10 @@ am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(tcpreceiver_SOURCES) \
-	$(nodist_tcpreceiver_SOURCES)
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(tcpreceiver_SOURCES)
+	$(pkt2receiver_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -447,7 +455,7 @@ CLEANFILES = $(genfiles)
 nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
-tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h \
+tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -505,6 +513,16 @@ handlerpq_SOURCES = \
 
 handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg
 handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# tcptransmitter
+#
+tcptransmitter_SOURCES = \
+	tcptransmitter.cpp  tcptransmitter-config.cpp  \
+	daemonize.cpp  ieee754.cpp  
+
+tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
@@ -633,6 +651,10 @@ tcpreceiver$(EXEEXT): $(tcpreceiver_OBJECTS) $(tcpreceiver_DEPENDENCIES) $(EXTRA
 	@rm -f tcpreceiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpreceiver_OBJECTS) $(tcpreceiver_LDADD) $(LIBS)
 
+tcptransmitter$(EXEEXT): $(tcptransmitter_OBJECTS) $(tcptransmitter_DEPENDENCIES) $(EXTRA_tcptransmitter_DEPENDENCIES) 
+	@rm -f tcptransmitter$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tcptransmitter_OBJECTS) $(tcptransmitter_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -667,6 +689,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-ieee754.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceiver-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceiver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-ieee754.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-tcptransmitter-config.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-tcptransmitter.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1080,6 +1106,62 @@ tcpreceiver-ieee754.obj: ieee754.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ieee754.cpp' object='tcpreceiver-ieee754.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+
+tcptransmitter-tcptransmitter.o: tcptransmitter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter.o -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo -c -o tcptransmitter-tcptransmitter.o `test -f 'tcptransmitter.cpp' || echo '$(srcdir)/'`tcptransmitter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo $(DEPDIR)/tcptransmitter-tcptransmitter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tcptransmitter.cpp' object='tcptransmitter-tcptransmitter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-tcptransmitter.o `test -f 'tcptransmitter.cpp' || echo '$(srcdir)/'`tcptransmitter.cpp
+
+tcptransmitter-tcptransmitter.obj: tcptransmitter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter.obj -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo -c -o tcptransmitter-tcptransmitter.obj `if test -f 'tcptransmitter.cpp'; then $(CYGPATH_W) 'tcptransmitter.cpp'; else $(CYGPATH_W) '$(srcdir)/tcptransmitter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo $(DEPDIR)/tcptransmitter-tcptransmitter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tcptransmitter.cpp' object='tcptransmitter-tcptransmitter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-tcptransmitter.obj `if test -f 'tcptransmitter.cpp'; then $(CYGPATH_W) 'tcptransmitter.cpp'; else $(CYGPATH_W) '$(srcdir)/tcptransmitter.cpp'; fi`
+
+tcptransmitter-tcptransmitter-config.o: tcptransmitter-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter-config.o -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter-config.Tpo -c -o tcptransmitter-tcptransmitter-config.o `test -f 'tcptransmitter-config.cpp' || echo '$(srcdir)/'`tcptransmitter-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-tcptransmitter-config.Tpo $(DEPDIR)/tcptransmitter-tcptransmitter-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tcptransmitter-config.cpp' object='tcptransmitter-tcptransmitter-config.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-tcptransmitter-config.o `test -f 'tcptransmitter-config.cpp' || echo '$(srcdir)/'`tcptransmitter-config.cpp
+
+tcptransmitter-tcptransmitter-config.obj: tcptransmitter-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter-config.obj -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter-config.Tpo -c -o tcptransmitter-tcptransmitter-config.obj `if test -f 'tcptransmitter-config.cpp'; then $(CYGPATH_W) 'tcptransmitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/tcptransmitter-config.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-tcptransmitter-config.Tpo $(DEPDIR)/tcptransmitter-tcptransmitter-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tcptransmitter-config.cpp' object='tcptransmitter-tcptransmitter-config.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-tcptransmitter-config.obj `if test -f 'tcptransmitter-config.cpp'; then $(CYGPATH_W) 'tcptransmitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/tcptransmitter-config.cpp'; fi`
+
+tcptransmitter-daemonize.o: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-daemonize.o -MD -MP -MF $(DEPDIR)/tcptransmitter-daemonize.Tpo -c -o tcptransmitter-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-daemonize.Tpo $(DEPDIR)/tcptransmitter-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='tcptransmitter-daemonize.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+tcptransmitter-daemonize.obj: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-daemonize.obj -MD -MP -MF $(DEPDIR)/tcptransmitter-daemonize.Tpo -c -o tcptransmitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-daemonize.Tpo $(DEPDIR)/tcptransmitter-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='tcptransmitter-daemonize.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+tcptransmitter-ieee754.o: ieee754.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-ieee754.o -MD -MP -MF $(DEPDIR)/tcptransmitter-ieee754.Tpo -c -o tcptransmitter-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-ieee754.Tpo $(DEPDIR)/tcptransmitter-ieee754.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ieee754.cpp' object='tcptransmitter-ieee754.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
+
+tcptransmitter-ieee754.obj: ieee754.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-ieee754.obj -MD -MP -MF $(DEPDIR)/tcptransmitter-ieee754.Tpo -c -o tcptransmitter-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-ieee754.Tpo $(DEPDIR)/tcptransmitter-ieee754.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ieee754.cpp' object='tcptransmitter-ieee754.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -1571,6 +1653,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 
 .PRECIOUS: Makefile
 
+	json.cpp \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
 	json.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
