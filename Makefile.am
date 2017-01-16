@@ -14,7 +14,7 @@ CLEANFILES = $(genfiles)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter tcpemitter
+bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
 
 #
 # Headers
@@ -36,6 +36,17 @@ rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h
 common_src =
 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
+
+#
+# tcpemitter
+#
+tcpemitter_SOURCES = \
+	tcpemitter.cpp  tcpemitter-config.cpp  \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # tcpreceiver
@@ -97,17 +108,6 @@ tcptransmitter_SOURCES = \
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
-
-#
-# tcpemitter
-#
-tcpemitter_SOURCES = \
-	tcpemitter.cpp  tcpemitter-config.cpp  \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
-	$(common_src)
-
-tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
-tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.

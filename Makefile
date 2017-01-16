@@ -90,9 +90,9 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-bin_PROGRAMS = tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
-	pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
-	tcptransmitter$(EXEEXT) tcpemitter$(EXEEXT)
+bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
+	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
+	tcptransmitter$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -478,6 +478,17 @@ common_src =
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 
 #
+# tcpemitter
+#
+tcpemitter_SOURCES = \
+	tcpemitter.cpp  tcpemitter-config.cpp  \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
 # tcpreceiver
 #
 tcpreceiver_SOURCES = \
@@ -532,17 +543,6 @@ tcptransmitter_SOURCES = \
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
-
-#
-# tcpemitter
-#
-tcpemitter_SOURCES = \
-	tcpemitter.cpp  tcpemitter-config.cpp  \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
-	$(common_src)
-
-tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
-tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
