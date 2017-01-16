@@ -92,7 +92,7 @@ build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
 	pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
-	tcptransmitter$(EXEEXT)
+	tcptransmitter$(EXEEXT) tcpemitter$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -146,6 +146,13 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-NanoMessage.$(OBJEXT) $(am__objects_1)
 pkt2receiver_OBJECTS = $(am_pkt2receiver_OBJECTS)
 pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
+	tcpemitter-tcpemitter-config.$(OBJEXT) \
+	tcpemitter-utilpriority.$(OBJEXT) \
+	tcpemitter-utilstring.$(OBJEXT) tcpemitter-utilinet.$(OBJEXT) \
+	tcpemitter-NanoMessage.$(OBJEXT) $(am__objects_1)
+tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
+tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-daemonize.$(OBJEXT) tcpreceiver-ieee754.$(OBJEXT)
@@ -194,11 +201,12 @@ am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(tcpreceiver_SOURCES) \
-	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
-DIST_SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(tcpreceiver_SOURCES) \
+	$(pkt2receiver_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
 	$(tcptransmitter_SOURCES)
+DIST_SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -456,6 +464,7 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
+tcpemitter-config.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -523,6 +532,17 @@ tcptransmitter_SOURCES = \
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# tcpemitter
+#
+tcpemitter_SOURCES = \
+	tcpemitter.cpp  tcpemitter-config.cpp  \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
@@ -647,6 +667,10 @@ pkt2receiver$(EXEEXT): $(pkt2receiver_OBJECTS) $(pkt2receiver_DEPENDENCIES) $(EX
 	@rm -f pkt2receiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pkt2receiver_OBJECTS) $(pkt2receiver_LDADD) $(LIBS)
 
+tcpemitter$(EXEEXT): $(tcpemitter_OBJECTS) $(tcpemitter_DEPENDENCIES) $(EXTRA_tcpemitter_DEPENDENCIES) 
+	@rm -f tcpemitter$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tcpemitter_OBJECTS) $(tcpemitter_LDADD) $(LIBS)
+
 tcpreceiver$(EXEEXT): $(tcpreceiver_OBJECTS) $(tcpreceiver_DEPENDENCIES) $(EXTRA_tcpreceiver_DEPENDENCIES) 
 	@rm -f tcpreceiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpreceiver_OBJECTS) $(tcpreceiver_LDADD) $(LIBS)
@@ -685,6 +709,12 @@ include ./$(DEPDIR)/pkt2receiver-pkt2receiver.Po
 include ./$(DEPDIR)/pkt2receiver-utilinet.Po
 include ./$(DEPDIR)/pkt2receiver-utilpriority.Po
 include ./$(DEPDIR)/pkt2receiver-utilstring.Po
+include ./$(DEPDIR)/tcpemitter-NanoMessage.Po
+include ./$(DEPDIR)/tcpemitter-tcpemitter-config.Po
+include ./$(DEPDIR)/tcpemitter-tcpemitter.Po
+include ./$(DEPDIR)/tcpemitter-utilinet.Po
+include ./$(DEPDIR)/tcpemitter-utilpriority.Po
+include ./$(DEPDIR)/tcpemitter-utilstring.Po
 include ./$(DEPDIR)/tcpreceiver-daemonize.Po
 include ./$(DEPDIR)/tcpreceiver-ieee754.Po
 include ./$(DEPDIR)/tcpreceiver-tcpreceiver-config.Po
@@ -1050,6 +1080,90 @@ pkt2receiver-NanoMessage.obj: NanoMessage.cpp
 #	$(AM_V_CXX)source='NanoMessage.cpp' object='pkt2receiver-NanoMessage.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+
+tcpemitter-tcpemitter.o: tcpemitter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter.Tpo -c -o tcpemitter-tcpemitter.o `test -f 'tcpemitter.cpp' || echo '$(srcdir)/'`tcpemitter.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitter.Tpo $(DEPDIR)/tcpemitter-tcpemitter.Po
+#	$(AM_V_CXX)source='tcpemitter.cpp' object='tcpemitter-tcpemitter.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitter.o `test -f 'tcpemitter.cpp' || echo '$(srcdir)/'`tcpemitter.cpp
+
+tcpemitter-tcpemitter.obj: tcpemitter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter.obj -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter.Tpo -c -o tcpemitter-tcpemitter.obj `if test -f 'tcpemitter.cpp'; then $(CYGPATH_W) 'tcpemitter.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitter.Tpo $(DEPDIR)/tcpemitter-tcpemitter.Po
+#	$(AM_V_CXX)source='tcpemitter.cpp' object='tcpemitter-tcpemitter.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitter.obj `if test -f 'tcpemitter.cpp'; then $(CYGPATH_W) 'tcpemitter.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter.cpp'; fi`
+
+tcpemitter-tcpemitter-config.o: tcpemitter-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter-config.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter-config.Tpo -c -o tcpemitter-tcpemitter-config.o `test -f 'tcpemitter-config.cpp' || echo '$(srcdir)/'`tcpemitter-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitter-config.Tpo $(DEPDIR)/tcpemitter-tcpemitter-config.Po
+#	$(AM_V_CXX)source='tcpemitter-config.cpp' object='tcpemitter-tcpemitter-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitter-config.o `test -f 'tcpemitter-config.cpp' || echo '$(srcdir)/'`tcpemitter-config.cpp
+
+tcpemitter-tcpemitter-config.obj: tcpemitter-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter-config.obj -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter-config.Tpo -c -o tcpemitter-tcpemitter-config.obj `if test -f 'tcpemitter-config.cpp'; then $(CYGPATH_W) 'tcpemitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitter-config.Tpo $(DEPDIR)/tcpemitter-tcpemitter-config.Po
+#	$(AM_V_CXX)source='tcpemitter-config.cpp' object='tcpemitter-tcpemitter-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitter-config.obj `if test -f 'tcpemitter-config.cpp'; then $(CYGPATH_W) 'tcpemitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-config.cpp'; fi`
+
+tcpemitter-utilpriority.o: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilpriority.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilpriority.Tpo -c -o tcpemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilpriority.Tpo $(DEPDIR)/tcpemitter-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='tcpemitter-utilpriority.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+tcpemitter-utilpriority.obj: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilpriority.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilpriority.Tpo -c -o tcpemitter-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilpriority.Tpo $(DEPDIR)/tcpemitter-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='tcpemitter-utilpriority.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+tcpemitter-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilstring.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilstring.Tpo -c -o tcpemitter-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilstring.Tpo $(DEPDIR)/tcpemitter-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='tcpemitter-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+tcpemitter-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilstring.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilstring.Tpo -c -o tcpemitter-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilstring.Tpo $(DEPDIR)/tcpemitter-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='tcpemitter-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+tcpemitter-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilinet.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilinet.Tpo -c -o tcpemitter-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilinet.Tpo $(DEPDIR)/tcpemitter-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='tcpemitter-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+tcpemitter-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilinet.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilinet.Tpo -c -o tcpemitter-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilinet.Tpo $(DEPDIR)/tcpemitter-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='tcpemitter-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+tcpemitter-NanoMessage.o: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-NanoMessage.o -MD -MP -MF $(DEPDIR)/tcpemitter-NanoMessage.Tpo -c -o tcpemitter-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-NanoMessage.Tpo $(DEPDIR)/tcpemitter-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='tcpemitter-NanoMessage.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+
+tcpemitter-NanoMessage.obj: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-NanoMessage.obj -MD -MP -MF $(DEPDIR)/tcpemitter-NanoMessage.Tpo -c -o tcpemitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-NanoMessage.Tpo $(DEPDIR)/tcpemitter-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='tcpemitter-NanoMessage.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
 tcpreceiver-tcpreceiver.o: tcpreceiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-tcpreceiver.o -MD -MP -MF $(DEPDIR)/tcpreceiver-tcpreceiver.Tpo -c -o tcpreceiver-tcpreceiver.o `test -f 'tcpreceiver.cpp' || echo '$(srcdir)/'`tcpreceiver.cpp
@@ -1656,7 +1770,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 	json.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
-	json.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
