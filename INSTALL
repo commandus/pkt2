@@ -1,5 +1,3 @@
 ## Wireshark plugin
-
 ~/.wireshark/plugins
 /usr/local/lib/wireshark/plugins/2.2.3/
-

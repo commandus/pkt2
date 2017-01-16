@@ -1,0 +1,33 @@
+#!/bin/bash
+#
+# mkdocker
+#   Build Docker container with tools, dev libraries and source to build pkt2 from sources
+#
+# After:
+#   docker ps
+#   docker rename ... onewayticket
+#
+# See also:
+#   mktools
+#   mkdependencies
+#
+OS=ubuntu
+IMG=$OS:16.04
+# IMG=$OS:14.04
+echo $OS
+
+DOCKERSRC=docker
+
+cp ../pkt2-*.tar.gz docker
+
+docker build -t $IMG -f docker/$OS/Dockerfile .
+CONTAINER_ID=$(docker create $IMG)
+echo Container $CONTAINER_ID created
+echo 
+echo docker ps -a
+echo docker rename ... pkt2
+echo docker images
+echo docker tag image-id pkt2:ubuntu
+echo docker run -p :5005:5005 --rm --add-host db:10.0.2.15 -w "/root" -t ubuntu:16.04 /usr/local/bin/pkt2.sh
+echo docker ps -a
+echo docker exec -ti ... bash

@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+# Set up Ubuntu environment
+# Usage:
+#   cd tools
+#   sudo ./mktools
+#
+if [[ $EUID -ne 0 ]]; then
+    echo Run as root: sudo $0
+    exit 1
+fi
+
+POSTGRES_VERSION=9.5
+# first install lsb-release tool and add-apt-repository tool, wget
+apt-get update
+apt-get install -y lsb-release software-properties-common python-software-properties wget curl
+
+# add PostgreSQL 9.5 repository for specified version
+echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg $POSTGRES_VERSION" >> /etc/apt/sources.list.d/pgdg.list
+# add repository key
+wget -q https://www.postgresql.org/media/keys/ACCC4CF8.asc -O - | apt-key add -
+ 
+# update to get a new GCC 
+add-apt-repository ppa:ubuntu-toolchain-r/test -y 
+
+# install all other dependencies
+apt-get update
+apt-get install -y g++-6
+apt-get install -y --allow-unauthenticated \
+  gcc-5-plugin-dev \
+  gcc-6-plugin-dev \
+  cmake \
+  build-essential \
+  autoconf \
+  automake \
+  libtool \
+  patch \
+  git \
+  libpq-dev \
+  postgresql-client \
+  gawk \
+  vim
+
+# create an user. Just in case.
+useradd -m -d /home/onewayticket onewayticket
+
+# psql default user & password to connect database
+echo db:$POSTGRES_PORT:*:$POSTGRES_USER_NAME:$POSTGRES_USER_PASSWORD > /root/.pgpass && chmod 0600 /root/.pgpass
+echo db:$POSTGRES_PORT:*:$POSTGRES_USER_NAME:$POSTGRES_USER_PASSWORD > /home/onewayticket/.pgpass && chown onewayticket:onewayticket /home/onewayticket/.pgpass && chmod 0600 /home/onewayticket/.pgpass
+
+echo Done with /etc/apt/sources.list.d/pgdg.list:
+cat  /etc/apt/sources.list.d/pgdg.list
+
+exit 0

@@ -1,0 +1,134 @@
+#!/bin/bash
+#
+# Download libraries and build them.
+# Usage:
+#   cd tools
+#   ./mkdependencies
+# You need have tools:
+#   sudo apt-get update && apt-get install -y software-properties-common python-software-properties \
+#     lsb-release gcc-4.7-plugin-dev \
+#     build-essential autoconf automake libtool patch postgresql-client
+#
+ 
+if [[ $EUID -ne 0 ]]; then
+    SUDO=sudo
+else
+    SUDO=
+fi
+
+function download {
+    # git clone https://github.com/pathscale/libunwind.git
+    wget -c http://download.savannah.gnu.org/releases/libunwind/libunwind-1.2-rc1.tar.gz && tar xvfz libunwind-1.2-rc1.tar.gz && mv libunwind-1.2-rc1 libunwind && rm libunwind-1.2-rc1.tar.gz 
+    git clone https://github.com/google/glog.git
+    git clone https://github.com/nanomsg/nanomsg.git
+    git clone https://github.com/jonathanmarvens/argtable2
+    # git clone https://github.com/openssl/openssl.git && cd openssl && git checkout -b tags/OpenSSL_1_0_2h && cd ..
+    wget -c --no-check-certificate https://www.openssl.org/source/openssl-1.0.2h.tar.gz && tar xvfz openssl-1.0.2h.tar.gz && mv openssl-1.0.2h openssl && rm openssl-1.0.2h.tar.gz
+    git clone https://github.com/google/protobuf.git && cd protobuf && git checkout -b tags/v3.0.2 && cd ..
+    git clone https://github.com/google/grpc.git && cd grpc && git checkout -b tags/v1.0.1 && cd ..
+
+    # git://scm.codesynthesis.com/libcutl/libcutl.git
+    wget -c http://codesynthesis.com/download/libcutl/1.9/libcutl-1.9.0.tar.gz && tar xvfz libcutl-1.9.0.tar.gz && mv libcutl-1.9.0 libcutl && rm libcutl-1.9.0.tar.gz
+    # git clone http://scm.codesynthesis.com/odb/libodb.git
+    wget -c http://www.codesynthesis.com/download/odb/2.4/libodb-2.4.0.tar.gz && tar xvfz libodb-2.4.0.tar.gz && mv libodb-2.4.0 libodb && rm libodb-2.4.0.tar.gz    
+    # git clone http://scm.codesynthesis.com/odb/odb.git
+    wget -c http://www.codesynthesis.com/download/odb/2.4/odb-2.4.0.tar.gz && tar xvfz odb-2.4.0.tar.gz && mv odb-2.4.0 odb && rm odb-2.4.0.tar.gz  
+    # git clone http://scm.codesynthesis.com/odb/odb-pgsql.git
+    wget -c http://www.codesynthesis.com/download/odb/2.4/libodb-pgsql-2.4.0.tar.gz && tar xvfz libodb-pgsql-2.4.0.tar.gz && mv libodb-pgsql-2.4.0 odb-pgsql && rm libodb-pgsql-2.4.0.tar.gz
+}
+
+function gnu_make () {
+    make
+    $SUDO make install
+    $SUDO make clean
+    $SUDO ldconfig
+}
+
+function gnu_configure () {
+    ./configure
+    gnu_make
+}
+
+function make_autogen () {
+    ./autogen.sh
+    make_ac
+}
+
+function make_ac () {
+    autoheader; aclocal; libtoolize --ltdl --copy --force; automake --add-missing --copy; autoreconf; aclocal; automake
+    gnu_configure 
+}
+
+function make_openssl () {
+    ./config
+    make
+    make test
+    $SUDO make install
+    make clean
+    $SUDO ln -sf /usr/local/ssl/bin/openssl `which openssl`
+    $SUDO ldconfig
+}
+
+function  patch_libunwind () {
+    patch configure.ac << '_configure.ac.diff_'
+13a14,15
+> AC_CONFIG_MACRO_DIR([m4])
+> AC_PROG_LIBTOOL
+_configure.ac.diff_
+    
+    patch Makefile.am <<'_makefile.am.diff_'
+0a1
+> ACLOCAL_AMFLAGS=-I m4
+_makefile.am.diff_
+
+    patch src/Makefile.am << '_srcmakefile.am.diff_'
+0a1
+> ACLOCAL_AMFLAGS=-I../m4 -Im4
+_srcmakefile.am.diff_
+    
+} 
+
+if [ ! -d ../third_party ] ; then
+    mkdir ../third_party 
+fi
+cd ../third_party
+
+if [ ! -d libunwind ] ; then
+    download
+fi
+
+echo libunwind && cd libunwind && patch_libunwind && make_autogen && cd ..
+
+echo glog && cd glog && autoreconf --install && automake --add-missing && gnu_configure && cd ..
+
+echo nanomsg && cd nanomsg && gnu_configure && cd ..
+# Windows 10 Ubuntu bash
+# $SUDO mv /usr/local/lib/x86_64-linux-gnu/* /usr/local/lib
+
+echo argtable2 && cd argtable2 && make_ac && cd ..
+
+echo openssl && cd openssl && make_openssl && cd ..
+
+echo protobuf && cd protobuf && make_ac && cd ..
+
+echo grpc && cd grpc
+mv /usr/include/openssl /usr/include/openssl.bak ; mv /usr/local/include/openssl /usr/local/include/openssl.bak
+git submodule update --init && gnu_make && cd ..
+mv /usr/include/openssl.bak /usr/include/openssl ; mv /usr/local/include/openssl.bak /usr/local/include/openssl 
+
+echo libcutl && cd libcutl && ./bootstrap && gnu_configure && cd ..
+
+echo libodb && cd libodb && ./bootstrap && gnu_configure && cd ..
+
+echo odb && cd odb && ./bootstrap && gnu_configure && cd ..
+
+echo odb-pgsql && cd odb-pgsql && ./bootstrap && gnu_configure && cd ..
+
+# check
+echo
+echo Done with:
+echo
+openssl version
+protoc --version
+
+exit 0
