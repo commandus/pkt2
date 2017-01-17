@@ -64,7 +64,7 @@ tcpreceiver_CPPFLAGS = $(commoncppflags) -std=c++11
 #  pkt2receiver
 #
 pkt2receiver_SOURCES= \
-	pkt2receiver.cpp  pkt2receiver-config.cpp  \
+	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
 	daemonize.cpp  ieee754.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)

@@ -3,9 +3,6 @@
 
 #include <sys/socket.h>
 
-#define PROGRAM_NAME             "tcpreceiver"
-#define PROGRAM_DESCRIPTION      "PKT2 tcp packet listener"
-
 struct PacketHeader
 {
     char name;
