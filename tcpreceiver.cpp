@@ -27,7 +27,15 @@ int reslt;
 
 void run()
 {
-	reslt = tcp_receiever_nano(config);
+	if (!config)
+	{
+		LOG(ERROR) << "config corrupted.";
+		return;
+	}
+	while (!config->stop_request)
+	{
+		reslt = tcp_receiever_nano(config);
+	}
 }
 
 void signalHandler(int signal)

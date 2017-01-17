@@ -10,8 +10,6 @@
 
 #include "tcpemitter-config.h"
 
-DECLARE_uint32(port);
-
 void *get_in_addr
 (
     struct sockaddr *sa

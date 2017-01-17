@@ -154,9 +154,10 @@ int tcp_receiever_nano(Config *config)
 			return 4;
 		}
         */
-        
-		// Close the socket before we finish 
-		close(new_conn_fd);	
+
+		// Close the socket
+		close(new_conn_fd);
+        	
 	}
    	close(socket);	
     return nn_shutdown(nano_socket, 0);
