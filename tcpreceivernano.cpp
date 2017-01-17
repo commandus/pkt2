@@ -98,12 +98,11 @@ int tcp_receiever_nano(Config *config)
 		return 2;
     }
 
-    struct sockaddr_storage client_addr;
-	socklen_t addr_size = sizeof(client_addr);
-	char s[INET6_ADDRSTRLEN]; // an empty string 
 
-    char *buffer = (char *) malloc(config->buffer_size);
-    if (!buffer)
+    InputPacket packet(config->buffer_size);
+    struct sockaddr_storage *client_addr = packet.get_socket_addr();
+
+    if (packet.error() != 0)
     {
         close(socket);	
 		return 3;
@@ -113,21 +112,23 @@ int tcp_receiever_nano(Config *config)
     {
 		// Wait now for a connection to accept
 		// Accept a new connection and return back the socket desciptor 
-		int new_conn_fd = accept(socket, (struct sockaddr *) &client_addr, &addr_size);	
+    	socklen_t addr_size = sizeof(struct sockaddr_storage);
+		int new_conn_fd = accept(socket, (struct sockaddr *) client_addr, &addr_size);	
 		if (new_conn_fd < 0)
 		{
             LOG(ERROR) << "accept error: " << new_conn_fd << ": " << gai_strerror(new_conn_fd);
 			continue;
 		}
-	
-		inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr *) &client_addr), s, sizeof(s)); 
+
+        char s[INET6_ADDRSTRLEN]; // an empty string 
+		inet_ntop(client_addr->ss_family, get_in_addr((struct sockaddr *) client_addr), s, sizeof(s)); 
         LOG(INFO) << "connected to: " << s;
 
-        int n = read(new_conn_fd, buffer, config->buffer_size);
+        packet.length = read(new_conn_fd, packet.data(), packet.size);
    
-        if (n < 0) 
+        if (packet.length < 0) 
         {
-            LOG(ERROR) << "error reading from socket " << n << ": " << gai_strerror(new_conn_fd);
+            LOG(ERROR) << "error reading from socket " << packet.length << ": " << gai_strerror(new_conn_fd);
             close(new_conn_fd);
             continue;
         }
@@ -150,11 +151,11 @@ int tcp_receiever_nano(Config *config)
 		close(new_conn_fd);
 
         // send message to the nano queue
-        InputPacket packet((struct sockaddr *) &client_addr, buffer, n);
-        int bytes = nn_send(nano_socket, packet.data, packet.size, 0);
-        if (bytes != n)
+
+        int bytes = nn_send(nano_socket, packet.get(), packet.length, 0);
+        if (bytes != packet.length)
         {
-            LOG(ERROR) << "nano message send error, sent " << bytes << " of " << n;
+            LOG(ERROR) << "nano message send error, sent " << bytes << " of " << packet.length;
         }
 	}
    	close(socket);	
