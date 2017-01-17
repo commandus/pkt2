@@ -155,7 +155,12 @@ tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
 tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
-	tcpreceiver-daemonize.$(OBJEXT) tcpreceiver-ieee754.$(OBJEXT)
+	tcpreceiver-tcpreceivernano.$(OBJEXT) \
+	tcpreceiver-daemonize.$(OBJEXT) tcpreceiver-ieee754.$(OBJEXT) \
+	tcpreceiver-utilpriority.$(OBJEXT) \
+	tcpreceiver-utilstring.$(OBJEXT) \
+	tcpreceiver-utilinet.$(OBJEXT) \
+	tcpreceiver-NanoMessage.$(OBJEXT) $(am__objects_1)
 nodist_tcpreceiver_OBJECTS = $(am__objects_1)
 tcpreceiver_OBJECTS = $(am_tcpreceiver_OBJECTS) \
 	$(nodist_tcpreceiver_OBJECTS)
@@ -464,7 +469,7 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
-tcpemitter-config.h \
+tcpemitter-config.h tcpreceivernano.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -492,8 +497,10 @@ tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 # tcpreceiver
 #
 tcpreceiver_SOURCES = \
-	tcpreceiver.cpp  tcpreceiver-config.cpp  \
-	daemonize.cpp  ieee754.cpp  
+	tcpreceiver.cpp  tcpreceiver-config.cpp tcpreceivernano.cpp \
+	daemonize.cpp  ieee754.cpp  \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcpreceiver_CPPFLAGS = $(commoncppflags) -std=c++11
@@ -715,10 +722,15 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpemitter-utilinet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpemitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpemitter-utilstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-NanoMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-ieee754.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceiver-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceiver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceivernano.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-utilinet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-utilpriority.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-ieee754.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-tcptransmitter-config.Po@am__quote@
@@ -1193,6 +1205,20 @@ tcpreceiver-tcpreceiver-config.obj: tcpreceiver-config.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-tcpreceiver-config.obj `if test -f 'tcpreceiver-config.cpp'; then $(CYGPATH_W) 'tcpreceiver-config.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpreceiver-config.cpp'; fi`
 
+tcpreceiver-tcpreceivernano.o: tcpreceivernano.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-tcpreceivernano.o -MD -MP -MF $(DEPDIR)/tcpreceiver-tcpreceivernano.Tpo -c -o tcpreceiver-tcpreceivernano.o `test -f 'tcpreceivernano.cpp' || echo '$(srcdir)/'`tcpreceivernano.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-tcpreceivernano.Tpo $(DEPDIR)/tcpreceiver-tcpreceivernano.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tcpreceivernano.cpp' object='tcpreceiver-tcpreceivernano.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-tcpreceivernano.o `test -f 'tcpreceivernano.cpp' || echo '$(srcdir)/'`tcpreceivernano.cpp
+
+tcpreceiver-tcpreceivernano.obj: tcpreceivernano.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-tcpreceivernano.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-tcpreceivernano.Tpo -c -o tcpreceiver-tcpreceivernano.obj `if test -f 'tcpreceivernano.cpp'; then $(CYGPATH_W) 'tcpreceivernano.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpreceivernano.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-tcpreceivernano.Tpo $(DEPDIR)/tcpreceiver-tcpreceivernano.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='tcpreceivernano.cpp' object='tcpreceiver-tcpreceivernano.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-tcpreceivernano.obj `if test -f 'tcpreceivernano.cpp'; then $(CYGPATH_W) 'tcpreceivernano.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpreceivernano.cpp'; fi`
+
 tcpreceiver-daemonize.o: daemonize.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-daemonize.o -MD -MP -MF $(DEPDIR)/tcpreceiver-daemonize.Tpo -c -o tcpreceiver-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-daemonize.Tpo $(DEPDIR)/tcpreceiver-daemonize.Po
@@ -1220,6 +1246,62 @@ tcpreceiver-ieee754.obj: ieee754.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ieee754.cpp' object='tcpreceiver-ieee754.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+
+tcpreceiver-utilpriority.o: utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilpriority.o -MD -MP -MF $(DEPDIR)/tcpreceiver-utilpriority.Tpo -c -o tcpreceiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-utilpriority.Tpo $(DEPDIR)/tcpreceiver-utilpriority.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilpriority.cpp' object='tcpreceiver-utilpriority.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+tcpreceiver-utilpriority.obj: utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilpriority.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-utilpriority.Tpo -c -o tcpreceiver-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-utilpriority.Tpo $(DEPDIR)/tcpreceiver-utilpriority.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilpriority.cpp' object='tcpreceiver-utilpriority.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+tcpreceiver-utilstring.o: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilstring.o -MD -MP -MF $(DEPDIR)/tcpreceiver-utilstring.Tpo -c -o tcpreceiver-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-utilstring.Tpo $(DEPDIR)/tcpreceiver-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='tcpreceiver-utilstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+tcpreceiver-utilstring.obj: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilstring.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-utilstring.Tpo -c -o tcpreceiver-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-utilstring.Tpo $(DEPDIR)/tcpreceiver-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='tcpreceiver-utilstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+tcpreceiver-utilinet.o: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilinet.o -MD -MP -MF $(DEPDIR)/tcpreceiver-utilinet.Tpo -c -o tcpreceiver-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-utilinet.Tpo $(DEPDIR)/tcpreceiver-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='tcpreceiver-utilinet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+tcpreceiver-utilinet.obj: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilinet.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-utilinet.Tpo -c -o tcpreceiver-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-utilinet.Tpo $(DEPDIR)/tcpreceiver-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='tcpreceiver-utilinet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+tcpreceiver-NanoMessage.o: NanoMessage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-NanoMessage.o -MD -MP -MF $(DEPDIR)/tcpreceiver-NanoMessage.Tpo -c -o tcpreceiver-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-NanoMessage.Tpo $(DEPDIR)/tcpreceiver-NanoMessage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NanoMessage.cpp' object='tcpreceiver-NanoMessage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+
+tcpreceiver-NanoMessage.obj: NanoMessage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-NanoMessage.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-NanoMessage.Tpo -c -o tcpreceiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-NanoMessage.Tpo $(DEPDIR)/tcpreceiver-NanoMessage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NanoMessage.cpp' object='tcpreceiver-NanoMessage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
 tcptransmitter-tcptransmitter.o: tcptransmitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter.o -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo -c -o tcptransmitter-tcptransmitter.o `test -f 'tcptransmitter.cpp' || echo '$(srcdir)/'`tcptransmitter.cpp
@@ -1767,9 +1849,6 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 
 .PRECIOUS: Makefile
 
-	json.cpp \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
-	$(common_src)
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
