@@ -156,6 +156,7 @@ tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
+	tcpreceiver-input-packet.$(OBJEXT) \
 	tcpreceiver-daemonize.$(OBJEXT) tcpreceiver-ieee754.$(OBJEXT) \
 	tcpreceiver-utilpriority.$(OBJEXT) \
 	tcpreceiver-utilstring.$(OBJEXT) \
@@ -469,7 +470,7 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
-tcpemitter-config.h tcpreceivernano.h \
+tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -497,7 +498,7 @@ tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 # tcpreceiver
 #
 tcpreceiver_SOURCES = \
-	tcpreceiver.cpp  tcpreceiver-config.cpp tcpreceivernano.cpp \
+	tcpreceiver.cpp  tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
 	daemonize.cpp  ieee754.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
@@ -725,6 +726,7 @@ include ./$(DEPDIR)/tcpemitter-utilstring.Po
 include ./$(DEPDIR)/tcpreceiver-NanoMessage.Po
 include ./$(DEPDIR)/tcpreceiver-daemonize.Po
 include ./$(DEPDIR)/tcpreceiver-ieee754.Po
+include ./$(DEPDIR)/tcpreceiver-input-packet.Po
 include ./$(DEPDIR)/tcpreceiver-tcpreceiver-config.Po
 include ./$(DEPDIR)/tcpreceiver-tcpreceiver.Po
 include ./$(DEPDIR)/tcpreceiver-tcpreceivernano.Po
@@ -1218,6 +1220,20 @@ tcpreceiver-tcpreceivernano.obj: tcpreceivernano.cpp
 #	$(AM_V_CXX)source='tcpreceivernano.cpp' object='tcpreceiver-tcpreceivernano.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-tcpreceivernano.obj `if test -f 'tcpreceivernano.cpp'; then $(CYGPATH_W) 'tcpreceivernano.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpreceivernano.cpp'; fi`
+
+tcpreceiver-input-packet.o: input-packet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-input-packet.o -MD -MP -MF $(DEPDIR)/tcpreceiver-input-packet.Tpo -c -o tcpreceiver-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-input-packet.Tpo $(DEPDIR)/tcpreceiver-input-packet.Po
+#	$(AM_V_CXX)source='input-packet.cpp' object='tcpreceiver-input-packet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+
+tcpreceiver-input-packet.obj: input-packet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-input-packet.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-input-packet.Tpo -c -o tcpreceiver-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-input-packet.Tpo $(DEPDIR)/tcpreceiver-input-packet.Po
+#	$(AM_V_CXX)source='input-packet.cpp' object='tcpreceiver-input-packet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
 
 tcpreceiver-daemonize.o: daemonize.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-daemonize.o -MD -MP -MF $(DEPDIR)/tcpreceiver-daemonize.Tpo -c -o tcpreceiver-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp

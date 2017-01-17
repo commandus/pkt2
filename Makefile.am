@@ -23,7 +23,7 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
-tcpemitter-config.h tcpreceivernano.h \
+tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -52,7 +52,7 @@ tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 # tcpreceiver
 #
 tcpreceiver_SOURCES = \
-	tcpreceiver.cpp  tcpreceiver-config.cpp tcpreceivernano.cpp \
+	tcpreceiver.cpp  tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
 	daemonize.cpp  ieee754.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)

@@ -9,6 +9,7 @@
 #include <glog/logging.h>
 
 #include "tcpreceivernano.h"
+#include "input-packet.h"
 
 void *get_in_addr
 (
@@ -119,10 +120,8 @@ int tcp_receiever_nano(Config *config)
 			continue;
 		}
 	
-		inet_ntop(client_addr.ss_family, 
-			get_in_addr((struct sockaddr *) &client_addr), s, sizeof(s)); 
+		inet_ntop(client_addr.ss_family, get_in_addr((struct sockaddr *) &client_addr), s, sizeof(s)); 
         LOG(INFO) << "connected to: " << s;
-
 
         int n = read(new_conn_fd, buffer, config->buffer_size);
    
@@ -136,14 +135,6 @@ int tcp_receiever_nano(Config *config)
         // Send immediate reply if provided
         /*
 		int status = send(new_conn_fd, "Welcome", 7, 0);
-        char *msg = "Welcome";
-        int sz_msg = strlen(msg) + 1; // '\0' too
-        int bytes = nn_send(nano_socket, msg, sz_msg, 0);
-        if (bytes != sz_msg)
-        {
-            LOG(ERROR) << "nano message send error, sent " << bytes << " of " << sz_msg;
-        }
-
 		if (status == -1)
 		{
             LOG(ERROR) << "send error";
@@ -157,7 +148,14 @@ int tcp_receiever_nano(Config *config)
 
 		// Close the socket
 		close(new_conn_fd);
-        	
+
+        // send message to the nano queue
+        InputPacket packet((struct sockaddr *) &client_addr, buffer, n);
+        int bytes = nn_send(nano_socket, packet.data, packet.size, 0);
+        if (bytes != n)
+        {
+            LOG(ERROR) << "nano message send error, sent " << bytes << " of " << n;
+        }
 	}
    	close(socket);	
     return nn_shutdown(nano_socket, 0);
@@ -172,6 +170,6 @@ int stop(Config *config)
     if (!config)
         return 1;
     config->stop_request = true;
-    // wake upper
+    // wake up
 
 }
