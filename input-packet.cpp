@@ -13,7 +13,29 @@ InputPacket::InputPacket(
     if (buffer)
     {
         header()->name = typ;
+        allocated = true;
     }
+    else
+    {
+        allocated = false;
+    }
+}
+
+InputPacket::InputPacket
+(
+    void *data,
+    size_t adata_size
+) 
+{
+    buffer = data;
+    size = adata_size;
+    allocated = false;
+}
+
+InputPacket::~InputPacket() 
+{
+    if (allocated && (buffer != NULL))
+        free(buffer);
 }
 
 void *InputPacket::get()

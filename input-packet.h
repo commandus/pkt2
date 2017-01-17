@@ -17,8 +17,11 @@ private:
     struct sockaddr socket_address_src;
     struct sockaddr socket_address_dst;
     void *buffer;
+    bool allocated; ///< true- buffer is malloc'ed, false- external buffer
 public:
     InputPacket(char typ, size_t data_size);
+    InputPacket(void *data, size_t data_size);
+    virtual ~InputPacket();
 
     /// buffer
     void *get();

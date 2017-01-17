@@ -11,16 +11,6 @@
 #include "tcpreceivernano.h"
 #include "input-packet.h"
 
-void *get_in_addr
-(
-    struct sockaddr *sa
-)
-{
-	if (sa->sa_family == AF_INET)
-		return &(((struct sockaddr_in *)sa)->sin_addr); 
-	return &(((struct sockaddr_in6 *)sa)->sin6_addr); 
-}
-
 int get_addr_info
 (
     Config *config,
@@ -140,9 +130,7 @@ int tcp_receiever_nano(Config *config)
 			continue;
 		}
 
-        char s[INET6_ADDRSTRLEN]; // an empty string 
-		inet_ntop(client_addr->ss_family, get_in_addr((struct sockaddr *) client_addr), s, sizeof(s)); 
-        LOG(INFO) << "connected to: " << s;
+        LOG(INFO) << "connected to: " << sockaddrToString(client_addr);
 
         packet.length = read(new_conn_fd, packet.data(), packet.size);
    

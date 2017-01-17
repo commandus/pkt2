@@ -9,6 +9,8 @@
 #include <sstream>
 #include <streambuf>
 
+#include <arpa/inet.h>
+
 /// http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start
 std::string &ltrim(std::string &s) 
@@ -161,4 +163,24 @@ std::string doubleToString(const double value)
 	idss.precision(std::numeric_limits<double>::digits10 + 1);
 	idss << std::fixed << value;
 	return idss.str();
+}
+
+void *get_in_addr
+(
+    struct sockaddr *sa
+)
+{
+	if (sa->sa_family == AF_INET)
+		return &(((struct sockaddr_in *)sa)->sin_addr); 
+	return &(((struct sockaddr_in6 *)sa)->sin6_addr); 
+}
+
+std::string sockaddrToString
+(
+	struct sockaddr_storage *value
+)
+{
+	char s[INET6_ADDRSTRLEN]; // an empty string 
+	inet_ntop(value->ss_family, get_in_addr((struct sockaddr *) value), s, sizeof(s)); 
+	return s;
 }

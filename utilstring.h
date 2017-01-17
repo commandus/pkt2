@@ -2,6 +2,7 @@
 #include <sstream>
 #include <vector>
 #include <stdint.h>
+#include <sys/socket.h>
 
 // trim from start
 std::string &ltrim(std::string &s);
@@ -59,3 +60,7 @@ std::string Long2E164(const uint64_t value);
 std::string uint64ToString(const uint64_t value);
 
 std::string doubleToString(const double value);
+
+void *get_in_addr(struct sockaddr *sa);
+
+std::string sockaddrToString(struct sockaddr_storage *value);
