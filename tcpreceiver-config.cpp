@@ -34,11 +34,11 @@ int Config::parseCmd
 )
 {
         struct arg_str *a_interface = arg_str0("i", "ipaddr", "<IP address>", "Netrwotk interface name or address. Default 0.0.0.0");
-        struct arg_int *a_port = arg_int0("l", "listen", "<port>", "service port. Default 50055");
+        struct arg_int *a_port = arg_int0("l", "listen", "<port>", "TCP port to listen. Default 50055");
 
         struct arg_str *a_message_url = arg_str0("q", "queue", "<queue url>", "Default ipc:///tmp/input.pkt2");
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 256 bytes");
-        struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "start as daemon/service");
+        struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 4, "Verbosity level");
 
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");

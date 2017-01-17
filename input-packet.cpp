@@ -3,13 +3,17 @@
 #include <cstdlib>
 
 InputPacket::InputPacket(
+    char typ,
     size_t adata_size
 ) 
 {
     data_size = adata_size;
-    addr_size = sizeof(struct sockaddr_storage);
-    size = data_size + addr_size;
+    size = sizeof(struct PacketHeader) + data_size + sizeof(struct sockaddr_storage) + sizeof(struct sockaddr_storage);
     buffer = malloc(size);
+    if (buffer)
+    {
+        header()->name = typ;
+    }
 }
 
 void *InputPacket::get()
@@ -17,14 +21,24 @@ void *InputPacket::get()
     return buffer;
 }
 
-struct sockaddr_storage *InputPacket::get_socket_addr()
+struct PacketHeader* InputPacket::header()
 {
-    return (struct sockaddr_storage *) buffer;
+    return (PacketHeader*) buffer;
+}
+
+struct sockaddr_storage *InputPacket::get_socket_addr_src()
+{
+    return (struct sockaddr_storage *) buffer + sizeof(struct PacketHeader);
+}
+
+struct sockaddr_storage *InputPacket::get_socket_addr_dst()
+{
+    return (struct sockaddr_storage *) buffer + sizeof(struct PacketHeader) + sizeof(struct sockaddr_storage);
 }
 
 void *InputPacket::data()
 {
-    return (char*) buffer + addr_size;
+    return (char*) buffer + sizeof(struct PacketHeader) + sizeof(struct sockaddr_storage) + sizeof(struct sockaddr_storage);
 }
 
 /**

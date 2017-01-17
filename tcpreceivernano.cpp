@@ -21,7 +21,11 @@ void *get_in_addr
 	return &(((struct sockaddr_in6 *)sa)->sin6_addr); 
 }
 
-int listen_port(Config *config)
+int get_addr_info
+(
+    Config *config,
+    struct addrinfo **res
+)
 {
 	// Before using hint you have to make sure that the data structure is empty 
     struct addrinfo hints;
@@ -32,19 +36,25 @@ int listen_port(Config *config)
 	hints.ai_flags = AI_PASSIVE; 
 	
 	// Fill the res data structure and make sure that the results make sense. 
-   	struct addrinfo *res;
-	int status = getaddrinfo(NULL, uint64ToString(config->port).c_str(), &hints, &res);
+	int status = getaddrinfo(NULL, uint64ToString(config->port).c_str(), &hints, res);
 	if (status != 0)
 	{
         LOG(ERROR) << "getaddrinfo error: " << gai_strerror(status);
         return -1;
 	}
-	
+    return 0;
+}
+
+int listen_port(
+    Config *config,
+    struct addrinfo *res
+    )
+{
 	// Create Socket and check if error occured afterwards
-	int listner = socket(res->ai_family,res->ai_socktype, res->ai_protocol);
+	int listner = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
 	if (listner < 0 )
 	{
-        LOG(ERROR) << "socket error: " << gai_strerror(status);
+        LOG(ERROR) << "socket error: " << gai_strerror(listner);
         return -1;
 	}
 	int reuseaddr = 1;
@@ -55,7 +65,7 @@ int listen_port(Config *config)
     }
 
 	// Bind the socket to the address of my local machine and port number 
-	status = bind(listner, res->ai_addr, res->ai_addrlen); 
+	int status = bind(listner, res->ai_addr, res->ai_addrlen); 
 	if (status < 0)
 	{
         LOG(ERROR) << "bind: " << gai_strerror(status);
@@ -68,9 +78,6 @@ int listen_port(Config *config)
 		LOG(ERROR) << "listen: " << gai_strerror(status);
         return -1;
 	}
-	
-	// Free the res linked list after we are done with it	
-	freeaddrinfo(res);
     return listner;
 }
 
@@ -83,7 +90,22 @@ int listen_port(Config *config)
   */
 int tcp_receiever_nano(Config *config)
 {
-	int socket = listen_port(config);
+    InputPacket packet('T', config->buffer_size);
+
+    struct addrinfo *res;
+    if (get_addr_info(config, &res))
+    {
+		LOG(ERROR) << "Can not resolve";
+		return 1;
+    }
+    struct sockaddr_storage *svc_addr = packet.get_socket_addr_dst();
+    //svc_addr
+
+	int socket = listen_port(config, res);
+
+	// Free the res linked list after we are done with it	
+	freeaddrinfo(res);
+
 	if (socket == -1)
 	{
 		LOG(ERROR) << "exit on listener error";
@@ -98,9 +120,7 @@ int tcp_receiever_nano(Config *config)
 		return 2;
     }
 
-
-    InputPacket packet(config->buffer_size);
-    struct sockaddr_storage *client_addr = packet.get_socket_addr();
+    struct sockaddr_storage *client_addr = packet.get_socket_addr_src();
 
     if (packet.error() != 0)
     {

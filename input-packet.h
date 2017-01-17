@@ -6,27 +6,37 @@
 #define PROGRAM_NAME             "tcpreceiver"
 #define PROGRAM_DESCRIPTION      "PKT2 tcp packet listener"
 
+struct PacketHeader
+{
+    char name;
+};
+
 /**
   *      \see 
   */
 class InputPacket
 {
 private:
-    struct sockaddr socket_address;
+    struct sockaddr socket_address_src;
+    struct sockaddr socket_address_dst;
     void *buffer;
 public:
-    InputPacket(size_t data_size);
+    InputPacket(char typ, size_t data_size);
+
     /// buffer
     void *get();
-    /// buffer size
+    /// buffer size including address and header
     size_t size;
     
-    struct sockaddr_storage *get_socket_addr();
-    size_t addr_size;
+    struct PacketHeader* header();
 
+    struct sockaddr_storage *get_socket_addr_src();
+    struct sockaddr_storage *get_socket_addr_dst();
+    
     void *data();
-    /// data length
+    /// max data buffer size
     int data_size;
+    /// actual data length
     int length;
 
     int error();
