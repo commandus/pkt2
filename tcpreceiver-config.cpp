@@ -38,6 +38,8 @@ int Config::parseCmd
 
         struct arg_str *a_message_url = arg_str0("q", "queue", "<queue url>", "Default ipc:///tmp/input.pkt2");
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 256 bytes");
+        struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0. -1- forever");
+        struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 4, "Verbosity level");
 
@@ -45,8 +47,9 @@ int Config::parseCmd
         struct arg_end *a_end = arg_end(20);
 
         void* argtable[] = { 
-                a_interface, a_port, a_message_url, a_buffer_size, a_daemonize,
-                a_verbosity,
+                a_interface, a_port, a_message_url, a_buffer_size, 
+                a_retries, a_retry_delay,
+                a_daemonize, a_verbosity,
                 a_help, a_end 
         };
 
@@ -94,6 +97,16 @@ int Config::parseCmd
         else
                 buffer_size = DEF_BUFFER_SIZE;
 
+        if (a_retries->count)
+                retries = *a_retries->ival;
+        else
+                retries = 0;
+
+        if (a_retry_delay->count)
+                retry_delay = *a_retry_delay->ival;
+        else
+                retry_delay = 60;
+        
         daemonize = a_daemonize->count > 0;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));

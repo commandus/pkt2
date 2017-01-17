@@ -32,6 +32,10 @@ public:
     uint32_t port;
     uint32_t verbosity;
     size_t buffer_size;
+
+    int retries;            ///< default 0
+    int retry_delay;        ///< default 60 seconds
+
     bool daemonize;
     bool stop_request;
     std::string message_url;

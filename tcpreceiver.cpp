@@ -32,9 +32,14 @@ void run()
 		LOG(ERROR) << "config corrupted.";
 		return;
 	}
+	int n = 0;
 	while (!config->stop_request)
 	{
 		reslt = tcp_receiever_nano(config);
+		if (n >= config->retries)
+			break;
+		n++;
+		sleep(config->retry_delay);
 	}
 }
 
