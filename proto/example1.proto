@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package example1;
+
+import "pkt2.proto";
+
+// option cc_enable_arenas = true;
+
+/// Temperature
+message TemperaturePkt
+{
+    option(pkt2.Packet) = { 
+        name = "temperature";
+        short_name = "Температура";
+        full_name = "Температура устройств";
+        variables = {};
+    };
+    uint8 unit     = 1 [(pkt2.Field) = { name = "device"; }];
+    uint32 time    = 2;
+    double celcius = 3;
+}
