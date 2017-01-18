@@ -4,18 +4,62 @@ package example1;
 
 import "pkt2.proto";
 
-// option cc_enable_arenas = true;
-
 /// Temperature
 message TemperaturePkt
 {
-    option(pkt2.Packet) = { 
-        name = "temperature";
-        short_name = "Температура";
-        full_name = "Температура устройств";
-        variables = {};
+    // input packet description
+    option(pkt2.packet) = { 
+        name: "temperature"
+        short_name: "Температура"
+        full_name: "DEVICE TEMP"
+        source: {
+            proto: PROTO_TCP
+            address: "84.237.104.57"
+            port: 0 // any port
+        }
+        fields: [
+        {
+            name: "device"
+            type: INPUT_UINT
+            size: 1
+            offset: 0
+        },
+        {
+            name: "unix_time"
+            type: INPUT_UINT
+            size: 4
+            offset: 1
+            endian: BIG_ENDIAN
+        },
+        {
+            name: "value"
+            type: INPUT_UINT
+            size: 2
+            offset: 5
+            endian: BIG_ENDIAN
+        }]
     };
-    uint8 unit     = 1 [(pkt2.Field) = { name = "device"; }];
-    uint32 time    = 2;
-    double celcius = 3;
+
+    // output 
+    uint32 degrees_c = 1 [(pkt2.variable) = {
+        name: "degrees_c"
+        type: OUTPUT_DOUBLE
+        short_name: "Температура"
+        full_name: "Температура, C"
+        measure_unit: "C"
+        formula: "1.22 * ((value & 0x0f) << 1)"
+        priority: 0                                 // required
+        format: "%8.2f"
+    }];
+
+    uint32 degrees_f = 2 [(pkt2.variable) = {
+        name: "degrees_f"
+        type: OUTPUT_DOUBLE
+        short_name: "Температура"
+        full_name: "Температура, F"
+        measure_unit: "F"
+        formula: "degrees_f * 1.8 + 32"
+        priority: 1                                 // optional
+        format: "%8.2f"
+    }];
 }
