@@ -1,7 +1,15 @@
 SUBDIRS = .
-ACLOCAL_AMFLAGS = -I m4 
+ACLOCAL_AMFLAGS = -I m4
 
-commoncppflags = -DDEBUG
+if DEBUG
+	AM_CFLAGS = -g3 -O0
+	AM_CXXFLAGS = -g3 -O0
+	commoncppflags = -DDEBUG
+else
+	AM_CFLAGS = -O2
+	AM_CXXFLAGS = -O2
+	commoncppflags =
+endif
 
 #
 #	Exclude generated sources from distribution
@@ -14,7 +22,7 @@ CLEANFILES = $(genfiles)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
+bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter protopkt2
 
 #
 # Headers
@@ -22,6 +30,7 @@ bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransm
 nobase_dist_include_HEADERS = \
 NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
+proto-pkt2.h    pkt2_code_generator.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -101,12 +110,23 @@ handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 tcptransmitter_SOURCES = \
 	tcptransmitter.cpp  tcptransmitter-config.cpp  \
-	daemonize.cpp  ieee754.cpp  
+	daemonize.cpp  ieee754.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# protopkt2
+#
+protopkt2_SOURCES = \
+	proto-pkt2.cpp pkt2_code_generator.cpp \
+	utilstring.cpp utilinet.cpp \
+	$(common_src)
+
+protopkt2_LDADD = -lprotoc -lprotobuf
+protopkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
@@ -115,4 +135,3 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile
-
