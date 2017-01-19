@@ -1,4 +1,4 @@
-#include "proto-pkt2.h"
+#include "protoc-gen-pkt2.h"
 
 int main(int argc, char* argv[])
 {
