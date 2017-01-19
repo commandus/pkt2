@@ -1,7 +1,6 @@
 SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
 
-TESTS_ENVIRONMENT = $(PERL) -Mstrict -w
 TESTS = tests/p1.sh tests/t1 
 
 if DEBUG
@@ -25,15 +24,15 @@ CLEANFILES = $(genfiles)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter protopkt2
+bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter protoc-gen-pkt2
 
 #
 # Headers
 #
 nobase_dist_include_HEADERS = \
-NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
-utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
-proto-pkt2.h    pkt2_code_generator.h \
+NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
+utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h \
+protoc-gen-pkt2.h    pkt2_code_generator.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -121,15 +120,15 @@ tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
-# protopkt2
+# protoc-gen-pkt2
 #
-protopkt2_SOURCES = \
-	proto-pkt2.cpp pkt2_code_generator.cpp \
+protoc_gen_pkt2_SOURCES = \
+	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
 	utilstring.cpp utilinet.cpp \
 	$(common_src)
 
-protopkt2_LDADD = -lprotoc -lprotobuf
-protopkt2_CPPFLAGS = $(commoncppflags) -std=c++11
+protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf
+protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.

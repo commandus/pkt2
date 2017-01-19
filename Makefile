@@ -92,7 +92,7 @@ build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
-	tcptransmitter$(EXEEXT) protopkt2$(EXEEXT)
+	tcptransmitter$(EXEEXT) protoc-gen-pkt2$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -148,12 +148,13 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-NanoMessage.$(OBJEXT) $(am__objects_1)
 pkt2receiver_OBJECTS = $(am_pkt2receiver_OBJECTS)
 pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am_protopkt2_OBJECTS = protopkt2-proto-pkt2.$(OBJEXT) \
-	protopkt2-pkt2_code_generator.$(OBJEXT) \
-	protopkt2-utilstring.$(OBJEXT) protopkt2-utilinet.$(OBJEXT) \
-	$(am__objects_1)
-protopkt2_OBJECTS = $(am_protopkt2_OBJECTS)
-protopkt2_DEPENDENCIES =
+am_protoc_gen_pkt2_OBJECTS =  \
+	protoc_gen_pkt2-protoc-gen-pkt2.$(OBJEXT) \
+	protoc_gen_pkt2-pkt2_code_generator.$(OBJEXT) \
+	protoc_gen_pkt2-utilstring.$(OBJEXT) \
+	protoc_gen_pkt2-utilinet.$(OBJEXT) $(am__objects_1)
+protoc_gen_pkt2_OBJECTS = $(am_protoc_gen_pkt2_OBJECTS)
+protoc_gen_pkt2_DEPENDENCIES =
 am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-tcpemitter-config.$(OBJEXT) \
 	tcpemitter-utilpriority.$(OBJEXT) \
@@ -219,11 +220,11 @@ am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protopkt2_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
 	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protopkt2_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
 	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
@@ -642,7 +643,6 @@ top_builddir = .
 top_srcdir = .
 SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
-TESTS_ENVIRONMENT = $(PERL) -Mstrict -w
 TESTS = tests/p1.sh tests/t1 
 
 #
@@ -657,9 +657,9 @@ CLEANFILES = $(genfiles)
 # Headers
 #
 nobase_dist_include_HEADERS = \
-NanoMessage.h   cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
-utilpriority.h  utilstring.h    utilinet.h    bin2ascii.h \
-proto-pkt2.h    pkt2_code_generator.h \
+NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
+utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h \
+protoc-gen-pkt2.h    pkt2_code_generator.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -746,15 +746,15 @@ tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
-# protopkt2
+# protoc-gen-pkt2
 #
-protopkt2_SOURCES = \
-	proto-pkt2.cpp pkt2_code_generator.cpp \
+protoc_gen_pkt2_SOURCES = \
+	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
 	utilstring.cpp utilinet.cpp \
 	$(common_src)
 
-protopkt2_LDADD = -lprotoc -lprotobuf
-protopkt2_CPPFLAGS = $(commoncppflags) -std=c++11
+protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf
+protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
@@ -879,9 +879,9 @@ pkt2receiver$(EXEEXT): $(pkt2receiver_OBJECTS) $(pkt2receiver_DEPENDENCIES) $(EX
 	@rm -f pkt2receiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pkt2receiver_OBJECTS) $(pkt2receiver_LDADD) $(LIBS)
 
-protopkt2$(EXEEXT): $(protopkt2_OBJECTS) $(protopkt2_DEPENDENCIES) $(EXTRA_protopkt2_DEPENDENCIES) 
-	@rm -f protopkt2$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(protopkt2_OBJECTS) $(protopkt2_LDADD) $(LIBS)
+protoc-gen-pkt2$(EXEEXT): $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_DEPENDENCIES) $(EXTRA_protoc_gen_pkt2_DEPENDENCIES) 
+	@rm -f protoc-gen-pkt2$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_LDADD) $(LIBS)
 
 tcpemitter$(EXEEXT): $(tcpemitter_OBJECTS) $(tcpemitter_DEPENDENCIES) $(EXTRA_tcpemitter_DEPENDENCIES) 
 	@rm -f tcpemitter$(EXEEXT)
@@ -927,10 +927,10 @@ include ./$(DEPDIR)/pkt2receiver-pkt2receivernano.Po
 include ./$(DEPDIR)/pkt2receiver-utilinet.Po
 include ./$(DEPDIR)/pkt2receiver-utilpriority.Po
 include ./$(DEPDIR)/pkt2receiver-utilstring.Po
-include ./$(DEPDIR)/protopkt2-pkt2_code_generator.Po
-include ./$(DEPDIR)/protopkt2-proto-pkt2.Po
-include ./$(DEPDIR)/protopkt2-utilinet.Po
-include ./$(DEPDIR)/protopkt2-utilstring.Po
+include ./$(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
+include ./$(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
+include ./$(DEPDIR)/protoc_gen_pkt2-utilinet.Po
+include ./$(DEPDIR)/protoc_gen_pkt2-utilstring.Po
 include ./$(DEPDIR)/tcpemitter-NanoMessage.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter-config.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter.Po
@@ -1341,61 +1341,61 @@ pkt2receiver-NanoMessage.obj: NanoMessage.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
-protopkt2-proto-pkt2.o: proto-pkt2.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-proto-pkt2.o -MD -MP -MF $(DEPDIR)/protopkt2-proto-pkt2.Tpo -c -o protopkt2-proto-pkt2.o `test -f 'proto-pkt2.cpp' || echo '$(srcdir)/'`proto-pkt2.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-proto-pkt2.Tpo $(DEPDIR)/protopkt2-proto-pkt2.Po
-#	$(AM_V_CXX)source='proto-pkt2.cpp' object='protopkt2-proto-pkt2.o' libtool=no \
+protoc_gen_pkt2-protoc-gen-pkt2.o: protoc-gen-pkt2.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-protoc-gen-pkt2.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Tpo -c -o protoc_gen_pkt2-protoc-gen-pkt2.o `test -f 'protoc-gen-pkt2.cpp' || echo '$(srcdir)/'`protoc-gen-pkt2.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Tpo $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
+#	$(AM_V_CXX)source='protoc-gen-pkt2.cpp' object='protoc_gen_pkt2-protoc-gen-pkt2.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-proto-pkt2.o `test -f 'proto-pkt2.cpp' || echo '$(srcdir)/'`proto-pkt2.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-protoc-gen-pkt2.o `test -f 'protoc-gen-pkt2.cpp' || echo '$(srcdir)/'`protoc-gen-pkt2.cpp
 
-protopkt2-proto-pkt2.obj: proto-pkt2.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-proto-pkt2.obj -MD -MP -MF $(DEPDIR)/protopkt2-proto-pkt2.Tpo -c -o protopkt2-proto-pkt2.obj `if test -f 'proto-pkt2.cpp'; then $(CYGPATH_W) 'proto-pkt2.cpp'; else $(CYGPATH_W) '$(srcdir)/proto-pkt2.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-proto-pkt2.Tpo $(DEPDIR)/protopkt2-proto-pkt2.Po
-#	$(AM_V_CXX)source='proto-pkt2.cpp' object='protopkt2-proto-pkt2.obj' libtool=no \
+protoc_gen_pkt2-protoc-gen-pkt2.obj: protoc-gen-pkt2.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-protoc-gen-pkt2.obj -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Tpo -c -o protoc_gen_pkt2-protoc-gen-pkt2.obj `if test -f 'protoc-gen-pkt2.cpp'; then $(CYGPATH_W) 'protoc-gen-pkt2.cpp'; else $(CYGPATH_W) '$(srcdir)/protoc-gen-pkt2.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Tpo $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
+#	$(AM_V_CXX)source='protoc-gen-pkt2.cpp' object='protoc_gen_pkt2-protoc-gen-pkt2.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-proto-pkt2.obj `if test -f 'proto-pkt2.cpp'; then $(CYGPATH_W) 'proto-pkt2.cpp'; else $(CYGPATH_W) '$(srcdir)/proto-pkt2.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-protoc-gen-pkt2.obj `if test -f 'protoc-gen-pkt2.cpp'; then $(CYGPATH_W) 'protoc-gen-pkt2.cpp'; else $(CYGPATH_W) '$(srcdir)/protoc-gen-pkt2.cpp'; fi`
 
-protopkt2-pkt2_code_generator.o: pkt2_code_generator.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-pkt2_code_generator.o -MD -MP -MF $(DEPDIR)/protopkt2-pkt2_code_generator.Tpo -c -o protopkt2-pkt2_code_generator.o `test -f 'pkt2_code_generator.cpp' || echo '$(srcdir)/'`pkt2_code_generator.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-pkt2_code_generator.Tpo $(DEPDIR)/protopkt2-pkt2_code_generator.Po
-#	$(AM_V_CXX)source='pkt2_code_generator.cpp' object='protopkt2-pkt2_code_generator.o' libtool=no \
+protoc_gen_pkt2-pkt2_code_generator.o: pkt2_code_generator.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-pkt2_code_generator.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Tpo -c -o protoc_gen_pkt2-pkt2_code_generator.o `test -f 'pkt2_code_generator.cpp' || echo '$(srcdir)/'`pkt2_code_generator.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Tpo $(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
+#	$(AM_V_CXX)source='pkt2_code_generator.cpp' object='protoc_gen_pkt2-pkt2_code_generator.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-pkt2_code_generator.o `test -f 'pkt2_code_generator.cpp' || echo '$(srcdir)/'`pkt2_code_generator.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-pkt2_code_generator.o `test -f 'pkt2_code_generator.cpp' || echo '$(srcdir)/'`pkt2_code_generator.cpp
 
-protopkt2-pkt2_code_generator.obj: pkt2_code_generator.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-pkt2_code_generator.obj -MD -MP -MF $(DEPDIR)/protopkt2-pkt2_code_generator.Tpo -c -o protopkt2-pkt2_code_generator.obj `if test -f 'pkt2_code_generator.cpp'; then $(CYGPATH_W) 'pkt2_code_generator.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2_code_generator.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-pkt2_code_generator.Tpo $(DEPDIR)/protopkt2-pkt2_code_generator.Po
-#	$(AM_V_CXX)source='pkt2_code_generator.cpp' object='protopkt2-pkt2_code_generator.obj' libtool=no \
+protoc_gen_pkt2-pkt2_code_generator.obj: pkt2_code_generator.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-pkt2_code_generator.obj -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Tpo -c -o protoc_gen_pkt2-pkt2_code_generator.obj `if test -f 'pkt2_code_generator.cpp'; then $(CYGPATH_W) 'pkt2_code_generator.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2_code_generator.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Tpo $(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
+#	$(AM_V_CXX)source='pkt2_code_generator.cpp' object='protoc_gen_pkt2-pkt2_code_generator.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-pkt2_code_generator.obj `if test -f 'pkt2_code_generator.cpp'; then $(CYGPATH_W) 'pkt2_code_generator.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2_code_generator.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-pkt2_code_generator.obj `if test -f 'pkt2_code_generator.cpp'; then $(CYGPATH_W) 'pkt2_code_generator.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2_code_generator.cpp'; fi`
 
-protopkt2-utilstring.o: utilstring.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-utilstring.o -MD -MP -MF $(DEPDIR)/protopkt2-utilstring.Tpo -c -o protopkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-utilstring.Tpo $(DEPDIR)/protopkt2-utilstring.Po
-#	$(AM_V_CXX)source='utilstring.cpp' object='protopkt2-utilstring.o' libtool=no \
+protoc_gen_pkt2-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-utilstring.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-utilstring.Tpo -c -o protoc_gen_pkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-utilstring.Tpo $(DEPDIR)/protoc_gen_pkt2-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='protoc_gen_pkt2-utilstring.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
 
-protopkt2-utilstring.obj: utilstring.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-utilstring.obj -MD -MP -MF $(DEPDIR)/protopkt2-utilstring.Tpo -c -o protopkt2-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-utilstring.Tpo $(DEPDIR)/protopkt2-utilstring.Po
-#	$(AM_V_CXX)source='utilstring.cpp' object='protopkt2-utilstring.obj' libtool=no \
+protoc_gen_pkt2-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-utilstring.obj -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-utilstring.Tpo -c -o protoc_gen_pkt2-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-utilstring.Tpo $(DEPDIR)/protoc_gen_pkt2-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='protoc_gen_pkt2-utilstring.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
 
-protopkt2-utilinet.o: utilinet.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-utilinet.o -MD -MP -MF $(DEPDIR)/protopkt2-utilinet.Tpo -c -o protopkt2-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-utilinet.Tpo $(DEPDIR)/protopkt2-utilinet.Po
-#	$(AM_V_CXX)source='utilinet.cpp' object='protopkt2-utilinet.o' libtool=no \
+protoc_gen_pkt2-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-utilinet.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-utilinet.Tpo -c -o protoc_gen_pkt2-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-utilinet.Tpo $(DEPDIR)/protoc_gen_pkt2-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='protoc_gen_pkt2-utilinet.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
 
-protopkt2-utilinet.obj: utilinet.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protopkt2-utilinet.obj -MD -MP -MF $(DEPDIR)/protopkt2-utilinet.Tpo -c -o protopkt2-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/protopkt2-utilinet.Tpo $(DEPDIR)/protopkt2-utilinet.Po
-#	$(AM_V_CXX)source='utilinet.cpp' object='protopkt2-utilinet.obj' libtool=no \
+protoc_gen_pkt2-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-utilinet.obj -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-utilinet.Tpo -c -o protoc_gen_pkt2-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-utilinet.Tpo $(DEPDIR)/protoc_gen_pkt2-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='protoc_gen_pkt2-utilinet.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protopkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protopkt2-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
 tcpemitter-tcpemitter.o: tcpemitter.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter.Tpo -c -o tcpemitter-tcpemitter.o `test -f 'tcpemitter.cpp' || echo '$(srcdir)/'`tcpemitter.cpp
