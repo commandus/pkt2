@@ -85,10 +85,29 @@ message Packet {
     repeated Field fields     = 6;   ///<   поля пакета
 }
 
+/// SQL dialects
+enum Dialect {
+    SQL_POSTGRESQL            = 0;     
+    SQL_MYSQL                 = 1;
+    SQL_FIREBIRD              = 2;
+};
+
+message Sql {
+    Dialect dialect           = 1;
+}
+
+message Output {
+    Sql     sql               = 1;
+}
+
 extend google.protobuf.MessageOptions {
     pkt2.Packet packet = 50501;
 }
 
+extend google.protobuf.MessageOptions {
+    pkt2.Output output = 50502;
+}
+
 extend google.protobuf.FieldOptions {
-    pkt2.Variable variable = 50502;
+    pkt2.Variable variable = 50503;
 }

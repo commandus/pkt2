@@ -7,6 +7,13 @@ import "pkt2.proto";
 /// Temperature
 message TemperaturePkt
 {
+    // backend database
+    option(pkt2.output) = {
+    	sql {
+    		dialect: SQL_POSTGRESQL
+    	}
+    };
+
     // input packet description
     option(pkt2.packet) = { 
         name: "temperature"

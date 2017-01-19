@@ -9,18 +9,36 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/stl_util.h>
 
+const std::map<std::string, std::string> types_mysql = {
+	{"int32", "int(11)"},
+	{"int64", "int(20)"},
+	{"uint32", "int(11)"},
+	{"uint64", "int(20)"},
+	{"double", "double"},
+	{"float", "float"},
+	{"bool", "tinyint(1)"},
+	{"enum", "enum"},
+	{"string", "text"},
+	{"message", ""}
+};
+
+const std::map<std::string, std::string> types_postgresql = {
+	{"int32", "integer"},
+	{"int64", "bigint"},
+	{"uint32", "numeric(11)"},
+	{"uint64", "numeric(20)"},
+	{"double", "double precision"},
+	{"float", "real"},
+	{"bool", "boolean"},
+	{"enum", "enum"},
+	{"string", "text"},
+	{"message", ""}
+};
+
 Pkt2CodeGenerator::Pkt2CodeGenerator(const std::string& name)
 {
-	sqltypes["int32"] = "int(11)";
-	sqltypes["int64"] = "int(20)";
-	sqltypes["uint32"] = "int(11)";
-	sqltypes["uint64"] = "int(20)";
-	sqltypes["double"] = "double";
-	sqltypes["float"] = "float";
-	sqltypes["bool"] = "tinyint(1)";
-	sqltypes["enum"] = "enum";
-	sqltypes["string"] = "text";
-	sqltypes["message"] = "";
+	sqltypes = types_mysql;
+	// sqltypes = types_postgresql;
 }
 
 Pkt2CodeGenerator::~Pkt2CodeGenerator()

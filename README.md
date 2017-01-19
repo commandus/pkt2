@@ -251,7 +251,7 @@ message TemperaturePkt
 - SINT64
 
 Программы
-=========
+---------
 
 Программы
 
@@ -260,3 +260,17 @@ tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
 показаны на схеме, для передачи данных друг другу используется передача через именованные разделяемые области памяти
  библиотекой nanomsg (http://nanomsg.org/), эмулирующих межпроцессное взаимодействие с очередями сообщений как с сокетами.
  
+### Плагин компилятора protoc protoc-gen-pkt2
+
+Плагин компилятора protoc (компилятор скачать можно тут https://github.com/google/protobuf/releases)
+
+Пример использования protoc-gen-pkt2 в скрипте tests/p1.sh:
+
+```
+protoc --plugin=protoc-gen-pkt2="../protoc-gen-pkt2" --proto_path=../proto --pkt2_out=pkt2 ../proto/example1.proto
+```
+
+#### Опции
+
+- pkt2_out каталог, где будут сохранены сгенерированные файлы 
+- plugin имя плагина и путь к его исполнимому файлу
