@@ -1,5 +1,8 @@
-SUBDIRS = .
+SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
+
+TESTS_ENVIRONMENT = $(PERL) -Mstrict -w
+TESTS = tests/p1.sh tests/t1 
 
 if DEBUG
 	AM_CFLAGS = -g3 -O0
@@ -61,9 +64,9 @@ tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 # tcpreceiver
 #
 tcpreceiver_SOURCES = \
-	tcpreceiver.cpp  tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp  ieee754.cpp  \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
+	daemonize.cpp     ieee754.cpp  \
+	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
