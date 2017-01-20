@@ -12,6 +12,7 @@ class Pkt2CodeGenerator : public google::protobuf::compiler::CodeGenerator {
 private:
 	static void listOne2Many(const google::protobuf::FileDescriptor* file, std::map<const google::protobuf::Descriptor*, messagetypes*> *repeatedmessages);
 	std::map<std::string, std::string> sqltypes;
+	std::string quote;
 public:
 		Pkt2CodeGenerator(const std::string& name);
 		virtual ~Pkt2CodeGenerator();

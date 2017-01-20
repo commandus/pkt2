@@ -9,7 +9,15 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/stl_util.h>
 
+#include "pkt2.pb.h"
+
+const std::string quote_mysql("`");
+
 const std::map<std::string, std::string> types_mysql = {
+	{"primary", "int(20) NOT NULL PRIMARY KEY AUTO_INCREMENT"},
+	{"id", "int(20)"},
+	{"clause_set_charset", "SET CHARSET \'utf8\';"},
+
 	{"int32", "int(11)"},
 	{"int64", "int(20)"},
 	{"uint32", "int(11)"},
@@ -22,7 +30,13 @@ const std::map<std::string, std::string> types_mysql = {
 	{"message", ""}
 };
 
+const std::string quote_postgresql("\"");
+
 const std::map<std::string, std::string> types_postgresql = {
+	{"primary", "SERIAL PRIMARY KEY"},
+	{"id", "int(20)"},
+	{"clause_set_charset", "SET NAMES \'UTF8\';"},
+
 	{"int32", "integer"},
 	{"int64", "bigint"},
 	{"uint32", "numeric(11)"},
@@ -37,8 +51,10 @@ const std::map<std::string, std::string> types_postgresql = {
 
 Pkt2CodeGenerator::Pkt2CodeGenerator(const std::string& name)
 {
-	sqltypes = types_mysql;
-	// sqltypes = types_postgresql;
+	// sqltypes = types_mysql;
+	// quote = quote_mysql;
+	sqltypes = types_postgresql;
+	quote = quote_postgresql;
 }
 
 Pkt2CodeGenerator::~Pkt2CodeGenerator()
@@ -129,26 +145,31 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 	listOne2Many(file, &repeatedmessages);
 
 	std::stringstream ss;
-	ss << "SET charset 'utf8';" << std::endl;
+	ss << sqltypes.at("clause_set_charset") << std::endl << std::endl;
 	
 	ss << "/*" << std::endl;
 	for (int i = 0; i < file->message_type_count(); i++)
 	{
 		const google::protobuf::Descriptor *m = file->message_type(i);
-		ss << "DROP TABLE IF EXISTS " << m->name() << ";" << std::endl;
+		ss << "DROP TABLE IF EXISTS " << quote << m->name() << quote << ";" << std::endl;
 	}
-	ss << "*/" << std::endl;
+	ss << "*/" << std::endl << std::endl;
 	printer.PrintRaw(ss.str());
 
+	// Each message
 	for (int i = 0; i < file->message_type_count(); i++) 
 	{
 		const google::protobuf::Descriptor *m = file->message_type(i);
+		const google::protobuf::MessageOptions options = m->options();
+		options.GetExtension(output);
+
 		std::stringstream ss;
-		ss << "CREATE TABLE IF NOT EXISTS `" << m->name() << "`(" << std::endl;
-		ss << "  `id` int(20) NOT NULL primary key AUTO_INCREMENT," << std::endl;
+		ss << "CREATE TABLE IF NOT EXISTS " << quote << m->name() << quote << "(" << std::endl <<
+				" " << quote << "id" << quote <<
+				" " << sqltypes.at("primary") << "," << std::endl;
 
 
-		// foreign keys
+		// foreign keys for repeated
 		messagetypes *fk = repeatedmessages.at(file->message_type(i));
 		for (messagetypes::iterator it(fk->begin()); it != fk->end(); ++it)
 		{
@@ -158,8 +179,9 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 			std::string lcmn(file->message_type(i)->name());
 			std::transform(lcmn.begin(), lcmn.end(), lcmn.begin(), ::tolower);
 
-			ss << "  `" << lcn << "id` int(20) NOT NULL," << std::endl;
-			ss << "  KEY `key_" << lcmn << "_" << lcn << "id` (`" << lcn << "id`)," << std::endl;
+			ss << " " << quote << lcn << "id" << quote << " " << sqltypes.at("id") << " NOT NULL," << std::endl;
+			ss << "  KEY " << quote << "key_" << lcmn << "_" << lcn << "id" << quote << " ("
+					<< quote << lcn << "id" << quote << ")," << std::endl;
 		}
 
 		for (int f = 0; f < m->field_count(); f++)
@@ -172,17 +194,19 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 				case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
 					if (!fd->is_repeated())
 					{
-						ss << "  `" << fd->lowercase_name() << "id` int(20)" << getSuffix(fd) << ", " << std::endl;
+						ss << " " << quote << fd->lowercase_name() << "id" << quote << " " << sqltypes.at("id") << getSuffix(fd) << ", " << std::endl;
 						std::string lcmn(m->name());
 						std::transform(lcmn.begin(), lcmn.end(), lcmn.begin(), ::tolower);
-						ss << "  KEY `" << "key_" << lcmn << "_" << fd->lowercase_name() << "id` (`" << fd->lowercase_name() << "id`), " << std::endl;
-						ss << "  CONSTRAINT `fk_" << lcmn << "_" << fd->lowercase_name() << "id` FOREIGN KEY(`" << fd->lowercase_name() << "id`) REFERENCES `" 
-							<< fd->message_type()->name() << "`(`" << "id" << "`) ON DELETE CASCADE," << std::endl;
+						ss << " KEY " << quote << "key_" << lcmn << "_" << fd->lowercase_name() << "id" << quote
+								<< " (" << quote << fd->lowercase_name() << "id" << quote << "), " << std::endl;
+						ss << "  CONSTRAINT " << quote << "fk_" << lcmn << "_" << fd->lowercase_name() << "id" << quote << " FOREIGN KEY("
+								<< quote << fd->lowercase_name() << "id" << quote << ") REFERENCES " << quote
+								<< fd->message_type()->name() << quote << "(" << quote << "id" << quote << ") ON DELETE CASCADE," << std::endl;
 					}
 					break;
 				case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
 					{
-						ss << "  `" << fd->lowercase_name() << "` ";
+						ss << "  " << quote << fd->lowercase_name() << quote << " ";
 						ss << sqltypes.at(fd->cpp_type_name()) << "(";
 						const google::protobuf::EnumDescriptor *ed = fd->enum_type();
 						for (int ei = 0; ei < ed->value_count(); ei++)
@@ -196,10 +220,10 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 					}
 					break;
 				default:
-					ss << "  `" << fd->lowercase_name() << "` " << sqltypes.at(fd->cpp_type_name()) << getSuffix(fd) << ", " << std::endl;
+					ss << " " << quote << fd->lowercase_name() << quote << " " << sqltypes.at(fd->cpp_type_name()) << getSuffix(fd) << ", " << std::endl;
 			}
 		}
-		ss << "  `tag` int(11)" << std::endl;
+		ss << " " << quote << "tag" << quote << " int(11)" << std::endl;
 		ss << ");" << std::endl << std::endl;
 		printer.PrintRaw(ss.str());
 	}
