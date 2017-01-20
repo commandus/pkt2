@@ -37,9 +37,9 @@ enum OutputType {
 };
 
 enum Endian {
-    STREAM                    = 0;   // no order at all  
-    LITTLE_ENDIAN             = 1;
-    BIG_ENDIAN                = 2;
+    ENDIAN_NO_MATTER          = 0;   // no order at all  
+    ENDIAN_LITTLE_ENDIAN      = 1;
+    ENDIAN_BIG_ENDIAN         = 2;
 };
 
 message Field {

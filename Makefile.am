@@ -13,13 +13,19 @@ else
 	commoncppflags =
 endif
 
+gengrpcs = pkt2.pb.h pkt2.pb.cc
+$(gengrpcs): Makefile
+	protoc -I proto --cpp_out=. proto/descriptor.proto
+	protoc -I proto --cpp_out=. proto/pkt2.proto
+
 #
 #	Exclude generated sources from distribution
 #
-genfiles =
-nodist_tcpreceiver_SOURCES = $(genfiles)
-BUILT_SOURCES = $(genfiles)
-CLEANFILES = $(genfiles)
+
+# genfiles = $(gengrpcs)
+# nodist_tcpreceiver_SOURCES = $(genfiles)
+# BUILT_SOURCES = $(gengrpcs)
+CLEANFILES = $(gengrpcs)
 
 #
 # Binaries
@@ -136,4 +142,5 @@ protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
-	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile
+	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
+	proto/pkt2.proto proto/descriptor.proto proto/example1.proto

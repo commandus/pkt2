@@ -36,14 +36,14 @@ message TemperaturePkt
             type: INPUT_UINT
             size: 4
             offset: 1
-            endian: BIG_ENDIAN
+            endian: ENDIAN_BIG_ENDIAN
         },
         {
             name: "value"
             type: INPUT_UINT
             size: 2
             offset: 5
-            endian: BIG_ENDIAN
+            endian: ENDIAN_BIG_ENDIAN
         }]
     };
 
