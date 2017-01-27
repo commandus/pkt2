@@ -163,7 +163,7 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 		const google::protobuf::MessageOptions options = m->options();
 		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
 		pkt2::Address src = packet.source();
-		std::cerr << "Input: "
+		std::cerr << "Input packet: "
 				<< packet.name() <<  " "
 				<< packet.short_name() <<  " "
 				<< packet.full_name() <<  " "
@@ -176,6 +176,29 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 				<< src.port() <<  " "
 				<< std::endl;
 
+		std::cerr << "Fields: " << std::endl;
+		for (int f = 0; f < packet.fields_size(); f++)
+		{
+			pkt2::Field field = packet.fields(f);
+			std::cerr
+				<< field.name() << " "
+				<< field.type() << " "
+				<< field.size() << " "
+				<< field.offset() << " "
+				<< std::endl;
+		}
+		std::cerr << std::endl;
+
+		for (int f = 0; f < m->field_count(); f++)
+		{
+			const google::protobuf::FieldDescriptor *fd = m->field(f);
+			const google::protobuf::FieldOptions options = fd->options();
+			pkt2::Variable variable =  options.GetExtension(pkt2::variable);
+			std::cerr << "Field: "
+					<< variable.name() <<  " "
+					<< variable.short_name() <<  " "
+					<< variable.full_name() <<  " " << std::endl;
+		}
 
 		std::stringstream ss;
 		ss << "CREATE TABLE IF NOT EXISTS " << quote << m->name() << quote << "(" << std::endl <<
