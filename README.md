@@ -267,10 +267,54 @@ tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
 Пример использования protoc-gen-pkt2 в скрипте tests/p1.sh:
 
 ```
+protoc --proto_path=proto --cpp_out=. proto/pkt2.proto
+
+protoc --proto_path=proto --cpp_out=. proto/example1.proto
+
 protoc --plugin=protoc-gen-pkt2="../protoc-gen-pkt2" --proto_path=../proto --pkt2_out=pkt2 ../proto/example1.proto
+
+protoc --plugin=protoc-gen-pkt2="protoc-gen-pkt2" --proto_path=proto --pkt2_out=pkt2 proto/example1.proto
+
 ```
 
 #### Опции
 
 - pkt2_out каталог, где будут сохранены сгенерированные файлы 
 - plugin имя плагина и путь к его исполнимому файлу
+
+## Опции proto2
+
+- packet
+- output
+- variable
+
+```
+extend google.protobuf.MessageOptions {
+    pkt2.Packet packet = 50501;
+}
+
+extend google.protobuf.MessageOptions {
+    pkt2.Output output = 50502;
+}
+
+extend google.protobuf.FieldOptions {
+    pkt2.Variable variable = 50503;
+}
+
+```
+
+## Баги
+
+```
+protoc --proto_path=proto --cpp_out=. proto/pkt2.proto
+```
+
+
+
+Удалить в pkt2.pb.h
+
+#include "descriptor.pb.h"
+
+pkt2.pb.cpp
+
+пару методов
