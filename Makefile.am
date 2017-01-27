@@ -13,10 +13,12 @@ else
 	commoncppflags =
 endif
 
-gengrpcs = pkt2.pb.h pkt2.pb.cc
+gengrpcs = pkt2.pb.h pkt2.pb.cpp
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
+	sed -i '/#include "descriptor.pb.h"/d' pkt2.pb.h
+	mv pkt2.pb.cc pkt2.pb.cpp
 
 #
 #	Exclude generated sources from distribution
@@ -130,7 +132,7 @@ tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 protoc_gen_pkt2_SOURCES = \
 	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
-	utilstring.cpp utilinet.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf

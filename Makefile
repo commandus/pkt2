@@ -152,7 +152,8 @@ am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-protoc-gen-pkt2.$(OBJEXT) \
 	protoc_gen_pkt2-pkt2_code_generator.$(OBJEXT) \
 	protoc_gen_pkt2-utilstring.$(OBJEXT) \
-	protoc_gen_pkt2-utilinet.$(OBJEXT) $(am__objects_1)
+	protoc_gen_pkt2-utilinet.$(OBJEXT) \
+	protoc_gen_pkt2-pkt2.pb.$(OBJEXT) $(am__objects_1)
 protoc_gen_pkt2_OBJECTS = $(am_protoc_gen_pkt2_OBJECTS)
 protoc_gen_pkt2_DEPENDENCIES =
 am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
@@ -642,7 +643,7 @@ top_srcdir = .
 SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
-gengrpcs = pkt2.pb.h pkt2.pb.cc
+gengrpcs = pkt2.pb.h pkt2.pb.cpp
 
 #
 #	Exclude generated sources from distribution
@@ -750,7 +751,7 @@ tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 protoc_gen_pkt2_SOURCES = \
 	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
-	utilstring.cpp utilinet.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf
@@ -928,6 +929,7 @@ include ./$(DEPDIR)/pkt2receiver-pkt2receivernano.Po
 include ./$(DEPDIR)/pkt2receiver-utilinet.Po
 include ./$(DEPDIR)/pkt2receiver-utilpriority.Po
 include ./$(DEPDIR)/pkt2receiver-utilstring.Po
+include ./$(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilinet.Po
@@ -1397,6 +1399,20 @@ protoc_gen_pkt2-utilinet.obj: utilinet.cpp
 #	$(AM_V_CXX)source='utilinet.cpp' object='protoc_gen_pkt2-utilinet.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+protoc_gen_pkt2-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-pkt2.pb.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Tpo -c -o protoc_gen_pkt2-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Tpo $(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='protoc_gen_pkt2-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+protoc_gen_pkt2-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Tpo -c -o protoc_gen_pkt2-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Tpo $(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='protoc_gen_pkt2-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
 tcpemitter-tcpemitter.o: tcpemitter.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter.Tpo -c -o tcpemitter-tcpemitter.o `test -f 'tcpemitter.cpp' || echo '$(srcdir)/'`tcpemitter.cpp
@@ -2405,6 +2421,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
+	sed -i '/#include "descriptor.pb.h"/d' pkt2.pb.h
+	mv pkt2.pb.cc pkt2.pb.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

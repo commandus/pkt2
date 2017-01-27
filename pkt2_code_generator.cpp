@@ -161,7 +161,21 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 	{
 		const google::protobuf::Descriptor *m = file->message_type(i);
 		const google::protobuf::MessageOptions options = m->options();
-		options.GetExtension(output);
+		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
+		pkt2::Address src = packet.source();
+		std::cerr << "Input: "
+				<< packet.name() <<  " "
+				<< packet.short_name() <<  " "
+				<< packet.full_name() <<  " "
+
+				<< std::endl
+				<< "Source: "
+
+				<< src.address() <<  " "
+				<< src.proto() <<  " "
+				<< src.port() <<  " "
+				<< std::endl;
+
 
 		std::stringstream ss;
 		ss << "CREATE TABLE IF NOT EXISTS " << quote << m->name() << quote << "(" << std::endl <<

@@ -140,8 +140,9 @@ enum InputType {
   INPUT_DOUBLE = 1,
   INPUT_INT = 2,
   INPUT_UINT = 3,
-  INPUT_CHAR = 4,
-  INPUT_STRING = 5,
+  INPUT_BYTES = 4,
+  INPUT_CHAR = 5,
+  INPUT_STRING = 6,
   InputType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   InputType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };
@@ -454,9 +455,23 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
 
   // accessors -------------------------------------------------------
 
-  // string name = 1;
+  // string field = 1;
+  void clear_field();
+  static const int kFieldFieldNumber = 1;
+  const ::std::string& field() const;
+  void set_field(const ::std::string& value);
+  #if LANG_CXX11
+  void set_field(::std::string&& value);
+  #endif
+  void set_field(const char* value);
+  void set_field(const char* value, size_t size);
+  ::std::string* mutable_field();
+  ::std::string* release_field();
+  void set_allocated_field(::std::string* field);
+
+  // string name = 2;
   void clear_name();
-  static const int kNameFieldNumber = 1;
+  static const int kNameFieldNumber = 2;
   const ::std::string& name() const;
   void set_name(const ::std::string& value);
   #if LANG_CXX11
@@ -468,15 +483,15 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_name();
   void set_allocated_name(::std::string* name);
 
-  // .pkt2.OutputType type = 2;
+  // .pkt2.OutputType type = 3;
   void clear_type();
-  static const int kTypeFieldNumber = 2;
+  static const int kTypeFieldNumber = 3;
   ::pkt2::OutputType type() const;
   void set_type(::pkt2::OutputType value);
 
-  // string short_name = 3;
+  // string short_name = 4;
   void clear_short_name();
-  static const int kShortNameFieldNumber = 3;
+  static const int kShortNameFieldNumber = 4;
   const ::std::string& short_name() const;
   void set_short_name(const ::std::string& value);
   #if LANG_CXX11
@@ -488,9 +503,9 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_short_name();
   void set_allocated_short_name(::std::string* short_name);
 
-  // string full_name = 4;
+  // string full_name = 5;
   void clear_full_name();
-  static const int kFullNameFieldNumber = 4;
+  static const int kFullNameFieldNumber = 5;
   const ::std::string& full_name() const;
   void set_full_name(const ::std::string& value);
   #if LANG_CXX11
@@ -502,9 +517,9 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_full_name();
   void set_allocated_full_name(::std::string* full_name);
 
-  // string measure_unit = 5;
+  // string measure_unit = 6;
   void clear_measure_unit();
-  static const int kMeasureUnitFieldNumber = 5;
+  static const int kMeasureUnitFieldNumber = 6;
   const ::std::string& measure_unit() const;
   void set_measure_unit(const ::std::string& value);
   #if LANG_CXX11
@@ -516,9 +531,9 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_measure_unit();
   void set_allocated_measure_unit(::std::string* measure_unit);
 
-  // string formula = 6;
+  // string formula = 7;
   void clear_formula();
-  static const int kFormulaFieldNumber = 6;
+  static const int kFormulaFieldNumber = 7;
   const ::std::string& formula() const;
   void set_formula(const ::std::string& value);
   #if LANG_CXX11
@@ -530,10 +545,10 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_formula();
   void set_allocated_formula(::std::string* formula);
 
-  // repeated string values = 7;
+  // repeated string values = 8;
   int values_size() const;
   void clear_values();
-  static const int kValuesFieldNumber = 7;
+  static const int kValuesFieldNumber = 8;
   const ::std::string& values(int index) const;
   ::std::string* mutable_values(int index);
   void set_values(int index, const ::std::string& value);
@@ -546,15 +561,15 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::std::string>& values() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_values();
 
-  // uint32 priority = 8;
+  // uint32 priority = 9;
   void clear_priority();
-  static const int kPriorityFieldNumber = 8;
+  static const int kPriorityFieldNumber = 9;
   ::google::protobuf::uint32 priority() const;
   void set_priority(::google::protobuf::uint32 value);
 
-  // string format = 9;
+  // string format = 10;
   void clear_format();
-  static const int kFormatFieldNumber = 9;
+  static const int kFormatFieldNumber = 10;
   const ::std::string& format() const;
   void set_format(const ::std::string& value);
   #if LANG_CXX11
@@ -566,17 +581,33 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_format();
   void set_allocated_format(::std::string* format);
 
+  // string tostring = 11;
+  void clear_tostring();
+  static const int kTostringFieldNumber = 11;
+  const ::std::string& tostring() const;
+  void set_tostring(const ::std::string& value);
+  #if LANG_CXX11
+  void set_tostring(::std::string&& value);
+  #endif
+  void set_tostring(const char* value);
+  void set_tostring(const char* value, size_t size);
+  ::std::string* mutable_tostring();
+  ::std::string* release_tostring();
+  void set_allocated_tostring(::std::string* tostring);
+
   // @@protoc_insertion_point(class_scope:pkt2.Variable)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::google::protobuf::RepeatedPtrField< ::std::string> values_;
+  ::google::protobuf::internal::ArenaStringPtr field_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
   ::google::protobuf::internal::ArenaStringPtr measure_unit_;
   ::google::protobuf::internal::ArenaStringPtr formula_;
   ::google::protobuf::internal::ArenaStringPtr format_;
+  ::google::protobuf::internal::ArenaStringPtr tostring_;
   int type_;
   ::google::protobuf::uint32 priority_;
   mutable int _cached_size_;
@@ -1158,7 +1189,59 @@ inline void Field::set_size(::google::protobuf::uint32 value) {
 
 // Variable
 
-// string name = 1;
+// string field = 1;
+inline void Variable::clear_field() {
+  field_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Variable::field() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.field)
+  return field_.GetNoArena();
+}
+inline void Variable::set_field(const ::std::string& value) {
+  
+  field_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:pkt2.Variable.field)
+}
+#if LANG_CXX11
+inline void Variable::set_field(::std::string&& value) {
+  
+  field_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:pkt2.Variable.field)
+}
+#endif
+inline void Variable::set_field(const char* value) {
+  
+  field_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:pkt2.Variable.field)
+}
+inline void Variable::set_field(const char* value, size_t size) {
+  
+  field_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.field)
+}
+inline ::std::string* Variable::mutable_field() {
+  
+  // @@protoc_insertion_point(field_mutable:pkt2.Variable.field)
+  return field_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Variable::release_field() {
+  // @@protoc_insertion_point(field_release:pkt2.Variable.field)
+  
+  return field_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Variable::set_allocated_field(::std::string* field) {
+  if (field != NULL) {
+    
+  } else {
+    
+  }
+  field_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), field);
+  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.field)
+}
+
+// string name = 2;
 inline void Variable::clear_name() {
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1210,7 +1293,7 @@ inline void Variable::set_allocated_name(::std::string* name) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.name)
 }
 
-// .pkt2.OutputType type = 2;
+// .pkt2.OutputType type = 3;
 inline void Variable::clear_type() {
   type_ = 0;
 }
@@ -1224,7 +1307,7 @@ inline void Variable::set_type(::pkt2::OutputType value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.type)
 }
 
-// string short_name = 3;
+// string short_name = 4;
 inline void Variable::clear_short_name() {
   short_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1276,7 +1359,7 @@ inline void Variable::set_allocated_short_name(::std::string* short_name) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.short_name)
 }
 
-// string full_name = 4;
+// string full_name = 5;
 inline void Variable::clear_full_name() {
   full_name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1328,7 +1411,7 @@ inline void Variable::set_allocated_full_name(::std::string* full_name) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.full_name)
 }
 
-// string measure_unit = 5;
+// string measure_unit = 6;
 inline void Variable::clear_measure_unit() {
   measure_unit_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1380,7 +1463,7 @@ inline void Variable::set_allocated_measure_unit(::std::string* measure_unit) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.measure_unit)
 }
 
-// string formula = 6;
+// string formula = 7;
 inline void Variable::clear_formula() {
   formula_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1432,7 +1515,7 @@ inline void Variable::set_allocated_formula(::std::string* formula) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.formula)
 }
 
-// repeated string values = 7;
+// repeated string values = 8;
 inline int Variable::values_size() const {
   return values_.size();
 }
@@ -1487,7 +1570,7 @@ Variable::mutable_values() {
   return &values_;
 }
 
-// uint32 priority = 8;
+// uint32 priority = 9;
 inline void Variable::clear_priority() {
   priority_ = 0u;
 }
@@ -1501,7 +1584,7 @@ inline void Variable::set_priority(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.priority)
 }
 
-// string format = 9;
+// string format = 10;
 inline void Variable::clear_format() {
   format_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
@@ -1551,6 +1634,58 @@ inline void Variable::set_allocated_format(::std::string* format) {
   }
   format_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), format);
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.format)
+}
+
+// string tostring = 11;
+inline void Variable::clear_tostring() {
+  tostring_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Variable::tostring() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.tostring)
+  return tostring_.GetNoArena();
+}
+inline void Variable::set_tostring(const ::std::string& value) {
+  
+  tostring_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:pkt2.Variable.tostring)
+}
+#if LANG_CXX11
+inline void Variable::set_tostring(::std::string&& value) {
+  
+  tostring_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:pkt2.Variable.tostring)
+}
+#endif
+inline void Variable::set_tostring(const char* value) {
+  
+  tostring_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:pkt2.Variable.tostring)
+}
+inline void Variable::set_tostring(const char* value, size_t size) {
+  
+  tostring_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.tostring)
+}
+inline ::std::string* Variable::mutable_tostring() {
+  
+  // @@protoc_insertion_point(field_mutable:pkt2.Variable.tostring)
+  return tostring_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Variable::release_tostring() {
+  // @@protoc_insertion_point(field_release:pkt2.Variable.tostring)
+  
+  return tostring_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Variable::set_allocated_tostring(::std::string* tostring) {
+  if (tostring != NULL) {
+    
+  } else {
+    
+  }
+  tostring_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tostring);
+  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.tostring)
 }
 
 // -------------------------------------------------------------------
