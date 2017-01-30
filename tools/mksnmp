@@ -1,0 +1,12 @@
+#!/bin/sh
+env MIBS="+EAS-IKFIA-MIB" mib2c -c mib2c.scalar.conf pid
+env MIBS="+EAS-IKFIA-MIB" mib2c -c mib2c.scalar.conf ppid
+env MIBS="+EAS-IKFIA-MIB" mib2c -c mib2c.scalar.conf state
+env MIBS="+EAS-IKFIA-MIB" mib2c -c mib2c.scalar.conf procName
+env MIBS="+EAS-IKFIA-MIB" mib2c -c mib2c.scalar.conf memoryCurrent
+env MIBS="+EAS-IKFIA-MIB" mib2c -c mib2c.scalar.conf memoryPeak
+
+cat pid.h ppid.h state.h procName.h memoryCurrent.h memoryPeak.h > snmpagentpkt2.h
+rm  pid.h ppid.h state.h procName.h memoryCurrent.h memoryPeak.h
+cat pid.c ppid.c state.c procName.c memoryCurrent.c memoryPeak.c > snmpagentpkt2.c
+rm  pid.c ppid.c state.c procName.c memoryCurrent.c memoryPeak.c

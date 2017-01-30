@@ -1,0 +1,158 @@
+--
+-- See https://www.iana.org/assignments/enterprise-numbers/enterprise-numbers 
+-- IANA PEN 46956 
+-- MIB objects for PKT2
+--
+EAS-IKFIA-MIB DEFINITIONS ::= BEGIN
+IMPORTS
+    MODULE-IDENTITY, OBJECT-TYPE, 
+    Integer32, Unsigned32, NOTIFICATION-TYPE,
+    enterprises                               FROM SNMPv2-SMI 
+    TEXTUAL-CONVENTION                        FROM SNMPv2-TC
+    MODULE-COMPLIANCE, OBJECT-GROUP,
+    NOTIFICATION-GROUP                        FROM SNMPv2-CONF
+    SnmpAdminString                           FROM SNMP-FRAMEWORK-MIB
+;
+
+pkt2 MODULE-IDENTITY
+    LAST-UPDATED "201701300000Z"
+    ORGANIZATION "IKFIA ikfia.ysn.ru"
+    CONTACT-INFO    
+	  "postal:   Lenina, 31. Yakutsk, Russia
+       email:    andrey.ivanov@ikfia.sbras.ru"
+    DESCRIPTION
+	  "MIB objects for PKT2"
+    REVISION     "201701300000Z"
+    DESCRIPTION
+	"Initial release"
+--  ::= { enterprises 46956 }
+    ::= { eas 2 }
+
+ikfia OBJECT IDENTIFIER ::= { enterprises 46956 }
+eas OBJECT IDENTIFIER ::= { ikfia 1 }
+
+Float ::= TEXTUAL-CONVENTION
+    DISPLAY-HINT "16t"
+    STATUS        current
+    DESCRIPTION
+      "Data type for reporting floating point data."
+    SYNTAX OCTET STRING (SIZE(16)) 
+
+pkt2Conformance OBJECT IDENTIFIER ::= { pkt2 0 }
+pkt2MIBCompliances OBJECT IDENTIFIER ::= {  pkt2Conformance 1 }
+pkt2MIBGroups OBJECT IDENTIFIER ::= {  pkt2Conformance 2 }
+
+--
+-- top level structure
+--
+processes          OBJECT IDENTIFIER ::= { pkt2 1 }
+
+snmpProcessGroup OBJECT-GROUP
+    OBJECTS {
+      pid, ppid, state, procName, memoryCurrent, memoryPeak
+    }
+    STATUS  current
+    DESCRIPTION
+      "A collection of objects providing basic instrumentation and
+       control of an SNMPv2 entity."
+    ::= { pkt2MIBGroups 1 }
+
+pkt2MinimalCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+      "The compliance statement for SNMP agents which implement
+       the minimal subset."
+    MODULE  -- this module
+    MANDATORY-GROUPS {
+        snmpProcessGroup
+    }
+    ::= { pkt2MIBCompliances 1 }
+
+pkt2FullCompliance MODULE-COMPLIANCE
+    STATUS      current
+    DESCRIPTION
+        "The compliance statement for SNMP agents which implement
+         the minimal subset."
+    MODULE  -- this module
+    MANDATORY-GROUPS {
+        snmpProcessGroup
+    }
+    ::= { pkt2MIBCompliances 2 }
+    
+--
+-- processes
+--
+
+processTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF ProcessStateEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+	"Table of process state."
+    ::= { processes 1 }
+
+processEntry OBJECT-TYPE
+    SYNTAX      ProcessStateEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+	"Row of process state"
+    INDEX   { pid }
+    ::= {processTable 1 }
+
+ProcessStateEntry ::= SEQUENCE {
+	pid Unsigned32,
+	ppid Unsigned32,
+	procName	OCTET STRING,
+	state Unsigned32,
+	memoryCurrent Unsigned32,
+	memoryPeak	  Unsigned32
+}
+
+pid OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..4294967295)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION	"Process identifier"
+    ::= { processEntry 1 }
+
+ppid OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..4294967295)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION	"Parent process identifier"
+    ::= { processEntry 2 }
+
+procName OBJECT-TYPE
+    SYNTAX      OCTET STRING
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	"Process name"
+    ::= { processEntry 3 }
+
+state OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..4294967295)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	"State, 0- OK"
+    ::= { processEntry 4 }
+
+memoryCurrent OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..4294967295)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	"Current memory KB"
+    ::= { processEntry 5 }
+
+memoryPeak OBJECT-TYPE
+    SYNTAX      Unsigned32 (0..4294967295)
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+	"memory peak KB"
+    ::= { processEntry 6 }
+
+END
