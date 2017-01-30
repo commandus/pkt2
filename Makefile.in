@@ -122,7 +122,7 @@ am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-NanoMessage.$(OBJEXT) $(am__objects_1)
 handlerpq_OBJECTS = $(am_handlerpq_OBJECTS)
 am__DEPENDENCIES_1 =
-handlerpq_DEPENDENCIES = $(am__DEPENDENCIES_1)
+handlerpq_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
@@ -135,7 +135,7 @@ am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-utilinet.$(OBJEXT) \
 	pkt2gateway-NanoMessage.$(OBJEXT) $(am__objects_1)
 pkt2gateway_OBJECTS = $(am_pkt2gateway_OBJECTS)
-pkt2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
+pkt2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-pkt2receiver-config.$(OBJEXT) \
 	pkt2receiver-pkt2receivernano.$(OBJEXT) \
@@ -147,7 +147,8 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-utilinet.$(OBJEXT) \
 	pkt2receiver-NanoMessage.$(OBJEXT) $(am__objects_1)
 pkt2receiver_OBJECTS = $(am_pkt2receiver_OBJECTS)
-pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1)
+pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-protoc-gen-pkt2.$(OBJEXT) \
 	protoc_gen_pkt2-pkt2_code_generator.$(OBJEXT) \
@@ -155,25 +156,27 @@ am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-utilinet.$(OBJEXT) \
 	protoc_gen_pkt2-pkt2.pb.$(OBJEXT) $(am__objects_1)
 protoc_gen_pkt2_OBJECTS = $(am_protoc_gen_pkt2_OBJECTS)
-protoc_gen_pkt2_DEPENDENCIES =
+protoc_gen_pkt2_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-tcpemitter-config.$(OBJEXT) \
 	tcpemitter-utilpriority.$(OBJEXT) \
 	tcpemitter-utilstring.$(OBJEXT) tcpemitter-utilinet.$(OBJEXT) \
 	tcpemitter-NanoMessage.$(OBJEXT) $(am__objects_1)
 tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
-tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1)
+tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
 	tcpreceiver-input-packet.$(OBJEXT) \
 	tcpreceiver-daemonize.$(OBJEXT) tcpreceiver-ieee754.$(OBJEXT) \
+	tcpreceiver-snmpagentpkt2.$(OBJEXT) \
+	tcpreceiver-get_rss.$(OBJEXT) \
 	tcpreceiver-utilpriority.$(OBJEXT) \
 	tcpreceiver-utilstring.$(OBJEXT) \
 	tcpreceiver-utilinet.$(OBJEXT) \
 	tcpreceiver-NanoMessage.$(OBJEXT) $(am__objects_1)
 tcpreceiver_OBJECTS = $(am_tcpreceiver_OBJECTS)
-tcpreceiver_DEPENDENCIES = $(am__DEPENDENCIES_1)
+tcpreceiver_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
 	tcptransmitter-tcptransmitter-config.$(OBJEXT) \
 	tcptransmitter-daemonize.$(OBJEXT) \
@@ -183,7 +186,8 @@ am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
 	tcptransmitter-utilinet.$(OBJEXT) \
 	tcptransmitter-NanoMessage.$(OBJEXT) $(am__objects_1)
 tcptransmitter_OBJECTS = $(am_tcptransmitter_OBJECTS)
-tcptransmitter_DEPENDENCIES = $(am__DEPENDENCIES_1)
+tcptransmitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -200,6 +204,24 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
 am__mv = mv -f
+COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
+	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) \
+	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
+	$(AM_CFLAGS) $(CFLAGS)
+AM_V_CC = $(am__v_CC_@AM_V@)
+am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+am__v_CC_0 = @echo "  CC      " $@;
+am__v_CC_1 = 
+CCLD = $(CC)
+LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+am__v_CCLD_0 = @echo "  CCLD    " $@;
+am__v_CCLD_1 = 
 CXXCOMPILE = $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
 	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
 LTCXXCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
@@ -643,6 +665,9 @@ top_srcdir = @top_srcdir@
 SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
+
+# SNMPLIBS = `net-snmp-config --agent-libs`
+SNMPLIBS = -lnetsnmpagent -lnetsnmp
 gengrpcs = pkt2.pb.h pkt2.pb.cpp
 
 #
@@ -660,7 +685,7 @@ CLEANFILES = $(gengrpcs)
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h \
-protoc-gen-pkt2.h    pkt2_code_generator.h \
+protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -683,7 +708,7 @@ tcpemitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -691,11 +716,11 @@ tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 tcpreceiver_SOURCES = \
 	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp     ieee754.cpp  \
+	daemonize.cpp     ieee754.cpp  snmpagentpkt2.c get_rss.c \
 	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
 	$(common_src)
 
-tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcpreceiver_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -707,7 +732,7 @@ pkt2receiver_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2receiver_CPPFLAGS = $(commoncppflags) -std=c++11 
 
 #
@@ -719,7 +744,7 @@ pkt2gateway_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2gateway_CPPFLAGS = $(commoncppflags) -std=c++11 
 
 #
@@ -731,7 +756,7 @@ handlerpq_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg
+handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -743,7 +768,7 @@ tcptransmitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -754,7 +779,7 @@ protoc_gen_pkt2_SOURCES = \
 	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
 	$(common_src)
 
-protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf
+protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
 protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -770,7 +795,7 @@ all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .c .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -942,8 +967,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpemitter-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-NanoMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-get_rss.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-ieee754.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-input-packet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-snmpagentpkt2.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceiver-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceiver.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcpreceiver-tcpreceivernano.Po@am__quote@
@@ -958,6 +985,55 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilinet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilstring.Po@am__quote@
+
+.c.o:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ $<
+
+.c.obj:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.c.lo:
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+tcpreceiver-snmpagentpkt2.o: snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-snmpagentpkt2.o -MD -MP -MF $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo -c -o tcpreceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo $(DEPDIR)/tcpreceiver-snmpagentpkt2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='snmpagentpkt2.c' object='tcpreceiver-snmpagentpkt2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tcpreceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
+
+tcpreceiver-snmpagentpkt2.obj: snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-snmpagentpkt2.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo -c -o tcpreceiver-snmpagentpkt2.obj `if test -f 'snmpagentpkt2.c'; then $(CYGPATH_W) 'snmpagentpkt2.c'; else $(CYGPATH_W) '$(srcdir)/snmpagentpkt2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo $(DEPDIR)/tcpreceiver-snmpagentpkt2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='snmpagentpkt2.c' object='tcpreceiver-snmpagentpkt2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tcpreceiver-snmpagentpkt2.obj `if test -f 'snmpagentpkt2.c'; then $(CYGPATH_W) 'snmpagentpkt2.c'; else $(CYGPATH_W) '$(srcdir)/snmpagentpkt2.c'; fi`
+
+tcpreceiver-get_rss.o: get_rss.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-get_rss.o -MD -MP -MF $(DEPDIR)/tcpreceiver-get_rss.Tpo -c -o tcpreceiver-get_rss.o `test -f 'get_rss.c' || echo '$(srcdir)/'`get_rss.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-get_rss.Tpo $(DEPDIR)/tcpreceiver-get_rss.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='get_rss.c' object='tcpreceiver-get_rss.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tcpreceiver-get_rss.o `test -f 'get_rss.c' || echo '$(srcdir)/'`get_rss.c
+
+tcpreceiver-get_rss.obj: get_rss.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-get_rss.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-get_rss.Tpo -c -o tcpreceiver-get_rss.obj `if test -f 'get_rss.c'; then $(CYGPATH_W) 'get_rss.c'; else $(CYGPATH_W) '$(srcdir)/get_rss.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-get_rss.Tpo $(DEPDIR)/tcpreceiver-get_rss.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='get_rss.c' object='tcpreceiver-get_rss.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tcpreceiver-get_rss.obj `if test -f 'get_rss.c'; then $(CYGPATH_W) 'get_rss.c'; else $(CYGPATH_W) '$(srcdir)/get_rss.c'; fi`
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<

@@ -13,6 +13,9 @@ else
 	commoncppflags =
 endif
 
+# SNMPLIBS = `net-snmp-config --agent-libs`
+SNMPLIBS = -lnetsnmpagent -lnetsnmp
+
 gengrpcs = pkt2.pb.h pkt2.pb.cpp
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/descriptor.proto
@@ -40,7 +43,7 @@ bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransm
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h \
-protoc-gen-pkt2.h    pkt2_code_generator.h \
+protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -64,7 +67,7 @@ tcpemitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -72,11 +75,11 @@ tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 tcpreceiver_SOURCES = \
 	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp     ieee754.cpp  \
+	daemonize.cpp     ieee754.cpp  snmpagentpkt2.c get_rss.c \
 	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
 	$(common_src)
 
-tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcpreceiver_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -88,7 +91,7 @@ pkt2receiver_SOURCES= \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2receiver_CPPFLAGS = $(commoncppflags) -std=c++11 
 
 #
@@ -100,7 +103,7 @@ pkt2gateway_SOURCES= \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2gateway_CPPFLAGS = $(commoncppflags) -std=c++11 
 
 #
@@ -112,7 +115,7 @@ handlerpq_SOURCES= \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg
+handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -124,7 +127,7 @@ tcptransmitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg
+tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -135,7 +138,7 @@ protoc_gen_pkt2_SOURCES = \
 	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
 	$(common_src)
 
-protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf
+protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
 protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
