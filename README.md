@@ -309,12 +309,77 @@ extend google.protobuf.FieldOptions {
 protoc --proto_path=proto --cpp_out=. proto/pkt2.proto
 ```
 
-
-
 Удалить в pkt2.pb.h
 
 #include "descriptor.pb.h"
 
 pkt2.pb.cpp
 
-пару методов
+пару строк:
+
+::google::protobuf::protobuf_InitDefaults_descriptor_2eproto();
+
+::google::protobuf::protobuf_AddDesc_descriptor_2eproto();
+
+
+## SNMP
+```
+cp mib/* ~/.snmp/mibs
+
+snmptranslate -On -m +EAS-IKFIA-MIB -IR pkt2
+.1.3.6.1.4.1.46956.1.2
+snmptranslate -On -m +EAS-IKFIA-MIB -IR memoryPeak
+.1.3.6.1.4.1.46956.1.2.1.1.1.6
+
+smilint -l3  -s -p ./mib/EAS-IKFIA-MIB 
+
+```
+
+#### Cannot find module (SNMPv2-MIB)
+
+```
+sudo apt-get install snmp-mibs-downloader snmptrapd
+sudo download-mibs
+sudo sed -i "s/^\(mibs :\)./#\1/" /etc/snmp/snmp.conf
+```
+
+```
+mkdir -vp ~/.snmp/mibs
+sudo mkdir -p /root/.snmp/mib
+cp mib/* ~/.snmp/mibs
+sudo cp mib/* /root/.snmp/mib
+
+snmptranslate -On -m +ONEWAYTICKET-COMMANDUS-MIB -IR onewayticketservice
+.1.3.6.1.4.1.46821.1.1
+
+smilint -l3  -s -p ./mib/*
+
+snmpget -v2c -c private 127.0.0.1 ONEWAYTICKET-COMMANDUS-MIB::ticketssold.0
+ONEWAYTICKET-COMMANDUS-MIB::ticketssold.0 = INTEGER: 0
+
+snmpget -v2c -c private 127.0.0.1 ONEWAYTICKET-COMMANDUS-MIB::memorycurrent.0
+ONEWAYTICKET-COMMANDUS-MIB::memorycurrent.0 = INTEGER: 29784
+```
+
+#### ERROR: You don't have the SNMP perl module installed.
+
+#### Warning: no access control information configured.
+
+```
+Warning: no access control information configured.
+  (Config search path: /etc/snmp:/usr/share/snmp:/usr/lib/x86_64-linux-gnu/snmp:/home/andrei/.snmp)
+  It's unlikely this agent can serve any useful purpose in this state.
+  Run "snmpconf -g basic_setup" to help you configure the onewayticketsvc.conf file for this agent.
+```  
+```
+snmpconf -g basic_setup
+```
+
+#### Error opening specified endpoint "udp:161"
+
+161 привелигирпованный порт, запустить от рута.
+
+```
+sudo ./onewayticketsvc -l 50053 --user onewayticket --password 123456 --database onewayticket --snmp 1
+```
+
