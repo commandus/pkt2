@@ -269,7 +269,9 @@ tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
 ```
 protoc --proto_path=proto --cpp_out=. proto/pkt2.proto
 
-protoc --proto_path=proto --cpp_out=. proto/example1.proto
+protoc --proto_path=proto --cpp_out=. proto/example/example1.proto
+
+protoc --proto_path=proto --cpp_out=. proto/iridium/packet8.proto
 
 protoc --plugin=protoc-gen-pkt2="../protoc-gen-pkt2" --proto_path=../proto --pkt2_out=pkt2 ../proto/example1.proto
 
