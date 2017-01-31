@@ -58,8 +58,8 @@ message Variable {
     string short_name         = 4;  ///<   отображаемое имя
     string full_name          = 5;  ///<   описание
     string measure_unit       = 6;  ///<   название единицы измерения (если не задан values)
-    // map<string,string> formula
-    string formula
+    // map<string,string> get
+    string get
                               = 7;  ///<   формула на заданном языке для приведения значения к единице измерения (если не задан values). Применяются name в вычислениях. Имя переменной, возвращаемое значение- RETURN_VALUE (если нет, то приравнивается все выражение слева)
     repeated string values    = 8;  ///<   строки для флагов или перечислений по порядку. Если задан, measure_unit и formula не действуют.
     uint32 priority           = 9;  ///<   уровень детализации отображения. 0 (высший)- отображать всегда (по умолчанию), 1- не отображать (не записывать в БД)
@@ -86,6 +86,7 @@ message Packet {
     string short_name         = 4;   ///<   отображаемое имя
     string full_name          = 5;   ///<   описание
     repeated Field fields     = 6;   ///<   поля пакета
+    string set                = 7;   ///<   формула на заданном языке для установки в пакете из переменных сообщения (обратная функция get) 
 }
 
 /// SQL dialects

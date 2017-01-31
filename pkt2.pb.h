@@ -531,19 +531,19 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_measure_unit();
   void set_allocated_measure_unit(::std::string* measure_unit);
 
-  // string formula = 7;
-  void clear_formula();
-  static const int kFormulaFieldNumber = 7;
-  const ::std::string& formula() const;
-  void set_formula(const ::std::string& value);
+  // string get = 7;
+  void clear_get();
+  static const int kGetFieldNumber = 7;
+  const ::std::string& get() const;
+  void set_get(const ::std::string& value);
   #if LANG_CXX11
-  void set_formula(::std::string&& value);
+  void set_get(::std::string&& value);
   #endif
-  void set_formula(const char* value);
-  void set_formula(const char* value, size_t size);
-  ::std::string* mutable_formula();
-  ::std::string* release_formula();
-  void set_allocated_formula(::std::string* formula);
+  void set_get(const char* value);
+  void set_get(const char* value, size_t size);
+  ::std::string* mutable_get();
+  ::std::string* release_get();
+  void set_allocated_get(::std::string* get);
 
   // repeated string values = 8;
   int values_size() const;
@@ -605,7 +605,7 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
   ::google::protobuf::internal::ArenaStringPtr measure_unit_;
-  ::google::protobuf::internal::ArenaStringPtr formula_;
+  ::google::protobuf::internal::ArenaStringPtr get_;
   ::google::protobuf::internal::ArenaStringPtr format_;
   ::google::protobuf::internal::ArenaStringPtr tostring_;
   int type_;
@@ -865,6 +865,20 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   const ::google::protobuf::RepeatedPtrField< ::pkt2::Field >&
       fields() const;
 
+  // string set = 7;
+  void clear_set();
+  static const int kSetFieldNumber = 7;
+  const ::std::string& set() const;
+  void set_set(const ::std::string& value);
+  #if LANG_CXX11
+  void set_set(::std::string&& value);
+  #endif
+  void set_set(const char* value);
+  void set_set(const char* value, size_t size);
+  ::std::string* mutable_set();
+  ::std::string* release_set();
+  void set_allocated_set(::std::string* set);
+
   // @@protoc_insertion_point(class_scope:pkt2.Packet)
  private:
 
@@ -873,6 +887,7 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
+  ::google::protobuf::internal::ArenaStringPtr set_;
   ::pkt2::Address* source_;
   ::pkt2::Address* destination_;
   mutable int _cached_size_;
@@ -1463,56 +1478,56 @@ inline void Variable::set_allocated_measure_unit(::std::string* measure_unit) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.measure_unit)
 }
 
-// string formula = 7;
-inline void Variable::clear_formula() {
-  formula_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+// string get = 7;
+inline void Variable::clear_get() {
+  get_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline const ::std::string& Variable::formula() const {
-  // @@protoc_insertion_point(field_get:pkt2.Variable.formula)
-  return formula_.GetNoArena();
+inline const ::std::string& Variable::get() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.get)
+  return get_.GetNoArena();
 }
-inline void Variable::set_formula(const ::std::string& value) {
+inline void Variable::set_get(const ::std::string& value) {
   
-  formula_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
-  // @@protoc_insertion_point(field_set:pkt2.Variable.formula)
+  get_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:pkt2.Variable.get)
 }
 #if LANG_CXX11
-inline void Variable::set_formula(::std::string&& value) {
+inline void Variable::set_get(::std::string&& value) {
   
-  formula_.SetNoArena(
+  get_.SetNoArena(
     &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
-  // @@protoc_insertion_point(field_set_rvalue:pkt2.Variable.formula)
+  // @@protoc_insertion_point(field_set_rvalue:pkt2.Variable.get)
 }
 #endif
-inline void Variable::set_formula(const char* value) {
+inline void Variable::set_get(const char* value) {
   
-  formula_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
-  // @@protoc_insertion_point(field_set_char:pkt2.Variable.formula)
+  get_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:pkt2.Variable.get)
 }
-inline void Variable::set_formula(const char* value, size_t size) {
+inline void Variable::set_get(const char* value, size_t size) {
   
-  formula_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+  get_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
       ::std::string(reinterpret_cast<const char*>(value), size));
-  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.formula)
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.get)
 }
-inline ::std::string* Variable::mutable_formula() {
+inline ::std::string* Variable::mutable_get() {
   
-  // @@protoc_insertion_point(field_mutable:pkt2.Variable.formula)
-  return formula_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  // @@protoc_insertion_point(field_mutable:pkt2.Variable.get)
+  return get_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline ::std::string* Variable::release_formula() {
-  // @@protoc_insertion_point(field_release:pkt2.Variable.formula)
+inline ::std::string* Variable::release_get() {
+  // @@protoc_insertion_point(field_release:pkt2.Variable.get)
   
-  return formula_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  return get_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
 }
-inline void Variable::set_allocated_formula(::std::string* formula) {
-  if (formula != NULL) {
+inline void Variable::set_allocated_get(::std::string* get) {
+  if (get != NULL) {
     
   } else {
     
   }
-  formula_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), formula);
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.formula)
+  get_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), get);
+  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.get)
 }
 
 // repeated string values = 8;
@@ -2038,6 +2053,58 @@ inline const ::google::protobuf::RepeatedPtrField< ::pkt2::Field >&
 Packet::fields() const {
   // @@protoc_insertion_point(field_list:pkt2.Packet.fields)
   return fields_;
+}
+
+// string set = 7;
+inline void Packet::clear_set() {
+  set_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline const ::std::string& Packet::set() const {
+  // @@protoc_insertion_point(field_get:pkt2.Packet.set)
+  return set_.GetNoArena();
+}
+inline void Packet::set_set(const ::std::string& value) {
+  
+  set_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value);
+  // @@protoc_insertion_point(field_set:pkt2.Packet.set)
+}
+#if LANG_CXX11
+inline void Packet::set_set(::std::string&& value) {
+  
+  set_.SetNoArena(
+    &::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::move(value));
+  // @@protoc_insertion_point(field_set_rvalue:pkt2.Packet.set)
+}
+#endif
+inline void Packet::set_set(const char* value) {
+  
+  set_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value));
+  // @@protoc_insertion_point(field_set_char:pkt2.Packet.set)
+}
+inline void Packet::set_set(const char* value, size_t size) {
+  
+  set_.SetNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      ::std::string(reinterpret_cast<const char*>(value), size));
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Packet.set)
+}
+inline ::std::string* Packet::mutable_set() {
+  
+  // @@protoc_insertion_point(field_mutable:pkt2.Packet.set)
+  return set_.MutableNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline ::std::string* Packet::release_set() {
+  // @@protoc_insertion_point(field_release:pkt2.Packet.set)
+  
+  return set_.ReleaseNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+}
+inline void Packet::set_allocated_set(::std::string* set) {
+  if (set != NULL) {
+    
+  } else {
+    
+  }
+  set_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), set);
+  // @@protoc_insertion_point(field_set_allocated:pkt2.Packet.set)
 }
 
 // -------------------------------------------------------------------

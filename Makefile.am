@@ -21,6 +21,8 @@ $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
 	sed -i '/#include "descriptor.pb.h"/d' pkt2.pb.h
+	sed -i '/protobuf_InitDefaults_descriptor_2eproto();/d' pkt2.pb.cc
+	sed -i '/protobuf_AddDesc_descriptor_2eproto();/d' pkt2.pb.cc
 	mv pkt2.pb.cc pkt2.pb.cpp
 
 #
@@ -148,4 +150,6 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto proto/descriptor.proto proto/example1.proto
+	proto/pkt2.proto proto/descriptor.proto \
+	proto/gps16.proto proto/time5.proto \ 
+	proto/example/example1.proto  proto/iridium/packet8.proto
