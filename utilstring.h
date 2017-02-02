@@ -64,3 +64,7 @@ std::string doubleToString(const double value);
 void *get_in_addr(struct sockaddr *sa);
 
 std::string sockaddrToString(struct sockaddr_storage *value);
+
+std::string timeToString(time_t value);
+
+std::string spaces(char ch, int count);

@@ -60,7 +60,7 @@ pkt2
 Пррограммы
 
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
-udpreceiver
+udpreceiver                                                                                  write2lmdb
 
 Имена каналов(очередей) по умолчанию
            ipc:///tmp/input.pkt2                                           ipc:///tmp/output.pkt2

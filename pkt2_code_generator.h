@@ -13,10 +13,24 @@ private:
 	static void listOne2Many(const google::protobuf::FileDescriptor* file, std::map<const google::protobuf::Descriptor*, messagetypes*> *repeatedmessages);
 	std::map<std::string, std::string> sqltypes;
 	std::string quote;
+	bool generateSQL(
+			const google::protobuf::FileDescriptor* file,
+			const std::string& parameter,
+			google::protobuf::compiler::GeneratorContext* context,
+			std::string* error) const;
+	bool generateOptions(
+			const google::protobuf::FileDescriptor* file,
+			const std::string& parameter,
+			google::protobuf::compiler::GeneratorContext* context,
+			std::string* error) const;
 public:
 		Pkt2CodeGenerator(const std::string& name);
 		virtual ~Pkt2CodeGenerator();
-		virtual bool Generate(const google::protobuf::FileDescriptor* file, const std::string& parameter, google::protobuf::compiler::GeneratorContext* context, std::string* error) const;
+		virtual bool Generate(
+				const google::protobuf::FileDescriptor* file,
+				const std::string& parameter,
+				google::protobuf::compiler::GeneratorContext* context,
+				std::string* error) const;
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include <algorithm>
 
 #include <google/protobuf/descriptor.pb.h>
@@ -9,9 +10,24 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/stl_util.h>
 
+#include "utilstring.h"
+
 #include "pkt2.pb.h"
 
 const std::string quote_mysql("`");
+
+std::string getProtoName(enum pkt2::Proto proto) {
+	switch (proto) {
+	case pkt2::PROTO_NONE:
+		return "none";
+	case pkt2::PROTO_TCP:
+		return "tcp";
+	case pkt2::PROTO_UDP:
+		return "udp";
+	default:
+		return "-";
+	}
+}
 
 const std::map<std::string, std::string> types_mysql = {
 	{"primary", "int(20) NOT NULL PRIMARY KEY AUTO_INCREMENT"},
@@ -136,7 +152,86 @@ std::string getSuffix(const google::protobuf::FieldDescriptor *fd)
 	return ss.str();
 }
 
-bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, const std::string& parameter, google::protobuf::compiler::GeneratorContext* context, std::string* error)  const
+// sort by offset
+std::vector<int> sortPacketFieldsIndex(
+		const google::protobuf::RepeatedPtrField<pkt2::Field > &value)
+{
+	std::vector<std::pair<int, int>> idxOfs;
+	for (int i = 0; i < value.size(); i++)
+	{
+		idxOfs.push_back(std::pair<int, int>(i, value[i].offset()));
+	}
+
+	std::sort(idxOfs.begin(), idxOfs.end(), [] (std::pair<int, int> const& a, std::pair<int, int> const& b) { return a.second < b.second; });
+
+	std::vector<int> idx;
+	for (int i = 0; i < value.size(); i++)
+	{
+		idx.push_back(idxOfs[i].first);
+	}
+	return idx;
+}
+
+void messageOptionsToString(
+		std::ostream &strm,
+		const google::protobuf::Descriptor *m
+)
+{
+	const google::protobuf::MessageOptions options = m->options();
+	pkt2::Packet packet =  options.GetExtension(pkt2::packet);
+	pkt2::Address src = packet.source();
+	strm << "/*" << std::endl;
+	strm << " * Input packet: " <<  std::endl
+			<< " * Name:  " << packet.name() << std::endl
+			<< " * Full:  " << packet.full_name() <<  std::endl
+			<< " * Short: " << packet.short_name() <<  std::endl
+			<< " * Source: "
+			<< getProtoName(src.proto()) << ":" << src.address() <<  ":" << src.port() <<  " "
+			<< std::endl;
+
+	strm << "Packet fields:" << std::endl;
+	const std::vector<int> idxs = sortPacketFieldsIndex(packet.fields());
+
+	strm << spaces(' ', 41) << "Offset   Bytes   Type# Name" << std::endl;
+	int ofs = 0;
+	for (int f = 0; f < packet.fields_size(); f++)
+	{
+		pkt2::Field field = packet.fields(idxs[f]);
+		int sz = field.size();
+		strm
+			<< spaces(' ', ofs) << spaces('|', sz) << spaces(' ', 40 - ofs - sz)
+			<< std::setw(7) << field.offset() << " "
+			<< std::setw(7) << field.size() << " "
+			<< std::setw(7) << field.type() << " "
+			<< field.name() << " "
+			<< std::endl;
+		ofs += sz;
+	}
+	strm << "*/" << std::endl;
+	strm << std::endl;
+
+}
+
+void fieldOptionsToStream
+(
+		std::ostream &strm,
+		const google::protobuf::FieldDescriptor *value
+)
+{
+	const google::protobuf::FieldOptions options = value->options();
+	pkt2::Variable variable =  options.GetExtension(pkt2::variable);
+	strm << "Field: "
+			<< variable.name() <<  " "
+			<< variable.short_name() <<  " "
+			<< variable.full_name() <<  " " << std::endl;
+}
+
+bool Pkt2CodeGenerator::generateSQL(
+	const google::protobuf::FileDescriptor* file,
+	const std::string& parameter,
+	google::protobuf::compiler::GeneratorContext* context,
+	std::string* error
+) const
 {
 	google::protobuf::scoped_ptr<google::protobuf::io::ZeroCopyOutputStream> output(context->Open(file->name() + ".sql"));
 	google::protobuf::io::Printer printer(output.get(), '$');
@@ -160,45 +255,6 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 	for (int i = 0; i < file->message_type_count(); i++) 
 	{
 		const google::protobuf::Descriptor *m = file->message_type(i);
-		const google::protobuf::MessageOptions options = m->options();
-		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
-		pkt2::Address src = packet.source();
-		std::cerr << "Input packet: "
-				<< packet.name() <<  " "
-				<< packet.short_name() <<  " "
-				<< packet.full_name() <<  " "
-
-				<< std::endl
-				<< "Source: "
-
-				<< src.address() <<  " "
-				<< src.proto() <<  " "
-				<< src.port() <<  " "
-				<< std::endl;
-
-		std::cerr << "Fields: " << std::endl;
-		for (int f = 0; f < packet.fields_size(); f++)
-		{
-			pkt2::Field field = packet.fields(f);
-			std::cerr
-				<< field.name() << " "
-				<< field.type() << " "
-				<< field.size() << " "
-				<< field.offset() << " "
-				<< std::endl;
-		}
-		std::cerr << std::endl;
-
-		for (int f = 0; f < m->field_count(); f++)
-		{
-			const google::protobuf::FieldDescriptor *fd = m->field(f);
-			const google::protobuf::FieldOptions options = fd->options();
-			pkt2::Variable variable =  options.GetExtension(pkt2::variable);
-			std::cerr << "Field: "
-					<< variable.name() <<  " "
-					<< variable.short_name() <<  " "
-					<< variable.full_name() <<  " " << std::endl;
-		}
 
 		std::stringstream ss;
 		ss << "CREATE TABLE IF NOT EXISTS " << quote << m->name() << quote << "(" << std::endl <<
@@ -265,11 +321,74 @@ bool Pkt2CodeGenerator::Generate(const google::protobuf::FileDescriptor* file, c
 		printer.PrintRaw(ss.str());
 	}
 
-	if (printer.failed()) 
+	if (printer.failed())
 	{
 		*error = "Pkt2CodeGenerator detected write error.";
 		return false;
 	}
 	return true;
+}
+
+bool Pkt2CodeGenerator::generateOptions(
+	const google::protobuf::FileDescriptor* file,
+	const std::string& parameter,
+	google::protobuf::compiler::GeneratorContext* context,
+	std::string* error
+) const
+{
+	google::protobuf::scoped_ptr<google::protobuf::io::ZeroCopyOutputStream> output(context->Open(file->name() + ".options"));
+	google::protobuf::io::Printer printer(output.get(), '$');
+
+	std::map<const google::protobuf::Descriptor*, messagetypes*> repeatedmessages;
+	listOne2Many(file, &repeatedmessages);
+
+	std::stringstream ss;
+	ss << "/*"	<< std::endl << " * This is an automatically generated file, do not edit." << std::endl
+			<< " * " << timeToString(0) << std::endl;
+
+	for (int i = 0; i < file->message_type_count(); i++)
+	{
+		const google::protobuf::Descriptor *m = file->message_type(i);
+		ss << " * " << m->name() << std::endl;
+	}
+	ss << " */" << std::endl << std::endl;
+
+	// Each message
+	for (int i = 0; i < file->message_type_count(); i++)
+	{
+		const google::protobuf::Descriptor *m = file->message_type(i);
+
+		messageOptionsToString(ss, m);
+
+		ss << "Message fields: " << std::endl;
+		for (int f = 0; f < m->field_count(); f++)
+		{
+			const google::protobuf::FieldDescriptor *fd = m->field(f);
+			fieldOptionsToStream(ss, fd);
+
+		}
+		ss << std::endl << std::endl;
+	}
+
+	printer.PrintRaw(ss.str());
+	if (printer.failed()) 
+	{
+		*error = "Pkt2CodeGenerator generateOptions detected write error.";
+		return false;
+	}
+	return true;
+}
+
+
+bool Pkt2CodeGenerator::Generate(
+		const google::protobuf::FileDescriptor* file,
+		const std::string& parameter,
+		google::protobuf::compiler::GeneratorContext* context,
+		std::string* error)  const
+{
+	bool r = generateSQL(file, parameter, context, error);
+	r &= generateOptions(file, parameter, context, error);
+
+	return r;
 }
 

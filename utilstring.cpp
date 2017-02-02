@@ -3,6 +3,7 @@
 #include <algorithm> 
 #include <functional> 
 #include <cctype>
+#include <ctime>
 #include <limits>
 #include <locale>
 #include <fstream>
@@ -183,4 +184,23 @@ std::string sockaddrToString
 	char s[INET6_ADDRSTRLEN]; // an empty string 
 	inet_ntop(value->ss_family, get_in_addr((struct sockaddr *) value), s, sizeof(s)); 
 	return s;
+}
+
+std::string timeToString(time_t value)
+{
+	if (!value)
+		value = std::time(NULL);
+	std::tm *ptm = std::localtime(&value);
+	char buffer[80];
+	std::strftime(buffer, sizeof(buffer), "%c", ptm);
+	return std::string(buffer);
+}
+
+std::string spaces(char ch, int count)
+{
+    std::stringstream ss;
+    for (int i = 0; i < count; i++) {
+        ss << ch;
+    }
+    return ss.str();
 }
