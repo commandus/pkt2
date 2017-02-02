@@ -51,6 +51,7 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Field, endian_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Field, offset_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Field, size_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Field, tag_),
     ~0u,  // no _has_bits_
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -93,6 +94,7 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Output, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Output, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Output, sql_),
   };
   return offsets;
@@ -100,11 +102,11 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
 
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(Field)},
-  { 9, -1, sizeof(Variable)},
-  { 24, -1, sizeof(Address)},
-  { 31, -1, sizeof(Packet)},
-  { 42, -1, sizeof(Sql)},
-  { 47, -1, sizeof(Output)},
+  { 10, -1, sizeof(Variable)},
+  { 25, -1, sizeof(Address)},
+  { 32, -1, sizeof(Packet)},
+  { 43, -1, sizeof(Sql)},
+  { 48, -1, sizeof(Output)},
 };
 
 static const ::google::protobuf::internal::DefaultInstanceData file_default_instances[] = {
@@ -191,49 +193,50 @@ void protobuf_InitDefaults_pkt2_2eproto() {
 void protobuf_AddDesc_pkt2_2eproto_impl() {
   protobuf_InitDefaults_pkt2_2eproto();
   static const char descriptor[] = {
-      "\n\npkt2.proto\022\004pkt2\032\020descriptor.proto\"p\n\005"
+      "\n\npkt2.proto\022\004pkt2\032\020descriptor.proto\"}\n\005"
       "Field\022\014\n\004name\030\001 \001(\t\022\035\n\004type\030\002 \001(\0162\017.pkt2"
       ".InputType\022\034\n\006endian\030\003 \001(\0162\014.pkt2.Endian"
-      "\022\016\n\006offset\030\004 \001(\r\022\014\n\004size\030\005 \001(\r\"\325\001\n\010Varia"
-      "ble\022\r\n\005field\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\036\n\004type"
-      "\030\003 \001(\0162\020.pkt2.OutputType\022\022\n\nshort_name\030\004"
-      " \001(\t\022\021\n\tfull_name\030\005 \001(\t\022\024\n\014measure_unit\030"
-      "\006 \001(\t\022\013\n\003get\030\007 \001(\t\022\016\n\006values\030\010 \003(\t\022\020\n\010pr"
-      "iority\030\t \001(\r\022\016\n\006format\030\n \001(\t\022\020\n\010tostring"
-      "\030\013 \001(\t\"D\n\007Address\022\032\n\005proto\030\001 \001(\0162\013.pkt2."
-      "Proto\022\017\n\007address\030\002 \001(\t\022\014\n\004port\030\003 \001(\r\"\252\001\n"
-      "\006Packet\022\035\n\006source\030\001 \001(\0132\r.pkt2.Address\022\""
-      "\n\013destination\030\002 \001(\0132\r.pkt2.Address\022\014\n\004na"
-      "me\030\003 \001(\t\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tfull_nam"
-      "e\030\005 \001(\t\022\033\n\006fields\030\006 \003(\0132\013.pkt2.Field\022\013\n\003"
-      "set\030\007 \001(\t\"%\n\003Sql\022\036\n\007dialect\030\001 \001(\0162\r.pkt2"
-      ".Dialect\" \n\006Output\022\026\n\003sql\030\001 \001(\0132\t.pkt2.S"
-      "ql*\177\n\tInputType\022\016\n\nINPUT_NONE\020\000\022\020\n\014INPUT"
-      "_DOUBLE\020\001\022\r\n\tINPUT_INT\020\002\022\016\n\nINPUT_UINT\020\003"
-      "\022\017\n\013INPUT_BYTES\020\004\022\016\n\nINPUT_CHAR\020\005\022\020\n\014INP"
-      "UT_STRING\020\006*\361\002\n\nOutputType\022\017\n\013OUTPUT_NON"
-      "E\020\000\022\021\n\rOUTPUT_DOUBLE\020\001\022\020\n\014OUTPUT_FLOAT\020\002"
-      "\022\020\n\014OUTPUT_INT64\020\003\022\021\n\rOUTPUT_UINT64\020\004\022\020\n"
-      "\014OUTPUT_INT32\020\005\022\022\n\016OUTPUT_FIXED64\020\006\022\022\n\016O"
-      "UTPUT_FIXED32\020\007\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOUTP"
-      "UT_STRING\020\t\022\020\n\014OUTPUT_GROUP\020\n\022\022\n\016OUTPUT_"
-      "MESSAGE\020\013\022\020\n\014OUTPUT_BYTES\020\014\022\021\n\rOUTPUT_UI"
-      "NT32\020\r\022\017\n\013OUTPUT_ENUM\020\016\022\023\n\017OUTPUT_SFIXED"
-      "32\020\017\022\023\n\017OUTPUT_SFIXED64\020\020\022\021\n\rOUTPUT_SINT"
-      "32\020\021\022\021\n\rOUTPUT_SINT64\020\022*O\n\006Endian\022\024\n\020END"
-      "IAN_NO_MATTER\020\000\022\030\n\024ENDIAN_LITTLE_ENDIAN\020"
-      "\001\022\025\n\021ENDIAN_BIG_ENDIAN\020\002*5\n\005Proto\022\016\n\nPRO"
-      "TO_NONE\020\000\022\r\n\tPROTO_TCP\020\001\022\r\n\tPROTO_UDP\020\002*"
-      ">\n\007Dialect\022\022\n\016SQL_POSTGRESQL\020\000\022\r\n\tSQL_MY"
-      "SQL\020\001\022\020\n\014SQL_FIREBIRD\020\002:\?\n\006packet\022\037.goog"
-      "le.protobuf.MessageOptions\030\305\212\003 \001(\0132\014.pkt"
-      "2.Packet:\?\n\006output\022\037.google.protobuf.Mes"
-      "sageOptions\030\306\212\003 \001(\0132\014.pkt2.Output:A\n\010var"
-      "iable\022\035.google.protobuf.FieldOptions\030\307\212\003"
-      " \001(\0132\016.pkt2.Variableb\006proto3"
+      "\022\016\n\006offset\030\004 \001(\r\022\014\n\004size\030\005 \001(\r\022\013\n\003tag\030\006 "
+      "\001(\r\"\325\001\n\010Variable\022\r\n\005field\030\001 \001(\t\022\014\n\004name\030"
+      "\002 \001(\t\022\036\n\004type\030\003 \001(\0162\020.pkt2.OutputType\022\022\n"
+      "\nshort_name\030\004 \001(\t\022\021\n\tfull_name\030\005 \001(\t\022\024\n\014"
+      "measure_unit\030\006 \001(\t\022\013\n\003get\030\007 \001(\t\022\016\n\006value"
+      "s\030\010 \003(\t\022\020\n\010priority\030\t \001(\r\022\016\n\006format\030\n \001("
+      "\t\022\020\n\010tostring\030\013 \001(\t\"D\n\007Address\022\032\n\005proto\030"
+      "\001 \001(\0162\013.pkt2.Proto\022\017\n\007address\030\002 \001(\t\022\014\n\004p"
+      "ort\030\003 \001(\r\"\252\001\n\006Packet\022\035\n\006source\030\001 \001(\0132\r.p"
+      "kt2.Address\022\"\n\013destination\030\002 \001(\0132\r.pkt2."
+      "Address\022\014\n\004name\030\003 \001(\t\022\022\n\nshort_name\030\004 \001("
+      "\t\022\021\n\tfull_name\030\005 \001(\t\022\033\n\006fields\030\006 \003(\0132\013.p"
+      "kt2.Field\022\013\n\003set\030\007 \001(\t\"%\n\003Sql\022\036\n\007dialect"
+      "\030\001 \001(\0162\r.pkt2.Dialect\",\n\006Output\022\n\n\002id\030\001 "
+      "\001(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2.Sql*\177\n\tInputType"
+      "\022\016\n\nINPUT_NONE\020\000\022\020\n\014INPUT_DOUBLE\020\001\022\r\n\tIN"
+      "PUT_INT\020\002\022\016\n\nINPUT_UINT\020\003\022\017\n\013INPUT_BYTES"
+      "\020\004\022\016\n\nINPUT_CHAR\020\005\022\020\n\014INPUT_STRING\020\006*\361\002\n"
+      "\nOutputType\022\017\n\013OUTPUT_NONE\020\000\022\021\n\rOUTPUT_D"
+      "OUBLE\020\001\022\020\n\014OUTPUT_FLOAT\020\002\022\020\n\014OUTPUT_INT6"
+      "4\020\003\022\021\n\rOUTPUT_UINT64\020\004\022\020\n\014OUTPUT_INT32\020\005"
+      "\022\022\n\016OUTPUT_FIXED64\020\006\022\022\n\016OUTPUT_FIXED32\020\007"
+      "\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOUTPUT_STRING\020\t\022\020\n\014"
+      "OUTPUT_GROUP\020\n\022\022\n\016OUTPUT_MESSAGE\020\013\022\020\n\014OU"
+      "TPUT_BYTES\020\014\022\021\n\rOUTPUT_UINT32\020\r\022\017\n\013OUTPU"
+      "T_ENUM\020\016\022\023\n\017OUTPUT_SFIXED32\020\017\022\023\n\017OUTPUT_"
+      "SFIXED64\020\020\022\021\n\rOUTPUT_SINT32\020\021\022\021\n\rOUTPUT_"
+      "SINT64\020\022*O\n\006Endian\022\024\n\020ENDIAN_NO_MATTER\020\000"
+      "\022\030\n\024ENDIAN_LITTLE_ENDIAN\020\001\022\025\n\021ENDIAN_BIG"
+      "_ENDIAN\020\002*5\n\005Proto\022\016\n\nPROTO_NONE\020\000\022\r\n\tPR"
+      "OTO_TCP\020\001\022\r\n\tPROTO_UDP\020\002*>\n\007Dialect\022\022\n\016S"
+      "QL_POSTGRESQL\020\000\022\r\n\tSQL_MYSQL\020\001\022\020\n\014SQL_FI"
+      "REBIRD\020\002:\?\n\006packet\022\037.google.protobuf.Mes"
+      "sageOptions\030\305\212\003 \001(\0132\014.pkt2.Packet:\?\n\006out"
+      "put\022\037.google.protobuf.MessageOptions\030\306\212\003"
+      " \001(\0132\014.pkt2.Output:A\n\010variable\022\035.google."
+      "protobuf.FieldOptions\030\307\212\003 \001(\0132\016.pkt2.Var"
+      "iableb\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1588);
+      descriptor, 1613);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "pkt2.proto", &protobuf_RegisterTypes);
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_pkt2_2eproto);
@@ -354,6 +357,7 @@ const int Field::kTypeFieldNumber;
 const int Field::kEndianFieldNumber;
 const int Field::kOffsetFieldNumber;
 const int Field::kSizeFieldNumber;
+const int Field::kTagFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Field::Field()
@@ -374,15 +378,15 @@ Field::Field(const Field& from)
     name_.AssignWithDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.name_);
   }
   ::memcpy(&type_, &from.type_,
-    reinterpret_cast<char*>(&size_) -
-    reinterpret_cast<char*>(&type_) + sizeof(size_));
+    reinterpret_cast<char*>(&tag_) -
+    reinterpret_cast<char*>(&type_) + sizeof(tag_));
   // @@protoc_insertion_point(copy_constructor:pkt2.Field)
 }
 
 void Field::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&type_, 0, reinterpret_cast<char*>(&size_) -
-    reinterpret_cast<char*>(&type_) + sizeof(size_));
+  ::memset(&type_, 0, reinterpret_cast<char*>(&tag_) -
+    reinterpret_cast<char*>(&type_) + sizeof(tag_));
   _cached_size_ = 0;
 }
 
@@ -421,8 +425,8 @@ Field* Field::New(::google::protobuf::Arena* arena) const {
 void Field::Clear() {
 // @@protoc_insertion_point(message_clear_start:pkt2.Field)
   name_.ClearToEmptyNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&type_, 0, reinterpret_cast<char*>(&size_) -
-    reinterpret_cast<char*>(&type_) + sizeof(size_));
+  ::memset(&type_, 0, reinterpret_cast<char*>(&tag_) -
+    reinterpret_cast<char*>(&type_) + sizeof(tag_));
 }
 
 bool Field::MergePartialFromCodedStream(
@@ -504,6 +508,19 @@ bool Field::MergePartialFromCodedStream(
         break;
       }
 
+      // uint32 tag = 6;
+      case 6: {
+        if (tag == 48u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &tag_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -560,6 +577,11 @@ void Field::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->size(), output);
   }
 
+  // uint32 tag = 6;
+  if (this->tag() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->tag(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:pkt2.Field)
 }
 
@@ -598,6 +620,11 @@ void Field::SerializeWithCachedSizes(
   // uint32 size = 5;
   if (this->size() != 0) {
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->size(), target);
+  }
+
+  // uint32 tag = 6;
+  if (this->tag() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->tag(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Field)
@@ -639,6 +666,13 @@ size_t Field::ByteSizeLong() const {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->size());
+  }
+
+  // uint32 tag = 6;
+  if (this->tag() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->tag());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -683,6 +717,9 @@ void Field::MergeFrom(const Field& from) {
   if (from.size() != 0) {
     set_size(from.size());
   }
+  if (from.tag() != 0) {
+    set_tag(from.tag());
+  }
 }
 
 void Field::CopyFrom(const ::google::protobuf::Message& from) {
@@ -713,6 +750,7 @@ void Field::InternalSwap(Field* other) {
   std::swap(endian_, other->endian_);
   std::swap(offset_, other->offset_);
   std::swap(size_, other->size_);
+  std::swap(tag_, other->tag_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -830,6 +868,20 @@ void Field::set_size(::google::protobuf::uint32 value) {
   
   size_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Field.size)
+}
+
+// uint32 tag = 6;
+void Field::clear_tag() {
+  tag_ = 0u;
+}
+::google::protobuf::uint32 Field::tag() const {
+  // @@protoc_insertion_point(field_get:pkt2.Field.tag)
+  return tag_;
+}
+void Field::set_tag(::google::protobuf::uint32 value) {
+  
+  tag_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Field.tag)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS
@@ -3553,6 +3605,7 @@ void Sql::set_dialect(::pkt2::Dialect value) {
 // ===================================================================
 
 #if !defined(_MSC_VER) || _MSC_VER >= 1900
+const int Output::kIdFieldNumber;
 const int Output::kSqlFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -3574,11 +3627,13 @@ Output::Output(const Output& from)
   } else {
     sql_ = NULL;
   }
+  id_ = from.id_;
   // @@protoc_insertion_point(copy_constructor:pkt2.Output)
 }
 
 void Output::SharedCtor() {
-  sql_ = NULL;
+  ::memset(&sql_, 0, reinterpret_cast<char*>(&id_) -
+    reinterpret_cast<char*>(&sql_) + sizeof(id_));
   _cached_size_ = 0;
 }
 
@@ -3622,6 +3677,7 @@ void Output::Clear() {
     delete sql_;
   }
   sql_ = NULL;
+  id_ = 0u;
 }
 
 bool Output::MergePartialFromCodedStream(
@@ -3634,9 +3690,22 @@ bool Output::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // .pkt2.Sql sql = 1;
+      // uint32 id = 1;
       case 1: {
-        if (tag == 10u) {
+        if (tag == 8u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &id_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // .pkt2.Sql sql = 2;
+      case 2: {
+        if (tag == 18u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
                input, mutable_sql()));
         } else {
@@ -3669,10 +3738,15 @@ failure:
 void Output::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:pkt2.Output)
-  // .pkt2.Sql sql = 1;
+  // uint32 id = 1;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(1, this->id(), output);
+  }
+
+  // .pkt2.Sql sql = 2;
   if (this->has_sql()) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      1, *this->sql_, output);
+      2, *this->sql_, output);
   }
 
   // @@protoc_insertion_point(serialize_end:pkt2.Output)
@@ -3682,11 +3756,16 @@ void Output::SerializeWithCachedSizes(
     bool deterministic, ::google::protobuf::uint8* target) const {
   (void)deterministic; // Unused
   // @@protoc_insertion_point(serialize_to_array_start:pkt2.Output)
-  // .pkt2.Sql sql = 1;
+  // uint32 id = 1;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(1, this->id(), target);
+  }
+
+  // .pkt2.Sql sql = 2;
   if (this->has_sql()) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        1, *this->sql_, false, target);
+        2, *this->sql_, false, target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Output)
@@ -3697,11 +3776,18 @@ size_t Output::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:pkt2.Output)
   size_t total_size = 0;
 
-  // .pkt2.Sql sql = 1;
+  // .pkt2.Sql sql = 2;
   if (this->has_sql()) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
         *this->sql_);
+  }
+
+  // uint32 id = 1;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->id());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -3733,6 +3819,9 @@ void Output::MergeFrom(const Output& from) {
   if (from.has_sql()) {
     mutable_sql()->::pkt2::Sql::MergeFrom(from.sql());
   }
+  if (from.id() != 0) {
+    set_id(from.id());
+  }
 }
 
 void Output::CopyFrom(const ::google::protobuf::Message& from) {
@@ -3759,6 +3848,7 @@ void Output::Swap(Output* other) {
 }
 void Output::InternalSwap(Output* other) {
   std::swap(sql_, other->sql_);
+  std::swap(id_, other->id_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -3770,7 +3860,21 @@ void Output::InternalSwap(Output* other) {
 #if PROTOBUF_INLINE_NOT_IN_HEADERS
 // Output
 
-// .pkt2.Sql sql = 1;
+// uint32 id = 1;
+void Output::clear_id() {
+  id_ = 0u;
+}
+::google::protobuf::uint32 Output::id() const {
+  // @@protoc_insertion_point(field_get:pkt2.Output.id)
+  return id_;
+}
+void Output::set_id(::google::protobuf::uint32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Output.id)
+}
+
+// .pkt2.Sql sql = 2;
 bool Output::has_sql() const {
   return this != internal_default_instance() && sql_ != NULL;
 }

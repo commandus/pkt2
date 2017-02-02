@@ -684,7 +684,7 @@ CLEANFILES = $(gengrpcs)
 #
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
-utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h \
+utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \

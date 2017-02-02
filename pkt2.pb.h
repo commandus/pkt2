@@ -371,6 +371,12 @@ class Field : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::uint32 size() const;
   void set_size(::google::protobuf::uint32 value);
 
+  // uint32 tag = 6;
+  void clear_tag();
+  static const int kTagFieldNumber = 6;
+  ::google::protobuf::uint32 tag() const;
+  void set_tag(::google::protobuf::uint32 value);
+
   // @@protoc_insertion_point(class_scope:pkt2.Field)
  private:
 
@@ -380,6 +386,7 @@ class Field : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   int endian_;
   ::google::protobuf::uint32 offset_;
   ::google::protobuf::uint32 size_;
+  ::google::protobuf::uint32 tag_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -1051,10 +1058,16 @@ class Output : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
 
   // accessors -------------------------------------------------------
 
-  // .pkt2.Sql sql = 1;
+  // uint32 id = 1;
+  void clear_id();
+  static const int kIdFieldNumber = 1;
+  ::google::protobuf::uint32 id() const;
+  void set_id(::google::protobuf::uint32 value);
+
+  // .pkt2.Sql sql = 2;
   bool has_sql() const;
   void clear_sql();
-  static const int kSqlFieldNumber = 1;
+  static const int kSqlFieldNumber = 2;
   const ::pkt2::Sql& sql() const;
   ::pkt2::Sql* mutable_sql();
   ::pkt2::Sql* release_sql();
@@ -1065,6 +1078,7 @@ class Output : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   ::pkt2::Sql* sql_;
+  ::google::protobuf::uint32 id_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -1198,6 +1212,20 @@ inline void Field::set_size(::google::protobuf::uint32 value) {
   
   size_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Field.size)
+}
+
+// uint32 tag = 6;
+inline void Field::clear_tag() {
+  tag_ = 0u;
+}
+inline ::google::protobuf::uint32 Field::tag() const {
+  // @@protoc_insertion_point(field_get:pkt2.Field.tag)
+  return tag_;
+}
+inline void Field::set_tag(::google::protobuf::uint32 value) {
+  
+  tag_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Field.tag)
 }
 
 // -------------------------------------------------------------------
@@ -2129,7 +2157,21 @@ inline void Sql::set_dialect(::pkt2::Dialect value) {
 
 // Output
 
-// .pkt2.Sql sql = 1;
+// uint32 id = 1;
+inline void Output::clear_id() {
+  id_ = 0u;
+}
+inline ::google::protobuf::uint32 Output::id() const {
+  // @@protoc_insertion_point(field_get:pkt2.Output.id)
+  return id_;
+}
+inline void Output::set_id(::google::protobuf::uint32 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Output.id)
+}
+
+// .pkt2.Sql sql = 2;
 inline bool Output::has_sql() const {
   return this != internal_default_instance() && sql_ != NULL;
 }

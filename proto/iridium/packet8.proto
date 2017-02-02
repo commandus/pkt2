@@ -43,6 +43,7 @@ message Packet8
 {
     // backend database
     option(pkt2.output) = {
+        id: 10108				// LMDB primary key prefix
     	sql {
     		dialect: SQL_POSTGRESQL
     	}
@@ -61,10 +62,25 @@ message Packet8
         set: "packet_type = 8; gps_flags = SET_BIT(gpsolddata, 0) | SET_BIT(gpsencoded, 1) | SET_BIT(gpsfrommemory, 2) | SET_BIT(gpsnoformat, 3) | SET_BIT(gpsnosats, 4) | SET_BIT(gpsbadhdop, 5) | SET_BIT(gpstime, 6) | SET_BIT(gpsnavdata, 7); sats = satellite_visible_count; battery = ((battery_voltage * 10) & 0x3f) | SET_BIT(battery_low, 6) | SET_BIT(battery_high, 7); packet_key = 0; r2 = 0; temperature = temperature_c; SET(gps_coords, coordinates); SET(time5, measure_time);" 
         fields: [
         {
+            name: "ie_id"
+            type: INPUT_UINT
+            size: 1
+            offset: 0
+            tag: 2			      ///< tag 2- Iridium user payload
+        },
+        {
+            name: "ie_size"
+            type: INPUT_UINT
+            size: 2
+            offset: 1
+            tag: 30               ///< tag, 30 bytes long
+        },
+        {
             name: "packet_type"
             type: INPUT_UINT
             size: 1
             offset: 0
+            tag: 8			      ///< tag 8- animal. check this.
         },
         {
             name: "gps_flags"
@@ -132,6 +148,7 @@ message Packet8
 	// structure 5 bytes long (bytes 25..30) 
     Time5 measure_time = 2 [(pkt2.variable) = {
         field: "time5"
+        index: true
     }];
 
     // output 

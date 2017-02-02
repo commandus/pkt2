@@ -199,7 +199,7 @@ void messageOptionsToString(
 		pkt2::Field field = packet.fields(idxs[f]);
 		int sz = field.size();
 		strm
-			<< spaces(' ', ofs) << spaces('|', sz) << spaces(' ', 40 - ofs - sz)
+			<< spaces(' ', field.offset()) << spaces('|', sz) << spaces(' ', 40 - field.offset() - sz)
 			<< std::setw(7) << field.offset() << " "
 			<< std::setw(7) << field.size() << " "
 			<< std::setw(7) << field.type() << " "
