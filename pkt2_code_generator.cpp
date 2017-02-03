@@ -15,20 +15,36 @@
 
 #include "pkt2.pb.h"
 
+const std::string CLAUSE_RETURN_VALUE("RETURN_VALUE");
+const std::string CLAUSE_INCLUDES("#include \"pkt2util.h\"");
 const std::string quote_mysql("`");
 
-void replaceWords(
+// Regular expression to match words beginning with 'search'
+bool findWord
+(
+		std::string &subject,
+		const std::string& search
+)
+{
+	std::regex e("\\b" + search + "\\b");
+	std::smatch m;
+	return std::regex_search(subject, m, e);
+}
+
+void replaceWords
+(
 		std::string &subject,
 		const std::string& search,
 		const std::string& replace
 )
 {
     // Regular expression to match words beginning with 'search'
-	std::regex e ("(\\b("+search+"))([^,.]*)");
-	subject = std::regex_replace(subject, e, replace) ;
+	std::regex e("(\\b(" + search + "))([^,. ]*)");
+	subject = std::regex_replace(subject, e, replace);
 }
 
-void replacePacketFieldNames (
+void replacePacketFieldNames
+(
 		std::string &subject,
 		pkt2::Packet *packet
 )
@@ -39,7 +55,6 @@ void replacePacketFieldNames (
 		replaceWords(subject, f, "src->" + f);
 	}
 }
-
 
 std::string getProtoName(enum pkt2::Proto proto) {
 	switch (proto) {
@@ -288,6 +303,8 @@ void messageOptionsToInputPacketStructDeclaration(
 	}
 	strm << "*/" << std::endl << std::endl;
 
+	strm << CLAUSE_INCLUDES << std::endl << std::endl;
+
 	strm << "typedef struct " << packet.name() << " {" << std::endl;
 	for (int f = 0; f < packet.fields_size(); f++)
 	{
@@ -335,12 +352,19 @@ void fieldOptionsToInputPacketReader
 	else
 	{
 		std::string f = variable.get();
-		replacePacketFieldNames(f, &packet);
-		strm << "    dest->" << variable.name() << " = "
-			<< f << std::endl;
 
-		//	<< std::setw(32) << variable.short_name() <<  " "
-		//	<< std::setw(32) << variable.full_name() <<  " " << std::endl;
+		if (findWord(f, CLAUSE_RETURN_VALUE))
+		{
+			replaceWords(f, CLAUSE_RETURN_VALUE, "    dest->" + variable.name());
+			strm << "    "
+				<< f << std::endl;
+		}
+		else
+		{
+			replacePacketFieldNames(f, &packet);
+			strm << "    dest->" << variable.name() << " = "
+				<< f << ";" << std::endl;
+		}
 	}
 }
 
