@@ -1,6 +1,7 @@
 #include "pkt2_code_generator.h"
 
 #include <iostream>
+#include <regex>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -15,6 +16,30 @@
 #include "pkt2.pb.h"
 
 const std::string quote_mysql("`");
+
+void replaceWords(
+		std::string &subject,
+		const std::string& search,
+		const std::string& replace
+)
+{
+    // Regular expression to match words beginning with 'search'
+	std::regex e ("(\\b("+search+"))([^,.]*)");
+	subject = std::regex_replace(subject, e, replace) ;
+}
+
+void replacePacketFieldNames (
+		std::string &subject,
+		pkt2::Packet *packet
+)
+{
+	for (int i = 0; i < packet->fields_size(); i++)
+	{
+		std::string f = packet->fields(i).name();
+		replaceWords(subject, f, "src->" + f);
+	}
+}
+
 
 std::string getProtoName(enum pkt2::Proto proto) {
 	switch (proto) {
@@ -289,8 +314,11 @@ void fieldOptionsToInputPacketReader
 		const google::protobuf::FieldDescriptor *value
 )
 {
+	const google::protobuf::MessageOptions message_options = md->options();
+	pkt2::Packet packet = message_options.GetExtension(pkt2::packet);
 	const google::protobuf::FieldOptions options = value->options();
 	pkt2::Variable variable =  options.GetExtension(pkt2::variable);
+
 
 	// strm << value->DebugString();
 
@@ -306,8 +334,10 @@ void fieldOptionsToInputPacketReader
 	}
 	else
 	{
+		std::string f = variable.get();
+		replacePacketFieldNames(f, &packet);
 		strm << "    dest->" << variable.name() << " = "
-			<< variable.get() << std::endl;
+			<< f << std::endl;
 
 		//	<< std::setw(32) << variable.short_name() <<  " "
 		//	<< std::setw(32) << variable.full_name() <<  " " << std::endl;
