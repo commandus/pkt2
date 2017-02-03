@@ -1,6 +1,3 @@
-#include <nanomsg/nn.h>
-#include <nanomsg/pipeline.h>
-
 #include "pkt2receiver-config.h"
 #include "utilstring.h"
 

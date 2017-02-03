@@ -6,6 +6,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#include <nanomsg/nn.h>
+#include <nanomsg/pipeline.h>
+
 #include <glog/logging.h>
 
 #include "pkt2receivernano.h"

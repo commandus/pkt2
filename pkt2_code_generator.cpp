@@ -272,15 +272,38 @@ void messageOptionsToInputPacketStructDeclaration(
 {
 	const google::protobuf::MessageOptions options = m->options();
 	pkt2::Packet packet =  options.GetExtension(pkt2::packet);
-	pkt2::Address src = packet.source();
+
+	std::vector<pkt2::Address> srcAddresses;
+	std::vector<pkt2::Address> destAddresses;
+
+	for (int i = 0; i < packet.source_size(); i++)
+	{
+		srcAddresses.push_back(packet.source(i));
+	}
+	for (int i = 0; i < packet.destination_size(); i++)
+	{
+		destAddresses.push_back(packet.destination(i));
+	}
+
+
 	strm << "/*" << std::endl;
 	strm << " * Input packet: " <<  std::endl
 			<< " * Name:  " << packet.name() << std::endl
 			<< " * Full:  " << packet.full_name() <<  std::endl
 			<< " * Short: " << packet.short_name() <<  std::endl
-			<< " * Source: "
-			<< getProtoName(src.proto()) << ":" << src.address() <<  ":" << src.port() <<  " "
-			<< std::endl;
+			<< " * Source(s): ";
+
+	for (int i = 0; i < packet.source_size(); i++)
+	{
+		strm << getProtoName(packet.source(i).proto()) << ":" << packet.source(i).address() <<  ":" << packet.source(i).port() << " ";
+	}
+	strm << std::endl;
+	strm << " * Destination(s): ";
+	for (int i = 0; i < packet.destination_size(); i++)
+	{
+		strm << getProtoName(packet.destination(i).proto()) << ":" << packet.destination(i).address() <<  ":" << packet.destination(i).port() << " ";
+	}
+	strm << std::endl;
 
 	strm << "Packet fields:" << std::endl;
 	const std::vector<int> idxs = sortPacketFieldsIndex(packet.fields());

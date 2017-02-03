@@ -602,6 +602,12 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_tostring();
   void set_allocated_tostring(::std::string* tostring);
 
+  // bool index = 12;
+  void clear_index();
+  static const int kIndexFieldNumber = 12;
+  bool index() const;
+  void set_index(bool value);
+
   // @@protoc_insertion_point(class_scope:pkt2.Variable)
  private:
 
@@ -617,6 +623,7 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::google::protobuf::internal::ArenaStringPtr tostring_;
   int type_;
   ::google::protobuf::uint32 priority_;
+  bool index_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -800,23 +807,29 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
 
   // accessors -------------------------------------------------------
 
-  // .pkt2.Address source = 1;
-  bool has_source() const;
+  // repeated .pkt2.Address source = 1;
+  int source_size() const;
   void clear_source();
   static const int kSourceFieldNumber = 1;
-  const ::pkt2::Address& source() const;
-  ::pkt2::Address* mutable_source();
-  ::pkt2::Address* release_source();
-  void set_allocated_source(::pkt2::Address* source);
+  const ::pkt2::Address& source(int index) const;
+  ::pkt2::Address* mutable_source(int index);
+  ::pkt2::Address* add_source();
+  ::google::protobuf::RepeatedPtrField< ::pkt2::Address >*
+      mutable_source();
+  const ::google::protobuf::RepeatedPtrField< ::pkt2::Address >&
+      source() const;
 
-  // .pkt2.Address destination = 2;
-  bool has_destination() const;
+  // repeated .pkt2.Address destination = 2;
+  int destination_size() const;
   void clear_destination();
   static const int kDestinationFieldNumber = 2;
-  const ::pkt2::Address& destination() const;
-  ::pkt2::Address* mutable_destination();
-  ::pkt2::Address* release_destination();
-  void set_allocated_destination(::pkt2::Address* destination);
+  const ::pkt2::Address& destination(int index) const;
+  ::pkt2::Address* mutable_destination(int index);
+  ::pkt2::Address* add_destination();
+  ::google::protobuf::RepeatedPtrField< ::pkt2::Address >*
+      mutable_destination();
+  const ::google::protobuf::RepeatedPtrField< ::pkt2::Address >&
+      destination() const;
 
   // string name = 3;
   void clear_name();
@@ -886,17 +899,34 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   ::std::string* release_set();
   void set_allocated_set(::std::string* set);
 
+  // repeated string head = 9;
+  int head_size() const;
+  void clear_head();
+  static const int kHeadFieldNumber = 9;
+  const ::std::string& head(int index) const;
+  ::std::string* mutable_head(int index);
+  void set_head(int index, const ::std::string& value);
+  void set_head(int index, const char* value);
+  void set_head(int index, const char* value, size_t size);
+  ::std::string* add_head();
+  void add_head(const ::std::string& value);
+  void add_head(const char* value);
+  void add_head(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& head() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_head();
+
   // @@protoc_insertion_point(class_scope:pkt2.Packet)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
+  ::google::protobuf::RepeatedPtrField< ::pkt2::Address > source_;
+  ::google::protobuf::RepeatedPtrField< ::pkt2::Address > destination_;
   ::google::protobuf::RepeatedPtrField< ::pkt2::Field > fields_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> head_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
   ::google::protobuf::internal::ArenaStringPtr set_;
-  ::pkt2::Address* source_;
-  ::pkt2::Address* destination_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -1731,6 +1761,20 @@ inline void Variable::set_allocated_tostring(::std::string* tostring) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.tostring)
 }
 
+// bool index = 12;
+inline void Variable::clear_index() {
+  index_ = false;
+}
+inline bool Variable::index() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.index)
+  return index_;
+}
+inline void Variable::set_index(bool value) {
+  
+  index_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Variable.index)
+}
+
 // -------------------------------------------------------------------
 
 // Address
@@ -1819,82 +1863,64 @@ inline void Address::set_port(::google::protobuf::uint32 value) {
 
 // Packet
 
-// .pkt2.Address source = 1;
-inline bool Packet::has_source() const {
-  return this != internal_default_instance() && source_ != NULL;
+// repeated .pkt2.Address source = 1;
+inline int Packet::source_size() const {
+  return source_.size();
 }
 inline void Packet::clear_source() {
-  if (GetArenaNoVirtual() == NULL && source_ != NULL) delete source_;
-  source_ = NULL;
+  source_.Clear();
 }
-inline const ::pkt2::Address& Packet::source() const {
+inline const ::pkt2::Address& Packet::source(int index) const {
   // @@protoc_insertion_point(field_get:pkt2.Packet.source)
-  return source_ != NULL ? *source_
-                         : *::pkt2::Address::internal_default_instance();
+  return source_.Get(index);
 }
-inline ::pkt2::Address* Packet::mutable_source() {
-  
-  if (source_ == NULL) {
-    source_ = new ::pkt2::Address;
-  }
+inline ::pkt2::Address* Packet::mutable_source(int index) {
   // @@protoc_insertion_point(field_mutable:pkt2.Packet.source)
+  return source_.Mutable(index);
+}
+inline ::pkt2::Address* Packet::add_source() {
+  // @@protoc_insertion_point(field_add:pkt2.Packet.source)
+  return source_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::pkt2::Address >*
+Packet::mutable_source() {
+  // @@protoc_insertion_point(field_mutable_list:pkt2.Packet.source)
+  return &source_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::pkt2::Address >&
+Packet::source() const {
+  // @@protoc_insertion_point(field_list:pkt2.Packet.source)
   return source_;
 }
-inline ::pkt2::Address* Packet::release_source() {
-  // @@protoc_insertion_point(field_release:pkt2.Packet.source)
-  
-  ::pkt2::Address* temp = source_;
-  source_ = NULL;
-  return temp;
-}
-inline void Packet::set_allocated_source(::pkt2::Address* source) {
-  delete source_;
-  source_ = source;
-  if (source) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Packet.source)
-}
 
-// .pkt2.Address destination = 2;
-inline bool Packet::has_destination() const {
-  return this != internal_default_instance() && destination_ != NULL;
+// repeated .pkt2.Address destination = 2;
+inline int Packet::destination_size() const {
+  return destination_.size();
 }
 inline void Packet::clear_destination() {
-  if (GetArenaNoVirtual() == NULL && destination_ != NULL) delete destination_;
-  destination_ = NULL;
+  destination_.Clear();
 }
-inline const ::pkt2::Address& Packet::destination() const {
+inline const ::pkt2::Address& Packet::destination(int index) const {
   // @@protoc_insertion_point(field_get:pkt2.Packet.destination)
-  return destination_ != NULL ? *destination_
-                         : *::pkt2::Address::internal_default_instance();
+  return destination_.Get(index);
 }
-inline ::pkt2::Address* Packet::mutable_destination() {
-  
-  if (destination_ == NULL) {
-    destination_ = new ::pkt2::Address;
-  }
+inline ::pkt2::Address* Packet::mutable_destination(int index) {
   // @@protoc_insertion_point(field_mutable:pkt2.Packet.destination)
+  return destination_.Mutable(index);
+}
+inline ::pkt2::Address* Packet::add_destination() {
+  // @@protoc_insertion_point(field_add:pkt2.Packet.destination)
+  return destination_.Add();
+}
+inline ::google::protobuf::RepeatedPtrField< ::pkt2::Address >*
+Packet::mutable_destination() {
+  // @@protoc_insertion_point(field_mutable_list:pkt2.Packet.destination)
+  return &destination_;
+}
+inline const ::google::protobuf::RepeatedPtrField< ::pkt2::Address >&
+Packet::destination() const {
+  // @@protoc_insertion_point(field_list:pkt2.Packet.destination)
   return destination_;
-}
-inline ::pkt2::Address* Packet::release_destination() {
-  // @@protoc_insertion_point(field_release:pkt2.Packet.destination)
-  
-  ::pkt2::Address* temp = destination_;
-  destination_ = NULL;
-  return temp;
-}
-inline void Packet::set_allocated_destination(::pkt2::Address* destination) {
-  delete destination_;
-  destination_ = destination;
-  if (destination) {
-    
-  } else {
-    
-  }
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Packet.destination)
 }
 
 // string name = 3;
@@ -2133,6 +2159,61 @@ inline void Packet::set_allocated_set(::std::string* set) {
   }
   set_.SetAllocatedNoArena(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), set);
   // @@protoc_insertion_point(field_set_allocated:pkt2.Packet.set)
+}
+
+// repeated string head = 9;
+inline int Packet::head_size() const {
+  return head_.size();
+}
+inline void Packet::clear_head() {
+  head_.Clear();
+}
+inline const ::std::string& Packet::head(int index) const {
+  // @@protoc_insertion_point(field_get:pkt2.Packet.head)
+  return head_.Get(index);
+}
+inline ::std::string* Packet::mutable_head(int index) {
+  // @@protoc_insertion_point(field_mutable:pkt2.Packet.head)
+  return head_.Mutable(index);
+}
+inline void Packet::set_head(int index, const ::std::string& value) {
+  // @@protoc_insertion_point(field_set:pkt2.Packet.head)
+  head_.Mutable(index)->assign(value);
+}
+inline void Packet::set_head(int index, const char* value) {
+  head_.Mutable(index)->assign(value);
+  // @@protoc_insertion_point(field_set_char:pkt2.Packet.head)
+}
+inline void Packet::set_head(int index, const char* value, size_t size) {
+  head_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Packet.head)
+}
+inline ::std::string* Packet::add_head() {
+  // @@protoc_insertion_point(field_add_mutable:pkt2.Packet.head)
+  return head_.Add();
+}
+inline void Packet::add_head(const ::std::string& value) {
+  head_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:pkt2.Packet.head)
+}
+inline void Packet::add_head(const char* value) {
+  head_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:pkt2.Packet.head)
+}
+inline void Packet::add_head(const char* value, size_t size) {
+  head_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:pkt2.Packet.head)
+}
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+Packet::head() const {
+  // @@protoc_insertion_point(field_list:pkt2.Packet.head)
+  return head_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+Packet::mutable_head() {
+  // @@protoc_insertion_point(field_mutable_list:pkt2.Packet.head)
+  return &head_;
 }
 
 // -------------------------------------------------------------------
