@@ -39,7 +39,7 @@ void replaceWords
 )
 {
     // Regular expression to match words beginning with 'search'
-	std::regex e("(\\b(" + search + "))([^,. ]*)");
+	std::regex e("(\\b(" + search + "))([^(),. ]*)");
 	subject = std::regex_replace(subject, e, replace);
 }
 
@@ -323,12 +323,13 @@ void messageOptionsToInputPacketStructDeclaration(
 
 }
 
-// write input packet struct reader recirsively
+// write input packet structure reader recursively
 void fieldOptionsToInputPacketReader
 (
 		std::ostream &strm,
 		const google::protobuf::Descriptor *md,
-		const google::protobuf::FieldDescriptor *value
+		const google::protobuf::FieldDescriptor *value,
+		std::string prefix
 )
 {
 	const google::protobuf::MessageOptions message_options = md->options();
@@ -336,17 +337,15 @@ void fieldOptionsToInputPacketReader
 	const google::protobuf::FieldOptions options = value->options();
 	pkt2::Variable variable =  options.GetExtension(pkt2::variable);
 
-
-	// strm << value->DebugString();
-
 	// struct
 	if (value->message_type())
 	{
 		const google::protobuf::Descriptor *v = value->message_type();
+		prefix = prefix + "->" + "mutable_" + v->name();
 		for (int f = 0; f < v->field_count(); f++)
 		{
 			const google::protobuf::FieldDescriptor *fd = v->field(f);
-			fieldOptionsToInputPacketReader(strm, md, fd);
+			fieldOptionsToInputPacketReader(strm, md, fd, prefix);
 		}
 	}
 	else
@@ -355,15 +354,15 @@ void fieldOptionsToInputPacketReader
 
 		if (findWord(f, CLAUSE_RETURN_VALUE))
 		{
-			replaceWords(f, CLAUSE_RETURN_VALUE, "    dest->" + variable.name());
+			replaceWords(f, CLAUSE_RETURN_VALUE, prefix + "->set_" + variable.name() + "(");
 			strm << "    "
 				<< f << std::endl;
 		}
 		else
 		{
 			replacePacketFieldNames(f, &packet);
-			strm << "    dest->" << variable.name() << " = "
-				<< f << ";" << std::endl;
+			strm << prefix + "->set_" << variable.name() << "("
+				<< f << ");" << std::endl;
 		}
 	}
 }
@@ -387,7 +386,7 @@ void messageOptionsToInputPacketReader
 	for (int f = 0; f < value->field_count(); f++)
 	{
 		const google::protobuf::FieldDescriptor *fd = value->field(f);
-		fieldOptionsToInputPacketReader(strm, value, fd);
+		fieldOptionsToInputPacketReader(strm, value, fd, "    dest");
 	}
 	strm << "}" << std::endl;
 }

@@ -63,9 +63,9 @@ message Time5
         short_name: "Время"
         full_name: "Время, Unix epoch"
         measure_unit: "s"
-        get: "struct tm info;             info.tm_year = (day_month_year & ((1 << 7) - 1)) + 2000 - 1900; 			info.tm_mon = (day_month_year >> 7) & ((1 << 4) - 1) - 1; 			info.tm_mday = (day_month_year >> (7 + 4)) & ((1 << 5) - 1);			info.tm_hour = hour;			info.tm_min = minute; 			info.tm_sec = second; 			info.tm_isdst = -1; 			RETURN_VALUE = mktime(&info);" 
+        get: "struct tm info;             info.tm_year = (day_month_year & ((1 << 7) - 1)) + 2000 - 1900; 			info.tm_mon = (day_month_year >> 7) & ((1 << 4) - 1) - 1; 			info.tm_mday = (day_month_year >> (7 + 4)) & ((1 << 5) - 1);			info.tm_hour = hour;			info.tm_min = minute; 			info.tm_sec = second; 			info.tm_isdst = -1; 			RETURN_VALUE(mktime(&info));" 
         priority: 0
-        tostring: "char f[30];            struct tm = localtime(&INPUT_VALUE);        	strftime(f, sizeof(f), \"T %Y-%m-%d\", &tm);        	RETURN_VALUE = f;"
+        tostring: "char f[30];            struct tm = localtime(&INPUT_VALUE);        	strftime(f, sizeof(f), \"T %Y-%m-%d\", &tm);        	RETURN_VALUE(f);"
         format: "%d"
     }];
 }
