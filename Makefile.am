@@ -37,7 +37,7 @@ CLEANFILES = $(gengrpcs)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter protoc-gen-pkt2
+bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter write2lmdb protoc-gen-pkt2
 
 #
 # Headers
@@ -47,6 +47,7 @@ NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
+write2lmdb-config.h lmdbwriter.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -131,6 +132,18 @@ tcptransmitter_SOURCES = \
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# write2lmdb
+#
+write2lmdb_SOURCES = \
+	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp input-packet.cpp \
+	daemonize.cpp  ieee754.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	$(common_src)
+
+write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+write2lmdb_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # protoc-gen-pkt2

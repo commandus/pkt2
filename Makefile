@@ -92,7 +92,8 @@ build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
-	tcptransmitter$(EXEEXT) protoc-gen-pkt2$(EXEEXT)
+	tcptransmitter$(EXEEXT) write2lmdb$(EXEEXT) \
+	protoc-gen-pkt2$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -188,6 +189,15 @@ am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
 tcptransmitter_OBJECTS = $(am_tcptransmitter_OBJECTS)
 tcptransmitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_write2lmdb_OBJECTS = write2lmdb-write2lmdb.$(OBJEXT) \
+	write2lmdb-lmdbwriter.$(OBJEXT) \
+	write2lmdb-write2lmdb-config.$(OBJEXT) \
+	write2lmdb-input-packet.$(OBJEXT) \
+	write2lmdb-daemonize.$(OBJEXT) write2lmdb-ieee754.$(OBJEXT) \
+	write2lmdb-utilstring.$(OBJEXT) write2lmdb-utilinet.$(OBJEXT) \
+	write2lmdb-pkt2.pb.$(OBJEXT) $(am__objects_1)
+write2lmdb_OBJECTS = $(am_write2lmdb_OBJECTS)
+write2lmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
 am__v_P_ = $(am__v_P_$(AM_DEFAULT_VERBOSITY))
 am__v_P_0 = false
@@ -243,11 +253,11 @@ am__v_CXXLD_1 =
 SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
 DIST_SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -687,6 +697,7 @@ NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
+write2lmdb-config.h lmdbwriter.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -770,6 +781,18 @@ tcptransmitter_SOURCES = \
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# write2lmdb
+#
+write2lmdb_SOURCES = \
+	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp input-packet.cpp \
+	daemonize.cpp  ieee754.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	$(common_src)
+
+write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+write2lmdb_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # protoc-gen-pkt2
@@ -924,6 +947,10 @@ tcptransmitter$(EXEEXT): $(tcptransmitter_OBJECTS) $(tcptransmitter_DEPENDENCIES
 	@rm -f tcptransmitter$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcptransmitter_OBJECTS) $(tcptransmitter_LDADD) $(LIBS)
 
+write2lmdb$(EXEEXT): $(write2lmdb_OBJECTS) $(write2lmdb_DEPENDENCIES) $(EXTRA_write2lmdb_DEPENDENCIES) 
+	@rm -f write2lmdb$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(write2lmdb_OBJECTS) $(write2lmdb_LDADD) $(LIBS)
+
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 
@@ -987,6 +1014,15 @@ include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
 include ./$(DEPDIR)/tcptransmitter-utilpriority.Po
 include ./$(DEPDIR)/tcptransmitter-utilstring.Po
+include ./$(DEPDIR)/write2lmdb-daemonize.Po
+include ./$(DEPDIR)/write2lmdb-ieee754.Po
+include ./$(DEPDIR)/write2lmdb-input-packet.Po
+include ./$(DEPDIR)/write2lmdb-lmdbwriter.Po
+include ./$(DEPDIR)/write2lmdb-pkt2.pb.Po
+include ./$(DEPDIR)/write2lmdb-utilinet.Po
+include ./$(DEPDIR)/write2lmdb-utilstring.Po
+include ./$(DEPDIR)/write2lmdb-write2lmdb-config.Po
+include ./$(DEPDIR)/write2lmdb-write2lmdb.Po
 
 .c.o:
 	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
@@ -1827,6 +1863,132 @@ tcptransmitter-NanoMessage.obj: NanoMessage.cpp
 #	$(AM_V_CXX)source='NanoMessage.cpp' object='tcptransmitter-NanoMessage.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+
+write2lmdb-write2lmdb.o: write2lmdb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-write2lmdb.o -MD -MP -MF $(DEPDIR)/write2lmdb-write2lmdb.Tpo -c -o write2lmdb-write2lmdb.o `test -f 'write2lmdb.cpp' || echo '$(srcdir)/'`write2lmdb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-write2lmdb.Tpo $(DEPDIR)/write2lmdb-write2lmdb.Po
+#	$(AM_V_CXX)source='write2lmdb.cpp' object='write2lmdb-write2lmdb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-write2lmdb.o `test -f 'write2lmdb.cpp' || echo '$(srcdir)/'`write2lmdb.cpp
+
+write2lmdb-write2lmdb.obj: write2lmdb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-write2lmdb.obj -MD -MP -MF $(DEPDIR)/write2lmdb-write2lmdb.Tpo -c -o write2lmdb-write2lmdb.obj `if test -f 'write2lmdb.cpp'; then $(CYGPATH_W) 'write2lmdb.cpp'; else $(CYGPATH_W) '$(srcdir)/write2lmdb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-write2lmdb.Tpo $(DEPDIR)/write2lmdb-write2lmdb.Po
+#	$(AM_V_CXX)source='write2lmdb.cpp' object='write2lmdb-write2lmdb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-write2lmdb.obj `if test -f 'write2lmdb.cpp'; then $(CYGPATH_W) 'write2lmdb.cpp'; else $(CYGPATH_W) '$(srcdir)/write2lmdb.cpp'; fi`
+
+write2lmdb-lmdbwriter.o: lmdbwriter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-lmdbwriter.o -MD -MP -MF $(DEPDIR)/write2lmdb-lmdbwriter.Tpo -c -o write2lmdb-lmdbwriter.o `test -f 'lmdbwriter.cpp' || echo '$(srcdir)/'`lmdbwriter.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-lmdbwriter.Tpo $(DEPDIR)/write2lmdb-lmdbwriter.Po
+#	$(AM_V_CXX)source='lmdbwriter.cpp' object='write2lmdb-lmdbwriter.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-lmdbwriter.o `test -f 'lmdbwriter.cpp' || echo '$(srcdir)/'`lmdbwriter.cpp
+
+write2lmdb-lmdbwriter.obj: lmdbwriter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-lmdbwriter.obj -MD -MP -MF $(DEPDIR)/write2lmdb-lmdbwriter.Tpo -c -o write2lmdb-lmdbwriter.obj `if test -f 'lmdbwriter.cpp'; then $(CYGPATH_W) 'lmdbwriter.cpp'; else $(CYGPATH_W) '$(srcdir)/lmdbwriter.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-lmdbwriter.Tpo $(DEPDIR)/write2lmdb-lmdbwriter.Po
+#	$(AM_V_CXX)source='lmdbwriter.cpp' object='write2lmdb-lmdbwriter.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-lmdbwriter.obj `if test -f 'lmdbwriter.cpp'; then $(CYGPATH_W) 'lmdbwriter.cpp'; else $(CYGPATH_W) '$(srcdir)/lmdbwriter.cpp'; fi`
+
+write2lmdb-write2lmdb-config.o: write2lmdb-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-write2lmdb-config.o -MD -MP -MF $(DEPDIR)/write2lmdb-write2lmdb-config.Tpo -c -o write2lmdb-write2lmdb-config.o `test -f 'write2lmdb-config.cpp' || echo '$(srcdir)/'`write2lmdb-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-write2lmdb-config.Tpo $(DEPDIR)/write2lmdb-write2lmdb-config.Po
+#	$(AM_V_CXX)source='write2lmdb-config.cpp' object='write2lmdb-write2lmdb-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-write2lmdb-config.o `test -f 'write2lmdb-config.cpp' || echo '$(srcdir)/'`write2lmdb-config.cpp
+
+write2lmdb-write2lmdb-config.obj: write2lmdb-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-write2lmdb-config.obj -MD -MP -MF $(DEPDIR)/write2lmdb-write2lmdb-config.Tpo -c -o write2lmdb-write2lmdb-config.obj `if test -f 'write2lmdb-config.cpp'; then $(CYGPATH_W) 'write2lmdb-config.cpp'; else $(CYGPATH_W) '$(srcdir)/write2lmdb-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-write2lmdb-config.Tpo $(DEPDIR)/write2lmdb-write2lmdb-config.Po
+#	$(AM_V_CXX)source='write2lmdb-config.cpp' object='write2lmdb-write2lmdb-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-write2lmdb-config.obj `if test -f 'write2lmdb-config.cpp'; then $(CYGPATH_W) 'write2lmdb-config.cpp'; else $(CYGPATH_W) '$(srcdir)/write2lmdb-config.cpp'; fi`
+
+write2lmdb-input-packet.o: input-packet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-input-packet.o -MD -MP -MF $(DEPDIR)/write2lmdb-input-packet.Tpo -c -o write2lmdb-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-input-packet.Tpo $(DEPDIR)/write2lmdb-input-packet.Po
+#	$(AM_V_CXX)source='input-packet.cpp' object='write2lmdb-input-packet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+
+write2lmdb-input-packet.obj: input-packet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-input-packet.obj -MD -MP -MF $(DEPDIR)/write2lmdb-input-packet.Tpo -c -o write2lmdb-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-input-packet.Tpo $(DEPDIR)/write2lmdb-input-packet.Po
+#	$(AM_V_CXX)source='input-packet.cpp' object='write2lmdb-input-packet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+
+write2lmdb-daemonize.o: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-daemonize.o -MD -MP -MF $(DEPDIR)/write2lmdb-daemonize.Tpo -c -o write2lmdb-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-daemonize.Tpo $(DEPDIR)/write2lmdb-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='write2lmdb-daemonize.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+write2lmdb-daemonize.obj: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-daemonize.obj -MD -MP -MF $(DEPDIR)/write2lmdb-daemonize.Tpo -c -o write2lmdb-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-daemonize.Tpo $(DEPDIR)/write2lmdb-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='write2lmdb-daemonize.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+write2lmdb-ieee754.o: ieee754.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-ieee754.o -MD -MP -MF $(DEPDIR)/write2lmdb-ieee754.Tpo -c -o write2lmdb-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-ieee754.Tpo $(DEPDIR)/write2lmdb-ieee754.Po
+#	$(AM_V_CXX)source='ieee754.cpp' object='write2lmdb-ieee754.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
+
+write2lmdb-ieee754.obj: ieee754.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-ieee754.obj -MD -MP -MF $(DEPDIR)/write2lmdb-ieee754.Tpo -c -o write2lmdb-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-ieee754.Tpo $(DEPDIR)/write2lmdb-ieee754.Po
+#	$(AM_V_CXX)source='ieee754.cpp' object='write2lmdb-ieee754.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+
+write2lmdb-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilstring.o -MD -MP -MF $(DEPDIR)/write2lmdb-utilstring.Tpo -c -o write2lmdb-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilstring.Tpo $(DEPDIR)/write2lmdb-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='write2lmdb-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+write2lmdb-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilstring.obj -MD -MP -MF $(DEPDIR)/write2lmdb-utilstring.Tpo -c -o write2lmdb-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilstring.Tpo $(DEPDIR)/write2lmdb-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='write2lmdb-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+write2lmdb-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilinet.o -MD -MP -MF $(DEPDIR)/write2lmdb-utilinet.Tpo -c -o write2lmdb-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilinet.Tpo $(DEPDIR)/write2lmdb-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='write2lmdb-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+write2lmdb-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilinet.obj -MD -MP -MF $(DEPDIR)/write2lmdb-utilinet.Tpo -c -o write2lmdb-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilinet.Tpo $(DEPDIR)/write2lmdb-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='write2lmdb-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+write2lmdb-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pkt2.pb.o -MD -MP -MF $(DEPDIR)/write2lmdb-pkt2.pb.Tpo -c -o write2lmdb-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pkt2.pb.Tpo $(DEPDIR)/write2lmdb-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='write2lmdb-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+write2lmdb-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/write2lmdb-pkt2.pb.Tpo -c -o write2lmdb-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pkt2.pb.Tpo $(DEPDIR)/write2lmdb-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='write2lmdb-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
