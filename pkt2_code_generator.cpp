@@ -29,6 +29,59 @@ std::string getProtoName(enum pkt2::Proto proto) {
 	}
 }
 
+std::string getPacketInputTypeString(enum pkt2::InputType inputtype, int size) {
+	switch (inputtype) {
+	case pkt2::INPUT_NONE:
+		return "";
+	case pkt2::INPUT_DOUBLE:
+		switch (size) {
+			case 4:
+				return "float";
+			case 8:
+				return "double";
+			default:
+				return "";
+		}
+		break;
+	case pkt2::INPUT_INT:
+		switch (size) {
+			case 1:
+				return "int8_t";
+			case 2:
+				return "int16_t";
+			case 4:
+				return "int32_t";
+			case 8:
+				return "int64_t";
+			default:
+				return "";
+		}
+		break;
+	case pkt2::INPUT_UINT:
+		switch (size) {
+			case 1:
+				return "uint8_t";
+			case 2:
+				return "uint16_t";
+			case 4:
+				return "uint32_t";
+			case 8:
+				return "uint64_t";
+			default:
+				return "";
+		}
+		break;
+	case pkt2::INPUT_BYTES:
+		return "unsigned char[" + toString(size) + "]";
+	case pkt2::INPUT_CHAR:
+		return "char[" + toString(size) + "]";
+	case pkt2::INPUT_STRING:
+		return "char[" + toString(size) + "]";
+	default:
+		return "-";
+	}
+}
+
 const std::map<std::string, std::string> types_mysql = {
 	{"primary", "int(20) NOT NULL PRIMARY KEY AUTO_INCREMENT"},
 	{"id", "int(20)"},
@@ -172,7 +225,7 @@ std::vector<int> sortPacketFieldsIndex(
 	return idx;
 }
 
-void messageOptionsToString(
+void messageOptionsToInputPacketStructDeclaration(
 		std::ostream &strm,
 		const google::protobuf::Descriptor *m
 )
@@ -192,7 +245,7 @@ void messageOptionsToString(
 	strm << "Packet fields:" << std::endl;
 	const std::vector<int> idxs = sortPacketFieldsIndex(packet.fields());
 
-	strm << spaces(' ', 41) << "Offset   Bytes   Type# Name" << std::endl;
+	strm << spaces(' ', 41) << "Offset   Bytes Type                 Name" << std::endl;
 	int ofs = 0;
 	for (int f = 0; f < packet.fields_size(); f++)
 	{
@@ -200,31 +253,91 @@ void messageOptionsToString(
 		int sz = field.size();
 		strm
 			<< spaces(' ', field.offset()) << spaces('|', sz) << spaces(' ', 40 - field.offset() - sz)
+			<< std::right
 			<< std::setw(7) << field.offset() << " "
 			<< std::setw(7) << field.size() << " "
-			<< std::setw(7) << field.type() << " "
+			<< std::setw(20) << std::left << getPacketInputTypeString(field.type(), field.size()) << " "
 			<< field.name() << " "
 			<< std::endl;
 		ofs += sz;
 	}
-	strm << "*/" << std::endl;
+	strm << "*/" << std::endl << std::endl;
+
+	strm << "typedef struct " << packet.name() << " {" << std::endl;
+	for (int f = 0; f < packet.fields_size(); f++)
+	{
+		pkt2::Field field = packet.fields(idxs[f]);
+		int sz = field.size();
+		strm
+			<< "    " << std::left << std::setw(18)
+			<< getPacketInputTypeString(field.type(), field.size()) << " "
+			<< field.name() << ";"
+			<< std::endl;
+		ofs += sz;
+	}
+	strm << "} " << packet.name() << ";" << std::endl << std::endl;
+
 	strm << std::endl;
 
 }
 
-void fieldOptionsToStream
+// write input packet struct reader recirsively
+void fieldOptionsToInputPacketReader
 (
 		std::ostream &strm,
+		const google::protobuf::Descriptor *md,
 		const google::protobuf::FieldDescriptor *value
 )
 {
 	const google::protobuf::FieldOptions options = value->options();
 	pkt2::Variable variable =  options.GetExtension(pkt2::variable);
-	strm << "Field: "
-			<< variable.name() <<  " "
-			<< variable.short_name() <<  " "
-			<< variable.full_name() <<  " " << std::endl;
+
+	// strm << value->DebugString();
+
+	// struct
+	if (value->message_type())
+	{
+		const google::protobuf::Descriptor *v = value->message_type();
+		for (int f = 0; f < v->field_count(); f++)
+		{
+			const google::protobuf::FieldDescriptor *fd = v->field(f);
+			fieldOptionsToInputPacketReader(strm, md, fd);
+		}
+	}
+	else
+	{
+		strm << "    dest->" << variable.name() << " = "
+			<< variable.get() << std::endl;
+
+		//	<< std::setw(32) << variable.short_name() <<  " "
+		//	<< std::setw(32) << variable.full_name() <<  " " << std::endl;
+	}
 }
+
+void messageOptionsToInputPacketReader
+(
+		std::ostream &strm,
+		const google::protobuf::Descriptor *value
+)
+{
+	const google::protobuf::MessageOptions options = value->options();
+	pkt2::Packet packet =  options.GetExtension(pkt2::packet);
+
+	strm << "bool struct_" << packet.name() << "_to_" << value->name()
+			<< "("
+			<< value->name() << " *dest"
+			<< ", "
+			<< "struct " << packet.name() << " *src"
+			<< ") {"
+			<< std::endl;
+	for (int f = 0; f < value->field_count(); f++)
+	{
+		const google::protobuf::FieldDescriptor *fd = value->field(f);
+		fieldOptionsToInputPacketReader(strm, value, fd);
+	}
+	strm << "}" << std::endl;
+}
+
 
 bool Pkt2CodeGenerator::generateSQL(
 	const google::protobuf::FileDescriptor* file,
@@ -344,12 +457,21 @@ bool Pkt2CodeGenerator::generateOptions(
 
 	std::stringstream ss;
 	ss << "/*"	<< std::endl << " * This is an automatically generated file, do not edit." << std::endl
-			<< " * " << timeToString(0) << std::endl;
+			<< " * " << file->name() << ".options, source file: " << file->name() << std::endl
+			<< " * " << timeToString(0) << std::endl
+			<< " * " << file->dependency_count() << " dependencies: " << std::endl;
 
+	for (int i = 0; i < file->dependency_count(); i++)
+	{
+		ss << " *     "	<< file->dependency(i)->name() << std::endl;
+	}
+
+
+	ss << " * " << file->message_type_count() << " messages: " << std::endl;
 	for (int i = 0; i < file->message_type_count(); i++)
 	{
 		const google::protobuf::Descriptor *m = file->message_type(i);
-		ss << " * " << m->name() << std::endl;
+		ss << " *     " << m->name() << std::endl;
 	}
 	ss << " */" << std::endl << std::endl;
 
@@ -358,16 +480,9 @@ bool Pkt2CodeGenerator::generateOptions(
 	{
 		const google::protobuf::Descriptor *m = file->message_type(i);
 
-		messageOptionsToString(ss, m);
+		messageOptionsToInputPacketStructDeclaration(ss, m);
 
-		ss << "Message fields: " << std::endl;
-		for (int f = 0; f < m->field_count(); f++)
-		{
-			const google::protobuf::FieldDescriptor *fd = m->field(f);
-			fieldOptionsToStream(ss, fd);
-
-		}
-		ss << std::endl << std::endl;
+		messageOptionsToInputPacketReader(ss, m);
 	}
 
 	printer.PrintRaw(ss.str());

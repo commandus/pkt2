@@ -56,8 +56,12 @@ uint64_t E164ToLong(const std::string &value);
 
 std::string Long2E164(const uint64_t value);
 
-
-std::string uint64ToString(const uint64_t value);
+template <typename T> std::string toString(const T value)
+{
+        std::stringstream idss;
+        idss << value;
+        return idss.str();
+}
 
 std::string doubleToString(const double value);
 

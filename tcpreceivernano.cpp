@@ -26,7 +26,7 @@ int get_addr_info
 	hints.ai_flags = AI_PASSIVE; 
 	
 	// Fill the res data structure and make sure that the results make sense. 
-	int status = getaddrinfo(NULL, uint64ToString(config->port).c_str(), &hints, res);
+	int status = getaddrinfo(NULL, toString(config->port).c_str(), &hints, res);
 	if (status != 0)
 	{
         LOG(ERROR) << "getaddrinfo error: " << gai_strerror(status);

@@ -28,7 +28,7 @@ message IE_Location
 {
     // input packet description
     option(pkt2.packet) = { 
-        name: "ioheader"
+        name: "iolocation"
         short_name: "Iridium IO header"
         full_name: "Iridium message IO header"
         fields: [

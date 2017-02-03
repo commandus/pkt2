@@ -151,13 +151,6 @@ std::string Long2E164(const uint64_t value)
 		return "";
 }
 
-std::string uint64ToString(const uint64_t value)
-{
-	std::stringstream idss;
-	idss << value;
-	return idss.str();
-}
-
 std::string doubleToString(const double value)
 {
 	std::stringstream idss;

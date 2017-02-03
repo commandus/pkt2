@@ -18,6 +18,10 @@ message IE_Packet
         name: "iepacketheader"
         short_name: "Iridium packet header"
         full_name: "Iridium message full packet header"
+        head: [
+        	"IE_Location",
+        	"Packet8"
+        ]
         fields: [
         {
             name: "ie_id"
