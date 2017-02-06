@@ -16,21 +16,48 @@
 
 #include "lmdb.h"
 
-bool open_lmdb
-(
-		Config *config
-)
-{
+/**
+ * LMDB environment(transaction, cursor)
+ */
+struct dbenv {
 	MDB_env *env;
 	MDB_dbi dbi;
 	MDB_val key, data;
 	MDB_txn *txn;
 	MDB_cursor *cursor;
-	int rc = mdb_env_create(&env);
-	rc = mdb_env_open(env, config->path.c_str(), config->flags, config->mode);
-	rc = mdb_txn_begin(env, NULL, 0, &txn);
-	rc = mdb_open(txn, NULL, 0, &dbi);
+} dbenv;
+
+/**
+ * Opens LMDB database file
+ * @param env created LMDB environment(transaction, cursor)
+ * @param config pass path, flags, file open mode
+ * @return true- success
+ */
+bool open_lmdb
+(
+	struct dbenv *env,
+	Config *config
+)
+{
+	int rc = mdb_env_create(&env->env);
+	rc |= mdb_env_open(env->env, config->path.c_str(), config->flags, config->mode);
+	rc |= mdb_txn_begin(env->env, NULL, 0, &env->txn);
+	rc |= mdb_open(env->txn, NULL, 0, &env->dbi);
 	return rc == 0;
+}
+
+/**
+ * Close LMDB database file
+ * @param config pass path, flags, file open mode
+ * @return true- success
+ */
+bool close_lmdb
+(
+	struct dbenv *env
+)
+{
+	mdb_close(env->env, env->dbi);
+	mdb_env_close(env->env);
 }
 
 /**
@@ -38,7 +65,8 @@ bool open_lmdb
   *          1- can not listen port
   *          2- invalid nano socket URL
   *          3- buffer allocation error
-  *          4- send error, re-open 
+  *          4- send error, re-open
+  *          5- LMDB open database file error
   */
 int run
 (
@@ -49,10 +77,16 @@ int run
 	if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
 	{
 		LOG(ERROR) << "Can not connect to the IPC url " << config->message_url;
-				return 2;
+		return 2;
 	}
 
-	if (!open_lmdb(config))
+	struct dbenv env;
+
+	if (!open_lmdb(&env, config))
+	{
+		LOG(ERROR) << "Can not open database file " << config->path;
+		return 5;
+	}
     while (!config->stop_request)
     {
         char *buf = NULL;
@@ -77,6 +111,10 @@ int run
               nn_freemsg(buf);
           }
     }
+	if (!close_lmdb(&env))
+	{
+		LOG(ERROR) << "Can not close database file " << config->path;
+	}
 	return nn_shutdown(nano_socket, 0);
 }
 
