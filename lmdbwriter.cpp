@@ -11,18 +11,20 @@
 
 #include <glog/logging.h>
 
+#include <google/protobuf/message.h>
+
 #include "lmdbwriter.h"
 #include "input-packet.h"
+#include "output-message.h"
 
 #include "lmdb.h"
 
 /**
  * LMDB environment(transaction, cursor)
  */
-struct dbenv {
+typedef struct dbenv {
 	MDB_env *env;
 	MDB_dbi dbi;
-	MDB_val key, data;
 	MDB_txn *txn;
 	MDB_cursor *cursor;
 } dbenv;
@@ -41,7 +43,6 @@ bool open_lmdb
 {
 	int rc = mdb_env_create(&env->env);
 	rc |= mdb_env_open(env->env, config->path.c_str(), config->flags, config->mode);
-	rc |= mdb_txn_begin(env->env, NULL, 0, &env->txn);
 	rc |= mdb_open(env->txn, NULL, 0, &env->dbi);
 	return rc == 0;
 }
@@ -58,6 +59,37 @@ bool close_lmdb
 {
 	mdb_close(env->env, env->dbi);
 	mdb_env_close(env->env);
+}
+
+/**
+ * @param env LMDB database
+ * @returns 0- success
+ */
+int put_db
+(
+		struct dbenv *env,
+		struct OutputMessageKey *message_key,
+		const google::protobuf::Message *message_value
+)
+{
+	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
+	if (r)
+		return r;
+
+	MDB_val key, data;
+
+	key.mv_size = sizeof(struct OutputMessageKey);
+	key.mv_data = message_key;
+
+	std::string s = message_value->SerializeAsString();
+	data.mv_size = s.length();
+	data.mv_data = &s;
+
+	r = mdb_put(env->txn, env->dbi, &key, &data, 0);
+	if (r)
+		return r;
+
+	r = mdb_txn_commit(env->txn);
 }
 
 /**
