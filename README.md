@@ -61,7 +61,7 @@ pkt2
 Программы
 
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
-udpreceiver                                                                                  write2lmdb
+udpreceiver                                                                message2gateway   write2lmdb
 
 Имена каналов(очередей) по умолчанию
            ipc:///tmp/input.pkt2                                           ipc:///tmp/output.pkt2
@@ -269,7 +269,7 @@ message TemperaturePkt
 
 Программы
 
-tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter
+tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter message2gateway
 
 показаны на схеме, для передачи данных друг другу используется передача через именованные разделяемые области памяти
  библиотекой nanomsg (http://nanomsg.org/), эмулирующих межпроцессное взаимодействие с очередями сообщений как с сокетами.
