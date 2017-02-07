@@ -3,8 +3,8 @@
 
 #include <string>
 
-#define PROGRAM_NAME             "handlerpq"
-#define PROGRAM_DESCRIPTION      "PostgreSQLreceiver"
+#define PROGRAM_NAME             "message2gateway"
+#define PROGRAM_DESCRIPTION      "protobuf message injector. Read protobuf message(s) from stdin or file. Each message must be delimited."
 
 /**
   *      \see
@@ -28,12 +28,16 @@ public:
     Config(int argc, char* argv[]);
     int error();
 
-    uint32_t verbosity;
-    size_t buffer_size;
+    int verbosity;
+
+    int retries;            ///< default 0
+    int retry_delay;        ///< default 60 seconds
+
+    std::string message_url;
+    std::string file_name;
 
     bool daemonize;
     bool stop_request;
-    std::string message_url;
 };
 
 

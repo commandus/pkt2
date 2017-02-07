@@ -93,7 +93,7 @@ host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
 	tcptransmitter$(EXEEXT) write2lmdb$(EXEEXT) \
-	protoc-gen-pkt2$(EXEEXT)
+	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -128,6 +128,16 @@ AM_V_lt = $(am__v_lt_$(V))
 am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
 am__v_lt_0 = --silent
 am__v_lt_1 = 
+am_message2gateway_OBJECTS =  \
+	message2gateway-message2gateway.$(OBJEXT) \
+	message2gateway-message2gateway-impl.$(OBJEXT) \
+	message2gateway-message2gateway-config.$(OBJEXT) \
+	message2gateway-daemonize.$(OBJEXT) \
+	message2gateway-utilstring.$(OBJEXT) \
+	message2gateway-utilinet.$(OBJEXT) \
+	message2gateway-pkt2.pb.$(OBJEXT) $(am__objects_1)
+message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
+message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-pkt2gateway-config.$(OBJEXT) \
 	pkt2gateway-daemonize.$(OBJEXT) pkt2gateway-ieee754.$(OBJEXT) \
@@ -250,14 +260,16 @@ AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
-DIST_SOURCES = $(handlerpq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
+SOURCES = $(handlerpq_SOURCES) $(message2gateway_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
+	$(write2lmdb_SOURCES)
+DIST_SOURCES = $(handlerpq_SOURCES) $(message2gateway_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
+	$(write2lmdb_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -696,7 +708,7 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
-tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
+tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -804,6 +816,17 @@ protoc_gen_pkt2_SOURCES = \
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
 protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# message2gateway
+#
+message2gateway_SOURCES = \
+	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp \
+	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	$(common_src)
+
+message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
+message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
@@ -923,6 +946,10 @@ handlerpq$(EXEEXT): $(handlerpq_OBJECTS) $(handlerpq_DEPENDENCIES) $(EXTRA_handl
 	@rm -f handlerpq$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(handlerpq_OBJECTS) $(handlerpq_LDADD) $(LIBS)
 
+message2gateway$(EXEEXT): $(message2gateway_OBJECTS) $(message2gateway_DEPENDENCIES) $(EXTRA_message2gateway_DEPENDENCIES) 
+	@rm -f message2gateway$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(message2gateway_OBJECTS) $(message2gateway_LDADD) $(LIBS)
+
 pkt2gateway$(EXEEXT): $(pkt2gateway_OBJECTS) $(pkt2gateway_DEPENDENCIES) $(EXTRA_pkt2gateway_DEPENDENCIES) 
 	@rm -f pkt2gateway$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pkt2gateway_OBJECTS) $(pkt2gateway_LDADD) $(LIBS)
@@ -965,6 +992,13 @@ include ./$(DEPDIR)/handlerpq-ieee754.Po
 include ./$(DEPDIR)/handlerpq-utilinet.Po
 include ./$(DEPDIR)/handlerpq-utilpriority.Po
 include ./$(DEPDIR)/handlerpq-utilstring.Po
+include ./$(DEPDIR)/message2gateway-daemonize.Po
+include ./$(DEPDIR)/message2gateway-message2gateway-config.Po
+include ./$(DEPDIR)/message2gateway-message2gateway-impl.Po
+include ./$(DEPDIR)/message2gateway-message2gateway.Po
+include ./$(DEPDIR)/message2gateway-pkt2.pb.Po
+include ./$(DEPDIR)/message2gateway-utilinet.Po
+include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
 include ./$(DEPDIR)/pkt2gateway-daemonize.Po
 include ./$(DEPDIR)/pkt2gateway-ieee754.Po
@@ -1205,6 +1239,104 @@ handlerpq-NanoMessage.obj: NanoMessage.cpp
 #	$(AM_V_CXX)source='NanoMessage.cpp' object='handlerpq-NanoMessage.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+
+message2gateway-message2gateway.o: message2gateway.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway.o -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway.Tpo -c -o message2gateway-message2gateway.o `test -f 'message2gateway.cpp' || echo '$(srcdir)/'`message2gateway.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway.Tpo $(DEPDIR)/message2gateway-message2gateway.Po
+#	$(AM_V_CXX)source='message2gateway.cpp' object='message2gateway-message2gateway.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway.o `test -f 'message2gateway.cpp' || echo '$(srcdir)/'`message2gateway.cpp
+
+message2gateway-message2gateway.obj: message2gateway.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway.obj -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway.Tpo -c -o message2gateway-message2gateway.obj `if test -f 'message2gateway.cpp'; then $(CYGPATH_W) 'message2gateway.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway.Tpo $(DEPDIR)/message2gateway-message2gateway.Po
+#	$(AM_V_CXX)source='message2gateway.cpp' object='message2gateway-message2gateway.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway.obj `if test -f 'message2gateway.cpp'; then $(CYGPATH_W) 'message2gateway.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway.cpp'; fi`
+
+message2gateway-message2gateway-impl.o: message2gateway-impl.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway-impl.o -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway-impl.Tpo -c -o message2gateway-message2gateway-impl.o `test -f 'message2gateway-impl.cpp' || echo '$(srcdir)/'`message2gateway-impl.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway-impl.Tpo $(DEPDIR)/message2gateway-message2gateway-impl.Po
+#	$(AM_V_CXX)source='message2gateway-impl.cpp' object='message2gateway-message2gateway-impl.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway-impl.o `test -f 'message2gateway-impl.cpp' || echo '$(srcdir)/'`message2gateway-impl.cpp
+
+message2gateway-message2gateway-impl.obj: message2gateway-impl.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway-impl.obj -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway-impl.Tpo -c -o message2gateway-message2gateway-impl.obj `if test -f 'message2gateway-impl.cpp'; then $(CYGPATH_W) 'message2gateway-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway-impl.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway-impl.Tpo $(DEPDIR)/message2gateway-message2gateway-impl.Po
+#	$(AM_V_CXX)source='message2gateway-impl.cpp' object='message2gateway-message2gateway-impl.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway-impl.obj `if test -f 'message2gateway-impl.cpp'; then $(CYGPATH_W) 'message2gateway-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway-impl.cpp'; fi`
+
+message2gateway-message2gateway-config.o: message2gateway-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway-config.o -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway-config.Tpo -c -o message2gateway-message2gateway-config.o `test -f 'message2gateway-config.cpp' || echo '$(srcdir)/'`message2gateway-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway-config.Tpo $(DEPDIR)/message2gateway-message2gateway-config.Po
+#	$(AM_V_CXX)source='message2gateway-config.cpp' object='message2gateway-message2gateway-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway-config.o `test -f 'message2gateway-config.cpp' || echo '$(srcdir)/'`message2gateway-config.cpp
+
+message2gateway-message2gateway-config.obj: message2gateway-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway-config.obj -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway-config.Tpo -c -o message2gateway-message2gateway-config.obj `if test -f 'message2gateway-config.cpp'; then $(CYGPATH_W) 'message2gateway-config.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway-config.Tpo $(DEPDIR)/message2gateway-message2gateway-config.Po
+#	$(AM_V_CXX)source='message2gateway-config.cpp' object='message2gateway-message2gateway-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway-config.obj `if test -f 'message2gateway-config.cpp'; then $(CYGPATH_W) 'message2gateway-config.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway-config.cpp'; fi`
+
+message2gateway-daemonize.o: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-daemonize.o -MD -MP -MF $(DEPDIR)/message2gateway-daemonize.Tpo -c -o message2gateway-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-daemonize.Tpo $(DEPDIR)/message2gateway-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='message2gateway-daemonize.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+message2gateway-daemonize.obj: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-daemonize.obj -MD -MP -MF $(DEPDIR)/message2gateway-daemonize.Tpo -c -o message2gateway-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-daemonize.Tpo $(DEPDIR)/message2gateway-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='message2gateway-daemonize.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+message2gateway-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilstring.o -MD -MP -MF $(DEPDIR)/message2gateway-utilstring.Tpo -c -o message2gateway-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilstring.Tpo $(DEPDIR)/message2gateway-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='message2gateway-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+message2gateway-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilstring.obj -MD -MP -MF $(DEPDIR)/message2gateway-utilstring.Tpo -c -o message2gateway-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilstring.Tpo $(DEPDIR)/message2gateway-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='message2gateway-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+message2gateway-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilinet.o -MD -MP -MF $(DEPDIR)/message2gateway-utilinet.Tpo -c -o message2gateway-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilinet.Tpo $(DEPDIR)/message2gateway-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='message2gateway-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+message2gateway-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilinet.obj -MD -MP -MF $(DEPDIR)/message2gateway-utilinet.Tpo -c -o message2gateway-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilinet.Tpo $(DEPDIR)/message2gateway-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='message2gateway-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+message2gateway-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pkt2.pb.o -MD -MP -MF $(DEPDIR)/message2gateway-pkt2.pb.Tpo -c -o message2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pkt2.pb.Tpo $(DEPDIR)/message2gateway-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+message2gateway-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/message2gateway-pkt2.pb.Tpo -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pkt2.pb.Tpo $(DEPDIR)/message2gateway-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
 pkt2gateway-pkt2gateway.o: pkt2gateway.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2gateway.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2gateway.Tpo -c -o pkt2gateway-pkt2gateway.o `test -f 'pkt2gateway.cpp' || echo '$(srcdir)/'`pkt2gateway.cpp

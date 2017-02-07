@@ -37,7 +37,7 @@ CLEANFILES = $(gengrpcs)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter write2lmdb protoc-gen-pkt2
+bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter write2lmdb protoc-gen-pkt2 message2gateway
 
 #
 # Headers
@@ -46,7 +46,7 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
-tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
+tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
@@ -155,6 +155,18 @@ protoc_gen_pkt2_SOURCES = \
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
 protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
+
+
+#
+# message2gateway
+#
+message2gateway_SOURCES = \
+	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp \
+	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	$(common_src)
+
+message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
+message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
