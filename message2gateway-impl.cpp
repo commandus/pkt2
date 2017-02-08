@@ -25,6 +25,7 @@
 #include "message2gateway-config.h"
 #include "input-packet.h"
 #include "output-message.h"
+#include "utilprotobuf.h"
 
 using namespace google::protobuf;
 using namespace google::protobuf::io;
@@ -42,7 +43,7 @@ bool processMessage
   * Return:  0- success
   *          1- can not listen port
   *          2- invalid nano socket URL
-  *          3- buffer allocation error
+  *          3- protobuf load messages error occurred
   *          4- send error, re-open
   *          5- LMDB open database file error
   */
@@ -67,6 +68,17 @@ int run
 	{
 		strm = new std::ifstream(config->file_name, std::ifstream::in);
 	}
+
+	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors =
+			utilProto::parseProtoFiles("proto");
+	if (messageDescriptors->size() == 0)
+	{
+		LOG(ERROR) << "Can not load proto files from ";
+		return 3;
+	}
+
+	utilProto::debugProto(messageDescriptors);
+
 
 	google::protobuf::io::IstreamInputStream isistream(strm);
     google::protobuf::io::CodedInputStream input(&isistream);
@@ -96,14 +108,9 @@ int run
 
 
 
-
-
-
-
-
-		FileInputStream proto_stream();
-		ArrayInputStream text_stream("", 0);
-		Tokenizer input_proto(&text_stream, NULL);
+/*
+		FileInputStream proto_stream(0);
+		Tokenizer input_proto(&proto_stream, NULL);
 
 		FileDescriptorProto file_desc_proto;
 		Parser parser;
@@ -144,6 +151,7 @@ int run
 			LOG(ERROR) << "Failed in prototype_msg->New(); to create mutable message";
 			break;
 		}
+*/
 
 
 
@@ -161,8 +169,7 @@ int run
 
 
 
-
-
+/*
 		if (!mutable_msg->MergeFromCodedStream(&input))
 		{
 			// fatal error occured
@@ -170,6 +177,7 @@ int run
 			break;
 		}
 		processMessage(mutable_msg);
+		*/
 		input.ConsumedEntireMessage();
 		input.PopLimit(limit);
     }
