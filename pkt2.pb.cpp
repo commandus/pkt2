@@ -200,7 +200,7 @@ void protobuf_AddDesc_pkt2_2eproto_impl() {
       "\nshort_name\030\004 \001(\t\022\021\n\tfull_name\030\005 \001(\t\022\024\n\014"
       "measure_unit\030\006 \001(\t\022\013\n\003get\030\007 \001(\t\022\016\n\006value"
       "s\030\010 \003(\t\022\020\n\010priority\030\t \001(\r\022\016\n\006format\030\n \001("
-      "\t\022\020\n\010tostring\030\013 \001(\t\022\r\n\005index\030\014 \001(\010\"D\n\007Ad"
+      "\t\022\020\n\010tostring\030\013 \001(\t\022\r\n\005index\030\014 \001(\r\"D\n\007Ad"
       "dress\022\032\n\005proto\030\001 \001(\0162\013.pkt2.Proto\022\017\n\007add"
       "ress\030\002 \001(\t\022\014\n\004port\030\003 \001(\r\"\270\001\n\006Packet\022\035\n\006s"
       "ource\030\001 \003(\0132\r.pkt2.Address\022\"\n\013destinatio"
@@ -1195,12 +1195,12 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
-      // bool index = 12;
+      // uint32 index = 12;
       case 12: {
         if (tag == 96u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
                  input, &index_)));
         } else {
           goto handle_unusual;
@@ -1333,9 +1333,9 @@ void Variable::SerializeWithCachedSizes(
       11, this->tostring(), output);
   }
 
-  // bool index = 12;
+  // uint32 index = 12;
   if (this->index() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(12, this->index(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(12, this->index(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:pkt2.Variable)
@@ -1454,9 +1454,9 @@ void Variable::SerializeWithCachedSizes(
         11, this->tostring(), target);
   }
 
-  // bool index = 12;
+  // uint32 index = 12;
   if (this->index() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(12, this->index(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(12, this->index(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Variable)
@@ -1544,9 +1544,11 @@ size_t Variable::ByteSizeLong() const {
         this->priority());
   }
 
-  // bool index = 12;
+  // uint32 index = 12;
   if (this->index() != 0) {
-    total_size += 1 + 1;
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+        this->index());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -2164,15 +2166,15 @@ void Variable::set_allocated_tostring(::std::string* tostring) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.tostring)
 }
 
-// bool index = 12;
+// uint32 index = 12;
 void Variable::clear_index() {
-  index_ = false;
+  index_ = 0u;
 }
-bool Variable::index() const {
+::google::protobuf::uint32 Variable::index() const {
   // @@protoc_insertion_point(field_get:pkt2.Variable.index)
   return index_;
 }
-void Variable::set_index(bool value) {
+void Variable::set_index(::google::protobuf::uint32 value) {
   
   index_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Variable.index)

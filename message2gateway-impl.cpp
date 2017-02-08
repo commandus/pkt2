@@ -14,17 +14,28 @@
 #include <google/protobuf/message.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/text_format.h>
+
+#include <google/protobuf/dynamic_message.h>
+#include <google/protobuf/descriptor.h>
+
+#include <google/protobuf/io/tokenizer.h>
+#include <google/protobuf/compiler/parser.h>
 
 #include "message2gateway-config.h"
 #include "input-packet.h"
 #include "output-message.h"
 
+using namespace google::protobuf;
+using namespace google::protobuf::io;
+using namespace google::protobuf::compiler;
+
 bool processMessage
 (
-		google::protobuf::MessageLite* message
+		google::protobuf::Message* message
 )
 {
-	LOG(INFO) << "Process message " << message->ByteSize();
+	LOG(INFO) << "Process message " << message->DebugString();
 }
 
 /**
@@ -69,15 +80,96 @@ int run
     	}
 		uint32_t size;
 		input.ReadVarint32(&size);
+		LOG(ERROR) << size;
 		google::protobuf::io::CodedInputStream::Limit limit = input.PushLimit(size);
-		google::protobuf::MessageLite* message;
-		if (!message->MergeFromCodedStream(&input))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		FileInputStream proto_stream();
+		ArrayInputStream text_stream("", 0);
+		Tokenizer input_proto(&text_stream, NULL);
+
+		FileDescriptorProto file_desc_proto;
+		Parser parser;
+		if (!parser.Parse(&input_proto, &file_desc_proto)) {
+			LOG(ERROR) << "Failed to parse .proto definition";
+			break;
+		}
+
+		// Set the name in file_desc_proto as Parser::Parse does not do this:
+		std::string message_type("TemperaturePkt");
+		if (!file_desc_proto.has_name()) {
+			file_desc_proto.set_name(message_type);
+		}
+
+		google::protobuf::DescriptorPool pool;
+		const google::protobuf::FileDescriptor* file_desc = pool.BuildFile(file_desc_proto);
+		if (file_desc == NULL) {
+			std::cerr << "Cannot get file descriptor from file descriptor proto"
+					<< file_desc_proto.DebugString();
+			return -1;
+		}
+
+		const google::protobuf::Descriptor* message_desc = file_desc->FindMessageTypeByName(message_type);
+		if (message_desc == NULL) {
+			LOG(ERROR) << "Cannot get message descriptor of message: " << message_type;
+			break;
+		}
+
+		google::protobuf::DynamicMessageFactory factory;
+		const google::protobuf::Message* prototype_msg = factory.GetPrototype(message_desc); // prototype_msg is immutable
+		if (prototype_msg == NULL) {
+			LOG(ERROR) << "Cannot create prototype message from message descriptor";
+			break;
+		}
+
+		google::protobuf::Message* mutable_msg = prototype_msg->New();
+		if (mutable_msg == NULL) {
+			LOG(ERROR) << "Failed in prototype_msg->New(); to create mutable message";
+			break;
+		}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		if (!mutable_msg->MergeFromCodedStream(&input))
 		{
 			// fatal error occured
 			LOG(ERROR) << "Error decoding message, exit.";
 			break;
 		}
-		processMessage(message);
+		processMessage(mutable_msg);
 		input.ConsumedEntireMessage();
 		input.PopLimit(limit);
     }

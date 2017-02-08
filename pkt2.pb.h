@@ -602,11 +602,11 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::std::string* release_tostring();
   void set_allocated_tostring(::std::string* tostring);
 
-  // bool index = 12;
+  // uint32 index = 12;
   void clear_index();
   static const int kIndexFieldNumber = 12;
-  bool index() const;
-  void set_index(bool value);
+  ::google::protobuf::uint32 index() const;
+  void set_index(::google::protobuf::uint32 value);
 
   // @@protoc_insertion_point(class_scope:pkt2.Variable)
  private:
@@ -623,7 +623,7 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::google::protobuf::internal::ArenaStringPtr tostring_;
   int type_;
   ::google::protobuf::uint32 priority_;
-  bool index_;
+  ::google::protobuf::uint32 index_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -1761,15 +1761,15 @@ inline void Variable::set_allocated_tostring(::std::string* tostring) {
   // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.tostring)
 }
 
-// bool index = 12;
+// uint32 index = 12;
 inline void Variable::clear_index() {
-  index_ = false;
+  index_ = 0u;
 }
-inline bool Variable::index() const {
+inline ::google::protobuf::uint32 Variable::index() const {
   // @@protoc_insertion_point(field_get:pkt2.Variable.index)
   return index_;
 }
-inline void Variable::set_index(bool value) {
+inline void Variable::set_index(::google::protobuf::uint32 value) {
   
   index_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Variable.index)
