@@ -93,7 +93,8 @@ host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
 	tcptransmitter$(EXEEXT) write2lmdb$(EXEEXT) \
-	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT)
+	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
+	example1message$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -114,7 +115,21 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(configdir)" \
 	"$(DESTDIR)$(includedir)"
 PROGRAMS = $(bin_PROGRAMS)
+am__dirstamp = $(am__leading_dot)dirstamp
 am__objects_1 =
+am_example1message_OBJECTS =  \
+	example1message-example1message.$(OBJEXT) \
+	example/example1message-example1.pb.$(OBJEXT) \
+	example1message-utilstring.$(OBJEXT) \
+	example1message-utilinet.$(OBJEXT) \
+	example1message-pkt2.pb.$(OBJEXT) $(am__objects_1)
+example1message_OBJECTS = $(am_example1message_OBJECTS)
+am__DEPENDENCIES_1 =
+example1message_DEPENDENCIES = $(am__DEPENDENCIES_1)
+AM_V_lt = $(am__v_lt_$(V))
+am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+am__v_lt_0 = --silent
+am__v_lt_1 = 
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-handlerpq-config.$(OBJEXT) \
 	handlerpq-daemonize.$(OBJEXT) handlerpq-ieee754.$(OBJEXT) \
@@ -122,12 +137,7 @@ am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-utilstring.$(OBJEXT) handlerpq-utilinet.$(OBJEXT) \
 	handlerpq-NanoMessage.$(OBJEXT) $(am__objects_1)
 handlerpq_OBJECTS = $(am_handlerpq_OBJECTS)
-am__DEPENDENCIES_1 =
 handlerpq_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
-AM_V_lt = $(am__v_lt_$(V))
-am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
-am__v_lt_0 = --silent
-am__v_lt_1 = 
 am_message2gateway_OBJECTS =  \
 	message2gateway-message2gateway.$(OBJEXT) \
 	message2gateway-message2gateway-impl.$(OBJEXT) \
@@ -135,7 +145,8 @@ am_message2gateway_OBJECTS =  \
 	message2gateway-daemonize.$(OBJEXT) \
 	message2gateway-utilstring.$(OBJEXT) \
 	message2gateway-utilinet.$(OBJEXT) \
-	message2gateway-pkt2.pb.$(OBJEXT) $(am__objects_1)
+	message2gateway-pkt2.pb.$(OBJEXT) \
+	message2gateway-protobuf-util.$(OBJEXT) $(am__objects_1)
 message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
@@ -260,16 +271,16 @@ AM_V_CXXLD = $(am__v_CXXLD_$(V))
 am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
-SOURCES = $(handlerpq_SOURCES) $(message2gateway_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
-	$(write2lmdb_SOURCES)
-DIST_SOURCES = $(handlerpq_SOURCES) $(message2gateway_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
-	$(write2lmdb_SOURCES)
+SOURCES = $(example1message_SOURCES) $(handlerpq_SOURCES) \
+	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
+DIST_SOURCES = $(example1message_SOURCES) $(handlerpq_SOURCES) \
+	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -706,7 +717,7 @@ CLEANFILES = $(gengrpcs)
 #
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
-utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h \
+utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h protobuf-util.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h \
@@ -822,11 +833,22 @@ protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp \
-	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp protobuf-util.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
 message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# example1message
+#
+example1message_SOURCES = \
+	example1message.cpp example/example1.pb.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	$(common_src)
+
+example1message_LDADD = -lprotobuf $(SNMPLIBS)
+example1message_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
@@ -941,6 +963,18 @@ clean-binPROGRAMS:
 	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
 	echo " rm -f" $$list; \
 	rm -f $$list
+example/$(am__dirstamp):
+	@$(MKDIR_P) example
+	@: > example/$(am__dirstamp)
+example/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) example/$(DEPDIR)
+	@: > example/$(DEPDIR)/$(am__dirstamp)
+example/example1message-example1.pb.$(OBJEXT):  \
+	example/$(am__dirstamp) example/$(DEPDIR)/$(am__dirstamp)
+
+example1message$(EXEEXT): $(example1message_OBJECTS) $(example1message_DEPENDENCIES) $(EXTRA_example1message_DEPENDENCIES) 
+	@rm -f example1message$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(example1message_OBJECTS) $(example1message_LDADD) $(LIBS)
 
 handlerpq$(EXEEXT): $(handlerpq_OBJECTS) $(handlerpq_DEPENDENCIES) $(EXTRA_handlerpq_DEPENDENCIES) 
 	@rm -f handlerpq$(EXEEXT)
@@ -980,10 +1014,15 @@ write2lmdb$(EXEEXT): $(write2lmdb_OBJECTS) $(write2lmdb_DEPENDENCIES) $(EXTRA_wr
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f example/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
 
+include ./$(DEPDIR)/example1message-example1message.Po
+include ./$(DEPDIR)/example1message-pkt2.pb.Po
+include ./$(DEPDIR)/example1message-utilinet.Po
+include ./$(DEPDIR)/example1message-utilstring.Po
 include ./$(DEPDIR)/handlerpq-NanoMessage.Po
 include ./$(DEPDIR)/handlerpq-daemonize.Po
 include ./$(DEPDIR)/handlerpq-handlerpq-config.Po
@@ -997,6 +1036,7 @@ include ./$(DEPDIR)/message2gateway-message2gateway-config.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-impl.Po
 include ./$(DEPDIR)/message2gateway-message2gateway.Po
 include ./$(DEPDIR)/message2gateway-pkt2.pb.Po
+include ./$(DEPDIR)/message2gateway-protobuf-util.Po
 include ./$(DEPDIR)/message2gateway-utilinet.Po
 include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
@@ -1057,24 +1097,28 @@ include ./$(DEPDIR)/write2lmdb-utilinet.Po
 include ./$(DEPDIR)/write2lmdb-utilstring.Po
 include ./$(DEPDIR)/write2lmdb-write2lmdb-config.Po
 include ./$(DEPDIR)/write2lmdb-write2lmdb.Po
+include example/$(DEPDIR)/example1message-example1.pb.Po
 
 .c.o:
-	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	$(AM_V_CC)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c -o $@ $<
 
 .c.obj:
-	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(COMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	$(AM_V_CC)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .c.lo:
-	$(AM_V_CC)$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
 #	$(AM_V_CC)source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
@@ -1108,25 +1152,98 @@ tcpreceiver-get_rss.obj: get_rss.c
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o tcpreceiver-get_rss.obj `if test -f 'get_rss.c'; then $(CYGPATH_W) 'get_rss.c'; else $(CYGPATH_W) '$(srcdir)/get_rss.c'; fi`
 
 .cpp.o:
-	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	$(AM_V_CXX)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ $<
 
 .cpp.obj:
-	$(AM_V_CXX)$(CXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Po
 #	$(AM_V_CXX)source='$<' object='$@' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
 
 .cpp.lo:
-	$(AM_V_CXX)$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
+	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+	$(am__mv) $$depbase.Tpo $$depbase.Plo
 #	$(AM_V_CXX)source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(LTCXXCOMPILE) -c -o $@ $<
+
+example1message-example1message.o: example1message.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-example1message.o -MD -MP -MF $(DEPDIR)/example1message-example1message.Tpo -c -o example1message-example1message.o `test -f 'example1message.cpp' || echo '$(srcdir)/'`example1message.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-example1message.Tpo $(DEPDIR)/example1message-example1message.Po
+#	$(AM_V_CXX)source='example1message.cpp' object='example1message-example1message.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-example1message.o `test -f 'example1message.cpp' || echo '$(srcdir)/'`example1message.cpp
+
+example1message-example1message.obj: example1message.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-example1message.obj -MD -MP -MF $(DEPDIR)/example1message-example1message.Tpo -c -o example1message-example1message.obj `if test -f 'example1message.cpp'; then $(CYGPATH_W) 'example1message.cpp'; else $(CYGPATH_W) '$(srcdir)/example1message.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-example1message.Tpo $(DEPDIR)/example1message-example1message.Po
+#	$(AM_V_CXX)source='example1message.cpp' object='example1message-example1message.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-example1message.obj `if test -f 'example1message.cpp'; then $(CYGPATH_W) 'example1message.cpp'; else $(CYGPATH_W) '$(srcdir)/example1message.cpp'; fi`
+
+example/example1message-example1.pb.o: example/example1.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example/example1message-example1.pb.o -MD -MP -MF example/$(DEPDIR)/example1message-example1.pb.Tpo -c -o example/example1message-example1.pb.o `test -f 'example/example1.pb.cpp' || echo '$(srcdir)/'`example/example1.pb.cpp
+	$(AM_V_at)$(am__mv) example/$(DEPDIR)/example1message-example1.pb.Tpo example/$(DEPDIR)/example1message-example1.pb.Po
+#	$(AM_V_CXX)source='example/example1.pb.cpp' object='example/example1message-example1.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example/example1message-example1.pb.o `test -f 'example/example1.pb.cpp' || echo '$(srcdir)/'`example/example1.pb.cpp
+
+example/example1message-example1.pb.obj: example/example1.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example/example1message-example1.pb.obj -MD -MP -MF example/$(DEPDIR)/example1message-example1.pb.Tpo -c -o example/example1message-example1.pb.obj `if test -f 'example/example1.pb.cpp'; then $(CYGPATH_W) 'example/example1.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/example/example1.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) example/$(DEPDIR)/example1message-example1.pb.Tpo example/$(DEPDIR)/example1message-example1.pb.Po
+#	$(AM_V_CXX)source='example/example1.pb.cpp' object='example/example1message-example1.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example/example1message-example1.pb.obj `if test -f 'example/example1.pb.cpp'; then $(CYGPATH_W) 'example/example1.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/example/example1.pb.cpp'; fi`
+
+example1message-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-utilstring.o -MD -MP -MF $(DEPDIR)/example1message-utilstring.Tpo -c -o example1message-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-utilstring.Tpo $(DEPDIR)/example1message-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='example1message-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+example1message-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-utilstring.obj -MD -MP -MF $(DEPDIR)/example1message-utilstring.Tpo -c -o example1message-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-utilstring.Tpo $(DEPDIR)/example1message-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='example1message-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+example1message-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-utilinet.o -MD -MP -MF $(DEPDIR)/example1message-utilinet.Tpo -c -o example1message-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-utilinet.Tpo $(DEPDIR)/example1message-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='example1message-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+example1message-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-utilinet.obj -MD -MP -MF $(DEPDIR)/example1message-utilinet.Tpo -c -o example1message-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-utilinet.Tpo $(DEPDIR)/example1message-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='example1message-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+example1message-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-pkt2.pb.o -MD -MP -MF $(DEPDIR)/example1message-pkt2.pb.Tpo -c -o example1message-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-pkt2.pb.Tpo $(DEPDIR)/example1message-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='example1message-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+example1message-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/example1message-pkt2.pb.Tpo -c -o example1message-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-pkt2.pb.Tpo $(DEPDIR)/example1message-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='example1message-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp
@@ -1337,6 +1454,20 @@ message2gateway-pkt2.pb.obj: pkt2.pb.cpp
 #	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
+message2gateway-protobuf-util.o: protobuf-util.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-protobuf-util.o -MD -MP -MF $(DEPDIR)/message2gateway-protobuf-util.Tpo -c -o message2gateway-protobuf-util.o `test -f 'protobuf-util.cpp' || echo '$(srcdir)/'`protobuf-util.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-protobuf-util.Tpo $(DEPDIR)/message2gateway-protobuf-util.Po
+#	$(AM_V_CXX)source='protobuf-util.cpp' object='message2gateway-protobuf-util.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-protobuf-util.o `test -f 'protobuf-util.cpp' || echo '$(srcdir)/'`protobuf-util.cpp
+
+message2gateway-protobuf-util.obj: protobuf-util.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-protobuf-util.obj -MD -MP -MF $(DEPDIR)/message2gateway-protobuf-util.Tpo -c -o message2gateway-protobuf-util.obj `if test -f 'protobuf-util.cpp'; then $(CYGPATH_W) 'protobuf-util.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-util.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-protobuf-util.Tpo $(DEPDIR)/message2gateway-protobuf-util.Po
+#	$(AM_V_CXX)source='protobuf-util.cpp' object='message2gateway-protobuf-util.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-protobuf-util.obj `if test -f 'protobuf-util.cpp'; then $(CYGPATH_W) 'protobuf-util.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-util.cpp'; fi`
 
 pkt2gateway-pkt2gateway.o: pkt2gateway.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2gateway.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2gateway.Tpo -c -o pkt2gateway-pkt2gateway.o `test -f 'pkt2gateway.cpp' || echo '$(srcdir)/'`pkt2gateway.cpp
@@ -2679,6 +2810,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f example/$(DEPDIR)/$(am__dirstamp)
+	-rm -f example/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -2689,7 +2822,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) example/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -2738,7 +2871,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
+	-rm -rf ./$(DEPDIR) example/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -2797,6 +2930,8 @@ $(gengrpcs): Makefile
 	sed -i '/protobuf_InitDefaults_descriptor_2eproto();/d' pkt2.pb.cc
 	sed -i '/protobuf_AddDesc_descriptor_2eproto();/d' pkt2.pb.cc
 	mv pkt2.pb.cc pkt2.pb.cpp
+	protoc -I proto --cpp_out=. proto/example/example1.proto
+	mv example/example1.pb.cc example/example1.pb.cpp
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
