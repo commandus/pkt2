@@ -40,7 +40,7 @@ CLEANFILES = $(gengrpcs)
 # Binaries
 #
 bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter write2lmdb protoc-gen-pkt2 \
-	message2gateway example1message
+	message2gateway example1message example1message1
 
 #
 # Headers
@@ -177,11 +177,22 @@ message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 example1message_SOURCES = \
 	example1message.cpp example/example1.pb.cpp \
-	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	pkt2.pb.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf $(SNMPLIBS)
 example1message_CPPFLAGS = $(commoncppflags) -std=c++11
+
+#
+# example1message1
+#
+example1message1_SOURCES = \
+	example1message1.cpp example/example1.pb.cpp \
+	pkt2.pb.cpp \
+	$(common_src)
+
+example1message1_LDADD = -lprotobuf $(SNMPLIBS)
+example1message1_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
 # Configs, readme, CMake etc.
