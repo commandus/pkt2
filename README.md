@@ -63,6 +63,20 @@ pkt2
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
 udpreceiver                                                                message2gateway   write2lmdb
                                                                            example1message
+                                                                           
+                                                                           
+                                                                           
+### Тесты
+
+example1message1
+
+Сериализует в stdout одно случайное сообщение (сообщение TemperaturePkt, файл описания example/example1.proto)
+
+```
+./example1message1 > 1
+codex -protofile proto/example/example1.proto -message_name TemperaturePkt 1
+```
+
 Имена каналов(очередей) по умолчанию
            ipc:///tmp/input.pkt2                                           ipc:///tmp/output.pkt2
 

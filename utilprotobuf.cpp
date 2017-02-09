@@ -19,6 +19,9 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/io/tokenizer.h>
 #include <google/protobuf/compiler/parser.h>
+#include <google/protobuf/compiler/importer.h>
+
+#include <glog/logging.h>
 
 const std::string fileNameSuffixProto(".proto");
 
@@ -28,6 +31,20 @@ using namespace google::protobuf;
 using namespace google::protobuf::io;
 using namespace google::protobuf::compiler;
 
+struct StdErrErrorCollector : ::google::protobuf::io::ErrorCollector
+{
+    void AddError(int line, int column, const std::string& message) override
+    {
+        // log error
+    	std:cerr << "Error at " << line << ", " << column << ": " << message << std::endl;
+    }
+
+    void AddWarning(int line, int column, const std::string& message) override
+    {
+        // log warning
+    	std:cerr << "Warning at "<< line << ", " << column << ": " << message << std::endl;
+    }
+};
 
 bool parseProtoFile
 (
@@ -35,18 +52,37 @@ bool parseProtoFile
 		std::map<std::string, const google::protobuf::Descriptor*> &messages
 )
 {
+	::google::protobuf::io::MultiFileErrorCollector mf_error_collector;
+	// Allocate the Importer.
+	StdErrErrorCollector error_collector();
+	// Set up the source tree.
+	DiskSourceTree source_tree;
+	source_tree.MapPath("", ".");
+	source_tree.MapPath("pkt2.proto", "proto/pkt2.proto");
+
+	Importer importer(&source_tree, &mf_error_collector);
+	const FileDescriptor *im = importer.Import("pkt2.proto");
+
 	FileInputStream proto_stream(file_descriptor);
 	Tokenizer input_proto(&proto_stream, NULL);
 
 	FileDescriptorProto file_desc_proto;
 	Parser parser;
-	return parser.Parse(&input_proto, &file_desc_proto);
+	parser.RecordErrorsTo(&error_collector);
+
+	bool ok = parser.Parse(&input_proto, &file_desc_proto);
+	if (!ok)
+	{
+
+	}
 
 	google::protobuf::DescriptorPool pool;
+	pool.EnforceWeakDependencies(true);
+
 	const google::protobuf::FileDescriptor* file_desc = pool.BuildFile(file_desc_proto);
 	if (file_desc == NULL)
 	{
-		std::cerr << "Cannot get file descriptor from file descriptor proto " << file_desc_proto.DebugString();
+		LOG(ERROR) << "Cannot get file descriptor from file descriptor proto";
 		return false;
 	}
 
@@ -54,7 +90,7 @@ bool parseProtoFile
 	for (int m = 0; m < count; m++)
 	{
 		const google::protobuf::Descriptor* md = file_desc->message_type(m);
-		std::cerr << "message: " << md->DebugString() << std::endl;
+		LOG(ERROR) << "message: " << md->DebugString();
 		messages[md->name()] = md;
 	}
 	return true;
@@ -97,6 +133,7 @@ namespace utilProto
 		const char *path
 	)
 	{
+		LOG(INFO) << "parseProtoFile: " << path;
 		return parseProtoFile(path, internalMessages);
 	}
 
@@ -157,6 +194,5 @@ namespace utilProto
 		iteratePath(path, onProtoFile);
 		return &internalMessages;
 	}
-
 
 }
