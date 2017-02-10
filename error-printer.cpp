@@ -5,10 +5,22 @@
 #include <iostream>
 #include "error-printer.h"
 
-MFErrorPrinter::MFErrorPrinter(
-		google::protobuf::compiler::DiskSourceTree *tree = NULL
-) :
-	tree_(tree)
+void ErrorPrinter::AddError(int line, int column, const std::string& message)
+{
+	// log error
+	std::cerr << "Error at " << line << ", " << column << ": " << message << std::endl;
+}
+
+void ErrorPrinter::AddWarning(int line, int column, const std::string& message)
+{
+	// log warning
+	std::cerr << "Warning at "<< line << ", " << column << ": " << message << std::endl;
+}
+
+
+MFErrorPrinter::MFErrorPrinter
+(
+)
 {
 
 }

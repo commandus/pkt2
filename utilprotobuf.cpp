@@ -33,38 +33,30 @@ using namespace google::protobuf;
 using namespace google::protobuf::io;
 using namespace google::protobuf::compiler;
 
-struct StdErrErrorCollector : ::google::protobuf::io::ErrorCollector
-{
-    void AddError(int line, int column, const std::string& message) override
-    {
-        // log error
-    	std:cerr << "Error at " << line << ", " << column << ": " << message << std::endl;
-    }
-
-    void AddWarning(int line, int column, const std::string& message) override
-    {
-        // log warning
-    	std:cerr << "Warning at "<< line << ", " << column << ": " << message << std::endl;
-    }
-};
-
 bool parseProtoFile
 (
 		int file_descriptor,
 		std::map<std::string, const google::protobuf::Descriptor*> &messages
 )
 {
-	google::protobuf::compiler::DiskSourceTree tree;
-
-	MFErrorPrinter mf_error_collector(&tree);
-	// Allocate the Importer.
-	StdErrErrorCollector error_collector();
 	// Set up the source tree.
 	DiskSourceTree source_tree;
-	source_tree.MapPath("", ".");
-	source_tree.MapPath("pkt2.proto", "proto/pkt2.proto");
 
-	Importer importer(&source_tree, &mf_error_collector);
+	MFErrorPrinter mf_error_printer;
+	// Allocate the Importer.
+	source_tree.MapPath("", ".");
+	source_tree.MapPath("", "proto");
+
+	Importer importer(&source_tree, &mf_error_printer);
+
+	// Import the file.
+	// std::string fn = "example/example1.proto";
+	std::string fn = "pkt2.proto";
+
+	importer.AddUnusedImportTrackFile(fn);
+	const FileDescriptor* parsed_file = importer.Import(fn);
+	importer.ClearUnusedImportTrackFiles();
+
 	const FileDescriptor *im = importer.Import("pkt2.proto");
 
 	FileInputStream proto_stream(file_descriptor);
@@ -72,7 +64,7 @@ bool parseProtoFile
 
 	FileDescriptorProto file_desc_proto;
 	Parser parser;
-	parser.RecordErrorsTo(&mf_error_collector);
+	parser.RecordErrorsTo(&mf_error_printer);
 
 	bool ok = parser.Parse(&input_proto, &file_desc_proto);
 	if (!ok)

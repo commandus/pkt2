@@ -9,13 +9,21 @@
 #include <google/protobuf/compiler/parser.h>
 #include <google/protobuf/compiler/importer.h>
 
+class ErrorPrinter :
+	public google::protobuf::io::ErrorCollector
+{
+public:
+	void AddError(int line, int column, const std::string& message) override;
+	void AddWarning(int line, int column, const std::string& message) override;
+};
+
 /**
  * A MultiFileErrorCollector that prints errors to stderr.
  */
 
 class MFErrorPrinter :
-		public google::protobuf::io::ErrorCollector,
-		public google::protobuf::compiler::MultiFileErrorCollector
+	public google::protobuf::compiler::MultiFileErrorCollector,
+	public google::protobuf::io::ErrorCollector
 {
 private:
 	google::protobuf::compiler::DiskSourceTree *tree_;
@@ -29,9 +37,7 @@ private:
 		std::ostream& out
 	);
 public:
-	MFErrorPrinter (
-		google::protobuf::compiler::DiskSourceTree *tree
-	);
+	MFErrorPrinter();
 	~MFErrorPrinter();
 
 	// implements MultiFileErrorCollector
