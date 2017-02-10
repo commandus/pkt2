@@ -33,12 +33,18 @@ using namespace google::protobuf;
 using namespace google::protobuf::io;
 using namespace google::protobuf::compiler;
 
-bool parseProtoFile
+bool parseProtoFile2
 (
-		int file_descriptor,
+		const char *fn,
 		std::map<std::string, const google::protobuf::Descriptor*> &messages
 )
 {
+	FILE *f = fopen(fn, "r");
+	if (f == NULL)
+		return false;
+
+	vector<const FileDescriptor*> parsed_files;
+
 	// Set up the source tree.
 	DiskSourceTree source_tree;
 
@@ -50,16 +56,18 @@ bool parseProtoFile
 	Importer importer(&source_tree, &mf_error_printer);
 
 	// Import the file.
-	// std::string fn = "example/example1.proto";
-	std::string fn = "pkt2.proto";
-
+	importer.AddUnusedImportTrackFile("proto/pkt2.proto");
 	importer.AddUnusedImportTrackFile(fn);
 	const FileDescriptor* parsed_file = importer.Import(fn);
 	importer.ClearUnusedImportTrackFiles();
+	if (parsed_file == NULL)
+	{
+		fclose(f);
+		return false;
+	}
+	parsed_files.push_back(parsed_file);
 
-	const FileDescriptor *im = importer.Import("pkt2.proto");
-
-	FileInputStream proto_stream(file_descriptor);
+	FileInputStream proto_stream(fileno(f));
 	Tokenizer input_proto(&proto_stream, NULL);
 
 	FileDescriptorProto file_desc_proto;
@@ -79,6 +87,7 @@ bool parseProtoFile
 	if (file_desc == NULL)
 	{
 		LOG(ERROR) << "Cannot get file descriptor from file descriptor proto";
+		fclose(f);
 		return false;
 	}
 
@@ -89,37 +98,15 @@ bool parseProtoFile
 		LOG(ERROR) << "message: " << md->DebugString();
 		messages[md->name()] = md;
 	}
-	return true;
-}
 
-bool parseProtoFile
-(
-		FILE *file,
-		std::map<std::string, const google::protobuf::Descriptor*> &messages
-)
-{
-	return parseProtoFile(fileno(file), messages);
+
+	fclose(f);
+
+	return true;
 }
 
 namespace utilProto
 {
-
-	/// Each protobuf3 file must have .proto file name suffix
-	bool parseProtoFile
-	(
-		const char *path,
-		std::map<std::string, const google::protobuf::Descriptor*> &messages
-	)
-	{
-		bool r = false;
-		FILE *f = fopen(path, "r");
-		if (f != NULL)
-		{
-			r = parseProtoFile(f, messages);
-			fclose(f);
-		}
-		return r;
-	}
 
 	/**
 	 * for nftw() use only
@@ -130,7 +117,7 @@ namespace utilProto
 	)
 	{
 		LOG(INFO) << "parseProtoFile: " << path;
-		return parseProtoFile(path, internalMessages);
+		return parseProtoFile2(path, internalMessages);
 	}
 
 	void debugProto

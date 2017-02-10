@@ -1,0 +1,123 @@
+syntax = "proto3";
+
+package pkt2;
+
+import "descriptor.proto";
+
+enum InputType {
+    INPUT_NONE                = 0;
+    INPUT_DOUBLE              = 1;
+    INPUT_INT                 = 2;
+    INPUT_UINT                = 3;
+    INPUT_BYTES               = 4;
+    INPUT_CHAR                = 5;
+    INPUT_STRING              = 6;
+};
+
+enum OutputType {
+    // 0 is reserved for errors.
+    OUTPUT_NONE               = 0;
+    OUTPUT_DOUBLE             = 1;
+    OUTPUT_FLOAT              = 2;
+    OUTPUT_INT64              = 3;
+    OUTPUT_UINT64             = 4;
+    OUTPUT_INT32              = 5;
+    OUTPUT_FIXED64            = 6;
+    OUTPUT_FIXED32            = 7;
+    OUTPUT_BOOL               = 8;
+    OUTPUT_STRING             = 9;
+    OUTPUT_GROUP              = 10;  // Tag-delimited aggregate.
+    OUTPUT_MESSAGE            = 11;  // Length-delimited aggregate.
+    OUTPUT_BYTES              = 12;
+    OUTPUT_UINT32             = 13;
+    OUTPUT_ENUM               = 14;
+    OUTPUT_SFIXED32           = 15;
+    OUTPUT_SFIXED64           = 16;
+    OUTPUT_SINT32             = 17;  // Uses ZigZag encoding.
+    OUTPUT_SINT64             = 18;  // Uses ZigZag encoding.
+};
+
+enum Endian {
+    ENDIAN_NO_MATTER          = 0;   // no order at all  
+    ENDIAN_LITTLE_ENDIAN      = 1;
+    ENDIAN_BIG_ENDIAN         = 2;
+};
+
+message Field {
+    string name               = 1;
+    InputType type            = 2;
+    Endian endian             = 3;
+    uint32 offset             = 4;
+    uint32 size               = 5;
+    uint32 tag                = 6;  ///<   тег. Значение должно быть равно указанному
+}
+
+message Variable {
+    string field              = 1;  ///<   Только для вложенных message. Field задает смещение, где находится структура в родительском пакете. 
+    string name               = 2;
+    OutputType type           = 3;
+    string short_name         = 4;  ///<   отображаемое имя
+    string full_name          = 5;  ///<   описание
+    string measure_unit       = 6;  ///<   название единицы измерения (если не задан values)
+    // map<string,string> get
+    string get
+                              = 7;  ///<   формула на заданном языке для приведения значения к единице измерения (если не задан values). Применяются name в вычислениях. Имя переменной, возвращаемое значение- RETURN_VALUE (если нет, то приравнивается все выражение слева)
+    repeated string values    = 8;  ///<   строки для флагов или перечислений по порядку. Если задан, measure_unit и get не действуют.
+    uint32 priority           = 9;  ///<   уровень детализации отображения. 0 (высший)- отображать всегда (по умолчанию), 1- не отображать (не записывать в БД)
+    string format             = 10; ///<   формат преобразования в строку (для определенных типов, например, 8.2f для указания точности)
+    string tostring           = 11; ///<   выражение для преобразования в строку. Имя переменной, возвращаемое значение- RETURN_VALUE(если нет, то приравнивается все выражение слева)
+    uint32 index              = 12; ///<   включить переменную в индекс: 1, 2. В индекс должны входить время (1), идентфикатор устройства (2). Идентификатор пакета (0) формируется из имени сообщения хеш-функцией.
+}
+
+enum Proto {
+    PROTO_NONE                = 0;   // unknown
+    PROTO_TCP                 = 1;
+    PROTO_UDP                 = 2;
+};
+
+message Address {
+    Proto proto               = 1;
+    string address            = 2;
+    uint32 port               = 3;
+}
+
+message Packet {
+    repeated Address source   = 1;   ///<   для фильтрации по источнику. Маска  адресов.
+    repeated Address destination
+                              = 2;   ///<   для фильтрации по адресу получателя. Маска  адресов.
+    string name               = 3;   ///<   лат. имя. Может использоваться для расщирния файлов, имен таблиц БД и т.д.
+    string short_name         = 4;   ///<   отображаемое имя
+    string full_name          = 5;   ///<   описание
+    repeated Field fields     = 6;   ///<   поля пакета
+    string set                = 7;   ///<   формула на заданном языке для установки в пакете из переменных сообщения (обратная функция get)
+    // int32 priorit          = 8;   ///<   приоритет 0- высший. Пакеты с высшим приоритетом проверяются первыми.
+    repeated string head      = 9;   ///<   Если задан(пустой ии непустой)- начальный пакет. Если не задан, он не будет искаться. Содержит (опционально) список сообщений, которые могут следовать за ним в одном пакете (тогла они будут парсироваться).   
+}
+
+/// SQL dialects
+enum Dialect {
+    SQL_POSTGRESQL            = 0;     
+    SQL_MYSQL                 = 1;
+    SQL_FIREBIRD              = 2;
+};
+
+message Sql {
+    Dialect dialect           = 1;
+}
+
+message Output {
+	uint32	id                = 1;
+    Sql     sql               = 2;
+}
+
+extend google.protobuf.MessageOptions {
+    pkt2.Packet packet = 50501;
+}
+
+extend google.protobuf.MessageOptions {
+    pkt2.Output output = 50502;
+}
+
+extend google.protobuf.FieldOptions {
+    pkt2.Variable variable = 50503;
+}

@@ -10,9 +10,16 @@
 #include <stdio.h>
 #define PATH_DELIMITER "\\"
 #else
+#include <sys/param.h>
+#include <fcntl.h>
 #include <ftw.h>
 #include <unistd.h>
 #define PATH_DELIMITER "/"
+
+#ifndef F_GETPATH
+#define F_GETPATH	(1024 + 7)
+#endif
+
 #endif
 
 #include "utilfile.h"
@@ -128,4 +135,16 @@ bool iteratePath
 bool rmFile(const std::string &fn)
 {
 	return std::remove((const char*) fn.c_str()) == 0;
+}
+
+/**
+ * Does not work
+ */
+std::string getFilePathFromDescriptor(int fd)
+{
+	char filePath[MAXPATHLEN];
+	if (fcntl(fd, F_GETPATH, filePath) != -1)
+		return std::string(filePath);
+	else
+		return "";
 }

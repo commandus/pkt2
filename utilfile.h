@@ -18,3 +18,5 @@ bool iteratePath
 	const std::string &path,
 	NodeCallback callback
 );
+
+std::string getFilePathFromDescriptor(int fd);
