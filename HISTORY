@@ -1,1 +1,4 @@
 2017/01/16	First release git@gitlab.com:commandus/pkt2.git
+
+
+gcc -std=c++11 -I. -I ~/src/third_party/protobuf/src -I ~/src/third_party/grpc/third_party/googletest/include main.cc code_generator.cc plugin.pb.cc command_line_interface.cc importer.cc -lprotoc -lprotobuf -lglog -L/usr/lib64 -lstdc++ -o testprotoc
