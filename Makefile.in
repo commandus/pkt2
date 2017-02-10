@@ -146,6 +146,7 @@ am_message2gateway_OBJECTS =  \
 	message2gateway-message2gateway.$(OBJEXT) \
 	message2gateway-message2gateway-impl.$(OBJEXT) \
 	message2gateway-message2gateway-config.$(OBJEXT) \
+	message2gateway-error-printer.$(OBJEXT) \
 	message2gateway-daemonize.$(OBJEXT) \
 	message2gateway-utilstring.$(OBJEXT) \
 	message2gateway-utilinet.$(OBJEXT) \
@@ -727,7 +728,7 @@ NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
-write2lmdb-config.h lmdbwriter.h \
+write2lmdb-config.h lmdbwriter.h error-printer.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -839,7 +840,7 @@ protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 # message2gateway
 #
 message2gateway_SOURCES = \
-	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp \
+	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilprotobuf.cpp utilfile.cpp \
 	$(common_src)
 
@@ -1056,6 +1057,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerpq-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerpq-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message2gateway-daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message2gateway-error-printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message2gateway-message2gateway-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message2gateway-message2gateway-impl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/message2gateway-message2gateway.Po@am__quote@
@@ -1438,6 +1440,20 @@ message2gateway-message2gateway-config.obj: message2gateway-config.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='message2gateway-config.cpp' object='message2gateway-message2gateway-config.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-message2gateway-config.obj `if test -f 'message2gateway-config.cpp'; then $(CYGPATH_W) 'message2gateway-config.cpp'; else $(CYGPATH_W) '$(srcdir)/message2gateway-config.cpp'; fi`
+
+message2gateway-error-printer.o: error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-error-printer.o -MD -MP -MF $(DEPDIR)/message2gateway-error-printer.Tpo -c -o message2gateway-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-error-printer.Tpo $(DEPDIR)/message2gateway-error-printer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='error-printer.cpp' object='message2gateway-error-printer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+
+message2gateway-error-printer.obj: error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-error-printer.obj -MD -MP -MF $(DEPDIR)/message2gateway-error-printer.Tpo -c -o message2gateway-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-error-printer.Tpo $(DEPDIR)/message2gateway-error-printer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='error-printer.cpp' object='message2gateway-error-printer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
 
 message2gateway-daemonize.o: daemonize.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-daemonize.o -MD -MP -MF $(DEPDIR)/message2gateway-daemonize.Tpo -c -o message2gateway-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp

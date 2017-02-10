@@ -23,7 +23,9 @@
 
 #include <glog/logging.h>
 
-const std::string fileNameSuffixProto(".proto");
+#include "error-printer.h"
+
+const std::string fileNameSuffixProto = (".proto");
 
 std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
 
@@ -52,7 +54,9 @@ bool parseProtoFile
 		std::map<std::string, const google::protobuf::Descriptor*> &messages
 )
 {
-	::google::protobuf::io::MultiFileErrorCollector mf_error_collector;
+	google::protobuf::compiler::DiskSourceTree tree;
+
+	MFErrorPrinter mf_error_collector(&tree);
 	// Allocate the Importer.
 	StdErrErrorCollector error_collector();
 	// Set up the source tree.
@@ -68,7 +72,7 @@ bool parseProtoFile
 
 	FileDescriptorProto file_desc_proto;
 	Parser parser;
-	parser.RecordErrorsTo(&error_collector);
+	parser.RecordErrorsTo(&mf_error_collector);
 
 	bool ok = parser.Parse(&input_proto, &file_desc_proto);
 	if (!ok)

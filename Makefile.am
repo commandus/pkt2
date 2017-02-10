@@ -50,7 +50,7 @@ NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
-write2lmdb-config.h lmdbwriter.h \
+write2lmdb-config.h lmdbwriter.h error-printer.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -164,7 +164,7 @@ protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 # message2gateway
 #
 message2gateway_SOURCES = \
-	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp \
+	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilprotobuf.cpp utilfile.cpp \
 	$(common_src)
 
