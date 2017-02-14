@@ -131,7 +131,8 @@ am__v_lt_1 =
 am_example1message1_OBJECTS =  \
 	example1message1-example1message1.$(OBJEXT) \
 	example/example1message1-example1.pb.$(OBJEXT) \
-	example1message1-pkt2.pb.$(OBJEXT) $(am__objects_1)
+	example1message1-pkt2.pb.$(OBJEXT) \
+	example1message1-utilsnmp.$(OBJEXT) $(am__objects_1)
 example1message1_OBJECTS = $(am_example1message1_OBJECTS)
 example1message1_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
@@ -708,7 +709,7 @@ ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
-SNMPLIBS = -lnetsnmpagent -lnetsnmp
+SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
 gengrpcs = pkt2.pb.h pkt2.pb.cpp
 
 #
@@ -725,11 +726,11 @@ CLEANFILES = $(gengrpcs)
 #
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
-utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h utilprotobuf.h utilfile.h \
+utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
-tcpemitter-config.h tcpreceivernano.h input-packet.h \
+tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -862,8 +863,7 @@ example1message_CPPFLAGS = $(commoncppflags) -std=c++11
 # example1message1
 #
 example1message1_SOURCES = \
-	example1message1.cpp example/example1.pb.cpp \
-	pkt2.pb.cpp \
+	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp \
 	$(common_src)
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
@@ -879,7 +879,8 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \
 	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto proto/iridium/iridium1.proto \
-	mib/EAS-IKFIA-MIB
+	mib/EAS-IKFIA-MIB \
+	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -1049,6 +1050,7 @@ include ./$(DEPDIR)/example1message-example1message.Po
 include ./$(DEPDIR)/example1message-pkt2.pb.Po
 include ./$(DEPDIR)/example1message1-example1message1.Po
 include ./$(DEPDIR)/example1message1-pkt2.pb.Po
+include ./$(DEPDIR)/example1message1-utilsnmp.Po
 include ./$(DEPDIR)/handlerpq-NanoMessage.Po
 include ./$(DEPDIR)/handlerpq-daemonize.Po
 include ./$(DEPDIR)/handlerpq-handlerpq-config.Po
@@ -1287,6 +1289,20 @@ example1message1-pkt2.pb.obj: pkt2.pb.cpp
 #	$(AM_V_CXX)source='pkt2.pb.cpp' object='example1message1-pkt2.pb.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
+example1message1-utilsnmp.o: utilsnmp.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-utilsnmp.o -MD -MP -MF $(DEPDIR)/example1message1-utilsnmp.Tpo -c -o example1message1-utilsnmp.o `test -f 'utilsnmp.cpp' || echo '$(srcdir)/'`utilsnmp.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message1-utilsnmp.Tpo $(DEPDIR)/example1message1-utilsnmp.Po
+#	$(AM_V_CXX)source='utilsnmp.cpp' object='example1message1-utilsnmp.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-utilsnmp.o `test -f 'utilsnmp.cpp' || echo '$(srcdir)/'`utilsnmp.cpp
+
+example1message1-utilsnmp.obj: utilsnmp.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-utilsnmp.obj -MD -MP -MF $(DEPDIR)/example1message1-utilsnmp.Tpo -c -o example1message1-utilsnmp.obj `if test -f 'utilsnmp.cpp'; then $(CYGPATH_W) 'utilsnmp.cpp'; else $(CYGPATH_W) '$(srcdir)/utilsnmp.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message1-utilsnmp.Tpo $(DEPDIR)/example1message1-utilsnmp.Po
+#	$(AM_V_CXX)source='utilsnmp.cpp' object='example1message1-utilsnmp.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-utilsnmp.obj `if test -f 'utilsnmp.cpp'; then $(CYGPATH_W) 'utilsnmp.cpp'; else $(CYGPATH_W) '$(srcdir)/utilsnmp.cpp'; fi`
 
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp

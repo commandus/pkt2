@@ -14,7 +14,7 @@ else
 endif
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
-SNMPLIBS = -lnetsnmpagent -lnetsnmp
+SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
 
 gengrpcs = pkt2.pb.h pkt2.pb.cpp
 $(gengrpcs): Makefile
@@ -47,11 +47,11 @@ bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransm
 #
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
-utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  dump.h utilprotobuf.h utilfile.h \
+utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
-tcpemitter-config.h tcpreceivernano.h input-packet.h \
+tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -187,8 +187,7 @@ example1message_CPPFLAGS = $(commoncppflags) -std=c++11
 # example1message1
 #
 example1message1_SOURCES = \
-	example1message1.cpp example/example1.pb.cpp \
-	pkt2.pb.cpp \
+	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp \
 	$(common_src)
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
@@ -204,4 +203,6 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \ 
 	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto proto/iridium/iridium1.proto \
-	mib/EAS-IKFIA-MIB
+	mib/EAS-IKFIA-MIB \
+	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
+	
