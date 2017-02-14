@@ -50,14 +50,15 @@ bool parseProtoFile2
 
 	MFErrorPrinter mf_error_printer;
 	// Allocate the Importer.
-	source_tree.MapPath("", ".");
-	source_tree.MapPath("", "proto");
+	source_tree.MapPath("", "/home/andrei/src/pkt2/proto/example");
 
 	Importer importer(&source_tree, &mf_error_printer);
 
 	// Import the file.
-	importer.AddUnusedImportTrackFile("proto/pkt2.proto");
-	importer.AddUnusedImportTrackFile(fn);
+	const FileDescriptor* parsed_file1 = importer.Import("proto/pkt2.proto");
+	// importer.AddUnusedImportTrackFile("proto/pkt2.proto");
+	// importer.AddUnusedImportTrackFile(fn);
+
 	const FileDescriptor* parsed_file = importer.Import(fn);
 	importer.ClearUnusedImportTrackFiles();
 	if (parsed_file == NULL)

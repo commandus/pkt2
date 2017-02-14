@@ -6,7 +6,7 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/text_format.h>
-#include "example1.pb.h"
+#include "example/example1.pb.h"
 
 bool writeTo(
     const google::protobuf::MessageLite& message,
