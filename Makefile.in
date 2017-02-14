@@ -737,7 +737,7 @@ rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybu
 rapidjson/error/en.h             rapidjson/error/error.h \
 rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
-rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h
+rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h 
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
@@ -876,9 +876,10 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto proto/descriptor.proto \
-	proto/gps16.proto proto/time5.proto \
-	proto/example/example1.proto  proto/iridium/packet8.proto
+	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \
+	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
+	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto proto/iridium/iridium1.proto \
+	mib/EAS-IKFIA-MIB
 
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive

@@ -201,7 +201,7 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto proto/descriptor.proto \
-	proto/gps16.proto proto/time5.proto \
-	proto/example/example1.proto  proto/iridium/packet8.proto \
+	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \ 
+	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
+	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto proto/iridium/iridium1.proto \
 	mib/EAS-IKFIA-MIB
