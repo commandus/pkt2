@@ -50,7 +50,7 @@ bool parseProtoFile2
 
 	MFErrorPrinter mf_error_printer;
 	// Allocate the Importer.
-	source_tree.MapPath("", "/home/andrei/src/pkt2/proto/example");
+	source_tree.MapPath("", "/home/andrei/src/pkt2");
 
 	Importer importer(&source_tree, &mf_error_printer);
 
