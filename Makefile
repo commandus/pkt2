@@ -152,8 +152,9 @@ am_message2gateway_OBJECTS =  \
 	message2gateway-utilstring.$(OBJEXT) \
 	message2gateway-utilinet.$(OBJEXT) \
 	message2gateway-pkt2.pb.$(OBJEXT) \
-	message2gateway-utilprotobuf.$(OBJEXT) \
-	message2gateway-utilfile.$(OBJEXT) $(am__objects_1)
+	message2gateway-utilfile.$(OBJEXT) \
+	message2gateway-protobuf-declarations.$(OBJEXT) \
+	$(am__objects_1)
 message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
@@ -727,7 +728,7 @@ CLEANFILES = $(gengrpcs)
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
-protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h \
+protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-declarations.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
@@ -842,7 +843,7 @@ protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
-	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilprotobuf.cpp utilfile.cpp \
+	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
@@ -1065,9 +1066,9 @@ include ./$(DEPDIR)/message2gateway-message2gateway-config.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-impl.Po
 include ./$(DEPDIR)/message2gateway-message2gateway.Po
 include ./$(DEPDIR)/message2gateway-pkt2.pb.Po
+include ./$(DEPDIR)/message2gateway-protobuf-declarations.Po
 include ./$(DEPDIR)/message2gateway-utilfile.Po
 include ./$(DEPDIR)/message2gateway-utilinet.Po
-include ./$(DEPDIR)/message2gateway-utilprotobuf.Po
 include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
 include ./$(DEPDIR)/pkt2gateway-daemonize.Po
@@ -1528,20 +1529,6 @@ message2gateway-pkt2.pb.obj: pkt2.pb.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
-message2gateway-utilprotobuf.o: utilprotobuf.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilprotobuf.o -MD -MP -MF $(DEPDIR)/message2gateway-utilprotobuf.Tpo -c -o message2gateway-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilprotobuf.Tpo $(DEPDIR)/message2gateway-utilprotobuf.Po
-#	$(AM_V_CXX)source='utilprotobuf.cpp' object='message2gateway-utilprotobuf.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
-
-message2gateway-utilprotobuf.obj: utilprotobuf.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/message2gateway-utilprotobuf.Tpo -c -o message2gateway-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilprotobuf.Tpo $(DEPDIR)/message2gateway-utilprotobuf.Po
-#	$(AM_V_CXX)source='utilprotobuf.cpp' object='message2gateway-utilprotobuf.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
-
 message2gateway-utilfile.o: utilfile.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilfile.o -MD -MP -MF $(DEPDIR)/message2gateway-utilfile.Tpo -c -o message2gateway-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilfile.Tpo $(DEPDIR)/message2gateway-utilfile.Po
@@ -1555,6 +1542,20 @@ message2gateway-utilfile.obj: utilfile.cpp
 #	$(AM_V_CXX)source='utilfile.cpp' object='message2gateway-utilfile.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+message2gateway-protobuf-declarations.o: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/message2gateway-protobuf-declarations.Tpo -c -o message2gateway-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-protobuf-declarations.Tpo $(DEPDIR)/message2gateway-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='message2gateway-protobuf-declarations.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+
+message2gateway-protobuf-declarations.obj: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/message2gateway-protobuf-declarations.Tpo -c -o message2gateway-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-protobuf-declarations.Tpo $(DEPDIR)/message2gateway-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='message2gateway-protobuf-declarations.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
 
 pkt2gateway-pkt2gateway.o: pkt2gateway.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2gateway.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2gateway.Tpo -c -o pkt2gateway-pkt2gateway.o `test -f 'pkt2gateway.cpp' || echo '$(srcdir)/'`pkt2gateway.cpp

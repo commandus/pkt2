@@ -430,3 +430,19 @@ snmpconf -g basic_setup
 sudo ./onewayticketsvc -l 50053 --user onewayticket --password 123456 --database onewayticket --snmp 1
 ```
 
+## protoc
+
+```
+./example1message1 > 1
+
+protoc -I proto --decode example1.TemperaturePkt proto/example/example1.proto < 1
+device: 876648949
+time: 1487218294
+degrees_c: 22.111469307966281
+
+protoc -I proto --decode_raw  < 1
+1: 876648949
+2: 1487218294
+3: 0x40361c8940a83912
+
+```

@@ -25,7 +25,7 @@
 #include "message2gateway-config.h"
 #include "input-packet.h"
 #include "output-message.h"
-#include "utilprotobuf.h"
+#include "protobuf-declarations.h"
 
 using namespace google::protobuf;
 using namespace google::protobuf::io;
@@ -69,15 +69,22 @@ int run
 		strm = new std::ifstream(config->file_name, std::ifstream::in);
 	}
 
-	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors =
-			utilProto::parseProtoFiles("proto");
-	if (messageDescriptors->size() == 0)
+	ProtobufDeclarations pd("proto");
+	
+	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
+	
+	if (pd.parseProtoFile("example/example1.proto"))
+	{
+		messageDescriptors = pd.getMessages();	
+	}
+	
+	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
 	{
 		LOG(ERROR) << "Can not load proto files from ";
 		return 3;
 	}
 
-	utilProto::debugProto(messageDescriptors);
+	pd.debug(messageDescriptors);
 
 
 	google::protobuf::io::IstreamInputStream isistream(strm);
