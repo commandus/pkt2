@@ -97,6 +97,12 @@ int run
     		LOG(INFO) << "End of file detected, exit.";
     		break;
     	}
+
+    	//const std::string messageTypeName = "example1.TemperaturePkt";
+    	std::string messageType;
+    	input.ReadString(&messageType, 255);
+
+    	LOG(ERROR) << "messageType: " << messageType;
 		uint32_t size;
 		input.ReadVarint32(&size);
 		LOG(ERROR) << size;

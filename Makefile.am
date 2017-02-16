@@ -176,8 +176,8 @@ message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
 # example1message
 #
 example1message_SOURCES = \
-	example1message.cpp example/example1.pb.cpp \
-	pkt2.pb.cpp \
+	example1message.cpp \
+	example/example1.pb.cpp pkt2.pb.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf $(SNMPLIBS)

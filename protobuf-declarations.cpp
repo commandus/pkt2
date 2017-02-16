@@ -137,6 +137,7 @@ bool ProtobufDeclarations::parseProtoFile
 		return false;
 	}
 
+	// get "top level" file and print out messages
 	const FileDescriptor *file_desc = importer.pool()->FindFileByName(fn);
 
 	if (file_desc == NULL)
