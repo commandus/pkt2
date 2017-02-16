@@ -84,7 +84,7 @@ int run
 		return 3;
 	}
 
-	pd.debug(messageDescriptors);
+	// pd.debug(messageDescriptors);
 
 
 	google::protobuf::io::IstreamInputStream isistream(strm);
@@ -100,21 +100,20 @@ int run
 
     	//const std::string messageTypeName = "example1.TemperaturePkt";
     	std::string messageType;
-    	input.ReadString(&messageType, 255);
-
-    	LOG(ERROR) << "messageType: " << messageType;
+    	uint32_t message_type_size;
+    	input.ReadVarint32(&message_type_size);
+    	input.ReadString(&messageType, message_type_size);
+    	LOG(ERROR) << "messageType: " << messageType << " size: " << message_type_size;
 		uint32_t size;
 		input.ReadVarint32(&size);
 		LOG(ERROR) << size;
+
+		char *b;
+		b = (char *) malloc(size);
+		input.ReadRaw(b, size);
+		// google::protobuf::io::IstreamInputStream msgstrm;
+		// pd.decode(messageType, &msgstrm, size);	// isistream
 		google::protobuf::io::CodedInputStream::Limit limit = input.PushLimit(size);
-
-
-
-
-
-
-
-
 
 
 

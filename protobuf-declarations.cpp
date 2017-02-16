@@ -26,14 +26,10 @@
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/dynamic_message.h>
-#include <google/protobuf/descriptor.h>
 #include <google/protobuf/io/tokenizer.h>
 #include <google/protobuf/compiler/parser.h>
-#include <google/protobuf/compiler/importer.h>
 
 #include <glog/logging.h>
-
-#include "error-printer.h"
 
 using namespace google::protobuf;
 using namespace google::protobuf::io;
@@ -41,16 +37,21 @@ using namespace google::protobuf::compiler;
 
 const std::string fileNameSuffixProto = (".proto");
 
-ProtobufDeclarations::ProtobufDeclarations() {
-}
-
-
 ProtobufDeclarations::ProtobufDeclarations(const std::string &path) 
 {
 	paths.push_back(path);
+
+	// Allocate the Importer.
+	for (const std::string &path : paths)
+	{
+		source_tree.MapPath("", path);
+	}
+	importer = new Importer(&source_tree, &mf_error_printer);
 }
 
 ProtobufDeclarations::~ProtobufDeclarations() {
+	if (importer)
+		delete importer;
 }
 
 std::map<std::string, const google::protobuf::Descriptor*> *ProtobufDeclarations::getMessages()
@@ -58,29 +59,31 @@ std::map<std::string, const google::protobuf::Descriptor*> *ProtobufDeclarations
 	return &internalMessages;
 }
 
+/**
+ * 	const google::protobuf::DescriptorPool* pool,
+ *
+ */
 bool ProtobufDeclarations::decode
 (
-	const google::protobuf::DescriptorPool* pool,
-	const std::string &message_name
+	const std::string &message_name,
+	google::protobuf::io::IstreamInputStream *stream,
+	uint32_t size
 )
 {
 	// Look up the type.
-	const Descriptor* type = pool->FindMessageTypeByName(message_name);
+	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
 	if (type == NULL)
 		return false;
 
-	DynamicMessageFactory dynamic_factory(pool);
+	DynamicMessageFactory dynamic_factory(importer->pool());
 	google::protobuf::scoped_ptr<Message> message(dynamic_factory.GetPrototype(type)->New());
 
-	io::FileInputStream in(STDIN_FILENO);
-	io::FileOutputStream out(STDOUT_FILENO);
-
 	// Input is binary.
-	if (!message->ParsePartialFromZeroCopyStream(&in))
+	if (!message->ParsePartialFromZeroCopyStream(stream))
 		return false;
 
-	// Output is text.
-	// TextFormat::Print(*message, &out);
+	io::FileOutputStream out(STDOUT_FILENO);
+	TextFormat::Print(*message, &out);
 	return true;
 }
 
@@ -89,25 +92,10 @@ bool ProtobufDeclarations::parseProtoFile
 	const char *fn
 )
 {
-	
-	std::vector<const FileDescriptor*> parsed_files;
-
-	// Set up the source tree.
-	DiskSourceTree source_tree;
-
-	MFErrorPrinter mf_error_printer;
-	// Allocate the Importer.
-	for (const std::string &path : paths)
-	{
-		source_tree.MapPath("", path);
-	}
-
-	Importer importer(&source_tree, &mf_error_printer);
-
 	// Import the file.
-	importer.AddUnusedImportTrackFile(fn);
-	const FileDescriptor* parsed_file = importer.Import(fn);
-	importer.ClearUnusedImportTrackFiles();
+	importer->AddUnusedImportTrackFile(fn);
+	const FileDescriptor* parsed_file = importer->Import(fn);
+	importer->ClearUnusedImportTrackFiles();
 	if (parsed_file == NULL)
 	{
 		LOG(ERROR) << "Cannot import proto file " << fn;
@@ -138,7 +126,7 @@ bool ProtobufDeclarations::parseProtoFile
 	}
 
 	// get "top level" file and print out messages
-	const FileDescriptor *file_desc = importer.pool()->FindFileByName(fn);
+	const FileDescriptor *file_desc = importer->pool()->FindFileByName(fn);
 
 	if (file_desc == NULL)
 	{

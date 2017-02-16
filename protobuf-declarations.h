@@ -10,12 +10,23 @@
 #include <string>
 
 #include <google/protobuf/descriptor.h>
-
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/compiler/importer.h>
+#include "error-printer.h"
 
 class ProtobufDeclarations {
 private:
 	std::vector<std::string> paths;
 	std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
+	std::vector<const google::protobuf::FileDescriptor*> parsed_files;
+
+	// Set up the source tree.
+	google::protobuf::compiler::DiskSourceTree source_tree;
+
+	MFErrorPrinter mf_error_printer;
+
+	google::protobuf::compiler::Importer *importer;
 
 	int onProtoFile
 	(
@@ -29,14 +40,7 @@ private:
 	 * Add path from paths at specified index to the file name
 	 */
 	std::string concatPath(const std::string &fn, int index);
-	bool decode(
-		const google::protobuf::DescriptorPool* pool,
-		const std::string &message_name
-	);
-
 public:
-	ProtobufDeclarations();
-	
 	ProtobufDeclarations(const std::string &path);
 	
 	virtual ~ProtobufDeclarations();
@@ -51,7 +55,14 @@ public:
 	(
 		const std::string &path
 	);
-	
+
+	bool decode
+	(
+		const std::string &message_name,
+		google::protobuf::io::IstreamInputStream *stream,
+		uint32_t size
+	);
+
 	void debug
 	(
 		const std::map<std::string, const google::protobuf::Descriptor*> *messages

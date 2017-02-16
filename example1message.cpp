@@ -20,6 +20,7 @@ bool writeDelimitedTo
 	// We create a new coded stream for each message.  Don't worry, this is fast.
 	google::protobuf::io::CodedOutputStream output(rawOutput);
 	// Write the type
+	output.WriteVarint32(messageTypeName.size());
 	output.WriteString(messageTypeName);
 	// Write the size.
 	const int size = message.ByteSize();
