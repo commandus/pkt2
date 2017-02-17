@@ -10,6 +10,7 @@
 #include <string>
 
 #include <google/protobuf/descriptor.h>
+#include <google/protobuf/dynamic_message.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/compiler/importer.h>
@@ -27,6 +28,7 @@ private:
 	MFErrorPrinter mf_error_printer;
 
 	google::protobuf::compiler::Importer *importer;
+	google::protobuf::DynamicMessageFactory *dynamic_factory;
 
 	int onProtoFile
 	(
@@ -56,11 +58,16 @@ public:
 		const std::string &path
 	);
 
-	bool decode
+	google::protobuf::Message *decode
 	(
 		const std::string &message_name,
-		google::protobuf::io::IstreamInputStream *stream,
-		uint32_t size
+		google::protobuf::io::IstreamInputStream *stream
+	);
+
+	google::protobuf::Message *decode
+	(
+		const std::string &message_name,
+		google::protobuf::io::CodedInputStream *stream
 	);
 
 	void debug

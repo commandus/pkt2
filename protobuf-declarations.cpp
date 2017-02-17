@@ -25,7 +25,6 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/text_format.h>
-#include <google/protobuf/dynamic_message.h>
 #include <google/protobuf/io/tokenizer.h>
 #include <google/protobuf/compiler/parser.h>
 
@@ -47,9 +46,13 @@ ProtobufDeclarations::ProtobufDeclarations(const std::string &path)
 		source_tree.MapPath("", path);
 	}
 	importer = new Importer(&source_tree, &mf_error_printer);
+	dynamic_factory = new DynamicMessageFactory(importer->pool());
+
 }
 
 ProtobufDeclarations::~ProtobufDeclarations() {
+	if (dynamic_factory)
+		delete dynamic_factory;
 	if (importer)
 		delete importer;
 }
@@ -59,32 +62,55 @@ std::map<std::string, const google::protobuf::Descriptor*> *ProtobufDeclarations
 	return &internalMessages;
 }
 
+
 /**
- * 	const google::protobuf::DescriptorPool* pool,
- *
+ * Decide message from the stream
  */
-bool ProtobufDeclarations::decode
+Message *ProtobufDeclarations::decode
 (
 	const std::string &message_name,
-	google::protobuf::io::IstreamInputStream *stream,
-	uint32_t size
+	google::protobuf::io::CodedInputStream *stream
 )
 {
 	// Look up the type.
 	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
 	if (type == NULL)
-		return false;
+		return NULL;
 
-	DynamicMessageFactory dynamic_factory(importer->pool());
-	google::protobuf::scoped_ptr<Message> message(dynamic_factory.GetPrototype(type)->New());
+	Message *message(dynamic_factory->GetPrototype(type)->New());
+
+	// Input is binary.
+	if (!message->ParsePartialFromCodedStream(stream))
+	{
+		delete message;
+		return NULL;
+	}
+	return message;
+}
+
+/**
+ * Decode message from the stream
+ */
+Message *ProtobufDeclarations::decode
+(
+	const std::string &message_name,
+	google::protobuf::io::IstreamInputStream *stream
+)
+{
+	// Look up the type.
+	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
+	if (type == NULL)
+		return NULL;
+
+	Message *message(dynamic_factory->GetPrototype(type)->New());
 
 	// Input is binary.
 	if (!message->ParsePartialFromZeroCopyStream(stream))
-		return false;
-
-	io::FileOutputStream out(STDOUT_FILENO);
-	TextFormat::Print(*message, &out);
-	return true;
+	{
+		delete message;
+		return NULL;
+	}
+	return message;
 }
 
 bool ProtobufDeclarations::parseProtoFile
