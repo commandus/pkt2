@@ -709,6 +709,9 @@ SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
 
+# ----------------- REMOVE IT!!!! ------------------
+commoncppflags = -g3 -O0 -DDEBUG
+
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
 gengrpcs = pkt2.pb.h pkt2.pb.cpp

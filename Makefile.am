@@ -13,6 +13,9 @@ else
 	commoncppflags =
 endif
 
+# ----------------- REMOVE IT!!!! ------------------
+commoncppflags = -g3 -O0 -DDEBUG
+
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
 
@@ -170,7 +173,6 @@ message2gateway_SOURCES = \
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
 message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
-
 
 #
 # example1message
