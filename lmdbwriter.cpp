@@ -1,3 +1,6 @@
+/**
+ *
+ */
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -18,6 +21,7 @@
 #include "output-message.h"
 
 #include "lmdb.h"
+#include "errorcodes.h"
 
 /**
  * LMDB environment(transaction, cursor)
@@ -59,6 +63,7 @@ bool close_lmdb
 {
 	mdb_close(env->env, env->dbi);
 	mdb_env_close(env->env);
+	return true;
 }
 
 /**
@@ -90,15 +95,12 @@ int put_db
 		return r;
 
 	r = mdb_txn_commit(env->txn);
+	return r;
 }
 
 /**
-  * Return:  0- success
-  *          1- can not listen port
-  *          2- invalid nano socket URL
-  *          3- buffer allocation error
-  *          4- send error, re-open
-  *          5- LMDB open database file error
+  * @returns  0- success
+  *          >0- error (see errorcodes.h)
   */
 int run
 (
@@ -108,16 +110,16 @@ int run
 	int nano_socket = nn_socket(AF_SP, NN_PUSH);
 	if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
 	{
-		LOG(ERROR) << "Can not connect to the IPC url " << config->message_url;
-		return 2;
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
+		return ERRCODE_NN_CONNECT;
 	}
 
 	struct dbenv env;
 
 	if (!open_lmdb(&env, config))
 	{
-		LOG(ERROR) << "Can not open database file " << config->path;
-		return 5;
+		LOG(ERROR) << ERR_LMDB_OPEN << config->path;
+		return ERRCODE_LMDB_OPEN;
 	}
     while (!config->stop_request)
     {
@@ -126,7 +128,7 @@ int run
 
           if (bytes < 0)
           {
-              LOG(ERROR) << "nn_recv error: " << bytes << ": ";
+              LOG(ERROR) << ERR_NN_RECV << bytes;
               continue;
           }
           if (buf)
@@ -137,22 +139,33 @@ int run
 
               if (packet.error() != 0)
               {
-                  LOG(ERROR) << "packet error: " << packet.error();
+                  LOG(ERROR) << ERR_PACKET_PARSE << packet.error();
                   continue;
               }
               nn_freemsg(buf);
           }
     }
+
+	int r = 0;
+
 	if (!close_lmdb(&env))
 	{
-		LOG(ERROR) << "Can not close database file " << config->path;
+		LOG(ERROR) << ERR_LMDB_CLOSE << config->path;
+		r = ERRCODE_LMDB_CLOSE;
 	}
-	return nn_shutdown(nano_socket, 0);
+	r = nn_shutdown(nano_socket, 0);
+	if (r)
+	{
+		LOG(ERROR) << ERR_NN_SHUTDOWN << config->path;
+		r = ERRCODE_NN_SHUTDOWN;
+
+	}
+	return r;
 }
 
 /**
-  * Return 0- success
-  *        1- config is not initialized yet
+  * @returns 0- success
+  *        >0- config is not initialized yet
   */
 int stop
 (
@@ -160,7 +173,10 @@ int stop
 )
 {
     if (!config)
-        return 1;
+    {
+    	LOG(ERROR) << ERR_STOP;
+        return ERRCODE_STOP;
+    }
     config->stop_request = true;
     // wake up
 

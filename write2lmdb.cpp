@@ -1,5 +1,20 @@
+/**
+ *   Read protobuf messages from nanomsg socket ipc:///tmp/output.pkt2 (-q)
+ *   Store to LMDB database file (-p)
+ *
+ *   Usage (default values):
+ *   	write2lmdb -q ipc:///tmp/input.pkt2 -p db -f 0 -m 0664
+ *   -f LMDB database file flags
+ *   -m LMDB database file open mode flags
+ *
+ *   Error codes:
+ *           0- success
+ *
+ *
+ */
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
 
 #include <glog/logging.h>
 
@@ -8,18 +23,20 @@
 #include "write2lmdb-config.h"
 #include "lmdbwriter.h"
 
+#include "errorcodes.h"
+
 Config *config;
 
 void stopNWait()
 {
-    LOG(INFO) << "Stop..";
+    LOG(INFO) << MSG_STOP;
 	if (config)
 		stop(config);
 }
 
 void done()
 {
-    LOG(INFO) << "done";
+    LOG(INFO) << MSG_DONE;
 }
 
 int reslt;
@@ -65,6 +82,9 @@ void setSignalHandler(int signal)
         sigaction(signal, &action, NULL);
 }
 
+/**
+ * @returns @see errorcodes.h
+ */
 int main
 (
     int argc, 
@@ -80,10 +100,10 @@ int main
 
 	config = new Config(argc, argv);
 	if (!config)
-		exit(5);
+		exit(3);
     if (config->error() != 0)
 	{
-		LOG(ERROR) << "exit, invalid command line options or help requested.";
+		LOG(ERROR) << ERR_COMMAND;
 		exit(config->error());
 	}
 

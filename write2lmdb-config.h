@@ -4,10 +4,11 @@
 #include <string>
 
 #define PROGRAM_NAME             "write2lmdb"
-#define PROGRAM_DESCRIPTION      "PKT2 LMDB witer"
+#define PROGRAM_DESCRIPTION      "PKT2 LMDB writer"
 
 /**
-  *      \see 
+  *      \see write2lmdb.cpp
+  *      \see lmdbwritee.cpp
   */
 class Config
 {
@@ -16,8 +17,6 @@ private:
     /**
     * Parse command line
     * Return 0- success
-    *        1- show help and exit, or command syntax error
-    *        2- output file does not exists or can not open to write
     **/
     int parseCmd
     (

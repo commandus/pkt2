@@ -1,6 +1,8 @@
 #include "write2lmdb-config.h"
 #include <argtable2.h>
 
+#include "errorcodes.h"
+
 #define DEF_DB_PATH              "db"
 #define DEF_MODE                 0664
 #define DEF_FLAGS                0
@@ -75,7 +77,7 @@ int Config::parseCmd
                 printf("%s\n", PROGRAM_DESCRIPTION);
                 arg_print_glossary(stdout, argtable, "  %-25s %s\n");
                 arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-                return 1;
+                return ERRCODE_PARSE_COMMAND;
         }
 
         if (a_message_url->count)
@@ -111,5 +113,5 @@ int Config::parseCmd
         	flags = DEF_FLAGS;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-        return 0;
+        return ERR_OK;
 }
