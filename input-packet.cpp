@@ -1,6 +1,9 @@
 #include "input-packet.h"
 
 #include <cstdlib>
+#include <string.h>
+
+#include "errorcodes.h"
 
 InputPacket::InputPacket(
     char typ,
@@ -30,10 +33,15 @@ InputPacket::InputPacket
     buffer = data;
     size = adata_size;
     allocated = false;
+    length = 0;
+    data_size = 0;
+    parse();
 }
 
 InputPacket::~InputPacket() 
 {
+    if (message)
+    	delete message;
     if (allocated && (buffer != NULL))
         free(buffer);
 }
@@ -63,14 +71,29 @@ void *InputPacket::data()
     return (char*) buffer + sizeof(struct PacketHeader) + sizeof(struct sockaddr_storage) + sizeof(struct sockaddr_storage);
 }
 
+bool InputPacket::parse()
+{
+	// TODO
+	// 1. message
+	google::protobuf::Message *r = NULL;
+	void *d = data();
+	if (!d)
+		return false;
+
+	// 2. key
+	memset(&key, sizeof(key), 0);
+
+	return true;
+}
+
 /**
-  * Return 0- success
-  *        1- no enought memory
+  * @return 0- success
+  *        1- no enough memory
+  * @see errorcode.h
   */
 int InputPacket::error()
 {
     if (!buffer)
-        return 1;
-    return 0;
+        return ERRCODE_PACKET_PARSE;
+    return ERR_OK;
 }
-

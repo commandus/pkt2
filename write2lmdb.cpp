@@ -45,7 +45,7 @@ void runner()
 {
 	if (!config)
 	{
-		LOG(ERROR) << "config corrupted.";
+		LOG(ERROR) << ERR_NO_CONFIG;
 		return;
 	}
 	int n = 0;
@@ -64,13 +64,12 @@ void signalHandler(int signal)
         switch(signal)
         {
         case SIGINT:
-                LOG(INFO) << "Interrupted";
+                LOG(INFO) << MSG_INTERRUPTED;
                 stopNWait();
                 done();
-                LOG(INFO) << "exit";
                 break;
         default:
-                LOG(INFO) << "Signal " << signal;
+                LOG(INFO) << MSG_SIGNAL << signal;
         }
 }
 
@@ -109,7 +108,7 @@ int main
 
 	if (config->daemonize)
 	{
-		LOG(INFO) << "Start as daemon, use syslog";
+		LOG(INFO) << MSG_DAEMONIZE;
 		Daemonize daemonize(PROGRAM_NAME, runner, stopNWait, done);
 	}
 	else

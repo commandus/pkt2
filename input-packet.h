@@ -2,6 +2,8 @@
 #define INPUT_PACKET_H     1
 
 #include <sys/socket.h>
+#include <google/protobuf/message.h>
+#include "output-message.h"
 
 struct PacketHeader
 {
@@ -9,16 +11,20 @@ struct PacketHeader
 };
 
 /**
-  *      \see 
-  */
+ * @brief nanomsg packet
+ */
 class InputPacket
 {
 private:
     struct sockaddr socket_address_src;
     struct sockaddr socket_address_dst;
     void *buffer;
-    bool allocated; ///< true- buffer is malloc'ed, false- external buffer
+    bool allocated;			///< true- buffer is malloc'ed, false- external buffer
+    bool parse();
 public:
+    struct OutputMessageKey key;
+    google::protobuf::Message *message;
+
     InputPacket(char typ, size_t data_size);
     InputPacket(void *data, size_t data_size);
     virtual ~InputPacket();
@@ -38,9 +44,7 @@ public:
     int data_size;
     /// actual data length
     int length;
-
     int error();
 };
-
 
 #endif

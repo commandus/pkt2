@@ -24,7 +24,7 @@
 #include "errorcodes.h"
 
 /**
- * LMDB environment(transaction, cursor)
+ * @brief LMDB environment(transaction, cursor)
  */
 typedef struct dbenv {
 	MDB_env *env;
@@ -34,7 +34,7 @@ typedef struct dbenv {
 } dbenv;
 
 /**
- * Opens LMDB database file
+ * @brief Opens LMDB database file
  * @param env created LMDB environment(transaction, cursor)
  * @param config pass path, flags, file open mode
  * @return true- success
@@ -67,8 +67,9 @@ bool close_lmdb
 }
 
 /**
+ * @brief Store protobuf message to the LMDB
  * @param env LMDB database
- * @returns 0- success
+ * @return 0- success
  */
 int put_db
 (
@@ -98,10 +99,57 @@ int put_db
 	return r;
 }
 
+
 /**
-  * @returns  0- success
-  *          >0- error (see errorcodes.h)
-  */
+ * @brief Store input packet to the LMDB
+ * @param env
+ * @param packet
+ * @return 0 - success
+ */
+int put_db
+(
+		struct dbenv *env,
+		InputPacket *packet
+)
+{
+	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
+	if (r)
+		return r;
+
+	MDB_val key, data;
+
+	google::protobuf::Message *m = packet->message;
+	if (!m)
+		return ERRCODE_PACKET_PARSE;
+
+	uint32_t packet_type_id;
+	uint32_t time_stamp;
+	uint64_t device_id;
+
+	key.mv_size = sizeof(struct OutputMessageKey);
+	key.mv_data = &packet->key;
+
+	data.mv_size = packet->data_size;
+	data.mv_data = packet->data();
+
+	r = mdb_put(env->txn, env->dbi, &key, &data, 0);
+
+	delete m;
+
+	if (r)
+		return r;
+
+	r = mdb_txn_commit(env->txn);
+	return r;
+}
+
+
+/**
+ * @brief Write LMDB loop
+ * @param config
+ * @return  0- success
+ *          >0- error (see errorcodes.h)
+ */
 int run
 (
 		Config *config
@@ -142,6 +190,7 @@ int run
                   LOG(ERROR) << ERR_PACKET_PARSE << packet.error();
                   continue;
               }
+              put_db(&env, &packet);
               nn_freemsg(buf);
           }
     }
@@ -164,9 +213,11 @@ int run
 }
 
 /**
-  * @returns 0- success
-  *        >0- config is not initialized yet
-  */
+ *  @brief Stop writer
+ *  @param config
+ *  @return 0- success
+ *          >0- config is not initialized yet
+ */
 int stop
 (
 		Config *config
@@ -179,5 +230,6 @@ int stop
     }
     config->stop_request = true;
     // wake up
+    return ERR_OK;
 
 }
