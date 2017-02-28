@@ -88,69 +88,6 @@ inline bool predicate_num(char c)
 	return !isdigit(c);
 };
 
-/**
- *	remove all non numeric characters from the phone number
- *	TODO use libphonenumber
- */
-std::string E164ToString(const std::string &value)
-{
-	std::string r(value);
-	r.erase(std::remove_if(r.begin(), r.end(), predicate_num), r.end());
-	return r;
-}
-
-/**
- *	Format phone number
- *	TODO use libphonenumber
- */
-
-std::string String2E164(const std::string &value)
-{
-	if (value.size() == 11)
-	{
-		std::ostringstream os;
-		os << "+" << value.substr(0,1) << "(" << value.substr(1,3) <<  ")" << value.substr(4,3) << "-" << value.substr(7,4);
-		return os.str();
-	}
-	else
-		return "";
-}
-
-/**
- *	remove all non numeric characters from the phone number
- *	TODO use libphonenumber
- */
-uint64_t E164ToLong(const std::string &value)
-{
-	if (&value == NULL)
-		return 0;
-
-	std::string v(value);
-	v.erase(std::remove_if(v.begin(), v.end(), predicate_num), v.end());
-	return strtoul(v.c_str(), NULL, 0);
-}
-
-/**
- *	Format phone number
- *	TODO use libphonenumber
- */
-
-std::string Long2E164(const uint64_t value)
-{
-	std::ostringstream os;
-	os << value;
-	std::string v(os.str());
-	// TODO make valid for other E164 codes
-	if (v.size() == 11)
-	{
-		std::ostringstream os;
-		os << "+" << v.substr(0,1) << "(" << v.substr(1,3) <<  ")" << v.substr(4,3) << "-" << v.substr(7,4);
-		return os.str();
-	}
-	else
-		return "";
-}
-
 std::string doubleToString(const double value)
 {
 	std::stringstream idss;

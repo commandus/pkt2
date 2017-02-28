@@ -24,10 +24,14 @@
 #include <glog/logging.h>
 
 #include "error-printer.h"
+#include "errorcodes.h"
 
+/**
+ * Proto file must have file name suffix ".proto"
+ */
 const std::string fileNameSuffixProto = (".proto");
 
-std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
+// std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
 
 using namespace google::protobuf;
 using namespace google::protobuf::io;
@@ -36,7 +40,9 @@ using namespace google::protobuf::compiler;
 bool parseProtoFile2
 (
 		const char *fn,
-		std::map<std::string, const google::protobuf::Descriptor*> &messages
+		const std::string &path,
+		std::map<std::string, const google::protobuf::Descriptor*> &messages,
+		std::ostream *error_output
 )
 {
 	FILE *f = fopen(fn, "r");
@@ -50,15 +56,11 @@ bool parseProtoFile2
 
 	MFErrorPrinter mf_error_printer;
 	// Allocate the Importer.
-	source_tree.MapPath("", "/home/andrei/src/pkt2/proto");
+	source_tree.MapPath("", path);
 
 	Importer importer(&source_tree, &mf_error_printer);
 
 	// Import the file.
-	const FileDescriptor* parsed_file1 = importer.Import("pkt2.proto");
-	// importer.AddUnusedImportTrackFile("proto/pkt2.proto");
-	// importer.AddUnusedImportTrackFile(fn);
-
 	const FileDescriptor* parsed_file = importer.Import(fn);
 	importer.ClearUnusedImportTrackFiles();
 	if (parsed_file == NULL)
@@ -78,7 +80,8 @@ bool parseProtoFile2
 	bool ok = parser.Parse(&input_proto, &file_desc_proto);
 	if (!ok)
 	{
-
+		if (error_output)
+			*error_output << ERR_PARSE_PROTO << fn;
 	}
 
 	google::protobuf::DescriptorPool pool;
@@ -87,7 +90,8 @@ bool parseProtoFile2
 	const google::protobuf::FileDescriptor* file_desc = pool.BuildFile(file_desc_proto);
 	if (file_desc == NULL)
 	{
-		LOG(ERROR) << "Cannot get file descriptor from file descriptor proto";
+		if (error_output)
+			*error_output << ERR_PROTO_GET_DESCRIPTOR << fn;
 		fclose(f);
 		return false;
 	}
@@ -96,29 +100,35 @@ bool parseProtoFile2
 	for (int m = 0; m < count; m++)
 	{
 		const google::protobuf::Descriptor* md = file_desc->message_type(m);
-		LOG(ERROR) << "message: " << md->DebugString();
+		if (error_output)
+			*error_output << "message: " << md->DebugString();
 		messages[md->name()] = md;
 	}
-
-
 	fclose(f);
-
 	return true;
 }
 
 namespace utilProto
 {
-
 	/**
-	 * for nftw() use only
+	 * @brief Parse proto file
+	 * @oaram path
+	 * @param filename
+	 * @param messages
+	 * @param error_output
+	 * @return
 	 */
 	bool parseProtoFile
 	(
-		const char *path
+		const char *filename,
+		const std::string &path,
+		std::map<std::string, const google::protobuf::Descriptor*> &messages,
+		std::ostream *error_output
 	)
 	{
-		LOG(INFO) << "parseProtoFile: " << path;
-		return parseProtoFile2(path, internalMessages);
+		if (error_output)
+			*error_output << MSG_PARSE_FILE << filename << std::endl;
+		return parseProtoFile2(filename, path, messages, error_output);
 	}
 
 	void debugProto
@@ -132,51 +142,37 @@ namespace utilProto
 		}
 	}
 
-	int onProtoFile
+	/**
+	 * @brief Each protobuf3 file must have .proto file name suffix
+	 * @param path
+	 * @param messages
+	 * @param error_output std::ostream
+	 * @return successfully parsed files count
+	 */
+	size_t parseProtoFiles
 	(
-		const char *path,
-		const struct stat *ptr,
-		int flag,
-		struct FTW *ftwbuf
+		const std::string &path,
+		std::map<std::string, const google::protobuf::Descriptor*> &messages,
+		std::ostream *error_output
 	)
 	{
-		switch (flag)
+		std::vector<std::string> protoFiles;
+		filesInPath(path, ".proto", &protoFiles);
+
+		size_t r = 0;
+		for (std::string fn : protoFiles)
 		{
-		case FTW_D:
-		case FTW_DP:
-		case FTW_DNR:
-			return 0;
-		case FTW_F:
-		case FTW_SL:
-			{
-				if (strcasestr(path, fileNameSuffixProto.c_str()) >= 0)
-				{
-					// ".proto"
-					std::cerr << path << ".. ";
-					bool ok = utilProto::parseProtoFile(path);
-					if (ok)
-						std::cerr << "ok";
-					else
-						std::cerr << "failed";
-					std::cerr << std::endl;
-				}
-			}
-			break;
-
-		default:
-			return 0;
+			if (error_output)
+				*error_output << fn << ".. ";
+			bool ok = utilProto::parseProtoFile(fn.c_str(), path, messages, error_output);
+			if (error_output)
+				*error_output << (ok ? MSG_OK : MSG_FAILED) << std::endl;
+			if (ok)
+				r++;
 		}
-		return 0;
-	}
-
-
-	std::map<std::string, const google::protobuf::Descriptor*> *parseProtoFiles
-	(
-		const std::string &path
-	)
-	{
-		iteratePath(path, onProtoFile);
-		return &internalMessages;
+		if (error_output)
+				*error_output << r << "/" << protoFiles.size() << " " << MSG_PROCESSED << std::endl;
+		return r;
 	}
 
 }

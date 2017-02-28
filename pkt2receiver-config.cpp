@@ -2,9 +2,17 @@
 
 #include <argtable2.h>
 
+#include "errorcodes.h"
+
 #define DEF_QUEUE                "ipc:///tmp/input.pkt2"
 #define DEF_BUFFER_SIZE          256
 
+/**
+ * Parse command line options
+ * @param argc
+ * @param argv
+ * @see pktreceiver.cpp
+ */
 Config::Config
 (
     int argc, 
@@ -21,8 +29,8 @@ int Config::error()
 }
 
 /**
- * Parse command line into struct ClientConfig
- * Return 0- success
+ * @brief Parse command line into struct ClientConfig
+ * @return 0- success
  *        1- show help and exit, or command syntax error
  *        2- output file does not exists or can not open to write
  **/
@@ -55,7 +63,7 @@ int Config::parseCmd
         if (arg_nullcheck(argtable) != 0)
         {
             arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-            return 1;
+            return ERRCODE_PARSE_COMMAND;
         }
         // Parse the command line as defined by argtable[]
         nerrors = arg_parse(argc, argv, argtable);
@@ -70,7 +78,7 @@ int Config::parseCmd
                 printf("%s\n", PROGRAM_DESCRIPTION);
                 arg_print_glossary(stdout, argtable, "  %-25s %s\n");
                 arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-                return 1;
+                return ERRCODE_COMMAND;
         }
 
 
@@ -97,5 +105,5 @@ int Config::parseCmd
         daemonize = a_daemonize->count > 0;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-        return 0;
+        return ERR_OK;
 }

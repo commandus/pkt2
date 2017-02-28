@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
 
 #include <glog/logging.h>
 
@@ -7,15 +8,13 @@
 #include "daemonize.h"
 #include "message2gateway-config.h"
 
+#include "errorcodes.h"
+
 Config *config;
 
 /**
-  * Return:  0- success
-  *          1- can not listen port
-  *          2- invalid nano socket URL
-  *          3- buffer allocation error
-  *          4- send error, re-open
-  *          5- LMDB open database file error
+  * @return:  0- success
+  * @see errorcodes.h
   */
 int run
 (
@@ -24,7 +23,6 @@ int run
 
 /**
   * Return 0- success
-  *        1- config is not initialized yet
   */
 int stop
 (
@@ -33,14 +31,14 @@ int stop
 
 void stopNWait()
 {
-    LOG(INFO) << "Stop..";
+    LOG(INFO) << MSG_STOP;
 	if (config)
 		stop(config);
 }
 
 void done()
 {
-    LOG(INFO) << "done";
+    LOG(INFO) << MSG_DONE;
 }
 
 int reslt;
@@ -49,7 +47,7 @@ void runner()
 {
 	if (!config)
 	{
-		LOG(ERROR) << "config corrupted.";
+		LOG(ERROR) << ERR_NO_CONFIG;
 		return;
 	}
 	int n = 0;
@@ -68,13 +66,12 @@ void signalHandler(int signal)
         switch(signal)
         {
         case SIGINT:
-                LOG(INFO) << "Interrupted";
+                LOG(INFO) << MSG_INTERRUPTED;
                 stopNWait();
                 done();
-                LOG(INFO) << "exit";
                 break;
         default:
-                LOG(INFO) << "Signal " << signal;
+                LOG(INFO) << MSG_SIGNAL;
         }
 }
 
@@ -104,22 +101,21 @@ int main
 		exit(5);
     if (config->error() != 0)
 	{
-		LOG(ERROR) << "exit, invalid command line options or help requested.";
+		LOG(ERROR) << ERRCODE_COMMAND;
 		exit(config->error());
 	}
 
 	if (config->daemonize)
 	{
-		LOG(INFO) << "Start as daemon, use syslog";
+		LOG(INFO) << MSG_DAEMONIZE;
 		Daemonize daemonize(PROGRAM_NAME, runner, stopNWait, done);
 	}
 	else
 	{
-		LOG(INFO) << "Start..";
+		LOG(INFO) << MSG_START;
 		runner();
 		done();
 	}
 
 	return reslt;
 }
-

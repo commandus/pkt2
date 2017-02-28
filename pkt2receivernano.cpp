@@ -13,9 +13,10 @@
 
 #include "pkt2receivernano.h"
 #include "input-packet.h"
+#include "errorcodes.h"
 
 /**
-  * Return:  0- success
+  * @return: 0- success
   *          1- can not listen port
   *          2- invalid nano socket URL
   *          3- buffer allocation error
@@ -26,8 +27,8 @@ int pkt2_receiever_nano(Config *config)
     int nano_socket = nn_socket(AF_SP, NN_PUSH);
     if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
     {
-        LOG(ERROR) << "Can not connect to the IPC url " << config->message_url;
-		return 2;
+        LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
+		return ERRCODE_NN_CONNECT;
     }
 
     while (!config->stop_request)
@@ -37,7 +38,7 @@ int pkt2_receiever_nano(Config *config)
 
         if (bytes < 0)
         {
-            LOG(ERROR) << "nn_recv error: " << bytes << ": ";
+            LOG(ERROR) << ERR_NN_RECV << bytes;
             continue;
         }
         if (buf)
@@ -48,7 +49,7 @@ int pkt2_receiever_nano(Config *config)
 
             if (packet.error() != 0)
             {
-                LOG(ERROR) << "packet error: " << packet.error();
+                LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
                 continue;
             }
             nn_freemsg(buf);
@@ -58,14 +59,15 @@ int pkt2_receiever_nano(Config *config)
 }
 
 /**
-  * Return 0- success
-  *        1- config is not initialized yet
+  * @return 0- success
+  *         ERRCODE_STOP- config is not initialized yet
   */
 int stop(Config *config)
 {
     if (!config)
-        return 1;
+        return ERRCODE_STOP;
     config->stop_request = true;
+    return ERR_OK;
     // wake up
 
 }

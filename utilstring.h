@@ -31,31 +31,6 @@ bool string2file(const char *filename, const std::string &value);
  */
 std::vector<std::string> split(const std::string &s, char delim);
 
-/**
- *	remove all non numeric characters from the phone number
- *	TODO use libphonenumber
- */
-std::string E164ToString(const std::string &value);
-
-/**
- *	Format phone number
- *	TODO use libphonenumber
- */
-std::string String2E164(const std::string &value);
-
-/**
- *	remove all non numeric characters from the phone number
- *	TODO use libphonenumber
- */
-uint64_t E164ToLong(const std::string &value);
-
-/**
- *	Format phone number
- *	TODO use libphonenumber
- */
-
-std::string Long2E164(const uint64_t value);
-
 template <typename T> std::string toString(const T value)
 {
         std::stringstream idss;

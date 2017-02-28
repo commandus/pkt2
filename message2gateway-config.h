@@ -7,15 +7,16 @@
 #define PROGRAM_DESCRIPTION      "protobuf message injector. Read protobuf message(s) from stdin or file. Each message must be delimited."
 
 /**
-  *      \see
+  *     @brief message2gateway configuration
+  *     @see message2gateway.cpp
   */
 class Config
 {
 private:
     int lastError;
     /**
-    * Parse command line
-    * Return 0- success
+    * @brief Parse command line
+    * @return 0- success
     *        1- show help and exit, or command syntax error
     *        2- output file does not exists or can not open to write
     **/

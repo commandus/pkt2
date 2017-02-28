@@ -26,24 +26,28 @@
 #include "input-packet.h"
 #include "output-message.h"
 #include "protobuf-declarations.h"
+#include "errorcodes.h"
 
 using namespace google::protobuf;
 using namespace google::protobuf::io;
 using namespace google::protobuf::compiler;
+
+#define MAX_PROTO_TOTAL_BYTES_LIMIT 	512 * 1024 * 1024
 
 bool processMessage
 (
 		google::protobuf::Message* message
 )
 {
-
 	// io::FileOutputStream out(STDOUT_FILENO);
 	// TextFormat::Print(*message, &out);
 	std::cout << message->DebugString() << std::endl;
+	return true;
 }
 
 /**
-  * Return:  0- success
+  * Receives message from nanomsg socket
+  * @return:  0- success
   *          1- can not listen port
   *          2- invalid nano socket URL
   *          3- protobuf load messages error occurred
@@ -58,8 +62,8 @@ int run
 	int nano_socket = nn_socket(AF_SP, NN_PUSH);
 	if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
 	{
-		LOG(ERROR) << "Can not connect to the IPC url " << config->message_url;
-		return 2;
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
+		return ERRCODE_NN_CONNECT;
 	}
 
 	std::istream *strm;
@@ -72,7 +76,8 @@ int run
 		strm = new std::ifstream(config->file_name, std::ifstream::in);
 	}
 
-	ProtobufDeclarations pd("proto");
+	ProtobufDeclarations pd;
+	pd.addPath("proto");
 	
 	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
 	
@@ -83,8 +88,8 @@ int run
 	
 	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
 	{
-		LOG(ERROR) << "Can not load proto files from ";
-		return 3;
+		LOG(ERROR) << ERR_LOAD_PROTO "Can not load proto files from ";
+		return ERRCODE_LOAD_PROTO;
 	}
 
 	// pd.debug(messageDescriptors);
@@ -93,7 +98,7 @@ int run
 	google::protobuf::io::IstreamInputStream isistream(strm);
     google::protobuf::io::CodedInputStream input(&isistream);
 
-    input.SetTotalBytesLimit(512 * 1024 * 1024, -1);
+    input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
 
     while (!config->stop_request)
     {
@@ -128,7 +133,7 @@ int run
 }
 
 /**
-  * Return 0- success
+  * @return 0- success
   *        1- config is not initialized yet
   */
 int stop
@@ -137,8 +142,9 @@ int stop
 )
 {
     if (!config)
-        return 1;
+        return ERRCODE_STOP;
     config->stop_request = true;
+    return ERR_OK;
     // wake up
 
 }

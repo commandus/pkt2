@@ -30,24 +30,46 @@
 
 #include <glog/logging.h>
 
+#include "errorcodes.h"
+
 using namespace google::protobuf;
 using namespace google::protobuf::io;
 using namespace google::protobuf::compiler;
 
 const std::string fileNameSuffixProto = (".proto");
 
-ProtobufDeclarations::ProtobufDeclarations(const std::string &path) 
+ProtobufDeclarations::ProtobufDeclarations()
 {
-	paths.push_back(path);
-
 	// Allocate the Importer.
-	for (const std::string &path : paths)
-	{
-		source_tree.MapPath("", path);
-	}
 	importer = new Importer(&source_tree, &mf_error_printer);
 	dynamic_factory = new DynamicMessageFactory(importer->pool());
+}
 
+/**
+ * @brief add .proto include path
+ * @param virtual_path virtual path
+ * @param path include path
+ */
+void ProtobufDeclarations::addPath
+(
+		const std::string &virtual_path,
+		const std::string &path
+)
+{
+	paths.push_back(path);
+	source_tree.MapPath(virtual_path, path);
+}
+
+/**
+ * @brief add .proto include path
+ * @param path include path
+ */
+void ProtobufDeclarations::addPath
+(
+		const std::string &path
+)
+{
+	addPath("", path);
 }
 
 ProtobufDeclarations::~ProtobufDeclarations() {
@@ -62,9 +84,11 @@ std::map<std::string, const google::protobuf::Descriptor*> *ProtobufDeclarations
 	return &internalMessages;
 }
 
-
 /**
- * Decide message from the stream
+ * @brief decode message from the stream
+ * @param message_name Protobuf message name
+ * @param stream
+ * @return decoded Protobuf message from the stream
  */
 Message *ProtobufDeclarations::decode
 (
@@ -89,7 +113,10 @@ Message *ProtobufDeclarations::decode
 }
 
 /**
- * Decode message from the stream
+ * @brief decode message from the stream
+ * @param message_name Protobuf message name
+ * @param stream
+ * @return decoded Protobuf message from the stream
  */
 Message *ProtobufDeclarations::decode
 (
@@ -97,7 +124,7 @@ Message *ProtobufDeclarations::decode
 	google::protobuf::io::IstreamInputStream *stream
 )
 {
-	// Look up the type.
+	// Look up the type
 	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
 	if (type == NULL)
 		return NULL;
@@ -118,24 +145,22 @@ bool ProtobufDeclarations::parseProtoFile
 	const char *fn
 )
 {
-	// Import the file.
+	// Import the file
 	importer->AddUnusedImportTrackFile(fn);
 	const FileDescriptor* parsed_file = importer->Import(fn);
 	importer->ClearUnusedImportTrackFiles();
 	if (parsed_file == NULL)
 	{
-		LOG(ERROR) << "Cannot import proto file " << fn;
+		LOG(ERROR) << ERR_LOAD_PROTO << fn;
 		return false;
 	}
 	parsed_files.push_back(parsed_file);
 
-	FILE *f = fopen(fn, "r");
+	FILE *f = openProto(fn);
 	if (f == NULL)
 	{
-		std::string fn1 = concatPath(fn, 0);
-		f = fopen(fn1.c_str(), "r");
-		if (f == NULL)
-			return false;
+		LOG(ERROR) << ERR_OPEN_PROTO << fn;
+		return false;
 	}
 	FileInputStream proto_stream(fileno(f));
 	Tokenizer input_proto(&proto_stream, NULL);
@@ -147,7 +172,7 @@ bool ProtobufDeclarations::parseProtoFile
 	bool ok = parser.Parse(&input_proto, &file_desc_proto);
 	if (!ok)
 	{
-		LOG(ERROR) << "Cannot parse proto file " << fn;
+		LOG(ERROR) << ERR_PARSE_PROTO << fn;
 		return false;
 	}
 
@@ -156,7 +181,7 @@ bool ProtobufDeclarations::parseProtoFile
 
 	if (file_desc == NULL)
 	{
-		LOG(ERROR) << "Cannot get file descriptor from file descriptor proto";
+		LOG(ERROR) << ERR_PROTO_GET_DESCRIPTOR << fn;
 		fclose(f);
 		return false;
 	}
@@ -173,57 +198,37 @@ bool ProtobufDeclarations::parseProtoFile
 
 	return true;
 }
+
 /**
- * Add path from paths at specified index to the file name
+ * @brief Try add path from include paths at specified index to the file name and open
+ * @param fn file name to concatenate
+ * @param index path index
+ * @return
  */
-std::string ProtobufDeclarations::concatPath
+FILE *ProtobufDeclarations::openProto
 (
-	const std::string &fn, int index
+		const std::string &fn
 )
 {
-	return paths[index] + "/" + fn;
-}
-
-
-
-int ProtobufDeclarations::onProtoFile
-(
-	const char *path,
-	const struct stat *ptr,
-	int flag,
-	struct FTW *ftwbuf
-)
-{
-	switch (flag)
+	FILE *f = fopen(fn.c_str(), "r");
+	if (f == NULL)
 	{
-	case FTW_D:
-	case FTW_DP:
-	case FTW_DNR:
-		return 0;
-	case FTW_F:
-	case FTW_SL:
+		for (const std::string &fni : paths)
 		{
-			if (strcasestr(path, fileNameSuffixProto.c_str()) >= 0)
-			{
-				// ".proto"
-				std::cerr << path << ".. ";
-				bool ok = parseProtoFile(path);
-				if (ok)
-					std::cerr << "ok";
-				else
-					std::cerr << "failed";
-				std::cerr << std::endl;
-			}
+			std::string fn1 = fni + "/" + fn;
+			f = fopen(fn1.c_str(), "r");
+			if (f != NULL)
+				break;
 		}
-		break;
-
-	default:
-		return 0;
 	}
-	return 0;
+	return f;
 }
 
-void ProtobufDeclarations::debug
+/**
+ * Print out messages to stdout
+ * @param messages
+ */
+void ProtobufDeclarations::debugPrint
 (
 	const std::map<std::string, const google::protobuf::Descriptor*> *messages
 )

@@ -1,5 +1,6 @@
 /*
  * protobuf-declarations.h
+ * @see message2gateway-impl.cpp
  */
 
 #ifndef PROTOBUF_DECLARATIONS_H_
@@ -30,23 +31,41 @@ private:
 	google::protobuf::compiler::Importer *importer;
 	google::protobuf::DynamicMessageFactory *dynamic_factory;
 
-	int onProtoFile
+	/**
+	 * @brief Try add path from include paths at specified index to the file name and open
+	 * @param fn file name to concatenate
+	 * @param index path index
+	 * @return
+	 */
+	FILE *openProto
 	(
-		const char *path,
-		const struct stat *ptr,
-		int flag,
-		struct FTW *ftwbuf
+			const std::string &fn
+	);
+
+public:
+	ProtobufDeclarations();
+	virtual ~ProtobufDeclarations();
+
+	/**
+	 * @brief add .proto include path
+	 * @param virtual_path virtual path
+	 * @param path include path
+	 */
+	void addPath
+	(
+			const std::string &virtual_path,
+			const std::string &path
 	);
 
 	/**
-	 * Add path from paths at specified index to the file name
+	 * @brief add .proto include path
+	 * @param path include path
 	 */
-	std::string concatPath(const std::string &fn, int index);
-public:
-	ProtobufDeclarations(const std::string &path);
-	
-	virtual ~ProtobufDeclarations();
-	
+	void addPath
+	(
+			const std::string &path
+	);
+
 	std::map<std::string, const google::protobuf::Descriptor*> *getMessages();
 	bool parseProtoFile
 	(
@@ -70,7 +89,11 @@ public:
 		google::protobuf::io::CodedInputStream *stream
 	);
 
-	void debug
+	/**
+	 * Print out messages to stdout
+	 * @param messages
+	 */
+	void debugPrint
 	(
 		const std::map<std::string, const google::protobuf::Descriptor*> *messages
 	);

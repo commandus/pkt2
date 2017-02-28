@@ -9,12 +9,19 @@
 namespace utilProto
 {
 	/**
-	 * for nftw() use only
+	 * @brief Each protobuf3 file must have .proto file name suffix
+	 * @param filename
+	 * @param path
+	 * @param messages
+	 * @param error_output std::ostream
+	 * @return successfully parsed files count
 	 */
-	/// Each protobuf3 file must have .proto file name suffix
-	std::map<std::string, const google::protobuf::Descriptor*> *parseProtoFiles
+	size_t parseProtoFiles
 	(
-		const std::string &path
+		const std::string &filename,
+		const std::string &path,
+		std::map<std::string, const google::protobuf::Descriptor*> &messages,
+		std::ostream *error_output
 	);
 
 	void debugProto

@@ -14,6 +14,14 @@
 #include <fcntl.h>
 #include <ftw.h>
 #include <unistd.h>
+#include<stdlib.h>
+#include<stdio.h>
+#include<sys/types.h>
+#include<sys/stat.h>
+#include<fts.h>
+#include<string.h>
+#include<errno.h>
+
 #define PATH_DELIMITER "/"
 
 #ifndef F_GETPATH
@@ -78,6 +86,23 @@ bool rmDir(const std::string &path)
 	return true;
 }
 
+/**
+ * Return list of files in specified path
+ * @param path
+ * @param retval can be NULL
+ * @return count files
+ */
+size_t filesInPath
+(
+	const std::string &path,
+	const std::string &suffix,
+	std::vector<std::string> *retval
+)
+{
+	// TODO Implement Windows
+	return 0;
+}
+
 #else
 /**
 * FTW_D	directory
@@ -101,6 +126,7 @@ static int rmnode
 	case FTW_D:
 	case FTW_DP:
 		rm_func = rmdir;
+		break;
 	default:
 		rm_func = unlink;
 		break;
@@ -118,16 +144,66 @@ bool rmDir(const std::string &path)
 	return nftw(path.c_str(), rmnode,  64, FTW_DEPTH) == 0;
 }
 
-bool iteratePath
+int compareFile
 (
-	const std::string &path,
-	NodeCallback callback
+		const FTSENT **a,
+		const FTSENT **b
 )
 {
-	if ((&path == NULL) || (callback == NULL))
-		return false;
+	return strcmp((*a)->fts_name, (*b)->fts_name);
+}
 
-	return nftw(path.c_str(), callback,  64, FTW_DEPTH) == 0;
+/**
+ * Return list of files in specified path
+ * @param path
+ * @param retval can be NULL
+ * @return count files
+ */
+size_t filesInPath
+(
+	const std::string &path,
+	const std::string &suffix,
+	std::vector<std::string> *retval
+)
+{
+	if (&path == NULL)
+		return 0;
+
+	FTS* file_system = fts_open((char* const*) path.c_str(), FTS_LOGICAL | FTS_NOSTAT, &compareFile);
+
+    if (!file_system)
+    	return 0;
+    size_t count = 0;
+    FTSENT* parent;
+	while((parent = fts_read(file_system)))
+	{
+		FTSENT* child = fts_children(file_system, 0);
+		if (errno != 0)
+		{
+			// TODO
+		}
+		while (child && (child->fts_link))
+		{
+			child = child->fts_link;
+			switch (child->fts_info) {
+				case FTS_F:
+					{
+						std::string s(child->fts_path);
+						if (s.find(suffix) != std::string::npos)
+						{
+							count++;
+							if (retval)
+								retval->push_back(s.append(PATH_DELIMITER).append(child->fts_name));
+						}
+					}
+					break;
+				default:
+					break;
+			}
+		}
+	}
+	fts_close(file_system);
+	return count;
 }
 
 #endif
@@ -148,3 +224,4 @@ std::string getFilePathFromDescriptor(int fd)
 	else
 		return "";
 }
+

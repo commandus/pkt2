@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <signal.h>
+#include <stdlib.h>
 
-//#include <iostream>
 #include <glog/logging.h>
 
 #include "platform.h"
 #include "daemonize.h"
+#include "errorcodes.h"
 
 #include "pkt2receiver-config.h"
 #include "pkt2receivernano.h"
@@ -14,14 +15,14 @@ Config *config;
 
 void stopNWait()
 {
-    LOG(INFO) << "Stop..";
+    LOG(INFO) << MSG_STOP;
 	if (config)
 		stop(config);
 }
 
 void done()
 {
-    LOG(INFO) << "done";
+    LOG(INFO) << MSG_DONE;
 }
 
 int reslt;
@@ -30,7 +31,7 @@ void run()
 {
 	if (!config)
 	{
-		LOG(ERROR) << "config corrupted.";
+		LOG(ERROR) << ERR_NO_CONFIG;
 		return;
 	}
 	int n = 0;
@@ -49,13 +50,12 @@ void signalHandler(int signal)
         switch(signal)
         {
         case SIGINT:
-                LOG(INFO) << "Interrupted";
+                LOG(INFO) << MSG_INTERRUPTED;
                 stopNWait();
                 done();
-                LOG(INFO) << "exit";
                 break;
         default:
-                LOG(INFO) << "Signal " << signal;
+                LOG(INFO) << MSG_SIGNAL << signal;
         }
 }
 
@@ -85,18 +85,18 @@ int main
 		exit(5);
     if (config->error() != 0)
 	{
-		LOG(ERROR) << "exit, invalid command line options or help requested.";
-		exit(config->error());
+		LOG(ERROR) << ERR_COMMAND;
+		exit(ERRCODE_COMMAND);
 	}
 
 	if (config->daemonize)
 	{
-		LOG(INFO) << "Start as daemon, use syslog";
+		LOG(INFO) << MSG_DAEMONIZE;
 		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done);
 	}
 	else
 	{
-		LOG(INFO) << "Start..";
+		LOG(INFO) << MSG_START;
 		run();
 		done();
 	}

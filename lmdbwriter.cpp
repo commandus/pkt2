@@ -99,7 +99,6 @@ int put_db
 	return r;
 }
 
-
 /**
  * @brief Store input packet to the LMDB
  * @param env
@@ -114,17 +113,19 @@ int put_db
 {
 	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
 	if (r)
-		return r;
+	{
+		LOG(ERROR) << ERR_LMDB_TXN_BEGIN << r;
+		return ERRCODE_LMDB_TXN_BEGIN;
+	}
 
 	MDB_val key, data;
 
 	google::protobuf::Message *m = packet->message;
 	if (!m)
+	{
+		LOG(ERROR) << ERR_PACKET_PARSE;
 		return ERRCODE_PACKET_PARSE;
-
-	uint32_t packet_type_id;
-	uint32_t time_stamp;
-	uint64_t device_id;
+	}
 
 	key.mv_size = sizeof(struct OutputMessageKey);
 	key.mv_data = &packet->key;
@@ -140,9 +141,13 @@ int put_db
 		return r;
 
 	r = mdb_txn_commit(env->txn);
+	if (r)
+	{
+		LOG(ERROR) << ERR_LMDB_TXN_COMMIT << r;
+		return ERRCODE_LMDB_TXN_COMMIT;
+	}
 	return r;
 }
-
 
 /**
  * @brief Write LMDB loop

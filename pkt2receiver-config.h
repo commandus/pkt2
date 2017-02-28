@@ -2,20 +2,24 @@
 #define CONFIG_H     1
 
 #include <string>
+#include <stdint.h>
 
 #define PROGRAM_NAME             "pkt2receiver"
 #define PROGRAM_DESCRIPTION      "PKT2 receiver"
 
 /**
-  *      \see 
-  */
+ * Parse command line options
+ * @param argc
+ * @param argv
+ * @see pktreceiver.cpp
+ */
 class Config
 {
 private:
     int lastError;
     /**
-    * Parse command line
-    * Return 0- success
+    * @brief Parse command line
+    * @return 0- success
     *        1- show help and exit, or command syntax error
     *        2- output file does not exists or can not open to write
     **/

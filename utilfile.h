@@ -2,21 +2,26 @@
  * utilfile.h
  */
 
-typedef int (*NodeCallback)
-(
-	const char *path,
-	const struct stat *ptr,
-	int flag,
-	struct FTW *ftwbuf
-);
+#include <string>
+#include <vector>
 
 bool rmDir(const std::string &path);
 bool rmFile(const std::string &fn);
 
-bool iteratePath
+/**
+ * Return list of files in specified path
+ * @param path
+ * @param retval can be NULL
+ * @return count files
+ */
+size_t filesInPath
 (
 	const std::string &path,
-	NodeCallback callback
+	const std::string &suffix,
+	std::vector<std::string> *retval
 );
 
+/**
+ * Does not work
+ */
 std::string getFilePathFromDescriptor(int fd);
