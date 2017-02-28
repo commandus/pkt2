@@ -17,8 +17,6 @@ private:
     /**
     * @brief Parse command line
     * @return 0- success
-    *        1- show help and exit, or command syntax error
-    *        2- output file does not exists or can not open to write
     **/
     int parseCmd
     (
@@ -34,11 +32,14 @@ public:
     int retries;            ///< default 0
     int retry_delay;        ///< default 60 seconds
 
-    std::string message_url;
+    std::string message_in_url;
+    std::string message_out_url;
     std::string file_name;
+    std::string proto_path;
 
     bool daemonize;
     bool stop_request;
+    size_t buffer_size;
 };
 
 

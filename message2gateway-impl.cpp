@@ -7,7 +7,7 @@
 #include <arpa/inet.h>
 
 #include <nanomsg/nn.h>
-#include <nanomsg/pipeline.h>
+#include <nanomsg/pubsub.h>
 
 #include <glog/logging.h>
 
@@ -46,26 +46,14 @@ bool processMessage
 }
 
 /**
-  * Receives message from nanomsg socket
+  * @brief Receives message from stream
   * @return:  0- success
-  *          1- can not listen port
-  *          2- invalid nano socket URL
-  *          3- protobuf load messages error occurred
-  *          4- send error, re-open
-  *          5- LMDB open database file error
   */
-int run
+int run_stream
 (
 		Config *config
 )
 {
-	int nano_socket = nn_socket(AF_SP, NN_PUSH);
-	if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
-	{
-		LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
-		return ERRCODE_NN_CONNECT;
-	}
-
 	std::istream *strm;
 	if (config->file_name.empty())
 	{
@@ -76,19 +64,28 @@ int run
 		strm = new std::ifstream(config->file_name, std::ifstream::in);
 	}
 
-	ProtobufDeclarations pd;
-	pd.addPath("proto");
-	
-	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
-	
-	if (pd.parseProtoFile("example/example1.proto"))
+	int nano_socket_out = nn_socket(AF_SP, NN_PUB);
+
+	if (nn_connect(nano_socket_out, config->message_out_url.c_str()) < 0)
 	{
-		messageDescriptors = pd.getMessages();	
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url;
+		return ERRCODE_NN_CONNECT;
 	}
-	
+
+
+	ProtobufDeclarations pd;
+	pd.addPath(config->proto_path);
+
+	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
+
+	size_t c = pd.parseProtoPath(config->proto_path);
+	LOG(INFO) << MSG_PARSE_PROTO_COUNT << c;
+
+	messageDescriptors = pd.getMessages();
+
 	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
 	{
-		LOG(ERROR) << ERR_LOAD_PROTO "Can not load proto files from ";
+		LOG(ERROR) << ERR_LOAD_PROTO << ;
 		return ERRCODE_LOAD_PROTO;
 	}
 
@@ -102,11 +99,11 @@ int run
 
     while (!config->stop_request)
     {
-    	if (strm->eof())
-    	{
-    		LOG(INFO) << "End of file detected, exit.";
-    		break;
-    	}
+		if (strm->eof())
+		{
+			LOG(INFO) << "End of file detected, exit.";
+			break;
+		}
 
     	uint32_t message_type_size;
     	input.ReadVarint32(&message_type_size);
@@ -129,7 +126,107 @@ int run
 		delete strm;
 	}
 
-	return nn_shutdown(nano_socket, 0);
+	int r = nn_shutdown(nano_socket_out, 0);
+	return r;
+}
+
+/**
+  * @brief Receives message from nanomsg socket
+  * @return:  0- success
+  */
+int run_socket
+(
+		Config *config
+)
+{
+	int nano_socket_in = nn_socket(AF_SP, NN_SUB);
+	if (nn_connect(nano_socket_in, config->message_in_url.c_str()) < 0)
+	{
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_in_url;
+		return ERRCODE_NN_CONNECT;
+	}
+
+	int nano_socket_out = nn_socket(AF_SP, NN_PUB);
+	if (nn_connect(nano_socket_out, config->message_out_url.c_str()) < 0)
+	{
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url;
+		return ERRCODE_NN_CONNECT;
+	}
+
+	ProtobufDeclarations pd;
+	pd.addPath(config->proto_path);
+	
+	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
+	
+	if (pd.parseProtoPath(config->proto_path))
+	{
+		messageDescriptors = pd.getMessages();	
+	}
+	
+	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
+	{
+		LOG(ERROR) << ERR_LOAD_PROTO << ;
+		return ERRCODE_LOAD_PROTO;
+	}
+
+	// pd.debug(messageDescriptors);
+
+	void *buffer = malloc(config->buffer_size);
+	if (!buffer)
+	{
+		LOG(ERROR) << ERR_NO_MEMORY << config->buffer_size;
+		return ERRCODE_NO_MEMORY;
+	}
+
+    while (!config->stop_request)
+    {
+    	int bytes = nn_recv(nano_socket_in, buffer, config->buffer_size, 0);
+    	if (bytes < 0)
+    	{
+    		LOG(ERROR) << ERR_NN_RECV << bytes;
+    		continue;
+    	}
+    	else
+    		if (bytes == 0)
+    			continue;
+
+    	google::protobuf::io::ArrayInputStream isistream(buffer, bytes);
+        google::protobuf::io::CodedInputStream input(&isistream);
+        // input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
+
+    	uint32_t message_type_size;
+    	input.ReadVarint32(&message_type_size);
+    	std::string messageType;
+    	input.ReadString(&messageType, message_type_size);
+		uint32_t size;
+		input.ReadVarint32(&size);
+		google::protobuf::io::CodedInputStream::Limit limit = input.PushLimit(size);
+		Message *m = pd.decode(messageType, &input);
+		if (m)
+		{
+			processMessage(m);
+		}
+		input.ConsumedEntireMessage();
+		input.PopLimit(limit);
+    }
+
+    return nn_shutdown(nano_socket_out, 0) | nn_shutdown(nano_socket_in, 0);
+}
+
+
+/**
+  * @brief Receives message from stream or nanomsg socket
+  * @return:  0- success
+  */
+int run
+(
+		Config *config
+)
+{
+	if (config->message_in_url.empty())
+		return run_stream(config);
+	else
+		return run_socket(config);
 }
 
 /**

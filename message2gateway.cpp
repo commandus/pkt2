@@ -1,3 +1,6 @@
+/**
+ * Read packet from nanomsg socket, parse and emit
+ */
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
@@ -98,11 +101,11 @@ int main
 
 	config = new Config(argc, argv);
 	if (!config)
-		exit(5);
+		exit(ERRCODE_NO_CONFIG);
     if (config->error() != 0)
 	{
-		LOG(ERROR) << ERRCODE_COMMAND;
-		exit(config->error());
+		LOG(ERROR) << ERR_COMMAND;
+		exit(ERRCODE_COMMAND);
 	}
 
 	if (config->daemonize)

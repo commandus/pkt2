@@ -72,6 +72,26 @@ public:
 		const char *fn
 	);
 
+	/**
+	 * parse proto files
+	 * @param protoFiles
+	 * @return count successfully parsed files
+	 */
+	size_t parseProtoFiles
+	(
+		const std::vector<std::string> &protoFiles
+	);
+
+	/**
+	 * @brief Each protobuf3 file must have .proto file name suffix
+	 * @param path
+	 * @return successfully parsed files count
+	 */
+	size_t parseProtoPath
+	(
+		const std::string &path
+	);
+
 	std::map<std::string, const google::protobuf::Descriptor*> *parseProtoDirectory
 	(
 		const std::string &path

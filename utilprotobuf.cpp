@@ -112,7 +112,7 @@ namespace utilProto
 {
 	/**
 	 * @brief Parse proto file
-	 * @oaram path
+	 * @param path
 	 * @param filename
 	 * @param messages
 	 * @param error_output
@@ -144,7 +144,8 @@ namespace utilProto
 
 	/**
 	 * @brief Each protobuf3 file must have .proto file name suffix
-	 * @param path
+	 * @param path	include path
+	 * @param protoFiles vector of file path name strings
 	 * @param messages
 	 * @param error_output std::ostream
 	 * @return successfully parsed files count
@@ -152,15 +153,13 @@ namespace utilProto
 	size_t parseProtoFiles
 	(
 		const std::string &path,
+		const std::vector<std::string> &protoFiles,
 		std::map<std::string, const google::protobuf::Descriptor*> &messages,
 		std::ostream *error_output
 	)
 	{
-		std::vector<std::string> protoFiles;
-		filesInPath(path, ".proto", &protoFiles);
-
 		size_t r = 0;
-		for (std::string fn : protoFiles)
+		for (const std::string &fn : protoFiles)
 		{
 			if (error_output)
 				*error_output << fn << ".. ";
@@ -173,6 +172,25 @@ namespace utilProto
 		if (error_output)
 				*error_output << r << "/" << protoFiles.size() << " " << MSG_PROCESSED << std::endl;
 		return r;
+	}
+
+	/**
+	 * @brief Each protobuf3 file must have .proto file name suffix
+	 * @param path
+	 * @param messages
+	 * @param error_output std::ostream
+	 * @return successfully parsed files count
+	 */
+	size_t parseProtoPath
+	(
+		const std::string &path,
+		std::map<std::string, const google::protobuf::Descriptor*> &messages,
+		std::ostream *error_output
+	)
+	{
+		std::vector<std::string> protoFiles;
+		filesInPath(path, ".proto", &protoFiles);
+		return parseProtoFiles(path, protoFiles, messages, error_output);
 	}
 
 }

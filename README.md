@@ -21,7 +21,7 @@ pkt2
 - описание исходящего пакета данных (ответа), опционально- адрес куда отправить пакет.
 
 ```
-               ipc:///tmp/input.pkt2                                      ipc:///tmp/output.pkt2
+               ipc:///tmp/packet.pkt2                                      ipc:///tmp/message.pkt2
                                               Файлы
                                             (плагины)
                                           поддерживаемых
@@ -78,7 +78,7 @@ codex -protofile proto/example/example1.proto -message_name TemperaturePkt 1
 ```
 
 Имена каналов(очередей) по умолчанию
-           ipc:///tmp/input.pkt2                                           ipc:///tmp/output.pkt2
+           ipc:///tmp/packet.pkt2                                           ipc:///tmp/message.pkt2
 
 ```
 

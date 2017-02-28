@@ -200,6 +200,41 @@ bool ProtobufDeclarations::parseProtoFile
 }
 
 /**
+ * parse proto files
+ * @param protoFiles
+ * @return count successfully parsed files
+ */
+size_t ProtobufDeclarations::parseProtoFiles
+(
+	const std::vector<std::string> &protoFiles
+)
+{
+	size_t r = 0;
+	for (const std::string &fn : protoFiles)
+	{
+		if (parseProtoFile(fn.c_str()))
+			r++;
+	}
+	return r;
+
+}
+
+/**
+ * @brief Each protobuf3 file must have .proto file name suffix
+ * @param path
+ * @return successfully parsed files count
+ */
+size_t ProtobufDeclarations::parseProtoPath
+(
+	const std::string &path
+)
+{
+	std::vector<std::string> protoFiles;
+	filesInPath(path, ".proto", &protoFiles);
+	return parseProtoFiles(protoFiles);
+}
+
+/**
  * @brief Try add path from include paths at specified index to the file name and open
  * @param fn file name to concatenate
  * @param index path index

@@ -6,16 +6,17 @@
 #ifndef ERRORCODES_H_
 #define ERRORCODES_H_
 
-#define MSG_OK					"OK"
-#define MSG_FAILED				"failed"
-#define MSG_START				"Start"
-#define MSG_STOP				"Stopped.."
-#define MSG_DONE				"Done"
-#define MSG_INTERRUPTED			"Interrupted"
-#define MSG_SIGNAL				"Signal "
-#define MSG_DAEMONIZE			"Start as daemon, use syslog"
-#define MSG_PROCESSED			"successfully processed"
-#define MSG_PARSE_FILE 			"parse proto file: "
+#define MSG_OK						"OK"
+#define MSG_FAILED					"failed"
+#define MSG_START					"Start"
+#define MSG_STOP					"Stopped.."
+#define MSG_DONE					"Done"
+#define MSG_INTERRUPTED				"Interrupted"
+#define MSG_SIGNAL					"Signal "
+#define MSG_DAEMONIZE				"Start as daemon, use syslog"
+#define MSG_PROCESSED				"successfully processed"
+#define MSG_PARSE_FILE 				"parse proto file: "
+#define MSG_PARSE_PROTO_COUNT		"Proto files parsed count: "
 
 #define ERR_OK						0
 #define ERRCODE_COMMAND				1
@@ -35,6 +36,7 @@
 #define ERRCODE_NO_CONFIG			19
 
 #define ERRCODE_LOAD_PROTO 			20
+#define ERRCODE_NO_MEMORY			21
 
 #define ERR_COMMAND					"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND			"Error parse command line options, possible cause is insufficient memory."
@@ -55,5 +57,6 @@
 #define ERR_OPEN_PROTO 				"Can not open proto file from "
 #define ERR_PARSE_PROTO				"Cannot parse proto file "
 #define ERR_PROTO_GET_DESCRIPTOR 	"Cannot get proto file descriptor from file "
+#define ERR_NO_MEMORY				"Can not allocate buffer size "
 
 #endif /* ERRORCODES_H_ */

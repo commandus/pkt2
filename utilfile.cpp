@@ -14,13 +14,13 @@
 #include <fcntl.h>
 #include <ftw.h>
 #include <unistd.h>
-#include<stdlib.h>
-#include<stdio.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<fts.h>
-#include<string.h>
-#include<errno.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fts.h>
+#include <string.h>
+#include <errno.h>
+#include <cstdio>
 
 #define PATH_DELIMITER "/"
 
@@ -169,7 +169,10 @@ size_t filesInPath
 	if (&path == NULL)
 		return 0;
 
-	FTS* file_system = fts_open((char* const*) path.c_str(), FTS_LOGICAL | FTS_NOSTAT, &compareFile);
+	char *pathlist[2];
+	pathlist[0] = (char *) path.c_str();
+	pathlist[1] = NULL;
+	FTS* file_system = fts_open(pathlist, FTS_LOGICAL | FTS_NOSTAT, &compareFile);
 
     if (!file_system)
     	return 0;

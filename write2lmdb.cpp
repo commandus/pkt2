@@ -3,7 +3,7 @@
  *   Store to LMDB database file (-p)
  *
  *   Usage (default values):
- *   	write2lmdb -q ipc:///tmp/input.pkt2 -p db -f 0 -m 0664
+ *   	write2lmdb -q ipc:///tmp/packet.pkt2 -p db -f 0 -m 0664
  *   -f LMDB database file flags
  *   -m LMDB database file open mode flags
  *
