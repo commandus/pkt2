@@ -1,4 +1,5 @@
 #include <string>
+#include <string.h>
 #include <iostream>
 #include "utilprotobuf.h"
 #include "utilfile.h"
@@ -25,6 +26,23 @@
 
 #include "error-printer.h"
 #include "errorcodes.h"
+
+MessageTypeNAddress::MessageTypeNAddress()
+	: message_type(""), message_size(0)
+{
+    memset(&socket_address_src, sizeof(struct sockaddr), 0);
+    memset(&socket_address_dst, sizeof(struct sockaddr), 0);
+}
+
+MessageTypeNAddress::MessageTypeNAddress
+(
+		const std::string &messagetype
+)
+	: message_type(messagetype), message_size(0)
+{
+    memset(&socket_address_src, sizeof(struct sockaddr), 0);
+    memset(&socket_address_dst, sizeof(struct sockaddr), 0);
+}
 
 /**
  * Proto file must have file name suffix ".proto"
@@ -205,16 +223,19 @@ namespace utilProto
  */
 int writeDelimitedMessage
 (
-	const std::string &messageTypeName,
+	const MessageTypeNAddress *messageTypeNAddress,
     const google::protobuf::MessageLite& message,
     google::protobuf::io::ZeroCopyOutputStream* rawOutput
 )
 {
 	// We create a new coded stream for each message.  Don't worry, this is fast.
 	google::protobuf::io::CodedOutputStream output(rawOutput);
+
+	output.WriteRaw(&messageTypeNAddress->socket_address_src, SOCKADDR_SIZE);
+	output.WriteRaw(&messageTypeNAddress->socket_address_dst, SOCKADDR_SIZE);
 	// Write the type
-	output.WriteVarint32(messageTypeName.size());
-	output.WriteString(messageTypeName);
+	output.WriteVarint32(messageTypeNAddress->message_type.size());
+	output.WriteString(messageTypeNAddress->message_type);
 	// Write the size.
 	const int size = message.ByteSize();
 	output.WriteVarint32(size);
@@ -231,7 +252,7 @@ int writeDelimitedMessage
 		if (output.HadError())
 			return -1;
 	}
-	return (4 + messageTypeName.size() + 4 + size);
+	return (4 + messageTypeNAddress->message_type.size() + 4 + size);
 }
 
 /**
@@ -242,14 +263,78 @@ int writeDelimitedMessage
  */
 std::string stringDelimitedMessage
 (
-	const std::string &messageTypeName,
+	const MessageTypeNAddress *messageTypeNAddress,
     const google::protobuf::MessageLite& message
 )
 {
 	google::protobuf::io::ZeroCopyOutputStream* rawOutput;
 	std::stringstream ss;
 	google::protobuf::io::OstreamOutputStream strm(&ss);
-	writeDelimitedMessage(messageTypeName, message, &strm);
+	writeDelimitedMessage(messageTypeNAddress, message, &strm);
 	return ss.str();
 }
 
+/**
+ * Read delimited message from the coded stream
+ * @param strm
+ * @param messageType
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		google::protobuf::io::CodedInputStream *input,
+		MessageTypeNAddress *messageTypeNAddress
+)
+{
+	input->ReadRaw(&messageTypeNAddress->socket_address_src, SOCKADDR_SIZE);
+	input->ReadRaw(&messageTypeNAddress->socket_address_dst, SOCKADDR_SIZE);
+	uint32_t message_type_size;
+	input->ReadVarint32(&message_type_size);
+	input->ReadString(&messageTypeNAddress->message_type, message_type_size);
+	input->ReadVarint32(&messageTypeNAddress->message_size);
+	google::protobuf::io::CodedInputStream::Limit limit = input->PushLimit(messageTypeNAddress->message_size);
+	// google::protobuf::Arena arena;
+	// Message *m = pd->decode(&arena, messageTypeNAddress->message_type, input);
+	Message *m = pd->decode(messageTypeNAddress->message_type, input);
+	if (!m)
+		input->Skip(messageTypeNAddress->message_size);
+	input->ConsumedEntireMessage();
+	input->PopLimit(limit);
+	return m;
+}
+
+/**
+ * Read delimited message from the stream
+ * @param pd
+ * @param strm
+ * @param messageType
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+	ProtobufDeclarations *pd,
+	std::istream *strm,
+	MessageTypeNAddress *messageTypeNAddress
+)
+{
+	google::protobuf::io::IstreamInputStream isistream(strm);
+    google::protobuf::io::CodedInputStream input(&isistream);
+    return readDelimitedMessage(pd, &input, messageTypeNAddress);
+}
+
+/**
+ * Read delimited message from the string
+ * @param value
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		std::string &buffer,
+		MessageTypeNAddress *messageTypeNAddress
+)
+{
+	std::stringstream ss(buffer);
+	return readDelimitedMessage(pd, &ss, messageTypeNAddress);
+}

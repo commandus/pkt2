@@ -38,7 +38,6 @@ int main(int args, char **argv)
     setSignalHandler(SIGINT);
 
 	example1::TemperaturePkt m;
-	const std::string messageTypeName = "example1.TemperaturePkt";
 	std::ostream *ostrm = &std::cout;
 
 	google::protobuf::io::OstreamOutputStream strm(ostrm);
@@ -47,6 +46,9 @@ int main(int args, char **argv)
 	srand(t);
 	int count = 0;
 	cont = true;
+
+	MessageTypeNAddress messageTypeNAddress("example1.TemperaturePkt");
+
 	while (cont)
 	{
 		for (int d = 0; d < 3; d++)
@@ -56,7 +58,7 @@ int main(int args, char **argv)
 			t = time(NULL);
 			m.set_time(t);
 			m.set_degrees_c(c);
-			writeDelimitedMessage(messageTypeName, m, &strm);
+			writeDelimitedMessage(&messageTypeNAddress, m, &strm);
 			count++;
 		}
 	}

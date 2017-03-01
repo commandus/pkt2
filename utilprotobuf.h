@@ -1,10 +1,29 @@
 #ifndef UTILPROTOBUF_H
 #define UTILPROTOBUF_H
 
+#include <sys/socket.h>
 #include <string>
 #include <map>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
+
+#include "protobuf-declarations.h"
+
+#define MAX_PROTO_TOTAL_BYTES_LIMIT 	512 * 1024 * 1024
+
+#define SOCKADDR_SIZE sizeof(struct sockaddr)	// 16 bytes
+
+class MessageTypeNAddress
+{
+public:
+    struct sockaddr socket_address_src;
+    struct sockaddr socket_address_dst;
+    uint32_t message_size;
+	std::string message_type;
+
+	MessageTypeNAddress();
+	MessageTypeNAddress(const std::string &messagetype);
+};
 
 namespace utilProto
 {
@@ -72,7 +91,7 @@ void debugProto
  */
 int writeDelimitedMessage
 (
-	const std::string &messageTypeName,
+	const MessageTypeNAddress *messageTypeNAddress,
     const google::protobuf::MessageLite& message,
     google::protobuf::io::ZeroCopyOutputStream* rawOutput
 );
@@ -85,8 +104,44 @@ int writeDelimitedMessage
  */
 std::string stringDelimitedMessage
 (
-	const std::string &messageTypeName,
+	const MessageTypeNAddress *messageTypeNAddress,
     const google::protobuf::MessageLite& message
+);
+
+/**
+ * Read delimited message from the coded stream
+ * @param strm
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		google::protobuf::io::CodedInputStream *strm,
+		MessageTypeNAddress *messageTypeNAddress
+);
+
+/**
+ * Read delimited message from the stream
+ * @param strm
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		std::istream *strm,
+		MessageTypeNAddress *messageTypeNAddress
+);
+
+/**
+ * Read delimited message from the string
+ * @param value
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		std::string &buffer,
+		MessageTypeNAddress *messageTypeNAddress
 );
 
 #endif /* UTILPROTOBUF_H */

@@ -17,7 +17,7 @@
 #define MSG_PROCESSED				"successfully processed"
 #define MSG_PARSE_FILE 				"parse proto file: "
 #define MSG_PARSE_PROTO_COUNT		"Parsed proto file(s): "
-#define MSG_EOF						"End of file detected "
+#define MSG_EOF						"End of file detected after record "
 #define MSG_MESSAGE_DESCRIPTOR_CNT	"Protobuf descriptor(s): "
 #define MSG_LOOP_EXIT				"Event loop exit"
 

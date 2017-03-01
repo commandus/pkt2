@@ -33,14 +33,14 @@ using namespace google::protobuf;
 using namespace google::protobuf::io;
 using namespace google::protobuf::compiler;
 
-#define MAX_PROTO_TOTAL_BYTES_LIMIT 	512 * 1024 * 1024
 
+uint64_t read_count = 0;
 uint64_t sent_count = 0;
 
 void sendMessage
 (
 		int nnsocket,
-		std::string &messagetype,
+		const MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message &message
 )
 {
@@ -48,9 +48,8 @@ void sendMessage
 	// TextFormat::Print(*message, &out);
 	// std::cout << message->DebugString() << std::endl;
 
-	std::string r = stringDelimitedMessage(messagetype, message);
+	std::string r = stringDelimitedMessage(messageTypeNAddress, message);
 	int sent = nn_send(nnsocket, r.c_str(), r.size(), 0);
-	std::cout << ++sent_count << std::endl;
 	if (sent < 0)
 		LOG(ERROR) << ERR_NN_SEND << sent;
 }
@@ -96,38 +95,26 @@ int run_stream
 
 	google::protobuf::io::IstreamInputStream isistream(strm);
     google::protobuf::io::CodedInputStream input(&isistream);
-
     input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
 
     while (!config->stop_request)
     {
 		if (strm->eof())
 		{
-			LOG(INFO) << MSG_EOF;
+			LOG(INFO) << MSG_EOF << " " << read_count;
 			break;
 		}
-
-    	uint32_t message_type_size;
-    	input.ReadVarint32(&message_type_size);
-    	std::string messageType;
-    	input.ReadString(&messageType, message_type_size);
-		uint32_t size;
-		input.ReadVarint32(&size);
-		google::protobuf::io::CodedInputStream::Limit limit = input.PushLimit(size);
-		// google::protobuf::Arena arena;
-		// Message *m = pd.decode(&arena, messageType, &input);
-		Message *m = pd.decode(messageType, &input);
+		MessageTypeNAddress messageTypeNAddress;
+		Message *m = readDelimitedMessage(&pd, &input, &messageTypeNAddress);
 		if (m)
 		{
-			sendMessage(nano_socket_out, messageType, *m);
+			sendMessage(nano_socket_out, &messageTypeNAddress, *m);
 		}
 		else
 		{
-			LOG(ERROR) << ERR_DECODE_MESSAGE << " (" << size << " bytes)";
-			input.Skip(size);
+			LOG(ERROR) << ERR_DECODE_MESSAGE;
 		}
-		input.ConsumedEntireMessage();
-		input.PopLimit(limit);
+		read_count++;
     }
 
     LOG(INFO) << MSG_LOOP_EXIT;
@@ -203,27 +190,18 @@ int run_socket
 
     	google::protobuf::io::ArrayInputStream isistream(buffer, bytes);
         google::protobuf::io::CodedInputStream input(&isistream);
-        // input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
+        input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
 
-    	uint32_t message_type_size;
-    	input.ReadVarint32(&message_type_size);
-    	std::string messageType;
-    	input.ReadString(&messageType, message_type_size);
-		uint32_t size;
-		input.ReadVarint32(&size);
-		google::protobuf::io::CodedInputStream::Limit limit = input.PushLimit(size);
-		Message *m = pd.decode(messageType, &input);
+		MessageTypeNAddress messageTypeNAddress;
+		Message *m = readDelimitedMessage(&pd, &input, &messageTypeNAddress);
 		if (m)
 		{
-			sendMessage(nano_socket_out, messageType, *m);
+			sendMessage(nano_socket_out, &messageTypeNAddress, *m);
 		}
 		else
 		{
-			LOG(ERROR) << ERR_DECODE_MESSAGE << " (" << size << " bytes)";
-			input.Skip(size);
+			LOG(ERROR) << ERR_DECODE_MESSAGE;
 		}
-		input.ConsumedEntireMessage();
-		input.PopLimit(limit);
     }
 
     return nn_shutdown(nano_socket_out, 0) | nn_shutdown(nano_socket_in, 0);
