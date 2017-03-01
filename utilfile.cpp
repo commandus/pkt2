@@ -156,23 +156,35 @@ int compareFile
 /**
  * Return list of files in specified path
  * @param path
+ * @param flags 0- as is, 1- full path, 2- relative (remove parent path)
  * @param retval can be NULL
  * @return count files
+ * FreeBSD fts.h fts_*()
  */
 size_t filesInPath
 (
 	const std::string &path,
 	const std::string &suffix,
+	int flags,
 	std::vector<std::string> *retval
 )
 {
 	if (&path == NULL)
 		return 0;
-
 	char *pathlist[2];
-	pathlist[0] = (char *) path.c_str();
 	pathlist[1] = NULL;
-	FTS* file_system = fts_open(pathlist, FTS_LOGICAL | FTS_NOSTAT, &compareFile);
+	if (flags & 1)
+	{
+		char realtapth[PATH_MAX+1];
+		pathlist[0] = realpath((char *) path.c_str(), realtapth);
+	}
+	else
+	{
+		pathlist[0] = (char *) path.c_str();
+	}
+	int parent_len = strlen(pathlist[0]) + 1;	///< Arggh. Remove '/' path delimiter(I mean it 'always' present). Not sure is it works fine. It's bad, I know.
+
+	FTS* file_system = fts_open(pathlist, FTS_LOGICAL | FTS_NOSTAT, NULL);
 
     if (!file_system)
     	return 0;
@@ -183,26 +195,35 @@ size_t filesInPath
 		FTSENT* child = fts_children(file_system, 0);
 		if (errno != 0)
 		{
-			// TODO
+			// ignore, perhaps permission error
 		}
-		while (child && (child->fts_link))
+		while (child)
 		{
-			child = child->fts_link;
 			switch (child->fts_info) {
 				case FTS_F:
 					{
-						std::string s(child->fts_path);
+						std::string s(child->fts_name);
 						if (s.find(suffix) != std::string::npos)
 						{
 							count++;
 							if (retval)
-								retval->push_back(s.append(PATH_DELIMITER).append(child->fts_name));
+							{
+								if (flags & 2)
+								{
+									// extract parent path
+									std::string p(&child->fts_path[parent_len]);
+									retval->push_back(p + s);
+								}
+								else
+									retval->push_back(std::string(child->fts_path) + s);
+							}
 						}
 					}
 					break;
 				default:
 					break;
 			}
+			child = child->fts_link;
 		}
 	}
 	fts_close(file_system);

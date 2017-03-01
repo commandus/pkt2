@@ -106,7 +106,37 @@ Message *ProtobufDeclarations::decode
 	// Input is binary.
 	if (!message->ParsePartialFromCodedStream(stream))
 	{
-		delete message;
+		// delete message;
+		return NULL;
+	}
+	return message;
+}
+
+/**
+ * @brief decode message from the stream
+ * @param arena protobuf arena
+ * @param message_name Protobuf message name
+ * @param stream
+ * @return decoded Protobuf message from the stream
+ */
+Message *ProtobufDeclarations::decode
+(
+	google::protobuf::Arena *arena,
+	const std::string &message_name,
+	google::protobuf::io::CodedInputStream *stream
+)
+{
+	// Look up the type.
+	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
+	if (type == NULL)
+		return NULL;
+
+	Message *message(dynamic_factory->GetPrototype(type)->New(arena));
+
+	// Input is binary.
+	if (!message->ParsePartialFromCodedStream(stream))
+	{
+		// delete message;
 		return NULL;
 	}
 	return message;
@@ -190,7 +220,7 @@ bool ProtobufDeclarations::parseProtoFile
 	for (int m = 0; m < count; m++)
 	{
 		const google::protobuf::Descriptor* md = file_desc->message_type(m);
-		LOG(ERROR) << "message: " << md->DebugString();
+		// LOG(INFO) << "message: " << md->DebugString();
 		internalMessages[md->name()] = md;
 	}
 
@@ -230,8 +260,17 @@ size_t ProtobufDeclarations::parseProtoPath
 )
 {
 	std::vector<std::string> protoFiles;
-	filesInPath(path, ".proto", &protoFiles);
-	return parseProtoFiles(protoFiles);
+	filesInPath(path, ".proto", 2, &protoFiles);
+
+	for (std::vector<std::string>::iterator iter = protoFiles.begin(); iter != protoFiles.end(); ++iter)
+		LOG(INFO) << *iter;
+
+	size_t r = parseProtoFiles(protoFiles);
+
+	LOG(INFO) << MSG_PARSE_PROTO_COUNT << r;
+	for (std::map<std::string, const google::protobuf::Descriptor*>::iterator iter = internalMessages.begin(); iter != internalMessages.end(); ++iter)
+		LOG(INFO) << iter->first;
+	return r;
 }
 
 /**

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include <glog/logging.h>
 
@@ -22,7 +23,7 @@ void stopNWait()
 
 void done()
 {
-    LOG(INFO) << MSG_DONE;
+    std::cerr << MSG_DONE;
 }
 
 int reslt;
@@ -50,12 +51,12 @@ void signalHandler(int signal)
         switch(signal)
         {
         case SIGINT:
-                LOG(INFO) << MSG_INTERRUPTED;
+        		std::cerr << MSG_INTERRUPTED;
                 stopNWait();
                 done();
                 break;
         default:
-                LOG(INFO) << MSG_SIGNAL << signal;
+        		std::cerr << MSG_SIGNAL << signal;
         }
 }
 

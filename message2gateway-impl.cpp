@@ -27,6 +27,7 @@
 #include "output-message.h"
 #include "protobuf-declarations.h"
 #include "errorcodes.h"
+#include "utilprotobuf.h"
 
 using namespace google::protobuf;
 using namespace google::protobuf::io;
@@ -34,15 +35,24 @@ using namespace google::protobuf::compiler;
 
 #define MAX_PROTO_TOTAL_BYTES_LIMIT 	512 * 1024 * 1024
 
-bool processMessage
+uint64_t sent_count = 0;
+
+void sendMessage
 (
-		google::protobuf::Message* message
+		int nnsocket,
+		std::string &messagetype,
+		const google::protobuf::Message &message
 )
 {
 	// io::FileOutputStream out(STDOUT_FILENO);
 	// TextFormat::Print(*message, &out);
-	std::cout << message->DebugString() << std::endl;
-	return true;
+	// std::cout << message->DebugString() << std::endl;
+
+	std::string r = stringDelimitedMessage(messagetype, message);
+	int sent = nn_send(nnsocket, r.c_str(), r.size(), 0);
+	std::cout << ++sent_count << std::endl;
+	if (sent < 0)
+		LOG(ERROR) << ERR_NN_SEND << sent;
 }
 
 /**
@@ -76,21 +86,13 @@ int run_stream
 	ProtobufDeclarations pd;
 	pd.addPath(config->proto_path);
 
-	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
-
 	size_t c = pd.parseProtoPath(config->proto_path);
-	LOG(INFO) << MSG_PARSE_PROTO_COUNT << c;
-
-	messageDescriptors = pd.getMessages();
-
+	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = pd.getMessages();
 	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
 	{
-		LOG(ERROR) << ERR_LOAD_PROTO << ;
+		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;
 		return ERRCODE_LOAD_PROTO;
 	}
-
-	// pd.debug(messageDescriptors);
-
 
 	google::protobuf::io::IstreamInputStream isistream(strm);
     google::protobuf::io::CodedInputStream input(&isistream);
@@ -101,7 +103,7 @@ int run_stream
     {
 		if (strm->eof())
 		{
-			LOG(INFO) << "End of file detected, exit.";
+			LOG(INFO) << MSG_EOF;
 			break;
 		}
 
@@ -112,14 +114,23 @@ int run_stream
 		uint32_t size;
 		input.ReadVarint32(&size);
 		google::protobuf::io::CodedInputStream::Limit limit = input.PushLimit(size);
+		// google::protobuf::Arena arena;
+		// Message *m = pd.decode(&arena, messageType, &input);
 		Message *m = pd.decode(messageType, &input);
 		if (m)
 		{
-			processMessage(m);
+			sendMessage(nano_socket_out, messageType, *m);
+		}
+		else
+		{
+			LOG(ERROR) << ERR_DECODE_MESSAGE << " (" << size << " bytes)";
+			input.Skip(size);
 		}
 		input.ConsumedEntireMessage();
 		input.PopLimit(limit);
     }
+
+    LOG(INFO) << MSG_LOOP_EXIT;
 
 	if (strm && (!config->file_name.empty()))
 	{
@@ -165,7 +176,7 @@ int run_socket
 	
 	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
 	{
-		LOG(ERROR) << ERR_LOAD_PROTO << ;
+		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;
 		return ERRCODE_LOAD_PROTO;
 	}
 
@@ -204,7 +215,12 @@ int run_socket
 		Message *m = pd.decode(messageType, &input);
 		if (m)
 		{
-			processMessage(m);
+			sendMessage(nano_socket_out, messageType, *m);
+		}
+		else
+		{
+			LOG(ERROR) << ERR_DECODE_MESSAGE << " (" << size << " bytes)";
+			input.Skip(size);
 		}
 		input.ConsumedEntireMessage();
 		input.PopLimit(limit);

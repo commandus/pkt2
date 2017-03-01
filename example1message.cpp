@@ -6,40 +6,8 @@
 #include <google/protobuf/io/zero_copy_stream_impl.h>
 #include <google/protobuf/io/coded_stream.h>
 #include <google/protobuf/text_format.h>
+#include "utilprotobuf.h"
 #include "example/example1.pb.h"
-
-/**
- * Write Message type string, size of message and message itself
- */
-bool writeDelimitedTo
-(
-	const std::string &messageTypeName,
-    const google::protobuf::MessageLite& message,
-    google::protobuf::io::ZeroCopyOutputStream* rawOutput)
-{
-	// We create a new coded stream for each message.  Don't worry, this is fast.
-	google::protobuf::io::CodedOutputStream output(rawOutput);
-	// Write the type
-	output.WriteVarint32(messageTypeName.size());
-	output.WriteString(messageTypeName);
-	// Write the size.
-	const int size = message.ByteSize();
-	output.WriteVarint32(size);
-	uint8_t* buffer = output.GetDirectBufferForNBytesAndAdvance(size);
-	if (buffer != NULL)
-	{
-		// Optimization:  The message fits in one buffer, so use the faster direct-to-array serialization path.
-		message.SerializeWithCachedSizesToArray(buffer);
-	}
-	else
-	{
-		// Slightly-slower path when the message is multiple buffers.
-		message.SerializeWithCachedSizes(&output);
-		if (output.HadError())
-			return false;
-	}
-	return true;
-}
 
 bool cont;
 
@@ -88,7 +56,7 @@ int main(int args, char **argv)
 			t = time(NULL);
 			m.set_time(t);
 			m.set_degrees_c(c);
-			writeDelimitedTo(messageTypeName, m, &strm);
+			writeDelimitedMessage(messageTypeName, m, &strm);
 			count++;
 		}
 	}

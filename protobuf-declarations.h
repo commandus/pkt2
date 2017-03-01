@@ -10,6 +10,7 @@
 #include <vector>
 #include <string>
 
+#include "google/protobuf/arena.h"
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/dynamic_message.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -19,6 +20,7 @@
 
 class ProtobufDeclarations {
 private:
+	// google::protobuf::Arena arena;
 	std::vector<std::string> paths;
 	std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
 	std::vector<const google::protobuf::FileDescriptor*> parsed_files;
@@ -105,6 +107,13 @@ public:
 
 	google::protobuf::Message *decode
 	(
+		const std::string &message_name,
+		google::protobuf::io::CodedInputStream *stream
+	);
+
+	google::protobuf::Message *decode
+	(
+		google::protobuf::Arena *arena,
 		const std::string &message_name,
 		google::protobuf::io::CodedInputStream *stream
 	);

@@ -62,4 +62,31 @@ void debugProto
 );
 }
 
+/**
+ * @brief Write Message type string, size of message and message itself
+ *
+ * @param messageTypeName
+ * @param message
+ * @param rawOutput
+ * @return
+ */
+int writeDelimitedMessage
+(
+	const std::string &messageTypeName,
+    const google::protobuf::MessageLite& message,
+    google::protobuf::io::ZeroCopyOutputStream* rawOutput
+);
+
+/**
+ * @brief Write Message type string, size of message and message itself to the string
+ * @param messageTypeName
+ * @param message
+ * @return
+ */
+std::string stringDelimitedMessage
+(
+	const std::string &messageTypeName,
+    const google::protobuf::MessageLite& message
+);
+
 #endif /* UTILPROTOBUF_H */

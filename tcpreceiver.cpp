@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <signal.h>
 
-//#include <iostream>
+#include <iostream>
 #include <glog/logging.h>
 
 #include "platform.h"
@@ -48,13 +48,12 @@ void signalHandler(int signal)
         switch(signal)
         {
         case SIGINT:
-                LOG(INFO) << "Interrupted";
+                std::cerr << "Interrupted";
                 stopNWait();
                 done();
-                LOG(INFO) << "exit";
                 break;
         default:
-                LOG(INFO) << "Signal " << signal;
+                std::cerr << "Signal " << signal;
         }
 }
 

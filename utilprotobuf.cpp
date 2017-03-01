@@ -189,8 +189,67 @@ namespace utilProto
 	)
 	{
 		std::vector<std::string> protoFiles;
-		filesInPath(path, ".proto", &protoFiles);
+		filesInPath(path, ".proto", 2, &protoFiles);
 		return parseProtoFiles(path, protoFiles, messages, error_output);
 	}
 
 }
+
+/**
+ * @brief Write Message type string, size of message and message itself
+ *
+ * @param messageTypeName
+ * @param message
+ * @param rawOutput
+ * @return
+ */
+int writeDelimitedMessage
+(
+	const std::string &messageTypeName,
+    const google::protobuf::MessageLite& message,
+    google::protobuf::io::ZeroCopyOutputStream* rawOutput
+)
+{
+	// We create a new coded stream for each message.  Don't worry, this is fast.
+	google::protobuf::io::CodedOutputStream output(rawOutput);
+	// Write the type
+	output.WriteVarint32(messageTypeName.size());
+	output.WriteString(messageTypeName);
+	// Write the size.
+	const int size = message.ByteSize();
+	output.WriteVarint32(size);
+	uint8_t* buffer = output.GetDirectBufferForNBytesAndAdvance(size);
+	if (buffer != NULL)
+	{
+		// Optimization:  The message fits in one buffer, so use the faster direct-to-array serialization path.
+		message.SerializeWithCachedSizesToArray(buffer);
+	}
+	else
+	{
+		// Slightly-slower path when the message is multiple buffers.
+		message.SerializeWithCachedSizes(&output);
+		if (output.HadError())
+			return -1;
+	}
+	return (4 + messageTypeName.size() + 4 + size);
+}
+
+/**
+ * @brief Write Message type string, size of message and message itself to the string
+ * @param messageTypeName
+ * @param message
+ * @return
+ */
+std::string stringDelimitedMessage
+(
+	const std::string &messageTypeName,
+    const google::protobuf::MessageLite& message
+)
+{
+	google::protobuf::io::ZeroCopyOutputStream* rawOutput;
+	std::stringstream ss;
+	google::protobuf::io::OstreamOutputStream strm(&ss);
+	writeDelimitedMessage(messageTypeName, message, &strm);
+	return ss.str();
+}
+
