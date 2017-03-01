@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package pkt2;
 
+option cc_enable_arenas = true;
+
 import "descriptor.proto";
 
 enum InputType {

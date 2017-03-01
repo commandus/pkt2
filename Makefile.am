@@ -169,6 +169,7 @@ protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
+	utilprotobuf.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
@@ -178,8 +179,8 @@ message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
 # example1message
 #
 example1message_SOURCES = \
-	example1message.cpp \
-	example/example1.pb.cpp pkt2.pb.cpp \
+	example1message.cpp utilprotobuf.cpp error-printer.cpp \
+	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf $(SNMPLIBS)
@@ -204,7 +205,7 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
 	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \
 	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
-	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto proto/iridium/iridium1.proto \
+	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto  \
 	mib/EAS-IKFIA-MIB \
 	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
 	

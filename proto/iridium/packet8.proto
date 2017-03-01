@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package iridium;
 
+option cc_enable_arenas = true;
+
 import "pkt2.proto";
 import "time5.proto";
 import "gps16.proto";
@@ -148,7 +150,7 @@ message Packet8
 	// structure 5 bytes long (bytes 25..30) 
     Time5 measure_time = 2 [(pkt2.variable) = {
         field: "time5"
-        index: true
+        index: 1
     }];
 
     // output 
