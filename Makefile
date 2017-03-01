@@ -123,7 +123,9 @@ am_example1message_OBJECTS =  \
 	example1message-error-printer.$(OBJEXT) \
 	example/example1message-example1.pb.$(OBJEXT) \
 	example1message-pkt2.pb.$(OBJEXT) \
-	example1message-utilfile.$(OBJEXT) $(am__objects_1)
+	example1message-utilfile.$(OBJEXT) \
+	example1message-protobuf-declarations.$(OBJEXT) \
+	$(am__objects_1)
 example1message_OBJECTS = $(am_example1message_OBJECTS)
 am__DEPENDENCIES_1 =
 example1message_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -861,10 +863,10 @@ message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
 #
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
-	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp \
+	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
 	$(common_src)
 
-example1message_LDADD = -lprotobuf $(SNMPLIBS)
+example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
 example1message_CPPFLAGS = $(commoncppflags) -std=c++11
 
 #
@@ -1057,6 +1059,7 @@ distclean-compile:
 include ./$(DEPDIR)/example1message-error-printer.Po
 include ./$(DEPDIR)/example1message-example1message.Po
 include ./$(DEPDIR)/example1message-pkt2.pb.Po
+include ./$(DEPDIR)/example1message-protobuf-declarations.Po
 include ./$(DEPDIR)/example1message-utilfile.Po
 include ./$(DEPDIR)/example1message-utilprotobuf.Po
 include ./$(DEPDIR)/example1message1-example1message1.Po
@@ -1301,6 +1304,20 @@ example1message-utilfile.obj: utilfile.cpp
 #	$(AM_V_CXX)source='utilfile.cpp' object='example1message-utilfile.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+example1message-protobuf-declarations.o: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/example1message-protobuf-declarations.Tpo -c -o example1message-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-protobuf-declarations.Tpo $(DEPDIR)/example1message-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='example1message-protobuf-declarations.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+
+example1message-protobuf-declarations.obj: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/example1message-protobuf-declarations.Tpo -c -o example1message-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-protobuf-declarations.Tpo $(DEPDIR)/example1message-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='example1message-protobuf-declarations.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
 
 example1message1-example1message1.o: example1message1.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-example1message1.o -MD -MP -MF $(DEPDIR)/example1message1-example1message1.Tpo -c -o example1message1-example1message1.o `test -f 'example1message1.cpp' || echo '$(srcdir)/'`example1message1.cpp
