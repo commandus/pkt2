@@ -4,7 +4,7 @@
 #include "errorcodes.h"
 
 #define DEF_DB_PATH              	"db"
-#define DEF_MODE                 	0664
+#define DEF_MODE                 	0
 #define DEF_BUFFER_SIZE				2048
 #define DEF_FLAGS              		0
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"

@@ -23,6 +23,9 @@
 #include "errorcodes.h"
 #include "utilprotobuf.h"
 
+#include "json/json.h"
+#include "pbjson.hpp"
+
 using namespace google::protobuf;
 
 /**
@@ -33,7 +36,7 @@ using namespace google::protobuf;
  * @param message
  * @return 0 - success
  */
-int put_line
+int put_debug
 (
 		void *buffer,
 		int buffer_size,
@@ -42,6 +45,28 @@ int put_line
 )
 {
 	std::cout << message->DebugString() << std::endl;
+	return 0;
+}
+
+/**
+ * @brief Print packet to the stdout
+ * @param buffer
+ * @param buffer_size
+ * @param messageTypeNAddress
+ * @param message
+ * @return 0 - success
+ */
+int put_json
+(
+		void *buffer,
+		int buffer_size,
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
+)
+{
+	std::string out;
+	pbjson::pb2json(message, out);
+	std::cout << out << std::endl;
 	return 0;
 }
 
@@ -99,8 +124,11 @@ int run
 		{
 			switch (config->mode)
 			{
-				default:
-					put_line(buffer, bytes, &messageTypeNAddress, m);
+			case 0:
+				put_json(buffer, bytes, &messageTypeNAddress, m);
+				break;
+			default:
+				put_debug(buffer, bytes, &messageTypeNAddress, m);
 			}
     	}
 		else
