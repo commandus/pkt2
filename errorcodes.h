@@ -33,19 +33,20 @@
 #define ERRCODE_LMDB_CLOSE			13
 
 #define ERRCODE_NN_CONNECT	 		14
-#define ERRCODE_NN_SHUTDOWN 		15
-#define ERRCODE_NN_RECV				16
-#define ERRCODE_NN_SEND				17
+#define ERRCODE_NN_SUBSCRIBE		15
+#define ERRCODE_NN_SHUTDOWN 		16
+#define ERRCODE_NN_RECV				17
+#define ERRCODE_NN_SEND				18
 
-#define ERRCODE_PACKET_PARSE		18
-#define ERRCODE_STOP				19
-#define ERRCODE_NO_CONFIG			20
+#define ERRCODE_PACKET_PARSE		19
+#define ERRCODE_STOP				20
+#define ERRCODE_NO_CONFIG			21
 
-#define ERRCODE_LOAD_PROTO 			21
-#define ERRCODE_NO_MEMORY			22
-#define ERRCODE_DECODE_MESSAGE		23
+#define ERRCODE_LOAD_PROTO 			22
+#define ERRCODE_NO_MEMORY			23
+#define ERRCODE_DECODE_MESSAGE		24
 
-#define ERRCODE_SOCKET_SEND			24
+#define ERRCODE_SOCKET_SEND			25
 
 #define ERR_COMMAND					"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND			"Error parse command line options, possible cause is insufficient memory."
@@ -55,6 +56,7 @@
 #define ERR_LMDB_CLOSE				"Can not close database file "
 
 #define ERR_NN_CONNECT				"Can not connect to the IPC url "
+#define ERR_NN_SUBSCRIBE			"Can not subscribe to the IPC url "
 #define ERR_NN_SHUTDOWN				"Can not shutdown nanomsg socket "
 #define ERR_NN_RECV					"Receive nanomsg error "
 #define ERR_NN_SEND					"Send nanomsg error "

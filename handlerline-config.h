@@ -3,12 +3,12 @@
 
 #include <string>
 
-#define PROGRAM_NAME             "write2lmdb"
-#define PROGRAM_DESCRIPTION      "PKT2 LMDB writer"
+#define PROGRAM_NAME             "handlerline"
+#define PROGRAM_DESCRIPTION      "PKT2 stdout printer"
 
 /**
-  *      \see write2lmdb.cpp
-  *      \see lmdbwritee.cpp
+  *      \see handlerline.cpp
+  *      \see handlerline.cpp
   */
 class Config
 {
@@ -31,13 +31,10 @@ public:
     int retries;             ///< default 1
     int retry_delay;         ///<
 
-    // LMDB
-    std::string path;        ///< path, default "lmdb"
-    int mode;                ///< default 0664
-    int flags;               ///< default 0
-
     // proto
     std::string proto_path;	///< proto files directory path
+    int mode;		        ///< default 0- JSON
+    int buffer_size;        ///< default 2048
 
     bool daemonize;
     bool stop_request;

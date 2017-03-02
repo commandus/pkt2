@@ -34,8 +34,8 @@ $(gengrpcs): Makefile
 #
 
 # genfiles = $(gengrpcs)
-# nodist_tcpreceiver_SOURCES = $(genfiles)
-# BUILT_SOURCES = $(gengrpcs)
+nodist_tcpreceiver_SOURCES = $(genfiles)
+BUILT_SOURCES = $(gengrpcs)
 CLEANFILES = $(gengrpcs)
 
 #

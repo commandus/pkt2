@@ -35,7 +35,7 @@ int stop
 
 void stopNWait()
 {
-    LOG(INFO) << MSG_STOP;
+	std::cerr << MSG_STOP;
 	if (config)
 		stop(config);
 }

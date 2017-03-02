@@ -44,10 +44,6 @@ void sendMessage
 		const google::protobuf::Message &message
 )
 {
-	// io::FileOutputStream out(STDOUT_FILENO);
-	// TextFormat::Print(*message, &out);
-	// std::cout << message->DebugString() << std::endl;
-
 	std::string r = stringDelimitedMessage(messageTypeNAddress, message);
 	int sent = nn_send(nnsocket, r.c_str(), r.size(), 0);
 	if (sent < 0)
@@ -65,19 +61,16 @@ int run_stream
 {
 	std::istream *strm;
 	if (config->file_name.empty())
-	{
 		strm = &std::cin;
-	}
 	else
-	{
 		strm = new std::ifstream(config->file_name, std::ifstream::in);
-	}
 
 	int nano_socket_out = nn_socket(AF_SP, NN_PUB);
 
-	if (nn_connect(nano_socket_out, config->message_out_url.c_str()) < 0)
+	int eoutid = nn_bind(nano_socket_out, config->message_out_url.c_str());
+	if (eoutid < 0)
 	{
-		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url;
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_CONNECT;
 	}
 
@@ -119,7 +112,13 @@ int run_stream
 		delete strm;
 	}
 
-	int r = nn_shutdown(nano_socket_out, 0);
+	int r = nn_shutdown(nano_socket_out, eoutid);
+	if (r)
+	{
+		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_out_url << " " << errno << " " << strerror(errno);
+		r = ERRCODE_NN_SHUTDOWN;
+
+	}
 	return r;
 }
 
@@ -133,16 +132,18 @@ int run_socket
 )
 {
 	int nano_socket_in = nn_socket(AF_SP, NN_SUB);
-	if (nn_connect(nano_socket_in, config->message_in_url.c_str()) < 0)
+	int einid = nn_connect(nano_socket_in, config->message_in_url.c_str());
+	if (einid < 0)
 	{
-		LOG(ERROR) << ERR_NN_CONNECT << config->message_in_url;
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_in_url << " " << errno << " " << strerror(errno);;
 		return ERRCODE_NN_CONNECT;
 	}
 
 	int nano_socket_out = nn_socket(AF_SP, NN_PUB);
-	if (nn_connect(nano_socket_out, config->message_out_url.c_str()) < 0)
+	int eoutid = nn_bind(nano_socket_out, config->message_out_url.c_str());
+	if (eoutid < 0)
 	{
-		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url;
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_CONNECT;
 	}
 
@@ -165,7 +166,7 @@ int run_socket
     	int bytes = nn_recv(nano_socket_in, buffer, config->buffer_size, 0);
     	if (bytes < 0)
     	{
-    		LOG(ERROR) << ERR_NN_RECV << bytes;
+    		LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
     		continue;
     	}
     	else
@@ -181,7 +182,14 @@ int run_socket
     }
 
 	free(buffer);
-    return nn_shutdown(nano_socket_out, 0) | nn_shutdown(nano_socket_in, 0);
+
+    int r = nn_shutdown(nano_socket_out, einid) | nn_shutdown(nano_socket_in, eoutid);
+	if (r)
+	{
+		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_in_url << " " << errno << " " << strerror(errno);
+		r = ERRCODE_NN_SHUTDOWN;
+	}
+	return r;
 }
 
 

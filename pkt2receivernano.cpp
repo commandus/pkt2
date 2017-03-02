@@ -38,7 +38,7 @@ int pkt2_receiever_nano(Config *config)
 
         if (bytes < 0)
         {
-            LOG(ERROR) << ERR_NN_RECV << bytes;
+        	LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
             continue;
         }
         if (buf)

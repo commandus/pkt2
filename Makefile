@@ -223,7 +223,9 @@ am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-utilstring.$(OBJEXT) \
 	tcpreceiver-utilinet.$(OBJEXT) \
 	tcpreceiver-NanoMessage.$(OBJEXT) $(am__objects_1)
-tcpreceiver_OBJECTS = $(am_tcpreceiver_OBJECTS)
+nodist_tcpreceiver_OBJECTS =
+tcpreceiver_OBJECTS = $(am_tcpreceiver_OBJECTS) \
+	$(nodist_tcpreceiver_OBJECTS)
 tcpreceiver_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
 	tcptransmitter-tcptransmitter-config.$(OBJEXT) \
@@ -304,7 +306,8 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
+	$(write2lmdb_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handlerline_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
@@ -742,8 +745,8 @@ gengrpcs = pkt2.pb.h pkt2.pb.cpp
 #
 
 # genfiles = $(gengrpcs)
-# nodist_tcpreceiver_SOURCES = $(genfiles)
-# BUILT_SOURCES = $(gengrpcs)
+nodist_tcpreceiver_SOURCES = $(genfiles)
+BUILT_SOURCES = $(gengrpcs)
 CLEANFILES = $(gengrpcs)
 
 #
@@ -921,7 +924,7 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	mib/EAS-IKFIA-MIB \
 	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
 
-all: config.h
+all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
@@ -3143,14 +3146,16 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: check-recursive
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-recursive
 all-am: Makefile $(PROGRAMS) $(DATA) $(HEADERS) config.h
 installdirs: installdirs-recursive
 installdirs-am:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(configdir)" "$(DESTDIR)$(includedir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-recursive
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
 uninstall: uninstall-recursive
@@ -3186,6 +3191,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-recursive
 
 clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
@@ -3261,7 +3267,8 @@ ps-am:
 uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 	uninstall-nobase_dist_includeHEADERS
 
-.MAKE: $(am__recursive_targets) all check-am install-am install-strip
+.MAKE: $(am__recursive_targets) all check check-am install install-am \
+	install-strip
 
 .PHONY: $(am__recursive_targets) CTAGS GTAGS TAGS all all-am \
 	am--refresh check check-TESTS check-am clean clean-binPROGRAMS \

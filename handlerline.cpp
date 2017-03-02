@@ -1,15 +1,15 @@
 /**
  *   Read protobuf messages from nanomsg socket ipc:///tmp/output.pkt2 (-q)
- *   Store to LMDB database file (-p)
+ *   Print to stdout
  *
  *   Usage (default values):
- *   	write2lmdb -q ipc:///tmp/packet.pkt2 -p db -f 0 -m 0664
- *   -f LMDB database file flags
- *   -m LMDB database file open mode flags
+ *   	handlerline -q ipc:///tmp/packet.pkt2 -m 0
+ *
+ *   Options
+ *   	-m 0- JSON
  *
  *   Error codes:
  *           0- success
- *
  *
  */
 #include <stdio.h>
@@ -21,8 +21,8 @@
 
 #include "platform.h"
 #include "daemonize.h"
-#include "write2lmdb-config.h"
-#include "lmdbwriter.h"
+#include "handlerline-config.h"
+#include "linewriter.h"
 
 #include "errorcodes.h"
 
@@ -114,7 +114,7 @@ int main
 	}
 	else
 	{
-		LOG(INFO) << "Start..";
+		LOG(INFO) << MSG_START;
 		runner();
 		done();
 	}

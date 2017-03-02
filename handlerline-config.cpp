@@ -1,10 +1,11 @@
-#include "write2lmdb-config.h"
+#include "handlerline-config.h"
 #include <argtable2.h>
 
 #include "errorcodes.h"
 
 #define DEF_DB_PATH              	"db"
 #define DEF_MODE                 	0664
+#define DEF_BUFFER_SIZE				2048
 #define DEF_FLAGS              		0
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
 #define DEF_PROTO_PATH				"proto"
@@ -43,10 +44,8 @@ int Config::parseCmd
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 4, "Verbosity level");
 
         struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
-        struct arg_str *a_db_path = arg_str0("p", "dbpath", "<path>", "Default db");
-        struct arg_int *a_flags = arg_int0("f", "flags", "<number>", "LMDB flags. Default 0");
-        struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "LMDB file open mode. Default 0664");
-
+        struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "0- JSON. Default 0");
+        struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
         struct arg_end *a_end = arg_end(20);
 
@@ -55,7 +54,7 @@ int Config::parseCmd
                 a_message_url,
                 a_retries, a_retry_delay,
                 a_daemonize, a_verbosity,
-				a_db_path, a_flags, a_mode,
+				a_mode, a_buffer_size,
                 a_help, a_end 
         };
 
@@ -105,20 +104,15 @@ int Config::parseCmd
         
         daemonize = a_daemonize->count > 0;
 
-        if (a_db_path->count)
-        	path = *a_db_path->sval;
-        else
-            path = DEF_DB_PATH;
-
         if (a_mode->count)
             mode = *a_mode->ival;
         else
             mode = DEF_MODE;
 
-        if (a_flags->count)
-        	flags = *a_flags->ival;
+        if (a_buffer_size->count)
+        	buffer_size = *a_buffer_size->ival;
         else
-        	flags = DEF_FLAGS;
+        	buffer_size = DEF_BUFFER_SIZE;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return ERR_OK;

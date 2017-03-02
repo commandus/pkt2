@@ -238,17 +238,19 @@ int writeDelimitedMessage
 )
 {
 	// We create a new coded stream for each message.  Don't worry, this is fast.
-	google::protobuf::io::CodedOutputStream output(rawOutput);
+	google::protobuf::io::CodedOutputStream *output = new google::protobuf::io::CodedOutputStream(rawOutput);
 
-	output.WriteRaw(&messageTypeNAddress->socket_address_src, SOCKADDR_SIZE);
-	output.WriteRaw(&messageTypeNAddress->socket_address_dst, SOCKADDR_SIZE);
+	output->WriteRaw(&messageTypeNAddress->socket_address_src, SOCKADDR_SIZE);
+	output->WriteRaw(&messageTypeNAddress->socket_address_dst, SOCKADDR_SIZE);
 	// Write the type
-	output.WriteVarint32(messageTypeNAddress->message_type.size());
-	output.WriteString(messageTypeNAddress->message_type);
+	output->WriteVarint32(messageTypeNAddress->message_type.size());
+	output->WriteString(messageTypeNAddress->message_type);
 	// Write the size.
 	const int size = message.ByteSize();
-	output.WriteVarint32(size);
-	uint8_t* buffer = output.GetDirectBufferForNBytesAndAdvance(size);
+	output->WriteVarint32(size);
+	uint8_t* buffer = output->GetDirectBufferForNBytesAndAdvance(size);
+
+	int r = (4 + messageTypeNAddress->message_type.size() + 4 + size);
 	if (buffer != NULL)
 	{
 		// Optimization:  The message fits in one buffer, so use the faster direct-to-array serialization path.
@@ -257,11 +259,15 @@ int writeDelimitedMessage
 	else
 	{
 		// Slightly-slower path when the message is multiple buffers.
-		message.SerializeWithCachedSizes(&output);
-		if (output.HadError())
-			return -1;
+		message.SerializeWithCachedSizes(output);
+		if (output->HadError())
+		{
+			r = -1;
+		}
 	}
-	return (4 + messageTypeNAddress->message_type.size() + 4 + size);
+
+	delete output;
+	return r;
 }
 
 /**
@@ -276,10 +282,10 @@ std::string stringDelimitedMessage
     const google::protobuf::MessageLite& message
 )
 {
-	google::protobuf::io::ZeroCopyOutputStream* rawOutput;
-	std::stringstream ss;
-	google::protobuf::io::OstreamOutputStream strm(&ss);
-	writeDelimitedMessage(messageTypeNAddress, message, &strm);
+	std::stringstream ss(std::stringstream::out | std::stringstream::binary);
+	google::protobuf::io::OstreamOutputStream *strm = new google::protobuf::io::OstreamOutputStream(&ss);
+	int sz = writeDelimitedMessage(messageTypeNAddress, message, strm);
+	delete strm;
 	return ss.str();
 }
 

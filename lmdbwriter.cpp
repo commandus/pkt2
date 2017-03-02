@@ -71,7 +71,10 @@ bool close_lmdb
 /**
  * @brief Store input packet to the LMDB
  * @param env
- * @param packet
+ * @param buffer
+ * @param buffer_size
+ * @param messageTypeNAddress
+ * @param message
  * @return 0 - success
  */
 int put_db
@@ -156,7 +159,7 @@ int run
 
     	if (bytes < 0)
     	{
-    		LOG(ERROR) << ERR_NN_RECV << bytes;
+    		LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
     		continue;
     	}
 		MessageTypeNAddress messageTypeNAddress;
@@ -179,7 +182,7 @@ int run
 	r = nn_shutdown(nano_socket, 0);
 	if (r)
 	{
-		LOG(ERROR) << ERR_NN_SHUTDOWN << config->path;
+		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url;
 		r = ERRCODE_NN_SHUTDOWN;
 
 	}
