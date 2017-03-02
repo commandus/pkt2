@@ -5,16 +5,15 @@ TESTS = tests/p1.sh tests/t1
 
 if DEBUG
 	AM_CFLAGS = -g3 -O0
-	AM_CXXFLAGS = -g3 -O0
-	commoncppflags = -DDEBUG
+	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
 else
 	AM_CFLAGS = -O2
-	AM_CXXFLAGS = -O2
-	commoncppflags =
+	AM_CXXFLAGS = -O2 -std=c++11
 endif
 
 # ----------------- REMOVE IT!!!! ------------------
-commoncppflags = -g3 -O0 -DDEBUG
+AM_CXXFLAGS = -std=c++11
+#COMMON_CPP_FLAGS = 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
@@ -42,7 +41,9 @@ CLEANFILES = $(gengrpcs)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter write2lmdb protoc-gen-pkt2 \
+bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
+	handlerpq handlerline write2lmdb \
+	protoc-gen-pkt2 \
 	message2gateway example1message example1message1
 
 #
@@ -55,6 +56,7 @@ protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-de
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
+linewriter.h handlerline-config.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -77,7 +79,7 @@ tcpemitter_SOURCES = \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
+tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # tcpreceiver
@@ -89,7 +91,7 @@ tcpreceiver_SOURCES = \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(commoncppflags) -std=c++11
+tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #  pkt2receiver
@@ -101,7 +103,7 @@ pkt2receiver_SOURCES= \
 	$(common_src)
 
 pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2receiver_CPPFLAGS = $(commoncppflags) -std=c++11 
+pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
 #  pkt2gateway
@@ -113,7 +115,7 @@ pkt2gateway_SOURCES= \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2gateway_CPPFLAGS = $(commoncppflags) -std=c++11 
+pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
 # handlerpq
@@ -125,7 +127,7 @@ handlerpq_SOURCES= \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg $(SNMPLIBS)
-handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
+handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # tcptransmitter
@@ -137,19 +139,30 @@ tcptransmitter_SOURCES = \
 	$(common_src)
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
+tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # write2lmdb
 #
 write2lmdb_SOURCES = \
-	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp input-packet.cpp \
-	daemonize.cpp  ieee754.cpp \
-	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp \
+	$(common_src)
+write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+write2lmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# handlerline
+#
+handlerline_SOURCES = \
+	handlerline.cpp linewriter.cpp handlerline-config.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp \
 	$(common_src)
 
-write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
-write2lmdb_CPPFLAGS = $(commoncppflags) -std=c++11
+handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # protoc-gen-pkt2
@@ -160,8 +173,7 @@ protoc_gen_pkt2_SOURCES = \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
-protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
-
+protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # message2gateway
@@ -173,7 +185,7 @@ message2gateway_SOURCES = \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
-message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
+message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # example1message
@@ -184,7 +196,7 @@ example1message_SOURCES = \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
-example1message_CPPFLAGS = $(commoncppflags) -std=c++11
+example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # example1message1
@@ -194,7 +206,7 @@ example1message1_SOURCES = \
 	$(common_src)
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
-example1message1_CPPFLAGS = $(commoncppflags) -std=c++11
+example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # Configs, readme, CMake etc.

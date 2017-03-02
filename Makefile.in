@@ -91,8 +91,9 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
-	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) handlerpq$(EXEEXT) \
-	tcptransmitter$(EXEEXT) write2lmdb$(EXEEXT) \
+	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) \
+	tcptransmitter$(EXEEXT) handlerpq$(EXEEXT) \
+	handlerline$(EXEEXT) write2lmdb$(EXEEXT) \
 	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
 	example1message$(EXEEXT) example1message1$(EXEEXT)
 subdir = .
@@ -140,6 +141,18 @@ am_example1message1_OBJECTS =  \
 	example1message1-utilsnmp.$(OBJEXT) $(am__objects_1)
 example1message1_OBJECTS = $(am_example1message1_OBJECTS)
 example1message1_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
+	handlerline-linewriter.$(OBJEXT) \
+	handlerline-handlerline-config.$(OBJEXT) \
+	handlerline-daemonize.$(OBJEXT) \
+	handlerline-protobuf-declarations.$(OBJEXT) \
+	handlerline-utilprotobuf.$(OBJEXT) \
+	handlerline-error-printer.$(OBJEXT) \
+	handlerline-utilfile.$(OBJEXT) \
+	handlerline-utilstring.$(OBJEXT) \
+	handlerline-utilinet.$(OBJEXT) $(am__objects_1)
+handlerline_OBJECTS = $(am_handlerline_OBJECTS)
+handlerline_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-handlerpq-config.$(OBJEXT) \
 	handlerpq-daemonize.$(OBJEXT) handlerpq-ieee754.$(OBJEXT) \
@@ -226,10 +239,12 @@ tcptransmitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 am_write2lmdb_OBJECTS = write2lmdb-write2lmdb.$(OBJEXT) \
 	write2lmdb-lmdbwriter.$(OBJEXT) \
 	write2lmdb-write2lmdb-config.$(OBJEXT) \
-	write2lmdb-input-packet.$(OBJEXT) \
-	write2lmdb-daemonize.$(OBJEXT) write2lmdb-ieee754.$(OBJEXT) \
-	write2lmdb-utilstring.$(OBJEXT) write2lmdb-utilinet.$(OBJEXT) \
-	write2lmdb-pkt2.pb.$(OBJEXT) $(am__objects_1)
+	write2lmdb-daemonize.$(OBJEXT) \
+	write2lmdb-protobuf-declarations.$(OBJEXT) \
+	write2lmdb-utilprotobuf.$(OBJEXT) \
+	write2lmdb-error-printer.$(OBJEXT) \
+	write2lmdb-utilfile.$(OBJEXT) write2lmdb-utilstring.$(OBJEXT) \
+	write2lmdb-utilinet.$(OBJEXT) $(am__objects_1)
 write2lmdb_OBJECTS = $(am_write2lmdb_OBJECTS)
 write2lmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -285,17 +300,17 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
-	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
-	$(write2lmdb_SOURCES)
+	$(handlerline_SOURCES) $(handlerpq_SOURCES) \
+	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
-	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES) \
-	$(write2lmdb_SOURCES)
+	$(handlerline_SOURCES) $(handlerpq_SOURCES) \
+	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES) $(write2lmdb_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -715,7 +730,8 @@ ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
 
 # ----------------- REMOVE IT!!!! ------------------
-commoncppflags = -g3 -O0 -DDEBUG
+AM_CXXFLAGS = -std=c++11
+#COMMON_CPP_FLAGS = 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
@@ -740,6 +756,7 @@ protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-de
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 write2lmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
+linewriter.h handlerline-config.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -761,7 +778,7 @@ tcpemitter_SOURCES = \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpemitter_CPPFLAGS = $(commoncppflags) -std=c++11
+tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # tcpreceiver
@@ -773,7 +790,7 @@ tcpreceiver_SOURCES = \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(commoncppflags) -std=c++11
+tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #  pkt2receiver
@@ -785,7 +802,7 @@ pkt2receiver_SOURCES = \
 	$(common_src)
 
 pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2receiver_CPPFLAGS = $(commoncppflags) -std=c++11 
+pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
 #  pkt2gateway
@@ -797,7 +814,7 @@ pkt2gateway_SOURCES = \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2gateway_CPPFLAGS = $(commoncppflags) -std=c++11 
+pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
 # handlerpq
@@ -809,7 +826,7 @@ handlerpq_SOURCES = \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg $(SNMPLIBS)
-handlerpq_CPPFLAGS = $(commoncppflags) -std=c++11
+handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # tcptransmitter
@@ -821,19 +838,31 @@ tcptransmitter_SOURCES = \
 	$(common_src)
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcptransmitter_CPPFLAGS = $(commoncppflags) -std=c++11
+tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # write2lmdb
 #
 write2lmdb_SOURCES = \
-	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp input-packet.cpp \
-	daemonize.cpp  ieee754.cpp \
-	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp \
 	$(common_src)
 
 write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
-write2lmdb_CPPFLAGS = $(commoncppflags) -std=c++11
+write2lmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# handlerline
+#
+handlerline_SOURCES = \
+	handlerline.cpp linewriter.cpp handlerline-config.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp \
+	$(common_src)
+
+handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # protoc-gen-pkt2
@@ -844,7 +873,7 @@ protoc_gen_pkt2_SOURCES = \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
-protoc_gen_pkt2_CPPFLAGS = $(commoncppflags) -std=c++11
+protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # message2gateway
@@ -856,7 +885,7 @@ message2gateway_SOURCES = \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
-message2gateway_CPPFLAGS = $(commoncppflags) -std=c++11
+message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # example1message
@@ -867,7 +896,7 @@ example1message_SOURCES = \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
-example1message_CPPFLAGS = $(commoncppflags) -std=c++11
+example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # example1message1
@@ -877,7 +906,7 @@ example1message1_SOURCES = \
 	$(common_src)
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
-example1message1_CPPFLAGS = $(commoncppflags) -std=c++11
+example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # Configs, readme, CMake etc.
@@ -1013,6 +1042,10 @@ example1message1$(EXEEXT): $(example1message1_OBJECTS) $(example1message1_DEPEND
 	@rm -f example1message1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(example1message1_OBJECTS) $(example1message1_LDADD) $(LIBS)
 
+handlerline$(EXEEXT): $(handlerline_OBJECTS) $(handlerline_DEPENDENCIES) $(EXTRA_handlerline_DEPENDENCIES) 
+	@rm -f handlerline$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(handlerline_OBJECTS) $(handlerline_LDADD) $(LIBS)
+
 handlerpq$(EXEEXT): $(handlerpq_OBJECTS) $(handlerpq_DEPENDENCIES) $(EXTRA_handlerpq_DEPENDENCIES) 
 	@rm -f handlerpq$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(handlerpq_OBJECTS) $(handlerpq_LDADD) $(LIBS)
@@ -1065,6 +1098,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message1-example1message1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message1-pkt2.pb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message1-utilsnmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-error-printer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-handlerline-config.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-handlerline.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-linewriter.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-protobuf-declarations.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-utilfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-utilinet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-utilprotobuf.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerline-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerpq-NanoMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerpq-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handlerpq-handlerpq-config.Po@am__quote@
@@ -1134,11 +1177,12 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-daemonize.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-ieee754.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-input-packet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-error-printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-lmdbwriter.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-pkt2.pb.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-protobuf-declarations.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-utilfile.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-utilinet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-utilprotobuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-write2lmdb-config.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/write2lmdb-write2lmdb.Po@am__quote@
@@ -1374,6 +1418,146 @@ example1message1-utilsnmp.obj: utilsnmp.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilsnmp.cpp' object='example1message1-utilsnmp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-utilsnmp.obj `if test -f 'utilsnmp.cpp'; then $(CYGPATH_W) 'utilsnmp.cpp'; else $(CYGPATH_W) '$(srcdir)/utilsnmp.cpp'; fi`
+
+handlerline-handlerline.o: handlerline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-handlerline.o -MD -MP -MF $(DEPDIR)/handlerline-handlerline.Tpo -c -o handlerline-handlerline.o `test -f 'handlerline.cpp' || echo '$(srcdir)/'`handlerline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-handlerline.Tpo $(DEPDIR)/handlerline-handlerline.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='handlerline.cpp' object='handlerline-handlerline.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-handlerline.o `test -f 'handlerline.cpp' || echo '$(srcdir)/'`handlerline.cpp
+
+handlerline-handlerline.obj: handlerline.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-handlerline.obj -MD -MP -MF $(DEPDIR)/handlerline-handlerline.Tpo -c -o handlerline-handlerline.obj `if test -f 'handlerline.cpp'; then $(CYGPATH_W) 'handlerline.cpp'; else $(CYGPATH_W) '$(srcdir)/handlerline.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-handlerline.Tpo $(DEPDIR)/handlerline-handlerline.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='handlerline.cpp' object='handlerline-handlerline.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-handlerline.obj `if test -f 'handlerline.cpp'; then $(CYGPATH_W) 'handlerline.cpp'; else $(CYGPATH_W) '$(srcdir)/handlerline.cpp'; fi`
+
+handlerline-linewriter.o: linewriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-linewriter.o -MD -MP -MF $(DEPDIR)/handlerline-linewriter.Tpo -c -o handlerline-linewriter.o `test -f 'linewriter.cpp' || echo '$(srcdir)/'`linewriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-linewriter.Tpo $(DEPDIR)/handlerline-linewriter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linewriter.cpp' object='handlerline-linewriter.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-linewriter.o `test -f 'linewriter.cpp' || echo '$(srcdir)/'`linewriter.cpp
+
+handlerline-linewriter.obj: linewriter.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-linewriter.obj -MD -MP -MF $(DEPDIR)/handlerline-linewriter.Tpo -c -o handlerline-linewriter.obj `if test -f 'linewriter.cpp'; then $(CYGPATH_W) 'linewriter.cpp'; else $(CYGPATH_W) '$(srcdir)/linewriter.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-linewriter.Tpo $(DEPDIR)/handlerline-linewriter.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='linewriter.cpp' object='handlerline-linewriter.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-linewriter.obj `if test -f 'linewriter.cpp'; then $(CYGPATH_W) 'linewriter.cpp'; else $(CYGPATH_W) '$(srcdir)/linewriter.cpp'; fi`
+
+handlerline-handlerline-config.o: handlerline-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-handlerline-config.o -MD -MP -MF $(DEPDIR)/handlerline-handlerline-config.Tpo -c -o handlerline-handlerline-config.o `test -f 'handlerline-config.cpp' || echo '$(srcdir)/'`handlerline-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-handlerline-config.Tpo $(DEPDIR)/handlerline-handlerline-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='handlerline-config.cpp' object='handlerline-handlerline-config.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-handlerline-config.o `test -f 'handlerline-config.cpp' || echo '$(srcdir)/'`handlerline-config.cpp
+
+handlerline-handlerline-config.obj: handlerline-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-handlerline-config.obj -MD -MP -MF $(DEPDIR)/handlerline-handlerline-config.Tpo -c -o handlerline-handlerline-config.obj `if test -f 'handlerline-config.cpp'; then $(CYGPATH_W) 'handlerline-config.cpp'; else $(CYGPATH_W) '$(srcdir)/handlerline-config.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-handlerline-config.Tpo $(DEPDIR)/handlerline-handlerline-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='handlerline-config.cpp' object='handlerline-handlerline-config.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-handlerline-config.obj `if test -f 'handlerline-config.cpp'; then $(CYGPATH_W) 'handlerline-config.cpp'; else $(CYGPATH_W) '$(srcdir)/handlerline-config.cpp'; fi`
+
+handlerline-daemonize.o: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-daemonize.o -MD -MP -MF $(DEPDIR)/handlerline-daemonize.Tpo -c -o handlerline-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-daemonize.Tpo $(DEPDIR)/handlerline-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='handlerline-daemonize.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+handlerline-daemonize.obj: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-daemonize.obj -MD -MP -MF $(DEPDIR)/handlerline-daemonize.Tpo -c -o handlerline-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-daemonize.Tpo $(DEPDIR)/handlerline-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='handlerline-daemonize.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+handlerline-protobuf-declarations.o: protobuf-declarations.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/handlerline-protobuf-declarations.Tpo -c -o handlerline-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-protobuf-declarations.Tpo $(DEPDIR)/handlerline-protobuf-declarations.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='protobuf-declarations.cpp' object='handlerline-protobuf-declarations.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+
+handlerline-protobuf-declarations.obj: protobuf-declarations.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/handlerline-protobuf-declarations.Tpo -c -o handlerline-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-protobuf-declarations.Tpo $(DEPDIR)/handlerline-protobuf-declarations.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='protobuf-declarations.cpp' object='handlerline-protobuf-declarations.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+
+handlerline-utilprotobuf.o: utilprotobuf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilprotobuf.o -MD -MP -MF $(DEPDIR)/handlerline-utilprotobuf.Tpo -c -o handlerline-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilprotobuf.Tpo $(DEPDIR)/handlerline-utilprotobuf.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilprotobuf.cpp' object='handlerline-utilprotobuf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+
+handlerline-utilprotobuf.obj: utilprotobuf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/handlerline-utilprotobuf.Tpo -c -o handlerline-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilprotobuf.Tpo $(DEPDIR)/handlerline-utilprotobuf.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilprotobuf.cpp' object='handlerline-utilprotobuf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+
+handlerline-error-printer.o: error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-error-printer.o -MD -MP -MF $(DEPDIR)/handlerline-error-printer.Tpo -c -o handlerline-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-error-printer.Tpo $(DEPDIR)/handlerline-error-printer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='error-printer.cpp' object='handlerline-error-printer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+
+handlerline-error-printer.obj: error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-error-printer.obj -MD -MP -MF $(DEPDIR)/handlerline-error-printer.Tpo -c -o handlerline-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-error-printer.Tpo $(DEPDIR)/handlerline-error-printer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='error-printer.cpp' object='handlerline-error-printer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+
+handlerline-utilfile.o: utilfile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilfile.o -MD -MP -MF $(DEPDIR)/handlerline-utilfile.Tpo -c -o handlerline-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilfile.Tpo $(DEPDIR)/handlerline-utilfile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilfile.cpp' object='handlerline-utilfile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+handlerline-utilfile.obj: utilfile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilfile.obj -MD -MP -MF $(DEPDIR)/handlerline-utilfile.Tpo -c -o handlerline-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilfile.Tpo $(DEPDIR)/handlerline-utilfile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilfile.cpp' object='handlerline-utilfile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+handlerline-utilstring.o: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilstring.o -MD -MP -MF $(DEPDIR)/handlerline-utilstring.Tpo -c -o handlerline-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilstring.Tpo $(DEPDIR)/handlerline-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='handlerline-utilstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+handlerline-utilstring.obj: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilstring.obj -MD -MP -MF $(DEPDIR)/handlerline-utilstring.Tpo -c -o handlerline-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilstring.Tpo $(DEPDIR)/handlerline-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='handlerline-utilstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+handlerline-utilinet.o: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilinet.o -MD -MP -MF $(DEPDIR)/handlerline-utilinet.Tpo -c -o handlerline-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilinet.Tpo $(DEPDIR)/handlerline-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='handlerline-utilinet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+handlerline-utilinet.obj: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-utilinet.obj -MD -MP -MF $(DEPDIR)/handlerline-utilinet.Tpo -c -o handlerline-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-utilinet.Tpo $(DEPDIR)/handlerline-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='handlerline-utilinet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
 handlerpq-handlerpq.o: handlerpq.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp
@@ -2341,20 +2525,6 @@ write2lmdb-write2lmdb-config.obj: write2lmdb-config.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-write2lmdb-config.obj `if test -f 'write2lmdb-config.cpp'; then $(CYGPATH_W) 'write2lmdb-config.cpp'; else $(CYGPATH_W) '$(srcdir)/write2lmdb-config.cpp'; fi`
 
-write2lmdb-input-packet.o: input-packet.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-input-packet.o -MD -MP -MF $(DEPDIR)/write2lmdb-input-packet.Tpo -c -o write2lmdb-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-input-packet.Tpo $(DEPDIR)/write2lmdb-input-packet.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='input-packet.cpp' object='write2lmdb-input-packet.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
-
-write2lmdb-input-packet.obj: input-packet.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-input-packet.obj -MD -MP -MF $(DEPDIR)/write2lmdb-input-packet.Tpo -c -o write2lmdb-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-input-packet.Tpo $(DEPDIR)/write2lmdb-input-packet.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='input-packet.cpp' object='write2lmdb-input-packet.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
-
 write2lmdb-daemonize.o: daemonize.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-daemonize.o -MD -MP -MF $(DEPDIR)/write2lmdb-daemonize.Tpo -c -o write2lmdb-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-daemonize.Tpo $(DEPDIR)/write2lmdb-daemonize.Po
@@ -2369,19 +2539,61 @@ write2lmdb-daemonize.obj: daemonize.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
 
-write2lmdb-ieee754.o: ieee754.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-ieee754.o -MD -MP -MF $(DEPDIR)/write2lmdb-ieee754.Tpo -c -o write2lmdb-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-ieee754.Tpo $(DEPDIR)/write2lmdb-ieee754.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ieee754.cpp' object='write2lmdb-ieee754.o' libtool=no @AMDEPBACKSLASH@
+write2lmdb-protobuf-declarations.o: protobuf-declarations.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/write2lmdb-protobuf-declarations.Tpo -c -o write2lmdb-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-protobuf-declarations.Tpo $(DEPDIR)/write2lmdb-protobuf-declarations.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='protobuf-declarations.cpp' object='write2lmdb-protobuf-declarations.o' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
 
-write2lmdb-ieee754.obj: ieee754.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-ieee754.obj -MD -MP -MF $(DEPDIR)/write2lmdb-ieee754.Tpo -c -o write2lmdb-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-ieee754.Tpo $(DEPDIR)/write2lmdb-ieee754.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='ieee754.cpp' object='write2lmdb-ieee754.obj' libtool=no @AMDEPBACKSLASH@
+write2lmdb-protobuf-declarations.obj: protobuf-declarations.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/write2lmdb-protobuf-declarations.Tpo -c -o write2lmdb-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-protobuf-declarations.Tpo $(DEPDIR)/write2lmdb-protobuf-declarations.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='protobuf-declarations.cpp' object='write2lmdb-protobuf-declarations.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+
+write2lmdb-utilprotobuf.o: utilprotobuf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilprotobuf.o -MD -MP -MF $(DEPDIR)/write2lmdb-utilprotobuf.Tpo -c -o write2lmdb-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilprotobuf.Tpo $(DEPDIR)/write2lmdb-utilprotobuf.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilprotobuf.cpp' object='write2lmdb-utilprotobuf.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+
+write2lmdb-utilprotobuf.obj: utilprotobuf.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/write2lmdb-utilprotobuf.Tpo -c -o write2lmdb-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilprotobuf.Tpo $(DEPDIR)/write2lmdb-utilprotobuf.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilprotobuf.cpp' object='write2lmdb-utilprotobuf.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+
+write2lmdb-error-printer.o: error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-error-printer.o -MD -MP -MF $(DEPDIR)/write2lmdb-error-printer.Tpo -c -o write2lmdb-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-error-printer.Tpo $(DEPDIR)/write2lmdb-error-printer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='error-printer.cpp' object='write2lmdb-error-printer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+
+write2lmdb-error-printer.obj: error-printer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-error-printer.obj -MD -MP -MF $(DEPDIR)/write2lmdb-error-printer.Tpo -c -o write2lmdb-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-error-printer.Tpo $(DEPDIR)/write2lmdb-error-printer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='error-printer.cpp' object='write2lmdb-error-printer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+
+write2lmdb-utilfile.o: utilfile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilfile.o -MD -MP -MF $(DEPDIR)/write2lmdb-utilfile.Tpo -c -o write2lmdb-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilfile.Tpo $(DEPDIR)/write2lmdb-utilfile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilfile.cpp' object='write2lmdb-utilfile.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+write2lmdb-utilfile.obj: utilfile.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilfile.obj -MD -MP -MF $(DEPDIR)/write2lmdb-utilfile.Tpo -c -o write2lmdb-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-utilfile.Tpo $(DEPDIR)/write2lmdb-utilfile.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilfile.cpp' object='write2lmdb-utilfile.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
 
 write2lmdb-utilstring.o: utilstring.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-utilstring.o -MD -MP -MF $(DEPDIR)/write2lmdb-utilstring.Tpo -c -o write2lmdb-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
@@ -2410,20 +2622,6 @@ write2lmdb-utilinet.obj: utilinet.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='write2lmdb-utilinet.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
-
-write2lmdb-pkt2.pb.o: pkt2.pb.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pkt2.pb.o -MD -MP -MF $(DEPDIR)/write2lmdb-pkt2.pb.Tpo -c -o write2lmdb-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pkt2.pb.Tpo $(DEPDIR)/write2lmdb-pkt2.pb.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pkt2.pb.cpp' object='write2lmdb-pkt2.pb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-
-write2lmdb-pkt2.pb.obj: pkt2.pb.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/write2lmdb-pkt2.pb.Tpo -c -o write2lmdb-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pkt2.pb.Tpo $(DEPDIR)/write2lmdb-pkt2.pb.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pkt2.pb.cpp' object='write2lmdb-pkt2.pb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -3090,11 +3288,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 
 
 @DEBUG_TRUE@	AM_CFLAGS = -g3 -O0
-@DEBUG_TRUE@	AM_CXXFLAGS = -g3 -O0
-@DEBUG_TRUE@	commoncppflags = -DDEBUG
+@DEBUG_TRUE@	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
 @DEBUG_FALSE@	AM_CFLAGS = -O2
-@DEBUG_FALSE@	AM_CXXFLAGS = -O2
-@DEBUG_FALSE@	commoncppflags =
+@DEBUG_FALSE@	AM_CXXFLAGS = -O2 -std=c++11
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
