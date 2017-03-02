@@ -45,7 +45,19 @@ private:
 	);
 
 public:
+	/**
+	 * @brief After addPath() and parseProtoPath()
+	 */
 	ProtobufDeclarations();
+	/**
+	 * @brief Add virtual path "" and parse all files recursively
+	 * @param path
+	 */
+	ProtobufDeclarations
+	(
+		const std::string &path
+	);
+
 	virtual ~ProtobufDeclarations();
 
 	/**
@@ -73,6 +85,12 @@ public:
 	(
 		const char *fn
 	);
+
+	/**
+	 * Return protobuf messages
+	 * @return count
+	 */
+	size_t getMessageCount();
 
 	/**
 	 * parse proto files

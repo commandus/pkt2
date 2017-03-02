@@ -44,6 +44,15 @@ MessageTypeNAddress::MessageTypeNAddress
     memset(&socket_address_dst, sizeof(struct sockaddr), 0);
 }
 
+size_t MessageTypeNAddress::getKey(
+		void *buffer,
+		size_t max_size,
+		const google::protobuf::Message *message
+)
+{
+	return 0;
+}
+
 /**
  * Proto file must have file name suffix ".proto"
  */
@@ -338,3 +347,24 @@ google::protobuf::Message *readDelimitedMessage
 	std::stringstream ss(buffer);
 	return readDelimitedMessage(pd, &ss, messageTypeNAddress);
 }
+
+/**
+ * Read delimited message from the buffer
+ * @param buffer
+ * @param size
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		void *buffer,
+		int size,
+		MessageTypeNAddress *messageTypeNAddress
+)
+{
+	google::protobuf::io::ArrayInputStream isistream(buffer, size);
+	google::protobuf::io::CodedInputStream input(&isistream);
+	input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
+	return readDelimitedMessage(pd, &input, messageTypeNAddress);
+}
+

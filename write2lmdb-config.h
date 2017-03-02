@@ -31,9 +31,13 @@ public:
     int retries;             ///< default 1
     int retry_delay;         ///<
 
+    // LMDB
     std::string path;        ///< path, default "lmdb"
     int mode;                ///< default 0664
     int flags;               ///< default 0
+
+    // proto
+    std::string proto_path;	///< proto files directory path
 
     bool daemonize;
     bool stop_request;

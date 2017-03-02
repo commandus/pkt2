@@ -3,10 +3,11 @@
 
 #include "errorcodes.h"
 
-#define DEF_DB_PATH              "db"
-#define DEF_MODE                 0664
-#define DEF_FLAGS                0
-#define DEF_QUEUE                "ipc:///tmp/message.pkt2"
+#define DEF_DB_PATH              	"db"
+#define DEF_MODE                 	0664
+#define DEF_FLAGS              		0
+#define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
+#define DEF_PROTO_PATH				"proto"
 
 Config::Config
 (
@@ -41,6 +42,7 @@ int Config::parseCmd
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 4, "Verbosity level");
 
+        struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
         struct arg_str *a_db_path = arg_str0("p", "dbpath", "<path>", "Default db");
         struct arg_int *a_flags = arg_int0("f", "flags", "<number>", "LMDB flags. Default 0");
         struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "LMDB file open mode. Default 0664");
@@ -48,7 +50,8 @@ int Config::parseCmd
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
         struct arg_end *a_end = arg_end(20);
 
-        void* argtable[] = { 
+        void* argtable[] = {
+        		a_proto_path,
                 a_message_url,
                 a_retries, a_retry_delay,
                 a_daemonize, a_verbosity,
@@ -79,6 +82,11 @@ int Config::parseCmd
                 arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
                 return ERRCODE_PARSE_COMMAND;
         }
+
+        if (a_proto_path->count)
+        	proto_path = *a_proto_path->sval;
+        else
+        	proto_path = DEF_PROTO_PATH;
 
         if (a_message_url->count)
                 message_url = *a_message_url->sval;

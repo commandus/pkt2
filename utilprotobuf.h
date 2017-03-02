@@ -16,13 +16,19 @@
 class MessageTypeNAddress
 {
 public:
+	std::string message_type;
     struct sockaddr socket_address_src;
     struct sockaddr socket_address_dst;
     uint32_t message_size;
-	std::string message_type;
 
 	MessageTypeNAddress();
 	MessageTypeNAddress(const std::string &messagetype);
+
+	size_t getKey(
+			void *buffer,
+			size_t max_size,
+			const google::protobuf::Message *message
+	);
 };
 
 namespace utilProto
@@ -121,7 +127,7 @@ google::protobuf::Message *readDelimitedMessage
 );
 
 /**
- * Read delimited message from the stream
+ * Read delimited message from the input stream
  * @param strm
  * @return message
  */
@@ -141,6 +147,20 @@ google::protobuf::Message *readDelimitedMessage
 (
 		ProtobufDeclarations *pd,
 		std::string &buffer,
+		MessageTypeNAddress *messageTypeNAddress
+);
+
+/**
+ * Read delimited message from the buffer
+ * @param buffer
+ * @param size
+ * @return message
+ */
+google::protobuf::Message *readDelimitedMessage
+(
+		ProtobufDeclarations *pd,
+		void *buffer,
+		int size,
 		MessageTypeNAddress *messageTypeNAddress
 );
 

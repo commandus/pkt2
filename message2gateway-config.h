@@ -35,7 +35,7 @@ public:
     std::string message_in_url;
     std::string message_out_url;
     std::string file_name;
-    std::string proto_path;
+    std::string proto_path;	///< proto files directory path
 
     bool daemonize;
     bool stop_request;

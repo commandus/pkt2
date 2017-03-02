@@ -20,6 +20,8 @@
 #define MSG_EOF						"End of file detected after record "
 #define MSG_MESSAGE_DESCRIPTOR_CNT	"Protobuf descriptor(s): "
 #define MSG_LOOP_EXIT				"Event loop exit"
+#define MSG_PROTO_FILES_HEADER		"Protobuf files: "
+#define MSG_MESSAGE_HEADER			"Protobuf messages: "
 
 #define ERR_OK						0
 #define ERRCODE_COMMAND				1

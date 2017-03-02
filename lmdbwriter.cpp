@@ -17,11 +17,13 @@
 #include <google/protobuf/message.h>
 
 #include "lmdbwriter.h"
-#include "input-packet.h"
 #include "output-message.h"
 
 #include "lmdb.h"
 #include "errorcodes.h"
+#include "utilprotobuf.h"
+
+using namespace google::protobuf;
 
 /**
  * @brief LMDB environment(transaction, cursor)
@@ -67,39 +69,6 @@ bool close_lmdb
 }
 
 /**
- * @brief Store protobuf message to the LMDB
- * @param env LMDB database
- * @return 0- success
- */
-int put_db
-(
-		struct dbenv *env,
-		struct OutputMessageKey *message_key,
-		const google::protobuf::Message *message_value
-)
-{
-	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
-	if (r)
-		return r;
-
-	MDB_val key, data;
-
-	key.mv_size = sizeof(struct OutputMessageKey);
-	key.mv_data = message_key;
-
-	std::string s = message_value->SerializeAsString();
-	data.mv_size = s.length();
-	data.mv_data = &s;
-
-	r = mdb_put(env->txn, env->dbi, &key, &data, 0);
-	if (r)
-		return r;
-
-	r = mdb_txn_commit(env->txn);
-	return r;
-}
-
-/**
  * @brief Store input packet to the LMDB
  * @param env
  * @param packet
@@ -108,9 +77,19 @@ int put_db
 int put_db
 (
 		struct dbenv *env,
-		InputPacket *packet
+		void *buffer,
+		int buffer_size,
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
 )
 {
+	MDB_val key, data;
+	char keybuffer[2048];
+
+	key.mv_size = messageTypeNAddress->getKey(keybuffer, sizeof(keybuffer), message);
+	if (key.mv_size)
+		return 0;	// No key, no store
+
 	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
 	if (r)
 	{
@@ -118,24 +97,12 @@ int put_db
 		return ERRCODE_LMDB_TXN_BEGIN;
 	}
 
-	MDB_val key, data;
+	key.mv_data = keybuffer;
 
-	google::protobuf::Message *m = packet->message;
-	if (!m)
-	{
-		LOG(ERROR) << ERR_PACKET_PARSE;
-		return ERRCODE_PACKET_PARSE;
-	}
-
-	key.mv_size = sizeof(struct OutputMessageKey);
-	key.mv_data = &packet->key;
-
-	data.mv_size = packet->data_size;
-	data.mv_data = packet->data();
+	data.mv_size = buffer_size;
+	data.mv_data = buffer;
 
 	r = mdb_put(env->txn, env->dbi, &key, &data, 0);
-
-	delete m;
 
 	if (r)
 		return r;
@@ -174,30 +141,32 @@ int run
 		LOG(ERROR) << ERR_LMDB_OPEN << config->path;
 		return ERRCODE_LMDB_OPEN;
 	}
+
+	ProtobufDeclarations pd(config->proto_path);
+	if (!pd.getMessageCount())
+	{
+		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;
+		return ERRCODE_LOAD_PROTO;
+	}
+
     while (!config->stop_request)
     {
-        char *buf = NULL;
-          int bytes = nn_recv(nano_socket, &buf, NN_MSG, 0);
+    	char *buffer = NULL;
+    	int bytes = nn_recv(nano_socket, &buffer, NN_MSG, 0);
 
-          if (bytes < 0)
-          {
-              LOG(ERROR) << ERR_NN_RECV << bytes;
-              continue;
-          }
-          if (buf)
-          {
-              InputPacket packet(buf, bytes);
-              LOG(INFO) << "packet " << std::string(1, packet.header()->name) << " "
-                  << packet.get_socket_addr_src() << " ";
+    	if (bytes < 0)
+    	{
+    		LOG(ERROR) << ERR_NN_RECV << bytes;
+    		continue;
+    	}
+		MessageTypeNAddress messageTypeNAddress;
+		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
+		if (m)
+			put_db(&env, buffer, bytes, &messageTypeNAddress, m);
+		else
+			LOG(ERROR) << ERR_DECODE_MESSAGE;
 
-              if (packet.error() != 0)
-              {
-                  LOG(ERROR) << ERR_PACKET_PARSE << packet.error();
-                  continue;
-              }
-              put_db(&env, &packet);
-              nn_freemsg(buf);
-          }
+		nn_freemsg(buffer);
     }
 
 	int r = 0;

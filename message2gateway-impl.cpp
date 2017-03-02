@@ -81,13 +81,8 @@ int run_stream
 		return ERRCODE_NN_CONNECT;
 	}
 
-
-	ProtobufDeclarations pd;
-	pd.addPath(config->proto_path);
-
-	size_t c = pd.parseProtoPath(config->proto_path);
-	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = pd.getMessages();
-	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
+	ProtobufDeclarations pd(config->proto_path);
+	if (!pd.getMessageCount())
 	{
 		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;
 		return ERRCODE_LOAD_PROTO;
@@ -151,23 +146,12 @@ int run_socket
 		return ERRCODE_NN_CONNECT;
 	}
 
-	ProtobufDeclarations pd;
-	pd.addPath(config->proto_path);
-	
-	std::map<std::string, const google::protobuf::Descriptor*> *messageDescriptors = NULL;
-	
-	if (pd.parseProtoPath(config->proto_path))
-	{
-		messageDescriptors = pd.getMessages();	
-	}
-	
-	if ((messageDescriptors == NULL) || (messageDescriptors->size() == 0))
+	ProtobufDeclarations pd(config->proto_path);
+	if (!pd.getMessageCount())
 	{
 		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;
 		return ERRCODE_LOAD_PROTO;
 	}
-
-	// pd.debug(messageDescriptors);
 
 	void *buffer = malloc(config->buffer_size);
 	if (!buffer)
@@ -188,22 +172,15 @@ int run_socket
     		if (bytes == 0)
     			continue;
 
-    	google::protobuf::io::ArrayInputStream isistream(buffer, bytes);
-        google::protobuf::io::CodedInputStream input(&isistream);
-        input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
-
 		MessageTypeNAddress messageTypeNAddress;
-		Message *m = readDelimitedMessage(&pd, &input, &messageTypeNAddress);
+		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
 		if (m)
-		{
 			sendMessage(nano_socket_out, &messageTypeNAddress, *m);
-		}
 		else
-		{
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
-		}
     }
 
+	free(buffer);
     return nn_shutdown(nano_socket_out, 0) | nn_shutdown(nano_socket_in, 0);
 }
 
