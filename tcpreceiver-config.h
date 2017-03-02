@@ -2,6 +2,7 @@
 #define CONFIG_H     1
 
 #include <string>
+#include <stdint.h>
 
 #define PROGRAM_NAME             "tcpreceiver"
 #define PROGRAM_DESCRIPTION      "PKT2 tcp packet listener"

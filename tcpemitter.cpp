@@ -7,9 +7,11 @@
 #include<arpa/inet.h>
 
 #include <iostream>
+#include <stdlib.h>
 
 #include "tcpemitter-config.h"
 
+#include "errorcodes.h"
 #include "utilstring.h"
 
 int main
@@ -85,12 +87,12 @@ int main
 		if (status == -1)
 		{
 			close(new_conn_fd);
-			exit(4);
+			exit(ERRCODE_SOCKET_SEND);
 		}
 		
 	}
 	// Close the socket before we finish 
 	close(new_conn_fd);	
 	
-	return 0;
+	return ERR_OK;
 }

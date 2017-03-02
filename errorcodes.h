@@ -45,6 +45,8 @@
 #define ERRCODE_NO_MEMORY			22
 #define ERRCODE_DECODE_MESSAGE		23
 
+#define ERRCODE_SOCKET_SEND			24
+
 #define ERR_COMMAND					"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND			"Error parse command line options, possible cause is insufficient memory."
 #define ERR_LMDB_TXN_BEGIN			"Can not begin LMDB transaction "
@@ -67,5 +69,7 @@
 #define ERR_PROTO_GET_DESCRIPTOR 	"Cannot get proto file descriptor from file "
 #define ERR_NO_MEMORY				"Can not allocate buffer size "
 #define ERR_DECODE_MESSAGE			"Error decode message "
+
+#define ERR_SOCKET_SEND				"Error socket send "
 
 #endif /* ERRORCODES_H_ */

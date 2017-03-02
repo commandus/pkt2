@@ -79,7 +79,7 @@ bool parseProtoFile2
 	vector<const FileDescriptor*> parsed_files;
 
 	// Set up the source tree.
-	DiskSourceTree source_tree;
+	google::protobuf::compiler::DiskSourceTree source_tree;
 
 	MFErrorPrinter mf_error_printer;
 	// Allocate the Importer.
@@ -163,7 +163,7 @@ namespace utilProto
 		const std::map<std::string, const google::protobuf::Descriptor*> *messages
 	)
 	{
-		for (auto it = messages->begin(); it != messages->end(); ++it)
+		for (std::map<std::string, const google::protobuf::Descriptor*>::const_iterator it(messages->begin()); it != messages->end(); ++it)
 		{
 			std::cout << it->first << " => " << it->second->DebugString() << std::endl;
 		}
@@ -186,11 +186,11 @@ namespace utilProto
 	)
 	{
 		size_t r = 0;
-		for (const std::string &fn : protoFiles)
+		for (int i = 0; i < protoFiles.size(); i++)
 		{
 			if (error_output)
-				*error_output << fn << ".. ";
-			bool ok = utilProto::parseProtoFile(fn.c_str(), path, messages, error_output);
+				*error_output << protoFiles[i] << ".. ";
+			bool ok = utilProto::parseProtoFile(protoFiles[i].c_str(), path, messages, error_output);
 			if (error_output)
 				*error_output << (ok ? MSG_OK : MSG_FAILED) << std::endl;
 			if (ok)

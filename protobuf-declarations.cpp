@@ -262,9 +262,9 @@ size_t ProtobufDeclarations::parseProtoFiles
 )
 {
 	size_t r = 0;
-	for (const std::string &fn : protoFiles)
+	for (int i = 0; i < protoFiles.size(); i++)
 	{
-		if (parseProtoFile(fn.c_str()))
+		if (parseProtoFile(protoFiles[i].c_str()))
 			r++;
 	}
 	return r;
@@ -311,9 +311,9 @@ FILE *ProtobufDeclarations::openProto
 	FILE *f = fopen(fn.c_str(), "r");
 	if (f == NULL)
 	{
-		for (const std::string &fni : paths)
+		for (int i = 0; i < paths.size(); i++)
 		{
-			std::string fn1 = fni + "/" + fn;
+			std::string fn1 = paths[i] + "/" + fn;
 			f = fopen(fn1.c_str(), "r");
 			if (f != NULL)
 				break;
@@ -331,7 +331,7 @@ void ProtobufDeclarations::debugPrint
 	const std::map<std::string, const google::protobuf::Descriptor*> *messages
 )
 {
-	for (auto it = messages->begin(); it != messages->end(); ++it)
+	for (std::map<std::string, const google::protobuf::Descriptor*>::const_iterator it(messages->begin()); it != messages->end(); ++it)
 	{
 		std::cout << it->first << " => " << it->second->DebugString() << std::endl;
 	}

@@ -2,12 +2,14 @@
 #define CONFIG_H     1
 
 #include <string>
+#include <stdint.h>
 
 #define PROGRAM_NAME             "handlerpq"
 #define PROGRAM_DESCRIPTION      "PostgreSQLreceiver"
 
 /**
-  *      \see
+  * @brief  
+  * @see
   */
 class Config
 {

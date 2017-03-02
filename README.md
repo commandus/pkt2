@@ -61,8 +61,9 @@ pkt2
 Программы
 
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
-udpreceiver                                                                message2gateway   write2lmdb
-                                                                           example1message
+udpreceiver                                                                message2gateway   
+                                                                           example1message   handlerline
+                                                                                             write2lmdb    
                                                                            
                                                                            
                                                                            
@@ -283,7 +284,7 @@ message TemperaturePkt
 
 Программы
 
-tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq tcptransmitter message2gateway
+tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq handlerline tcptransmitter message2gateway
 
 ### Примеры
 
@@ -446,3 +447,7 @@ protoc -I proto --decode_raw  < 1
 3: 0x40361c8940a83912
 
 ```
+
+### handlerline
+
+Записывает в поток stdout сообщения в текстовом виде. Для отладки.
