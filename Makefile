@@ -126,7 +126,7 @@ am_example1message_OBJECTS =  \
 	example1message-pkt2.pb.$(OBJEXT) \
 	example1message-utilfile.$(OBJEXT) \
 	example1message-protobuf-declarations.$(OBJEXT) \
-	$(am__objects_1)
+	example1message-pbjson.$(OBJEXT) $(am__objects_1)
 example1message_OBJECTS = $(am_example1message_OBJECTS)
 am__DEPENDENCIES_1 =
 example1message_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -151,7 +151,7 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-utilfile.$(OBJEXT) \
 	handlerline-utilstring.$(OBJEXT) \
 	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
-	$(am__objects_1)
+	handlerline-pkt2.pb.$(OBJEXT) $(am__objects_1)
 handlerline_OBJECTS = $(am_handlerline_OBJECTS)
 handlerline_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
@@ -170,10 +170,11 @@ am_message2gateway_OBJECTS =  \
 	message2gateway-daemonize.$(OBJEXT) \
 	message2gateway-utilstring.$(OBJEXT) \
 	message2gateway-utilinet.$(OBJEXT) \
-	message2gateway-pkt2.pb.$(OBJEXT) \
 	message2gateway-utilfile.$(OBJEXT) \
 	message2gateway-protobuf-declarations.$(OBJEXT) \
-	message2gateway-utilprotobuf.$(OBJEXT) $(am__objects_1)
+	message2gateway-utilprotobuf.$(OBJEXT) \
+	message2gateway-pbjson.$(OBJEXT) \
+	message2gateway-pkt2.pb.$(OBJEXT) $(am__objects_1)
 message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
@@ -247,7 +248,8 @@ am_write2lmdb_OBJECTS = write2lmdb-write2lmdb.$(OBJEXT) \
 	write2lmdb-utilprotobuf.$(OBJEXT) \
 	write2lmdb-error-printer.$(OBJEXT) \
 	write2lmdb-utilfile.$(OBJEXT) write2lmdb-utilstring.$(OBJEXT) \
-	write2lmdb-utilinet.$(OBJEXT) $(am__objects_1)
+	write2lmdb-utilinet.$(OBJEXT) write2lmdb-pbjson.$(OBJEXT) \
+	write2lmdb-pkt2.pb.$(OBJEXT) $(am__objects_1)
 write2lmdb_OBJECTS = $(am_write2lmdb_OBJECTS)
 write2lmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_$(V))
@@ -852,6 +854,7 @@ write2lmdb_SOURCES = \
 	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
+	pbjson.cpp pkt2.pb.cpp \
 	$(common_src)
 
 write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -864,6 +867,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
+	pkt2.pb.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -885,8 +889,9 @@ protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
-	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
+	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
 	utilprotobuf.cpp \
+	pbjson.cpp pkt2.pb.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
@@ -898,6 +903,7 @@ message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
 	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
+	pbjson.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
@@ -920,7 +926,7 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \
+	proto/pkt2.proto              proto/google/protobuf/descriptor.proto            proto/gps16.proto \
 	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto  \
 	mib/EAS-IKFIA-MIB \
@@ -1096,6 +1102,7 @@ distclean-compile:
 
 include ./$(DEPDIR)/example1message-error-printer.Po
 include ./$(DEPDIR)/example1message-example1message.Po
+include ./$(DEPDIR)/example1message-pbjson.Po
 include ./$(DEPDIR)/example1message-pkt2.pb.Po
 include ./$(DEPDIR)/example1message-protobuf-declarations.Po
 include ./$(DEPDIR)/example1message-utilfile.Po
@@ -1109,6 +1116,7 @@ include ./$(DEPDIR)/handlerline-handlerline-config.Po
 include ./$(DEPDIR)/handlerline-handlerline.Po
 include ./$(DEPDIR)/handlerline-linewriter.Po
 include ./$(DEPDIR)/handlerline-pbjson.Po
+include ./$(DEPDIR)/handlerline-pkt2.pb.Po
 include ./$(DEPDIR)/handlerline-protobuf-declarations.Po
 include ./$(DEPDIR)/handlerline-utilfile.Po
 include ./$(DEPDIR)/handlerline-utilinet.Po
@@ -1127,6 +1135,7 @@ include ./$(DEPDIR)/message2gateway-error-printer.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-config.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-impl.Po
 include ./$(DEPDIR)/message2gateway-message2gateway.Po
+include ./$(DEPDIR)/message2gateway-pbjson.Po
 include ./$(DEPDIR)/message2gateway-pkt2.pb.Po
 include ./$(DEPDIR)/message2gateway-protobuf-declarations.Po
 include ./$(DEPDIR)/message2gateway-utilfile.Po
@@ -1185,6 +1194,8 @@ include ./$(DEPDIR)/tcptransmitter-utilstring.Po
 include ./$(DEPDIR)/write2lmdb-daemonize.Po
 include ./$(DEPDIR)/write2lmdb-error-printer.Po
 include ./$(DEPDIR)/write2lmdb-lmdbwriter.Po
+include ./$(DEPDIR)/write2lmdb-pbjson.Po
+include ./$(DEPDIR)/write2lmdb-pkt2.pb.Po
 include ./$(DEPDIR)/write2lmdb-protobuf-declarations.Po
 include ./$(DEPDIR)/write2lmdb-utilfile.Po
 include ./$(DEPDIR)/write2lmdb-utilinet.Po
@@ -1368,6 +1379,20 @@ example1message-protobuf-declarations.obj: protobuf-declarations.cpp
 #	$(AM_V_CXX)source='protobuf-declarations.cpp' object='example1message-protobuf-declarations.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+
+example1message-pbjson.o: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-pbjson.o -MD -MP -MF $(DEPDIR)/example1message-pbjson.Tpo -c -o example1message-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-pbjson.Tpo $(DEPDIR)/example1message-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='example1message-pbjson.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+example1message-pbjson.obj: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-pbjson.obj -MD -MP -MF $(DEPDIR)/example1message-pbjson.Tpo -c -o example1message-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-pbjson.Tpo $(DEPDIR)/example1message-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='example1message-pbjson.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
 example1message1-example1message1.o: example1message1.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-example1message1.o -MD -MP -MF $(DEPDIR)/example1message1-example1message1.Tpo -c -o example1message1-example1message1.o `test -f 'example1message1.cpp' || echo '$(srcdir)/'`example1message1.cpp
@@ -1579,6 +1604,20 @@ handlerline-pbjson.obj: pbjson.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
+handlerline-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2.pb.o -MD -MP -MF $(DEPDIR)/handlerline-pkt2.pb.Tpo -c -o handlerline-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pkt2.pb.Tpo $(DEPDIR)/handlerline-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='handlerline-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+handlerline-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/handlerline-pkt2.pb.Tpo -c -o handlerline-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pkt2.pb.Tpo $(DEPDIR)/handlerline-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='handlerline-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-handlerpq.Tpo $(DEPDIR)/handlerpq-handlerpq.Po
@@ -1789,20 +1828,6 @@ message2gateway-utilinet.obj: utilinet.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
-message2gateway-pkt2.pb.o: pkt2.pb.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pkt2.pb.o -MD -MP -MF $(DEPDIR)/message2gateway-pkt2.pb.Tpo -c -o message2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pkt2.pb.Tpo $(DEPDIR)/message2gateway-pkt2.pb.Po
-#	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-
-message2gateway-pkt2.pb.obj: pkt2.pb.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/message2gateway-pkt2.pb.Tpo -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pkt2.pb.Tpo $(DEPDIR)/message2gateway-pkt2.pb.Po
-#	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-
 message2gateway-utilfile.o: utilfile.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-utilfile.o -MD -MP -MF $(DEPDIR)/message2gateway-utilfile.Tpo -c -o message2gateway-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-utilfile.Tpo $(DEPDIR)/message2gateway-utilfile.Po
@@ -1844,6 +1869,34 @@ message2gateway-utilprotobuf.obj: utilprotobuf.cpp
 #	$(AM_V_CXX)source='utilprotobuf.cpp' object='message2gateway-utilprotobuf.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+
+message2gateway-pbjson.o: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pbjson.o -MD -MP -MF $(DEPDIR)/message2gateway-pbjson.Tpo -c -o message2gateway-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pbjson.Tpo $(DEPDIR)/message2gateway-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='message2gateway-pbjson.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+message2gateway-pbjson.obj: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pbjson.obj -MD -MP -MF $(DEPDIR)/message2gateway-pbjson.Tpo -c -o message2gateway-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pbjson.Tpo $(DEPDIR)/message2gateway-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='message2gateway-pbjson.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+message2gateway-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pkt2.pb.o -MD -MP -MF $(DEPDIR)/message2gateway-pkt2.pb.Tpo -c -o message2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pkt2.pb.Tpo $(DEPDIR)/message2gateway-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+message2gateway-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/message2gateway-pkt2.pb.Tpo -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pkt2.pb.Tpo $(DEPDIR)/message2gateway-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='message2gateway-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
 pkt2gateway-pkt2gateway.o: pkt2gateway.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2gateway.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2gateway.Tpo -c -o pkt2gateway-pkt2gateway.o `test -f 'pkt2gateway.cpp' || echo '$(srcdir)/'`pkt2gateway.cpp
@@ -2643,6 +2696,34 @@ write2lmdb-utilinet.obj: utilinet.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
+write2lmdb-pbjson.o: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pbjson.o -MD -MP -MF $(DEPDIR)/write2lmdb-pbjson.Tpo -c -o write2lmdb-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pbjson.Tpo $(DEPDIR)/write2lmdb-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='write2lmdb-pbjson.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+write2lmdb-pbjson.obj: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pbjson.obj -MD -MP -MF $(DEPDIR)/write2lmdb-pbjson.Tpo -c -o write2lmdb-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pbjson.Tpo $(DEPDIR)/write2lmdb-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='write2lmdb-pbjson.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+write2lmdb-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pkt2.pb.o -MD -MP -MF $(DEPDIR)/write2lmdb-pkt2.pb.Tpo -c -o write2lmdb-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pkt2.pb.Tpo $(DEPDIR)/write2lmdb-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='write2lmdb-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+write2lmdb-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT write2lmdb-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/write2lmdb-pkt2.pb.Tpo -c -o write2lmdb-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/write2lmdb-pkt2.pb.Tpo $(DEPDIR)/write2lmdb-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='write2lmdb-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(write2lmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o write2lmdb-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -3316,7 +3397,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 	AM_CFLAGS = -O2
 	AM_CXXFLAGS = -O2 -std=c++11
 $(gengrpcs): Makefile
-	protoc -I proto --cpp_out=. proto/descriptor.proto
+	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
 	sed -i '/#include "descriptor.pb.h"/d' pkt2.pb.h
 	sed -i '/protobuf_InitDefaults_descriptor_2eproto();/d' pkt2.pb.cc

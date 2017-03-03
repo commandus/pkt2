@@ -20,7 +20,7 @@ SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
 
 gengrpcs = pkt2.pb.h pkt2.pb.cpp
 $(gengrpcs): Makefile
-	protoc -I proto --cpp_out=. proto/descriptor.proto
+	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
 	sed -i '/#include "descriptor.pb.h"/d' pkt2.pb.h
 	sed -i '/protobuf_InitDefaults_descriptor_2eproto();/d' pkt2.pb.cc
@@ -149,6 +149,7 @@ write2lmdb_SOURCES = \
 	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
+	pbjson.cpp pkt2.pb.cpp \
 	$(common_src)
 write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 write2lmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
@@ -160,6 +161,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
+	pkt2.pb.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -181,8 +183,9 @@ protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
-	daemonize.cpp utilstring.cpp utilinet.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
+	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
 	utilprotobuf.cpp \
+	pbjson.cpp pkt2.pb.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
@@ -194,6 +197,7 @@ message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
 	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
+	pbjson.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
@@ -216,7 +220,7 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto              proto/descriptor.proto            proto/gps16.proto \
+	proto/pkt2.proto              proto/google/protobuf/descriptor.proto            proto/gps16.proto \
 	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto  \
 	mib/EAS-IKFIA-MIB \
