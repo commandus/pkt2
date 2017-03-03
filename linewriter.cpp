@@ -97,17 +97,27 @@ int put_pkt2_options
 	}
 
 	const google::protobuf::MessageOptions options = md->options();
-	try {
-		if (options.HasExtension(pkt2::packet))
-		{
-			std::string out;
-			pkt2::Packet packet =  options.GetExtension(pkt2::packet);
-			std::cout << packet.name() << " " << packet.short_name() << " " << packet.full_name();
-			pbjson::pb2json(&packet, out);
-			std::cout << out << std::endl;
-		}
-	} catch (...) {
+	if (options.HasExtension(pkt2::packet))
+	{
+		std::string out;
+		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
+		pbjson::pb2json(&packet, out);
+		std::cout << "{\"packet\":" << out << "," << std::endl;
 	}
+
+	std::cout << "\"variables\":[";
+	for (int f = 0; f < md->field_count(); f++)
+	{
+		const google::protobuf::FieldOptions foptions = md->field(f)->options();
+		std::string out;
+		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
+		pbjson::pb2json(&variable, out);
+		std::cout << out;
+		if (f < md->field_count() - 1)
+			std::cout << ",";
+	}
+	std::cout << "]}" << std::endl;
+
 	return 0;
 }
 
