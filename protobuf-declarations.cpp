@@ -108,6 +108,19 @@ size_t ProtobufDeclarations::getMessageCount()
 }
 
 /**
+ * Return message descriptor by the name
+ * @param name
+ * @return NULL if message name not found
+ */
+const google::protobuf::Descriptor* ProtobufDeclarations::getMessageDescriptor
+(
+		const std::string &name
+)
+{
+	return internalMessages[name];
+}
+
+/**
  * @brief decode message from the stream
  * @param message_name Protobuf message name
  * @param stream

@@ -26,6 +26,8 @@
 #include "json/json.h"
 #include "pbjson.hpp"
 
+#include "pkt2.pb.h"
+
 using namespace google::protobuf;
 
 /**
@@ -69,6 +71,46 @@ int put_json
 	std::cout << out << std::endl;
 	return 0;
 }
+
+/**
+ * @brief Print packet's message options to the stdout
+ * @param buffer
+ * @param buffer_size
+ * @param messageTypeNAddress
+ * @param message
+ * @return 0 - success
+ */
+int put_pkt2_options
+(
+		void *buffer,
+		int buffer_size,
+		ProtobufDeclarations *pd,
+		MessageTypeNAddress *messageTypeNAddress
+)
+{
+	// Each message
+	const google::protobuf::Descriptor* md = pd->getMessageDescriptor(messageTypeNAddress->message_type);
+	if (!md)
+	{
+		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << messageTypeNAddress->message_type;
+		return ERRCODE_MESSAGE_TYPE_NOT_FOUND;
+	}
+
+	const google::protobuf::MessageOptions options = md->options();
+	try {
+		if (options.HasExtension(pkt2::packet))
+		{
+			std::string out;
+			pkt2::Packet packet =  options.GetExtension(pkt2::packet);
+			std::cout << packet.name() << " " << packet.short_name() << " " << packet.full_name();
+			pbjson::pb2json(&packet, out);
+			std::cout << out << std::endl;
+		}
+	} catch (...) {
+	}
+	return 0;
+}
+
 
 /**
  * @brief Write line loop
@@ -126,6 +168,9 @@ int run
 			{
 			case 0:
 				put_json(buffer, bytes, &messageTypeNAddress, m);
+				break;
+			case 2:
+				put_pkt2_options(buffer, bytes, &pd, &messageTypeNAddress);
 				break;
 			default:
 				put_debug(buffer, bytes, &messageTypeNAddress, m);

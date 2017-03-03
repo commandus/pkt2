@@ -161,6 +161,7 @@ void protobuf_ShutdownFile_pkt2_2eproto() {
 void protobuf_InitDefaults_pkt2_2eproto_impl() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+  ::google::protobuf::protobuf_InitDefaults_google_2fprotobuf_2fdescriptor_2eproto();
   ::google::protobuf::internal::InitProtobufDefaults();
   _Field_default_instance_.DefaultConstruct();
   _Variable_default_instance_.DefaultConstruct();
@@ -191,53 +192,54 @@ void protobuf_InitDefaults_pkt2_2eproto() {
 void protobuf_AddDesc_pkt2_2eproto_impl() {
   protobuf_InitDefaults_pkt2_2eproto();
   static const char descriptor[] = {
-      "\n\npkt2.proto\022\004pkt2\032\020descriptor.proto\"}\n\005"
-      "Field\022\014\n\004name\030\001 \001(\t\022\035\n\004type\030\002 \001(\0162\017.pkt2"
-      ".InputType\022\034\n\006endian\030\003 \001(\0162\014.pkt2.Endian"
-      "\022\016\n\006offset\030\004 \001(\r\022\014\n\004size\030\005 \001(\r\022\013\n\003tag\030\006 "
-      "\001(\r\"\344\001\n\010Variable\022\r\n\005field\030\001 \001(\t\022\014\n\004name\030"
-      "\002 \001(\t\022\036\n\004type\030\003 \001(\0162\020.pkt2.OutputType\022\022\n"
-      "\nshort_name\030\004 \001(\t\022\021\n\tfull_name\030\005 \001(\t\022\024\n\014"
-      "measure_unit\030\006 \001(\t\022\013\n\003get\030\007 \001(\t\022\016\n\006value"
-      "s\030\010 \003(\t\022\020\n\010priority\030\t \001(\r\022\016\n\006format\030\n \001("
-      "\t\022\020\n\010tostring\030\013 \001(\t\022\r\n\005index\030\014 \001(\r\"D\n\007Ad"
-      "dress\022\032\n\005proto\030\001 \001(\0162\013.pkt2.Proto\022\017\n\007add"
-      "ress\030\002 \001(\t\022\014\n\004port\030\003 \001(\r\"\270\001\n\006Packet\022\035\n\006s"
-      "ource\030\001 \003(\0132\r.pkt2.Address\022\"\n\013destinatio"
-      "n\030\002 \003(\0132\r.pkt2.Address\022\014\n\004name\030\003 \001(\t\022\022\n\n"
-      "short_name\030\004 \001(\t\022\021\n\tfull_name\030\005 \001(\t\022\033\n\006f"
-      "ields\030\006 \003(\0132\013.pkt2.Field\022\013\n\003set\030\007 \001(\t\022\014\n"
-      "\004head\030\t \003(\t\"%\n\003Sql\022\036\n\007dialect\030\001 \001(\0162\r.pk"
-      "t2.Dialect\",\n\006Output\022\n\n\002id\030\001 \001(\r\022\026\n\003sql\030"
-      "\002 \001(\0132\t.pkt2.Sql*\177\n\tInputType\022\016\n\nINPUT_N"
-      "ONE\020\000\022\020\n\014INPUT_DOUBLE\020\001\022\r\n\tINPUT_INT\020\002\022\016"
-      "\n\nINPUT_UINT\020\003\022\017\n\013INPUT_BYTES\020\004\022\016\n\nINPUT"
-      "_CHAR\020\005\022\020\n\014INPUT_STRING\020\006*\361\002\n\nOutputType"
-      "\022\017\n\013OUTPUT_NONE\020\000\022\021\n\rOUTPUT_DOUBLE\020\001\022\020\n\014"
-      "OUTPUT_FLOAT\020\002\022\020\n\014OUTPUT_INT64\020\003\022\021\n\rOUTP"
-      "UT_UINT64\020\004\022\020\n\014OUTPUT_INT32\020\005\022\022\n\016OUTPUT_"
-      "FIXED64\020\006\022\022\n\016OUTPUT_FIXED32\020\007\022\017\n\013OUTPUT_"
-      "BOOL\020\010\022\021\n\rOUTPUT_STRING\020\t\022\020\n\014OUTPUT_GROU"
-      "P\020\n\022\022\n\016OUTPUT_MESSAGE\020\013\022\020\n\014OUTPUT_BYTES\020"
-      "\014\022\021\n\rOUTPUT_UINT32\020\r\022\017\n\013OUTPUT_ENUM\020\016\022\023\n"
-      "\017OUTPUT_SFIXED32\020\017\022\023\n\017OUTPUT_SFIXED64\020\020\022"
-      "\021\n\rOUTPUT_SINT32\020\021\022\021\n\rOUTPUT_SINT64\020\022*O\n"
-      "\006Endian\022\024\n\020ENDIAN_NO_MATTER\020\000\022\030\n\024ENDIAN_"
-      "LITTLE_ENDIAN\020\001\022\025\n\021ENDIAN_BIG_ENDIAN\020\002*5"
-      "\n\005Proto\022\016\n\nPROTO_NONE\020\000\022\r\n\tPROTO_TCP\020\001\022\r"
-      "\n\tPROTO_UDP\020\002*>\n\007Dialect\022\022\n\016SQL_POSTGRES"
-      "QL\020\000\022\r\n\tSQL_MYSQL\020\001\022\020\n\014SQL_FIREBIRD\020\002:\?\n"
-      "\006packet\022\037.google.protobuf.MessageOptions"
-      "\030\305\212\003 \001(\0132\014.pkt2.Packet:\?\n\006output\022\037.googl"
-      "e.protobuf.MessageOptions\030\306\212\003 \001(\0132\014.pkt2"
-      ".Output:A\n\010variable\022\035.google.protobuf.Fi"
-      "eldOptions\030\307\212\003 \001(\0132\016.pkt2.VariableB\003\370\001\001b"
-      "\006proto3"
+      "\n\npkt2.proto\022\004pkt2\032 google/protobuf/desc"
+      "riptor.proto\"}\n\005Field\022\014\n\004name\030\001 \001(\t\022\035\n\004t"
+      "ype\030\002 \001(\0162\017.pkt2.InputType\022\034\n\006endian\030\003 \001"
+      "(\0162\014.pkt2.Endian\022\016\n\006offset\030\004 \001(\r\022\014\n\004size"
+      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\r\"\344\001\n\010Variable\022\r\n\005fiel"
+      "d\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\036\n\004type\030\003 \001(\0162\020.pk"
+      "t2.OutputType\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tful"
+      "l_name\030\005 \001(\t\022\024\n\014measure_unit\030\006 \001(\t\022\013\n\003ge"
+      "t\030\007 \001(\t\022\016\n\006values\030\010 \003(\t\022\020\n\010priority\030\t \001("
+      "\r\022\016\n\006format\030\n \001(\t\022\020\n\010tostring\030\013 \001(\t\022\r\n\005i"
+      "ndex\030\014 \001(\r\"D\n\007Address\022\032\n\005proto\030\001 \001(\0162\013.p"
+      "kt2.Proto\022\017\n\007address\030\002 \001(\t\022\014\n\004port\030\003 \001(\r"
+      "\"\270\001\n\006Packet\022\035\n\006source\030\001 \003(\0132\r.pkt2.Addre"
+      "ss\022\"\n\013destination\030\002 \003(\0132\r.pkt2.Address\022\014"
+      "\n\004name\030\003 \001(\t\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tfull"
+      "_name\030\005 \001(\t\022\033\n\006fields\030\006 \003(\0132\013.pkt2.Field"
+      "\022\013\n\003set\030\007 \001(\t\022\014\n\004head\030\t \003(\t\"%\n\003Sql\022\036\n\007di"
+      "alect\030\001 \001(\0162\r.pkt2.Dialect\",\n\006Output\022\n\n\002"
+      "id\030\001 \001(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2.Sql*\177\n\tInpu"
+      "tType\022\016\n\nINPUT_NONE\020\000\022\020\n\014INPUT_DOUBLE\020\001\022"
+      "\r\n\tINPUT_INT\020\002\022\016\n\nINPUT_UINT\020\003\022\017\n\013INPUT_"
+      "BYTES\020\004\022\016\n\nINPUT_CHAR\020\005\022\020\n\014INPUT_STRING\020"
+      "\006*\361\002\n\nOutputType\022\017\n\013OUTPUT_NONE\020\000\022\021\n\rOUT"
+      "PUT_DOUBLE\020\001\022\020\n\014OUTPUT_FLOAT\020\002\022\020\n\014OUTPUT"
+      "_INT64\020\003\022\021\n\rOUTPUT_UINT64\020\004\022\020\n\014OUTPUT_IN"
+      "T32\020\005\022\022\n\016OUTPUT_FIXED64\020\006\022\022\n\016OUTPUT_FIXE"
+      "D32\020\007\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOUTPUT_STRING\020"
+      "\t\022\020\n\014OUTPUT_GROUP\020\n\022\022\n\016OUTPUT_MESSAGE\020\013\022"
+      "\020\n\014OUTPUT_BYTES\020\014\022\021\n\rOUTPUT_UINT32\020\r\022\017\n\013"
+      "OUTPUT_ENUM\020\016\022\023\n\017OUTPUT_SFIXED32\020\017\022\023\n\017OU"
+      "TPUT_SFIXED64\020\020\022\021\n\rOUTPUT_SINT32\020\021\022\021\n\rOU"
+      "TPUT_SINT64\020\022*O\n\006Endian\022\024\n\020ENDIAN_NO_MAT"
+      "TER\020\000\022\030\n\024ENDIAN_LITTLE_ENDIAN\020\001\022\025\n\021ENDIA"
+      "N_BIG_ENDIAN\020\002*5\n\005Proto\022\016\n\nPROTO_NONE\020\000\022"
+      "\r\n\tPROTO_TCP\020\001\022\r\n\tPROTO_UDP\020\002*>\n\007Dialect"
+      "\022\022\n\016SQL_POSTGRESQL\020\000\022\r\n\tSQL_MYSQL\020\001\022\020\n\014S"
+      "QL_FIREBIRD\020\002:\?\n\006packet\022\037.google.protobu"
+      "f.MessageOptions\030\305\212\003 \001(\0132\014.pkt2.Packet:\?"
+      "\n\006output\022\037.google.protobuf.MessageOption"
+      "s\030\306\212\003 \001(\0132\014.pkt2.Output:A\n\010variable\022\035.go"
+      "ogle.protobuf.FieldOptions\030\307\212\003 \001(\0132\016.pkt"
+      "2.VariableB\003\370\001\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1647);
+      descriptor, 1663);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "pkt2.proto", &protobuf_RegisterTypes);
+  ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_pkt2_2eproto);
 }
 

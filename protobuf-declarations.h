@@ -144,6 +144,17 @@ public:
 	(
 		const std::map<std::string, const google::protobuf::Descriptor*> *messages
 	);
+
+	/**
+	 * Return message descriptor by the name
+	 * @param name
+	 * @return NULL if message name not found
+	 */
+	const google::protobuf::Descriptor* getMessageDescriptor
+	(
+			const std::string &name
+	);
+
 };
 
 #endif

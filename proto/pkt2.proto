@@ -4,7 +4,7 @@ package pkt2;
 
 option cc_enable_arenas = true;
 
-import "descriptor.proto";
+import "google/protobuf/descriptor.proto";
 
 enum InputType {
     INPUT_NONE                = 0;
