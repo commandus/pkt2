@@ -42,7 +42,7 @@ CLEANFILES = $(gengrpcs)
 # Binaries
 #
 bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
-	handlerpq handlerline write2lmdb \
+	handlerpq handlerline handlerlmdb \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1
 
@@ -54,8 +54,8 @@ NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-declarations.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
-write2lmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
-tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
+handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
+tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h \
 pbjson.hpp errorcodes.h \
 json/json.h  json/json-forwards.h \
@@ -143,16 +143,16 @@ tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# write2lmdb
+# handlerlmdb
 #
-write2lmdb_SOURCES = \
-	write2lmdb.cpp lmdbwriter.cpp write2lmdb-config.cpp \
+handlerlmdb_SOURCES = \
+	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp pkt2.pb.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
 	$(common_src)
-write2lmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
-write2lmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
+handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # handlerline
