@@ -26,7 +26,7 @@
 #include "json/json.h"
 #include "pbjson.hpp"
 
-#include "pkt2.pb.h"
+#include "pkt2packetvariable.cpp"
 
 using namespace google::protobuf;
 
@@ -69,7 +69,7 @@ int put_json
 	std::string out;
 	pbjson::pb2json(message, out);
 	std::cout << out << std::endl;
-	return 0;
+	return ERR_OK;
 }
 
 /**
@@ -118,7 +118,7 @@ int put_pkt2_options
 	}
 	std::cout << "]}" << std::endl;
 
-	return 0;
+	return ERR_OK;
 }
 
 

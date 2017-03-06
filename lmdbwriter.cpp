@@ -1,5 +1,5 @@
 /**
- *
+ *	Write Protobuf message to the LMDB database
  */
 #include <string.h>
 #include <stdio.h>
@@ -22,6 +22,7 @@
 #include "lmdb.h"
 #include "errorcodes.h"
 #include "utilprotobuf.h"
+#include "pkt2packetvariable.h"
 
 using namespace google::protobuf;
 
@@ -54,7 +55,7 @@ bool open_lmdb
 }
 
 /**
- * Close LMDB database file
+ * @brief Close LMDB database file
  * @param config pass path, flags, file open mode
  * @return true- success
  */
@@ -120,6 +121,47 @@ int put_db
 }
 
 /**
+ * @brief get packet's message options
+ * @param buffer
+ * @param buffer_size
+ * @param messageTypeNAddress
+ * @param message
+ * @return 0 - success
+ */
+int put_pkt2_options
+(
+		void *buffer,
+		int buffer_size,
+		ProtobufDeclarations *pd,
+		MessageTypeNAddress *messageTypeNAddress
+)
+{
+	// Each message
+	const google::protobuf::Descriptor* md = pd->getMessageDescriptor(messageTypeNAddress->message_type);
+	if (!md)
+	{
+		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << messageTypeNAddress->message_type;
+		return ERRCODE_MESSAGE_TYPE_NOT_FOUND;
+	}
+
+	const google::protobuf::MessageOptions options = md->options();
+	if (options.HasExtension(pkt2::packet))
+	{
+		std::string out;
+		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
+	}
+
+	for (int f = 0; f < md->field_count(); f++)
+	{
+		const google::protobuf::FieldOptions foptions = md->field(f)->options();
+		std::string out;
+		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
+	}
+
+	return ERR_OK;
+}
+
+/**
  * @brief Write LMDB loop
  * @param config
  * @return  0- success
@@ -179,6 +221,7 @@ int run
 		LOG(ERROR) << ERR_LMDB_CLOSE << config->path;
 		r = ERRCODE_LMDB_CLOSE;
 	}
+
 	r = nn_shutdown(nano_socket, 0);
 	if (r)
 	{
@@ -208,5 +251,4 @@ int stop
     config->stop_request = true;
     // wake up
     return ERR_OK;
-
 }

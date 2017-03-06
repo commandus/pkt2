@@ -63,7 +63,7 @@ pkt2
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
 udpreceiver                                                                message2gateway   
                                                                            example1message   handlerline
-                                                                                             write2lmdb    
+                                                                                             handlerlmdb    
                                                                            
                                                                            
                                                                            
@@ -341,7 +341,7 @@ extend google.protobuf.FieldOptions {
 
 ## Программы
 
-### write2lmdb
+### handlerlmdb
 
 Значения
 
