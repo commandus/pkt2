@@ -7,7 +7,7 @@
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
 
-#include "protobuf-declarations.h"
+#include "pkt2optionscache.h"
 
 #define MAX_PROTO_TOTAL_BYTES_LIMIT 	512 * 1024 * 1024
 
@@ -23,12 +23,6 @@ public:
 
 	MessageTypeNAddress();
 	MessageTypeNAddress(const std::string &messagetype);
-
-	size_t getKey(
-			void *buffer,
-			size_t max_size,
-			const google::protobuf::Message *message
-	);
 };
 
 namespace utilProto

@@ -1,0 +1,142 @@
+/*
+ * pkt2optionscache.cpp
+ */
+
+#include <vector>
+#include <stdlib.h>
+#include "pbjson.hpp"
+#include "pkt2optionscache.h"
+
+Pkt2OptionsCache::Pkt2OptionsCache() {
+}
+
+Pkt2OptionsCache::Pkt2OptionsCache(ProtobufDeclarations *protobuf_declarations)
+{
+	addDeclarations(protobuf_declarations);
+}
+
+Pkt2OptionsCache::~Pkt2OptionsCache() {
+}
+
+void Pkt2OptionsCache::addDeclarations
+(
+	ProtobufDeclarations *protobuf_declarations
+)
+{
+	std::map<std::string, const google::protobuf::Descriptor*> *m = protobuf_declarations->getMessages();
+
+	for (std::map<std::string, const google::protobuf::Descriptor*>::iterator it = m->begin(); it != m->end(); ++it)
+	{
+		Pkt2PacketVariable pv(it->first, protobuf_declarations);
+	}
+}
+
+int Pkt2OptionsCache::size_of
+(
+		enum pkt2::OutputType t
+)
+{
+	switch (t) {
+	case pkt2::OUTPUT_NONE:
+		return 0;
+	case pkt2::OUTPUT_DOUBLE:
+	case pkt2::OUTPUT_INT64:
+	case pkt2::OUTPUT_UINT64:
+	case pkt2::OUTPUT_FIXED64:
+	case pkt2::OUTPUT_SFIXED64:
+	case pkt2::OUTPUT_SINT64:
+		return 8;
+	case pkt2::OUTPUT_FLOAT:
+	case pkt2::OUTPUT_INT32:
+	case pkt2::OUTPUT_FIXED32:
+	case pkt2::OUTPUT_SFIXED32:
+	case pkt2::OUTPUT_UINT32:
+	case pkt2::OUTPUT_SINT32:
+		return 4;
+	case pkt2::OUTPUT_BOOL:
+	case pkt2::OUTPUT_ENUM:
+		return 1;
+	case pkt2::OUTPUT_STRING:
+	case pkt2::OUTPUT_GROUP:
+	case pkt2::OUTPUT_MESSAGE:
+	case pkt2::OUTPUT_BYTES:
+		return 0;
+	default:
+		return 0;
+	}
+}
+
+size_t Pkt2OptionsCache::getKey(
+	const std::string &messageType,
+	void *buffer,
+	size_t max_size,
+	const google::protobuf::Message *message
+)
+{
+	Pkt2PacketVariable pv(pkt2[messageType]);
+
+	size_t r = 0;
+	for (std::vector<int>::iterator it(pv.keyIndexes.begin()); it != pv.keyIndexes.end(); ++it)
+	{
+		pkt2::Variable v = pkt2[messageType].variables[*it];
+		const google::protobuf::FieldDescriptor *field = message->GetDescriptor()->field(*it);
+        if (!field)
+            return 0;
+
+        rapidjson::Value *js = pbjson::pb2jsonobject(message);
+        rapidjson::Value::ConstMemberIterator itr = js->FindMember(field->name().c_str());
+        if (itr == js->MemberEnd())
+        	return 0;
+        switch (itr->value.GetType()) {
+			case rapidjson::kNumberType:
+				if (itr->value.IsInt64())
+				{
+					int64_t v = itr->value.GetInt64();
+					memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+					r += sizeof(v);
+				} else
+					if (itr->value.IsUint64())
+					{
+						uint64_t v = itr->value.GetUint64();
+						memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+						r += sizeof(v);
+					} else
+						if (itr->value.IsInt())
+						{
+							int v = itr->value.GetInt();
+							memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+							r += sizeof(v);
+						} else
+							if (itr->value.IsUint())
+							{
+								uint v = itr->value.GetUint();
+								memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+								r += sizeof(v);
+							} else
+								if (itr->value.IsDouble())
+								{
+									double v = itr->value.GetDouble();
+									memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+									r += sizeof(v);
+								} else
+									if (itr->value.IsFloat())
+									{
+										float v = itr->value.GetFloat();
+										memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+										r += sizeof(v);
+									} else
+										if (itr->value.IsBool())
+										{
+											bool v = itr->value.GetBool();
+											memmove(&(((char*)buffer)[r]), &v, sizeof(v));
+											r += sizeof(v);
+										}
+				break;
+			default:
+				break;
+        }
+        delete js;
+	}
+	return r;
+}
+

@@ -27,6 +27,7 @@
 #include "pbjson.hpp"
 
 #include "pkt2packetvariable.cpp"
+#include "pkt2optionscache.h"
 
 using namespace google::protobuf;
 

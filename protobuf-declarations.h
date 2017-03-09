@@ -20,9 +20,9 @@
 
 class ProtobufDeclarations {
 private:
+	std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
 	// google::protobuf::Arena arena;
 	std::vector<std::string> paths;
-	std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
 	std::vector<const google::protobuf::FileDescriptor*> parsed_files;
 
 	// Set up the source tree.
@@ -45,6 +45,7 @@ private:
 	);
 
 public:
+
 	/**
 	 * @brief After addPath() and parseProtoPath()
 	 */

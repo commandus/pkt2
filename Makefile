@@ -151,7 +151,8 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-utilfile.$(OBJEXT) \
 	handlerline-utilstring.$(OBJEXT) \
 	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
-	handlerline-pkt2.pb.$(OBJEXT) $(am__objects_1)
+	handlerline-pkt2.pb.$(OBJEXT) \
+	handlerline-pkt2optionscache.$(OBJEXT) $(am__objects_1)
 handlerline_OBJECTS = $(am_handlerline_OBJECTS)
 handlerline_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
@@ -165,7 +166,8 @@ am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
 	handlerlmdb-utilstring.$(OBJEXT) \
 	handlerlmdb-utilinet.$(OBJEXT) handlerlmdb-pbjson.$(OBJEXT) \
 	handlerlmdb-pkt2.pb.$(OBJEXT) \
-	handlerlmdb-pkt2packetvariable.$(OBJEXT) $(am__objects_1)
+	handlerlmdb-pkt2packetvariable.$(OBJEXT) \
+	handlerlmdb-pkt2optionscache.$(OBJEXT) $(am__objects_1)
 handlerlmdb_OBJECTS = $(am_handlerlmdb_OBJECTS)
 handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
@@ -765,7 +767,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h \
-pbjson.hpp errorcodes.h \
+pbjson.hpp errorcodes.h pkt2optionscache.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -857,6 +859,7 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
+	pkt2optionscache.cpp  \
 	$(common_src)
 
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -869,7 +872,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
-	pkt2.pb.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -1119,6 +1122,7 @@ include ./$(DEPDIR)/handlerline-handlerline.Po
 include ./$(DEPDIR)/handlerline-linewriter.Po
 include ./$(DEPDIR)/handlerline-pbjson.Po
 include ./$(DEPDIR)/handlerline-pkt2.pb.Po
+include ./$(DEPDIR)/handlerline-pkt2optionscache.Po
 include ./$(DEPDIR)/handlerline-protobuf-declarations.Po
 include ./$(DEPDIR)/handlerline-utilfile.Po
 include ./$(DEPDIR)/handlerline-utilinet.Po
@@ -1131,6 +1135,7 @@ include ./$(DEPDIR)/handlerlmdb-handlerlmdb.Po
 include ./$(DEPDIR)/handlerlmdb-lmdbwriter.Po
 include ./$(DEPDIR)/handlerlmdb-pbjson.Po
 include ./$(DEPDIR)/handlerlmdb-pkt2.pb.Po
+include ./$(DEPDIR)/handlerlmdb-pkt2optionscache.Po
 include ./$(DEPDIR)/handlerlmdb-pkt2packetvariable.Po
 include ./$(DEPDIR)/handlerlmdb-protobuf-declarations.Po
 include ./$(DEPDIR)/handlerlmdb-utilfile.Po
@@ -1621,6 +1626,20 @@ handlerline-pkt2.pb.obj: pkt2.pb.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
+handlerline-pkt2optionscache.o: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/handlerline-pkt2optionscache.Tpo -c -o handlerline-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pkt2optionscache.Tpo $(DEPDIR)/handlerline-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerline-pkt2optionscache.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+
+handlerline-pkt2optionscache.obj: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/handlerline-pkt2optionscache.Tpo -c -o handlerline-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pkt2optionscache.Tpo $(DEPDIR)/handlerline-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerline-pkt2optionscache.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+
 handlerlmdb-handlerlmdb.o: handlerlmdb.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-handlerlmdb.o -MD -MP -MF $(DEPDIR)/handlerlmdb-handlerlmdb.Tpo -c -o handlerlmdb-handlerlmdb.o `test -f 'handlerlmdb.cpp' || echo '$(srcdir)/'`handlerlmdb.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-handlerlmdb.Tpo $(DEPDIR)/handlerlmdb-handlerlmdb.Po
@@ -1802,6 +1821,20 @@ handlerlmdb-pkt2packetvariable.obj: pkt2packetvariable.cpp
 #	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handlerlmdb-pkt2packetvariable.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+
+handlerlmdb-pkt2optionscache.o: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/handlerlmdb-pkt2optionscache.Tpo -c -o handlerlmdb-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-pkt2optionscache.Tpo $(DEPDIR)/handlerlmdb-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerlmdb-pkt2optionscache.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+
+handlerlmdb-pkt2optionscache.obj: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/handlerlmdb-pkt2optionscache.Tpo -c -o handlerlmdb-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-pkt2optionscache.Tpo $(DEPDIR)/handlerlmdb-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerlmdb-pkt2optionscache.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
 
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp

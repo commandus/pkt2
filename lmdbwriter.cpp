@@ -23,6 +23,7 @@
 #include "errorcodes.h"
 #include "utilprotobuf.h"
 #include "pkt2packetvariable.h"
+#include "pkt2optionscache.h"
 
 using namespace google::protobuf;
 
@@ -81,6 +82,7 @@ bool close_lmdb
 int put_db
 (
 		struct dbenv *env,
+		Pkt2OptionsCache *options,
 		void *buffer,
 		int buffer_size,
 		MessageTypeNAddress *messageTypeNAddress,
@@ -90,7 +92,7 @@ int put_db
 	MDB_val key, data;
 	char keybuffer[2048];
 
-	key.mv_size = messageTypeNAddress->getKey(keybuffer, sizeof(keybuffer), message);
+	key.mv_size = options->getKey(messageTypeNAddress->message_type, keybuffer, sizeof(keybuffer), message);
 	if (key.mv_size)
 		return 0;	// No key, no store
 
@@ -102,7 +104,6 @@ int put_db
 	}
 
 	key.mv_data = keybuffer;
-
 	data.mv_size = buffer_size;
 	data.mv_data = buffer;
 
@@ -120,46 +121,6 @@ int put_db
 	return r;
 }
 
-/**
- * @brief get packet's message options
- * @param buffer
- * @param buffer_size
- * @param messageTypeNAddress
- * @param message
- * @return 0 - success
- */
-int put_pkt2_options
-(
-		void *buffer,
-		int buffer_size,
-		ProtobufDeclarations *pd,
-		MessageTypeNAddress *messageTypeNAddress
-)
-{
-	// Each message
-	const google::protobuf::Descriptor* md = pd->getMessageDescriptor(messageTypeNAddress->message_type);
-	if (!md)
-	{
-		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << messageTypeNAddress->message_type;
-		return ERRCODE_MESSAGE_TYPE_NOT_FOUND;
-	}
-
-	const google::protobuf::MessageOptions options = md->options();
-	if (options.HasExtension(pkt2::packet))
-	{
-		std::string out;
-		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
-	}
-
-	for (int f = 0; f < md->field_count(); f++)
-	{
-		const google::protobuf::FieldOptions foptions = md->field(f)->options();
-		std::string out;
-		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
-	}
-
-	return ERR_OK;
-}
 
 /**
  * @brief Write LMDB loop
@@ -193,6 +154,7 @@ int run
 		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;
 		return ERRCODE_LOAD_PROTO;
 	}
+	Pkt2OptionsCache options(&pd);
 
     while (!config->stop_request)
     {
@@ -207,7 +169,7 @@ int run
 		MessageTypeNAddress messageTypeNAddress;
 		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
 		if (m)
-			put_db(&env, buffer, bytes, &messageTypeNAddress, m);
+			put_db(&env, &options, buffer, bytes, &messageTypeNAddress, m);
 		else
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
 

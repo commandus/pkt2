@@ -44,15 +44,6 @@ MessageTypeNAddress::MessageTypeNAddress
     memset(&socket_address_dst, sizeof(struct sockaddr), 0);
 }
 
-size_t MessageTypeNAddress::getKey(
-		void *buffer,
-		size_t max_size,
-		const google::protobuf::Message *message
-)
-{
-	return 0;
-}
-
 /**
  * Proto file must have file name suffix ".proto"
  */
