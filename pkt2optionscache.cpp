@@ -66,6 +66,14 @@ int Pkt2OptionsCache::size_of
 	}
 }
 
+/**
+ * get values from message fields with index 1, 2... into key buffer
+ * @param messageType
+ * @param buffer
+ * @param max_size
+ * @param message
+ * @return
+ */
 size_t Pkt2OptionsCache::getKey(
 	const std::string &messageType,
 	void *buffer,
@@ -76,7 +84,17 @@ size_t Pkt2OptionsCache::getKey(
 	Pkt2PacketVariable pv(pkt2[messageType]);
 
 	size_t r = 0;
-	for (std::vector<int>::iterator it(pv.keyIndexes.begin()); it != pv.keyIndexes.end(); ++it)
+	std::vector<uint64_t>::iterator it(pv.keyIndexes.begin());
+	// first is identifier (or hash) of the message
+	if (it != pv.keyIndexes.end())
+	{
+		uint64_t t = *it;
+		memmove(buffer, &t, sizeof(uint64_t));
+		r+= sizeof(uint64_t);
+		it++;
+	}
+
+	for (;it != pv.keyIndexes.end(); ++it)
 	{
 		pkt2::Variable v = pkt2[messageType].variables[*it];
 		const google::protobuf::FieldDescriptor *field = message->GetDescriptor()->field(*it);

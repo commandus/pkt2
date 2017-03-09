@@ -82,6 +82,7 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, source_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, destination_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, short_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, full_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, fields_),
@@ -107,8 +108,8 @@ static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 10, -1, sizeof(Variable)},
   { 26, -1, sizeof(Address)},
   { 33, -1, sizeof(Packet)},
-  { 45, -1, sizeof(Sql)},
-  { 50, -1, sizeof(Output)},
+  { 46, -1, sizeof(Sql)},
+  { 51, -1, sizeof(Output)},
 };
 
 static const ::google::protobuf::internal::DefaultInstanceData file_default_instances[] = {
@@ -204,39 +205,39 @@ void protobuf_AddDesc_pkt2_2eproto_impl() {
       "\r\022\016\n\006format\030\n \001(\t\022\020\n\010tostring\030\013 \001(\t\022\r\n\005i"
       "ndex\030\014 \001(\r\"D\n\007Address\022\032\n\005proto\030\001 \001(\0162\013.p"
       "kt2.Proto\022\017\n\007address\030\002 \001(\t\022\014\n\004port\030\003 \001(\r"
-      "\"\270\001\n\006Packet\022\035\n\006source\030\001 \003(\0132\r.pkt2.Addre"
+      "\"\304\001\n\006Packet\022\035\n\006source\030\001 \003(\0132\r.pkt2.Addre"
       "ss\022\"\n\013destination\030\002 \003(\0132\r.pkt2.Address\022\014"
-      "\n\004name\030\003 \001(\t\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tfull"
-      "_name\030\005 \001(\t\022\033\n\006fields\030\006 \003(\0132\013.pkt2.Field"
-      "\022\013\n\003set\030\007 \001(\t\022\014\n\004head\030\t \003(\t\"%\n\003Sql\022\036\n\007di"
-      "alect\030\001 \001(\0162\r.pkt2.Dialect\",\n\006Output\022\n\n\002"
-      "id\030\001 \001(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2.Sql*\177\n\tInpu"
-      "tType\022\016\n\nINPUT_NONE\020\000\022\020\n\014INPUT_DOUBLE\020\001\022"
-      "\r\n\tINPUT_INT\020\002\022\016\n\nINPUT_UINT\020\003\022\017\n\013INPUT_"
-      "BYTES\020\004\022\016\n\nINPUT_CHAR\020\005\022\020\n\014INPUT_STRING\020"
-      "\006*\361\002\n\nOutputType\022\017\n\013OUTPUT_NONE\020\000\022\021\n\rOUT"
-      "PUT_DOUBLE\020\001\022\020\n\014OUTPUT_FLOAT\020\002\022\020\n\014OUTPUT"
-      "_INT64\020\003\022\021\n\rOUTPUT_UINT64\020\004\022\020\n\014OUTPUT_IN"
-      "T32\020\005\022\022\n\016OUTPUT_FIXED64\020\006\022\022\n\016OUTPUT_FIXE"
-      "D32\020\007\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOUTPUT_STRING\020"
-      "\t\022\020\n\014OUTPUT_GROUP\020\n\022\022\n\016OUTPUT_MESSAGE\020\013\022"
-      "\020\n\014OUTPUT_BYTES\020\014\022\021\n\rOUTPUT_UINT32\020\r\022\017\n\013"
-      "OUTPUT_ENUM\020\016\022\023\n\017OUTPUT_SFIXED32\020\017\022\023\n\017OU"
-      "TPUT_SFIXED64\020\020\022\021\n\rOUTPUT_SINT32\020\021\022\021\n\rOU"
-      "TPUT_SINT64\020\022*O\n\006Endian\022\024\n\020ENDIAN_NO_MAT"
-      "TER\020\000\022\030\n\024ENDIAN_LITTLE_ENDIAN\020\001\022\025\n\021ENDIA"
-      "N_BIG_ENDIAN\020\002*5\n\005Proto\022\016\n\nPROTO_NONE\020\000\022"
-      "\r\n\tPROTO_TCP\020\001\022\r\n\tPROTO_UDP\020\002*>\n\007Dialect"
-      "\022\022\n\016SQL_POSTGRESQL\020\000\022\r\n\tSQL_MYSQL\020\001\022\020\n\014S"
-      "QL_FIREBIRD\020\002:\?\n\006packet\022\037.google.protobu"
-      "f.MessageOptions\030\305\212\003 \001(\0132\014.pkt2.Packet:\?"
-      "\n\006output\022\037.google.protobuf.MessageOption"
-      "s\030\306\212\003 \001(\0132\014.pkt2.Output:A\n\010variable\022\035.go"
-      "ogle.protobuf.FieldOptions\030\307\212\003 \001(\0132\016.pkt"
-      "2.VariableB\003\370\001\001b\006proto3"
+      "\n\004name\030\003 \001(\t\022\n\n\002id\030\004 \001(\004\022\022\n\nshort_name\030\005"
+      " \001(\t\022\021\n\tfull_name\030\006 \001(\t\022\033\n\006fields\030\007 \003(\0132"
+      "\013.pkt2.Field\022\013\n\003set\030\010 \001(\t\022\014\n\004head\030\n \003(\t\""
+      "%\n\003Sql\022\036\n\007dialect\030\001 \001(\0162\r.pkt2.Dialect\","
+      "\n\006Output\022\n\n\002id\030\001 \001(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2"
+      ".Sql*\177\n\tInputType\022\016\n\nINPUT_NONE\020\000\022\020\n\014INP"
+      "UT_DOUBLE\020\001\022\r\n\tINPUT_INT\020\002\022\016\n\nINPUT_UINT"
+      "\020\003\022\017\n\013INPUT_BYTES\020\004\022\016\n\nINPUT_CHAR\020\005\022\020\n\014I"
+      "NPUT_STRING\020\006*\361\002\n\nOutputType\022\017\n\013OUTPUT_N"
+      "ONE\020\000\022\021\n\rOUTPUT_DOUBLE\020\001\022\020\n\014OUTPUT_FLOAT"
+      "\020\002\022\020\n\014OUTPUT_INT64\020\003\022\021\n\rOUTPUT_UINT64\020\004\022"
+      "\020\n\014OUTPUT_INT32\020\005\022\022\n\016OUTPUT_FIXED64\020\006\022\022\n"
+      "\016OUTPUT_FIXED32\020\007\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOU"
+      "TPUT_STRING\020\t\022\020\n\014OUTPUT_GROUP\020\n\022\022\n\016OUTPU"
+      "T_MESSAGE\020\013\022\020\n\014OUTPUT_BYTES\020\014\022\021\n\rOUTPUT_"
+      "UINT32\020\r\022\017\n\013OUTPUT_ENUM\020\016\022\023\n\017OUTPUT_SFIX"
+      "ED32\020\017\022\023\n\017OUTPUT_SFIXED64\020\020\022\021\n\rOUTPUT_SI"
+      "NT32\020\021\022\021\n\rOUTPUT_SINT64\020\022*O\n\006Endian\022\024\n\020E"
+      "NDIAN_NO_MATTER\020\000\022\030\n\024ENDIAN_LITTLE_ENDIA"
+      "N\020\001\022\025\n\021ENDIAN_BIG_ENDIAN\020\002*5\n\005Proto\022\016\n\nP"
+      "ROTO_NONE\020\000\022\r\n\tPROTO_TCP\020\001\022\r\n\tPROTO_UDP\020"
+      "\002*>\n\007Dialect\022\022\n\016SQL_POSTGRESQL\020\000\022\r\n\tSQL_"
+      "MYSQL\020\001\022\020\n\014SQL_FIREBIRD\020\002:\?\n\006packet\022\037.go"
+      "ogle.protobuf.MessageOptions\030\305\212\003 \001(\0132\014.p"
+      "kt2.Packet:\?\n\006output\022\037.google.protobuf.M"
+      "essageOptions\030\306\212\003 \001(\0132\014.pkt2.Output:A\n\010v"
+      "ariable\022\035.google.protobuf.FieldOptions\030\307"
+      "\212\003 \001(\0132\016.pkt2.VariableB\003\370\001\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1663);
+      descriptor, 1675);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "pkt2.proto", &protobuf_RegisterTypes);
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
@@ -2815,6 +2816,7 @@ void Address::set_port(::google::protobuf::uint32 value) {
 const int Packet::kSourceFieldNumber;
 const int Packet::kDestinationFieldNumber;
 const int Packet::kNameFieldNumber;
+const int Packet::kIdFieldNumber;
 const int Packet::kShortNameFieldNumber;
 const int Packet::kFullNameFieldNumber;
 const int Packet::kFieldsFieldNumber;
@@ -2873,6 +2875,7 @@ Packet::Packet(const Packet& from)
     set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.set(),
       GetArenaNoVirtual());
   }
+  id_ = from.id_;
   // @@protoc_insertion_point(copy_constructor:pkt2.Packet)
 }
 
@@ -2881,6 +2884,7 @@ void Packet::SharedCtor() {
   short_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   full_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   set_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  id_ = GOOGLE_ULONGLONG(0);
   _cached_size_ = 0;
 }
 
@@ -2936,6 +2940,7 @@ void Packet::Clear() {
   short_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   full_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+  id_ = GOOGLE_ULONGLONG(0);
 }
 
 bool Packet::MergePartialFromCodedStream(
@@ -2989,9 +2994,22 @@ bool Packet::MergePartialFromCodedStream(
         break;
       }
 
-      // string short_name = 4;
+      // uint64 id = 4;
       case 4: {
-        if (tag == 34u) {
+        if (tag == 32u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
+                 input, &id_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // string short_name = 5;
+      case 5: {
+        if (tag == 42u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_short_name()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -3004,9 +3022,9 @@ bool Packet::MergePartialFromCodedStream(
         break;
       }
 
-      // string full_name = 5;
-      case 5: {
-        if (tag == 42u) {
+      // string full_name = 6;
+      case 6: {
+        if (tag == 50u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_full_name()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -3019,9 +3037,9 @@ bool Packet::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated .pkt2.Field fields = 6;
-      case 6: {
-        if (tag == 50u) {
+      // repeated .pkt2.Field fields = 7;
+      case 7: {
+        if (tag == 58u) {
           DO_(input->IncrementRecursionDepth());
           DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtualNoRecursionDepth(
                 input, add_fields()));
@@ -3032,9 +3050,9 @@ bool Packet::MergePartialFromCodedStream(
         break;
       }
 
-      // string set = 7;
-      case 7: {
-        if (tag == 58u) {
+      // string set = 8;
+      case 8: {
+        if (tag == 66u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_set()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -3047,9 +3065,9 @@ bool Packet::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated string head = 9;
-      case 9: {
-        if (tag == 74u) {
+      // repeated string head = 10;
+      case 10: {
+        if (tag == 82u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->add_head()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -3109,50 +3127,55 @@ void Packet::SerializeWithCachedSizes(
       3, this->name(), output);
   }
 
-  // string short_name = 4;
+  // uint64 id = 4;
+  if (this->id() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(4, this->id(), output);
+  }
+
+  // string short_name = 5;
   if (this->short_name().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->short_name().data(), this->short_name().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Packet.short_name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->short_name(), output);
+      5, this->short_name(), output);
   }
 
-  // string full_name = 5;
+  // string full_name = 6;
   if (this->full_name().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->full_name().data(), this->full_name().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Packet.full_name");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->full_name(), output);
+      6, this->full_name(), output);
   }
 
-  // repeated .pkt2.Field fields = 6;
+  // repeated .pkt2.Field fields = 7;
   for (unsigned int i = 0, n = this->fields_size(); i < n; i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      6, this->fields(i), output);
+      7, this->fields(i), output);
   }
 
-  // string set = 7;
+  // string set = 8;
   if (this->set().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->set().data(), this->set().length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Packet.set");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      7, this->set(), output);
+      8, this->set(), output);
   }
 
-  // repeated string head = 9;
+  // repeated string head = 10;
   for (int i = 0; i < this->head_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->head(i).data(), this->head(i).length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Packet.head");
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      9, this->head(i), output);
+      10, this->head(i), output);
   }
 
   // @@protoc_insertion_point(serialize_end:pkt2.Packet)
@@ -3187,7 +3210,12 @@ void Packet::SerializeWithCachedSizes(
         3, this->name(), target);
   }
 
-  // string short_name = 4;
+  // uint64 id = 4;
+  if (this->id() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(4, this->id(), target);
+  }
+
+  // string short_name = 5;
   if (this->short_name().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->short_name().data(), this->short_name().length(),
@@ -3195,10 +3223,10 @@ void Packet::SerializeWithCachedSizes(
       "pkt2.Packet.short_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->short_name(), target);
+        5, this->short_name(), target);
   }
 
-  // string full_name = 5;
+  // string full_name = 6;
   if (this->full_name().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->full_name().data(), this->full_name().length(),
@@ -3206,17 +3234,17 @@ void Packet::SerializeWithCachedSizes(
       "pkt2.Packet.full_name");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->full_name(), target);
+        6, this->full_name(), target);
   }
 
-  // repeated .pkt2.Field fields = 6;
+  // repeated .pkt2.Field fields = 7;
   for (unsigned int i = 0, n = this->fields_size(); i < n; i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
-        6, this->fields(i), false, target);
+        7, this->fields(i), false, target);
   }
 
-  // string set = 7;
+  // string set = 8;
   if (this->set().size() > 0) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->set().data(), this->set().length(),
@@ -3224,17 +3252,17 @@ void Packet::SerializeWithCachedSizes(
       "pkt2.Packet.set");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        7, this->set(), target);
+        8, this->set(), target);
   }
 
-  // repeated string head = 9;
+  // repeated string head = 10;
   for (int i = 0; i < this->head_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->head(i).data(), this->head(i).length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Packet.head");
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(9, this->head(i), target);
+      WriteStringToArray(10, this->head(i), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Packet)
@@ -3267,7 +3295,7 @@ size_t Packet::ByteSizeLong() const {
     }
   }
 
-  // repeated .pkt2.Field fields = 6;
+  // repeated .pkt2.Field fields = 7;
   {
     unsigned int count = this->fields_size();
     total_size += 1UL * count;
@@ -3278,7 +3306,7 @@ size_t Packet::ByteSizeLong() const {
     }
   }
 
-  // repeated string head = 9;
+  // repeated string head = 10;
   total_size += 1 *
       ::google::protobuf::internal::FromIntSize(this->head_size());
   for (int i = 0; i < this->head_size(); i++) {
@@ -3293,25 +3321,32 @@ size_t Packet::ByteSizeLong() const {
         this->name());
   }
 
-  // string short_name = 4;
+  // string short_name = 5;
   if (this->short_name().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->short_name());
   }
 
-  // string full_name = 5;
+  // string full_name = 6;
   if (this->full_name().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->full_name());
   }
 
-  // string set = 7;
+  // string set = 8;
   if (this->set().size() > 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::StringSize(
         this->set());
+  }
+
+  // uint64 id = 4;
+  if (this->id() != 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
+        this->id());
   }
 
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
@@ -3355,6 +3390,9 @@ void Packet::MergeFrom(const Packet& from) {
   }
   if (from.set().size() > 0) {
     set_set(from.set());
+  }
+  if (from.id() != 0) {
+    set_id(from.id());
   }
 }
 
@@ -3404,6 +3442,7 @@ void Packet::InternalSwap(Packet* other) {
   short_name_.Swap(&other->short_name_);
   full_name_.Swap(&other->full_name_);
   set_.Swap(&other->set_);
+  std::swap(id_, other->id_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -3541,7 +3580,21 @@ void Packet::unsafe_arena_set_allocated_name(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.name)
 }
 
-// string short_name = 4;
+// uint64 id = 4;
+void Packet::clear_id() {
+  id_ = GOOGLE_ULONGLONG(0);
+}
+::google::protobuf::uint64 Packet::id() const {
+  // @@protoc_insertion_point(field_get:pkt2.Packet.id)
+  return id_;
+}
+void Packet::set_id(::google::protobuf::uint64 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Packet.id)
+}
+
+// string short_name = 5;
 void Packet::clear_short_name() {
   short_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -3607,7 +3660,7 @@ void Packet::unsafe_arena_set_allocated_short_name(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.short_name)
 }
 
-// string full_name = 5;
+// string full_name = 6;
 void Packet::clear_full_name() {
   full_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -3673,7 +3726,7 @@ void Packet::unsafe_arena_set_allocated_full_name(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.full_name)
 }
 
-// repeated .pkt2.Field fields = 6;
+// repeated .pkt2.Field fields = 7;
 int Packet::fields_size() const {
   return fields_.size();
 }
@@ -3703,7 +3756,7 @@ Packet::fields() const {
   return fields_;
 }
 
-// string set = 7;
+// string set = 8;
 void Packet::clear_set() {
   set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -3769,7 +3822,7 @@ void Packet::unsafe_arena_set_allocated_set(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.set)
 }
 
-// repeated string head = 9;
+// repeated string head = 10;
 int Packet::head_size() const {
   return head_.size();
 }

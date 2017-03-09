@@ -29,7 +29,7 @@ public:
 	pkt2::Packet packet;
 	std::vector<pkt2::Variable> variables;
 	/// keep variables vector index having index in order of 1, 2
-	std::vector<int> keyIndexes;
+	std::vector<uint64_t> keyIndexes;
 };
 
 #endif /* PKT2PACKETVARIABLE_H_ */

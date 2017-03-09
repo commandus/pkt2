@@ -903,9 +903,15 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   void unsafe_arena_set_allocated_name(
       ::std::string* name);
 
-  // string short_name = 4;
+  // uint64 id = 4;
+  void clear_id();
+  static const int kIdFieldNumber = 4;
+  ::google::protobuf::uint64 id() const;
+  void set_id(::google::protobuf::uint64 value);
+
+  // string short_name = 5;
   void clear_short_name();
-  static const int kShortNameFieldNumber = 4;
+  static const int kShortNameFieldNumber = 5;
   const ::std::string& short_name() const;
   void set_short_name(const ::std::string& value);
   void set_short_name(const char* value);
@@ -917,9 +923,9 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   void unsafe_arena_set_allocated_short_name(
       ::std::string* short_name);
 
-  // string full_name = 5;
+  // string full_name = 6;
   void clear_full_name();
-  static const int kFullNameFieldNumber = 5;
+  static const int kFullNameFieldNumber = 6;
   const ::std::string& full_name() const;
   void set_full_name(const ::std::string& value);
   void set_full_name(const char* value);
@@ -931,10 +937,10 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   void unsafe_arena_set_allocated_full_name(
       ::std::string* full_name);
 
-  // repeated .pkt2.Field fields = 6;
+  // repeated .pkt2.Field fields = 7;
   int fields_size() const;
   void clear_fields();
-  static const int kFieldsFieldNumber = 6;
+  static const int kFieldsFieldNumber = 7;
   const ::pkt2::Field& fields(int index) const;
   ::pkt2::Field* mutable_fields(int index);
   ::pkt2::Field* add_fields();
@@ -943,9 +949,9 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   const ::google::protobuf::RepeatedPtrField< ::pkt2::Field >&
       fields() const;
 
-  // string set = 7;
+  // string set = 8;
   void clear_set();
-  static const int kSetFieldNumber = 7;
+  static const int kSetFieldNumber = 8;
   const ::std::string& set() const;
   void set_set(const ::std::string& value);
   void set_set(const char* value);
@@ -957,10 +963,10 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   void unsafe_arena_set_allocated_set(
       ::std::string* set);
 
-  // repeated string head = 9;
+  // repeated string head = 10;
   int head_size() const;
   void clear_head();
-  static const int kHeadFieldNumber = 9;
+  static const int kHeadFieldNumber = 10;
   const ::std::string& head(int index) const;
   ::std::string* mutable_head(int index);
   void set_head(int index, const ::std::string& value);
@@ -988,6 +994,7 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
   ::google::protobuf::internal::ArenaStringPtr set_;
+  ::google::protobuf::uint64 id_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -2229,7 +2236,21 @@ inline void Packet::unsafe_arena_set_allocated_name(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.name)
 }
 
-// string short_name = 4;
+// uint64 id = 4;
+inline void Packet::clear_id() {
+  id_ = GOOGLE_ULONGLONG(0);
+}
+inline ::google::protobuf::uint64 Packet::id() const {
+  // @@protoc_insertion_point(field_get:pkt2.Packet.id)
+  return id_;
+}
+inline void Packet::set_id(::google::protobuf::uint64 value) {
+  
+  id_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Packet.id)
+}
+
+// string short_name = 5;
 inline void Packet::clear_short_name() {
   short_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2295,7 +2316,7 @@ inline void Packet::unsafe_arena_set_allocated_short_name(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.short_name)
 }
 
-// string full_name = 5;
+// string full_name = 6;
 inline void Packet::clear_full_name() {
   full_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2361,7 +2382,7 @@ inline void Packet::unsafe_arena_set_allocated_full_name(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.full_name)
 }
 
-// repeated .pkt2.Field fields = 6;
+// repeated .pkt2.Field fields = 7;
 inline int Packet::fields_size() const {
   return fields_.size();
 }
@@ -2391,7 +2412,7 @@ Packet::fields() const {
   return fields_;
 }
 
-// string set = 7;
+// string set = 8;
 inline void Packet::clear_set() {
   set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
 }
@@ -2457,7 +2478,7 @@ inline void Packet::unsafe_arena_set_allocated_set(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.set)
 }
 
-// repeated string head = 9;
+// repeated string head = 10;
 inline int Packet::head_size() const {
   return head_.size();
 }

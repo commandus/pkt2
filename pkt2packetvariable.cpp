@@ -2,6 +2,7 @@
  * pkt2packetvariable.cpp
  *
  */
+#include <functional>
 #include <glog/logging.h>
 
 #include "pkt2.pb.h"
@@ -40,6 +41,13 @@ Pkt2PacketVariable::Pkt2PacketVariable
 	if (options.HasExtension(pkt2::packet))
 	{
 		packet = options.GetExtension(pkt2::packet);
+		// set message identifier if not assigned in the proto file
+		if (!packet.id())
+		{
+			std::hash<std::string> h;
+			size_t id = h(packet.name());
+			packet.set_id(id);
+		}
 	}
 
 	// temporarily used for sorting
@@ -55,8 +63,12 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		// prepare index
 		if (variable.index())
 			indexVariable[variable.index()] = f;
+		// calculate hash of the name as identifier if identifier is 0
 	}
 
+	// create index
+	// first is message identifier itself
+	keyIndexes.push_back(packet.id());
 	for (int i = 1; i <= indexVariable.size(); i++)
 		keyIndexes.push_back(indexVariable[i]);
 }
