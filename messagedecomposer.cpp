@@ -5,12 +5,13 @@
  *      Author: andrei
  */
 
+#include <sstream>
 #include "messagedecomposer.h"
 #include "errorcodes.h"
 #include "bin2ascii.h"
 
 MessageDecomposer::MessageDecomposer()
-	: ondecompose(NULL)
+	: env(NULL), ondecompose(NULL)
 {
 }
 
@@ -19,11 +20,21 @@ MessageDecomposer::~MessageDecomposer() {
 
 MessageDecomposer::MessageDecomposer
 (
-	const google::protobuf::Message *message
+	void *environment,
+	const google::protobuf::Message *message,
+	ondecompose_callback callback
 )
-	: ondecompose(NULL)
+	: env(environment), ondecompose(callback)
 {
 	decompose(message);
+}
+
+void MessageDecomposer::setCallback
+(
+		ondecompose_callback ondecompose
+)
+{
+	this->ondecompose = ondecompose;
 }
 
 #define DECOMPOSE_TYPE(NATIVE_TYPE, PROTO_TYPE) \
@@ -34,18 +45,19 @@ MessageDecomposer::MessageDecomposer
 		for (size_t i = 0; i != array_size; ++i) \
 		{ \
 			value = ref->GetRepeated ## PROTO_TYPE(*message, field, i); \
-			ondecompose(t, &value, sizeof(NATIVE_TYPE)); \
+			ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE)); \
 		} \
 	} \
 	else \
 	{ \
 		value = ref->Get ## PROTO_TYPE(*message, field); \
-		ondecompose(t, &value, sizeof(NATIVE_TYPE)); \
+		ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE)); \
 	} \
 }
 
 int MessageDecomposer::decomposeField
 (
+	const google::protobuf::Descriptor *message_descriptor,
 	const google::protobuf::Message *message,
 	const google::protobuf::FieldDescriptor *field
 )
@@ -58,7 +70,7 @@ int MessageDecomposer::decomposeField
         array_size = ref->FieldSize(*message, field);
 
     google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
-    switch (field->cpp_type())
+    switch (t)
     {
         case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
         	DECOMPOSE_TYPE(double, Double)
@@ -91,7 +103,7 @@ int MessageDecomposer::decomposeField
                     std::string value = ref->GetRepeatedString(*message, field, i);
                     if (is_binary)
                         value = b64_encode(value);
-                    ondecompose(t, (void *) value.c_str(), value.length());
+                    ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length());
                 }
             }
             else
@@ -101,7 +113,7 @@ int MessageDecomposer::decomposeField
                 {
                     value = b64_encode(value);
                 }
-                ondecompose(t, (void *) value.c_str(), value.length());
+                ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length());
             }
             break;
         }
@@ -129,14 +141,14 @@ int MessageDecomposer::decomposeField
 					{
 						const google::protobuf::EnumValueDescriptor* value = ref->GetRepeatedEnum(*message, field, i);
 						v = value->number();
-						ondecompose(t, &v, sizeof(v));
+						ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v));
 					}
 				}
 				else
 				{
 					const google::protobuf::EnumValueDescriptor* value = ref->GetEnum(*message, field);
 					v = value->number();
-					ondecompose(t, &v, sizeof(v));
+					ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v));
 				}
         	}
             break;
@@ -153,20 +165,140 @@ int MessageDecomposer::decompose
 {
 	if (!ondecompose)
 		return ERRCODE_NO_CALLBACK;
-    const google::protobuf::Descriptor *d = message->GetDescriptor();
-    if (!d)
+    const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
+    if (!message_descriptor)
         return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
     const google::protobuf::Reflection *ref = message->GetReflection();
     if (!ref)
         return ERRCODE_DECOMPOSE_NO_REFECTION;
-    size_t count = d->field_count();
+    size_t count = message_descriptor->field_count();
     for (size_t i = 0; i != count; ++i)
     {
-        const google::protobuf::FieldDescriptor *field = d->field(i);
+        const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
         if (!field)
             return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
         if (!(field->is_optional() && !ref->HasField(*message, field)))
-        	decomposeField(message, field);
+        	decomposeField(message_descriptor, message, field);
     }
     return ERR_OK;
+}
+
+#define TO_STRING(NATIVE_TYPE, PROTO_TYPE) \
+{ \
+	NATIVE_TYPE value; \
+	if (repeated) \
+	{ \
+		for (size_t i = 0; i != array_size; ++i) \
+		{ \
+			value = ref->GetRepeated ## PROTO_TYPE(*message, field, i); \
+			ss << value; \
+		} \
+	} \
+	else \
+	{ \
+		value = ref->Get ## PROTO_TYPE(*message, field); \
+		ss << value; \
+	} \
+}
+
+/**
+  * @brief return human readable value as string
+  */
+std::string MessageDecomposer::toString
+(
+	google::protobuf::FieldDescriptor::CppType field_type,
+	void* value,
+	int size
+)
+{
+	std::stringstream ss;
+	/*
+    google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
+    switch (t)
+    {
+        case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+        	TO_STRING(double, Double)
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+        	TO_STRING(float, Float)
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+        	TO_STRING(int64_t, Int64)
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+        	TO_STRING(uint64_t, UInt64)
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+        	TO_STRING(int32_t, Int32)
+			break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+        	TO_STRING(uint32_t, UInt32)
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+        	TO_STRING(bool, Bool)
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
+        {
+            bool is_binary = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES;
+            if (repeated)
+            {
+                for (size_t i = 0; i != array_size; ++i)
+                {
+                    std::string value = ref->GetRepeatedString(*message, field, i);
+                    if (is_binary)
+                        value = b64_encode(value);
+                    ondecompose(env,t, field->name(), (void *) value.c_str(), value.length());
+                }
+            }
+            else
+            {
+                std::string value = ref->GetString(*message, field);
+                if (is_binary)
+                {
+                    value = b64_encode(value);
+                }
+                ondecompose(env,t, field->name(), (void *) value.c_str(), value.length());
+            }
+            break;
+        }
+        case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
+            if (repeated)
+            {
+                for (size_t i = 0; i != array_size; ++i)
+                {
+                    const google::protobuf::Message *value = &(ref->GetRepeatedMessage(*message, field, i));
+                    decompose(value);
+                }
+            }
+            else
+            {
+                const google::protobuf::Message *value = &(ref->GetMessage(*message, field));
+                decompose(value);
+            }
+            break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+        	{
+        		int v;
+				if (repeated)
+				{
+					for (size_t i = 0; i != array_size; ++i)
+					{
+						const google::protobuf::EnumValueDescriptor* value = ref->GetRepeatedEnum(*message, field, i);
+						v = value->number();
+						ondecompose(env,t, field->name(), &v, sizeof(v));
+					}
+				}
+				else
+				{
+					const google::protobuf::EnumValueDescriptor* value = ref->GetEnum(*message, field);
+					v = value->number();
+					ondecompose(env,t, field->name(), &v, sizeof(v));
+				}
+        	}
+            break;
+        default:
+            break;
+    }
+	 */
+	return ss.str();
 }

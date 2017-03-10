@@ -1,7 +1,6 @@
 /**
  *
  */
-#include <iostream>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -9,6 +8,10 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <vector>
 
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
@@ -28,6 +31,8 @@
 
 #include "pkt2packetvariable.cpp"
 #include "pkt2optionscache.h"
+
+#include "messagedecomposer.h"
 
 using namespace google::protobuf;
 
@@ -52,7 +57,7 @@ int put_debug
 }
 
 /**
- * @brief Print packet to the stdout
+ * @brief Print packet to the stdout as JSON
  * @param buffer
  * @param buffer_size
  * @param messageTypeNAddress
@@ -70,6 +75,105 @@ int put_json
 	std::string out;
 	pbjson::pb2json(message, out);
 	std::cout << out << std::endl;
+	return ERR_OK;
+}
+
+class InsertSQLStrings
+{
+private:
+	std::string table;
+	std::vector<std::string> fields;
+	std::vector<std::string> values;
+public:
+	InsertSQLStrings(const std::string &table_name)
+		: table(table_name)
+	{
+
+	};
+
+	std::string toString() {
+		const std::string quote("\"");
+		std::stringstream ss;
+		int sz = fields.size();
+		ss << "INSERT INTO " << quote << table << quote << "(";
+		for (int i = 0; i < sz; i++)
+		{
+			ss << quote << fields[i] << quote;
+			if (i < sz - 1)
+				ss << ", ";
+		}
+		ss << ") VALUES (";
+		sz = values.size();
+		for (int i = 0; i < sz; i++)
+		{
+			ss << values[i];
+			if (i < sz - 1)
+				ss << ", ";
+		}
+		ss << ");";
+		return ss.str();
+	};
+
+	void add
+	(
+		const std::string &field,
+		const std::string &value
+	)
+	{
+		fields.push_back(field);
+		values.push_back(value);
+	};
+
+	void add_string
+	(
+		const std::string &field,
+		const std::string &value
+	)
+	{
+		const std::string string_quote("'");
+		add(field, string_quote + field + string_quote);
+	};
+
+};
+
+void sql_printer_pg
+(
+	void *env,
+	const google::protobuf::Descriptor *message_descriptor,
+	google::protobuf::FieldDescriptor::CppType field_type,
+	const std::string &field_name,
+	void* value,
+	int size
+)
+{
+	InsertSQLStrings *sqls = (InsertSQLStrings *) env;
+	if (field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING)
+		sqls->add_string(field_name, std::string((char *)value, size));
+	else
+	{
+		// TODO
+		sqls->add(field_name, "");
+	}
+}
+
+/**
+ * @brief Print packet to the stdout as SQL
+ * @param buffer
+ * @param buffer_size
+ * @param messageTypeNAddress
+ * @param message
+ * @return
+ */
+int put_sql
+(
+		void *buffer,
+		int buffer_size,
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
+)
+{
+	InsertSQLStrings insertSQLStrings(messageTypeNAddress->message_type);
+	MessageDecomposer md(&insertSQLStrings, message, sql_printer_pg);
 	return ERR_OK;
 }
 
@@ -179,6 +283,9 @@ int run
 			{
 			case 0:
 				put_json(buffer, bytes, &messageTypeNAddress, m);
+				break;
+			case 1:
+				put_sql(buffer, bytes, &messageTypeNAddress, m);
 				break;
 			case 2:
 				put_pkt2_options(buffer, bytes, &pd, &messageTypeNAddress);
