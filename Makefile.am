@@ -56,7 +56,7 @@ protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-de
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
-linewriter.h handlerline-config.h \
+linewriter.h handlerline-config.h messagedecomposer.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -150,7 +150,7 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
-	pkt2optionscache.cpp  \
+	pkt2optionscache.cpp messagedecomposer.cpp \
 	$(common_src)
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)

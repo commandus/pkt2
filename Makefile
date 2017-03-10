@@ -167,7 +167,8 @@ am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
 	handlerlmdb-utilinet.$(OBJEXT) handlerlmdb-pbjson.$(OBJEXT) \
 	handlerlmdb-pkt2.pb.$(OBJEXT) \
 	handlerlmdb-pkt2packetvariable.$(OBJEXT) \
-	handlerlmdb-pkt2optionscache.$(OBJEXT) $(am__objects_1)
+	handlerlmdb-pkt2optionscache.$(OBJEXT) \
+	handlerlmdb-messagedecomposer.$(OBJEXT) $(am__objects_1)
 handlerlmdb_OBJECTS = $(am_handlerlmdb_OBJECTS)
 handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
@@ -766,7 +767,7 @@ protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-de
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
-linewriter.h handlerline-config.h \
+linewriter.h handlerline-config.h messagedecomposer.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -859,7 +860,7 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
-	pkt2optionscache.cpp  \
+	pkt2optionscache.cpp messagedecomposer.cpp \
 	$(common_src)
 
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -1133,6 +1134,7 @@ include ./$(DEPDIR)/handlerlmdb-error-printer.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb-config.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb.Po
 include ./$(DEPDIR)/handlerlmdb-lmdbwriter.Po
+include ./$(DEPDIR)/handlerlmdb-messagedecomposer.Po
 include ./$(DEPDIR)/handlerlmdb-pbjson.Po
 include ./$(DEPDIR)/handlerlmdb-pkt2.pb.Po
 include ./$(DEPDIR)/handlerlmdb-pkt2optionscache.Po
@@ -1835,6 +1837,20 @@ handlerlmdb-pkt2optionscache.obj: pkt2optionscache.cpp
 #	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerlmdb-pkt2optionscache.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+
+handlerlmdb-messagedecomposer.o: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-messagedecomposer.o -MD -MP -MF $(DEPDIR)/handlerlmdb-messagedecomposer.Tpo -c -o handlerlmdb-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-messagedecomposer.Tpo $(DEPDIR)/handlerlmdb-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handlerlmdb-messagedecomposer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+
+handlerlmdb-messagedecomposer.obj: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-messagedecomposer.obj -MD -MP -MF $(DEPDIR)/handlerlmdb-messagedecomposer.Tpo -c -o handlerlmdb-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-messagedecomposer.Tpo $(DEPDIR)/handlerlmdb-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handlerlmdb-messagedecomposer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
 
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp
