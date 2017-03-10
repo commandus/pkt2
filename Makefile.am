@@ -162,7 +162,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
-	pkt2.pb.cpp pkt2optionscache.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp messagedecomposer.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)

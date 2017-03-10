@@ -152,7 +152,8 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-utilstring.$(OBJEXT) \
 	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
 	handlerline-pkt2.pb.$(OBJEXT) \
-	handlerline-pkt2optionscache.$(OBJEXT) $(am__objects_1)
+	handlerline-pkt2optionscache.$(OBJEXT) \
+	handlerline-messagedecomposer.$(OBJEXT) $(am__objects_1)
 handlerline_OBJECTS = $(am_handlerline_OBJECTS)
 handlerline_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
@@ -873,7 +874,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
-	pkt2.pb.cpp pkt2optionscache.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp messagedecomposer.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -1121,6 +1122,7 @@ include ./$(DEPDIR)/handlerline-error-printer.Po
 include ./$(DEPDIR)/handlerline-handlerline-config.Po
 include ./$(DEPDIR)/handlerline-handlerline.Po
 include ./$(DEPDIR)/handlerline-linewriter.Po
+include ./$(DEPDIR)/handlerline-messagedecomposer.Po
 include ./$(DEPDIR)/handlerline-pbjson.Po
 include ./$(DEPDIR)/handlerline-pkt2.pb.Po
 include ./$(DEPDIR)/handlerline-pkt2optionscache.Po
@@ -1641,6 +1643,20 @@ handlerline-pkt2optionscache.obj: pkt2optionscache.cpp
 #	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerline-pkt2optionscache.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+
+handlerline-messagedecomposer.o: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-messagedecomposer.o -MD -MP -MF $(DEPDIR)/handlerline-messagedecomposer.Tpo -c -o handlerline-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-messagedecomposer.Tpo $(DEPDIR)/handlerline-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handlerline-messagedecomposer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+
+handlerline-messagedecomposer.obj: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-messagedecomposer.obj -MD -MP -MF $(DEPDIR)/handlerline-messagedecomposer.Tpo -c -o handlerline-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-messagedecomposer.Tpo $(DEPDIR)/handlerline-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handlerline-messagedecomposer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
 
 handlerlmdb-handlerlmdb.o: handlerlmdb.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-handlerlmdb.o -MD -MP -MF $(DEPDIR)/handlerlmdb-handlerlmdb.Tpo -c -o handlerlmdb-handlerlmdb.o `test -f 'handlerlmdb.cpp' || echo '$(srcdir)/'`handlerlmdb.cpp
