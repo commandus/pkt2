@@ -94,6 +94,7 @@ size_t Pkt2OptionsCache::getKey(
 		it++;
 	}
 
+    rapidjson::Value *js = pbjson::pb2jsonobject(message);
 	for (;it != pv.keyIndexes.end(); ++it)
 	{
 		pkt2::Variable v = pkt2[messageType].variables[*it];
@@ -101,7 +102,6 @@ size_t Pkt2OptionsCache::getKey(
         if (!field)
             return 0;
 
-        rapidjson::Value *js = pbjson::pb2jsonobject(message);
         rapidjson::Value::ConstMemberIterator itr = js->FindMember(field->name().c_str());
         if (itr == js->MemberEnd())
         	return 0;
