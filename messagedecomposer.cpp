@@ -11,7 +11,7 @@
 #include "bin2ascii.h"
 
 MessageDecomposer::MessageDecomposer()
-	: env(NULL), ondecompose(NULL)
+	: env(NULL), ondecompose(NULL), options_cache(NULL)
 {
 }
 
@@ -24,7 +24,19 @@ MessageDecomposer::MessageDecomposer
 	const google::protobuf::Message *message,
 	ondecompose_callback callback
 )
-	: env(environment), ondecompose(callback)
+	: env(environment), ondecompose(callback), options_cache(NULL)
+{
+	decompose(message);
+}
+
+MessageDecomposer::MessageDecomposer
+(
+		void *environment,
+		Pkt2OptionsCache *options,
+		const google::protobuf::Message *message,
+		ondecompose_callback callback
+)
+	: env(environment), ondecompose(callback), options_cache(options)
 {
 	decompose(message);
 }
@@ -45,13 +57,13 @@ void MessageDecomposer::setCallback
 		for (size_t i = 0; i != array_size; ++i) \
 		{ \
 			value = ref->GetRepeated ## PROTO_TYPE(*message, field, i); \
-			ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE)); \
+			ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE), index); \
 		} \
 	} \
 	else \
 	{ \
 		value = ref->Get ## PROTO_TYPE(*message, field); \
-		ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE)); \
+		ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE), index); \
 	} \
 }
 
@@ -69,7 +81,15 @@ int MessageDecomposer::decomposeField
     if (repeated)
         array_size = ref->FieldSize(*message, field);
 
+    int index = 0;
     google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
+
+    if (options_cache)
+    {
+    	// check is it index
+    	index = options_cache->getIndex(message_descriptor->name(), field->name());
+    }
+
     switch (t)
     {
         case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
@@ -103,7 +123,7 @@ int MessageDecomposer::decomposeField
                     std::string value = ref->GetRepeatedString(*message, field, i);
                     if (is_binary)
                         value = b64_encode(value);
-                    ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length());
+                    ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length(), index);
                 }
             }
             else
@@ -113,7 +133,7 @@ int MessageDecomposer::decomposeField
                 {
                     value = b64_encode(value);
                 }
-                ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length());
+                ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length(), index);
             }
             break;
         }
@@ -141,14 +161,14 @@ int MessageDecomposer::decomposeField
 					{
 						const google::protobuf::EnumValueDescriptor* value = ref->GetRepeatedEnum(*message, field, i);
 						v = value->number();
-						ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v));
+						ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v), index);
 					}
 				}
 				else
 				{
 					const google::protobuf::EnumValueDescriptor* value = ref->GetEnum(*message, field);
 					v = value->number();
-					ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v));
+					ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v), index);
 				}
         	}
             break;

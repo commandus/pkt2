@@ -67,6 +67,26 @@ int Pkt2OptionsCache::size_of
 }
 
 /**
+ * Check if field have index
+ * @param message_type message name
+ * @param field_type field name
+ * @return 0- no index, 1,2.. index
+ */
+int Pkt2OptionsCache::getIndex(
+		const std::string &message_type,
+		const std::string &field_type
+)
+{
+	Pkt2PacketVariable pv(pkt2[message_type]);
+	for (int i = 1; i < pv.keyIndexes.size(); i++)
+	{
+		if (field_type == pv.variables[i].name())
+			return i;
+	}
+	return 0;
+}
+
+/**
  * get values from message fields with index 1, 2... into key buffer
  * @param messageType
  * @param buffer

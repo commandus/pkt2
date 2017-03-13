@@ -10,6 +10,8 @@
 
 #include <google/protobuf/message.h>
 
+#include "pkt2optionscache.h"
+
 /**
   * @brief "Parse" message using callback
   */
@@ -20,27 +22,37 @@ class MessageDecomposer {
 		const google::protobuf::FieldDescriptor::CppType field_type,
 		const std::string &field_name,
 		void* value,
-		int size
+		int size,
+		int index
 	);
 private:
 	void* env;
 	ondecompose_callback ondecompose;
+	Pkt2OptionsCache *options_cache;
 	int decomposeField
 	(
 		const google::protobuf::Descriptor *message_descriptor,
 		const google::protobuf::Message *message, 
 		const google::protobuf::FieldDescriptor *field
 	);
+protected:
+	/// Decompose with no index
+	int decompose
+	(
+			const google::protobuf::Message *message
+	);
 public:
 	MessageDecomposer();
 	MessageDecomposer(void *env, const google::protobuf::Message *message, ondecompose_callback callback);
+	MessageDecomposer(void *env, Pkt2OptionsCache *options, const google::protobuf::Message *message, ondecompose_callback callback);
 	virtual ~MessageDecomposer();
 	void setCallback(ondecompose_callback ondecompose);
-	int decompose(const google::protobuf::Message *message);
+
 	/**
-	  * @brief return human readable value as string 
+	  * @brief return human readable value of message buffer as string
 	  */
-	static std::string toString(
+	static std::string toString
+	(
 		google::protobuf::FieldDescriptor::CppType field_type,
 		void* value,
 		int size

@@ -13,6 +13,9 @@
 #include "protobuf-declarations.h"
 #include "pkt2.pb.h"
 
+/**
+ * Keep message options: packet & variables and indexes
+ */
 class Pkt2PacketVariable {
 public:
 	Pkt2PacketVariable();
@@ -29,6 +32,7 @@ public:
 	pkt2::Packet packet;
 	std::vector<pkt2::Variable> variables;
 	/// keep variables vector index having index in order of 1, 2
+	/// first is identifier (or hash) of the message
 	std::vector<uint64_t> keyIndexes;
 };
 
