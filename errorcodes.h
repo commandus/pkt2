@@ -55,6 +55,7 @@
 #define ERRCODE_DECOMPOSE_FATAL					29
 #define ERRCODE_DECOMPOSE_NO_REFECTION			30
 #define ERRCODE_NO_CALLBACK						31
+#define ERRCODE_NOT_IMPLEMENTED					32
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -82,5 +83,7 @@
 #define ERR_MESSAGE_TYPE_NOT_FOUND				"Protobuf message not found "
 
 #define ERR_SOCKET_SEND							"Error socket send "
+
+#define ERR_NOT_IMPLEMENTED					    "Not implemented"
 
 #endif /* ERRORCODES_H_ */

@@ -38,16 +38,12 @@ using namespace google::protobuf;
 
 /**
  * @brief Print packet to the stdout
- * @param buffer
- * @param buffer_size
  * @param messageTypeNAddress
  * @param message
  * @return 0 - success
  */
 int put_debug
 (
-		void *buffer,
-		int buffer_size,
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
@@ -57,17 +53,13 @@ int put_debug
 }
 
 /**
- * @brief Print packet to the stdout as JSON
- * @param buffer
- * @param buffer_size
+ * @brief Print packet to the stdout as JSON.
  * @param messageTypeNAddress
  * @param message
  * @return 0 - success
  */
 int put_json
 (
-		void *buffer,
-		int buffer_size,
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
@@ -78,21 +70,29 @@ int put_json
 	return ERR_OK;
 }
 
+/**
+ * @brief Accumulate field names and values as string
+ */
 class InsertSQLStrings
 {
 private:
 	std::string table;
 	std::vector<std::string> fields;
 	std::vector<std::string> values;
+	std::string string_quote;
+	std::string quote;
 public:
 	InsertSQLStrings(const std::string &table_name)
-		: table(table_name)
+		: table(table_name), string_quote ("'"), quote("\"")
 	{
 
 	};
 
+	/**
+	 * After all message "parsed" get INSERT clause
+	 * @return String
+	 */
 	std::string toString() {
-		const std::string quote("\"");
 		std::stringstream ss;
 		int sz = fields.size();
 		ss << "INSERT INTO " << quote << table << quote << "(";
@@ -110,11 +110,11 @@ public:
 			if (i < sz - 1)
 				ss << ", ";
 		}
-		ss << ");";
+		ss << ");" << std::endl;
 		return ss.str();
 	};
 
-	void add
+	inline void add
 	(
 		const std::string &field,
 		const std::string &value
@@ -124,18 +124,28 @@ public:
 		values.push_back(value);
 	};
 
-	void add_string
+	inline void add_string
 	(
 		const std::string &field,
 		const std::string &value
 	)
 	{
-		const std::string string_quote("'");
 		add(field, string_quote + field + string_quote);
 	};
 
 };
 
+/**
+ * @brief Use in conjunction with InsertSQLStrings class(see first parameter).
+ * @param env accumulates field names and values in the InsertSQLStrings object
+ * @param message_descriptor message
+ * @param field_type type of the data
+ * @param field_name field name
+ * @param value pointer to the data
+ * @param size  size occupied by data
+ *
+ * @see InsertSQLStrings
+ */
 void sql_printer_pg
 (
 	void *env,
@@ -150,45 +160,35 @@ void sql_printer_pg
 	if (field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING)
 		sqls->add_string(field_name, std::string((char *)value, size));
 	else
-	{
-		// TODO
-		sqls->add(field_name, "");
-	}
+		sqls->add(field_name, MessageDecomposer::toString(field_type, value, size));
 }
 
 /**
  * @brief Print packet to the stdout as SQL
- * @param buffer
- * @param buffer_size
  * @param messageTypeNAddress
  * @param message
  * @return
  */
 int put_sql
 (
-		void *buffer,
-		int buffer_size,
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
 {
 	InsertSQLStrings insertSQLStrings(messageTypeNAddress->message_type);
 	MessageDecomposer md(&insertSQLStrings, message, sql_printer_pg);
+	std::cout << insertSQLStrings.toString();
 	return ERR_OK;
 }
 
 /**
  * @brief Print packet's message options to the stdout
- * @param buffer
- * @param buffer_size
  * @param messageTypeNAddress
  * @param message
  * @return 0 - success
  */
 int put_pkt2_options
 (
-		void *buffer,
-		int buffer_size,
 		ProtobufDeclarations *pd,
 		MessageTypeNAddress *messageTypeNAddress
 )
@@ -282,16 +282,16 @@ int run
 			switch (config->mode)
 			{
 			case 0:
-				put_json(buffer, bytes, &messageTypeNAddress, m);
+				put_json(&messageTypeNAddress, m);
 				break;
 			case 1:
-				put_sql(buffer, bytes, &messageTypeNAddress, m);
+				put_sql(&messageTypeNAddress, m);
 				break;
 			case 2:
-				put_pkt2_options(buffer, bytes, &pd, &messageTypeNAddress);
+				put_pkt2_options(&pd, &messageTypeNAddress);
 				break;
 			default:
-				put_debug(buffer, bytes, &messageTypeNAddress, m);
+				put_debug(&messageTypeNAddress, m);
 			}
     	}
 		else

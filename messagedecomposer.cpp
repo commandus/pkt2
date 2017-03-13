@@ -183,22 +183,11 @@ int MessageDecomposer::decompose
     return ERR_OK;
 }
 
-#define TO_STRING(NATIVE_TYPE, PROTO_TYPE) \
+#define TO_STRING(NATIVE_TYPE) \
 { \
-	NATIVE_TYPE value; \
-	if (repeated) \
-	{ \
-		for (size_t i = 0; i != array_size; ++i) \
-		{ \
-			value = ref->GetRepeated ## PROTO_TYPE(*message, field, i); \
-			ss << value; \
-		} \
-	} \
-	else \
-	{ \
-		value = ref->Get ## PROTO_TYPE(*message, field); \
-		ss << value; \
-	} \
+	NATIVE_TYPE val; \
+	val = *((NATIVE_TYPE *) value); \
+	ss << val; \
 }
 
 /**
@@ -212,93 +201,43 @@ std::string MessageDecomposer::toString
 )
 {
 	std::stringstream ss;
-	/*
-    google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
-    switch (t)
+    switch (field_type)
     {
         case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
-        	TO_STRING(double, Double)
+        	TO_STRING(double)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
-        	TO_STRING(float, Float)
+        	TO_STRING(float)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
-        	TO_STRING(int64_t, Int64)
+        	TO_STRING(int64_t)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
-        	TO_STRING(uint64_t, UInt64)
+        	TO_STRING(uint64_t)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
-        	TO_STRING(int32_t, Int32)
+        	TO_STRING(int32_t)
 			break;
         case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
-        	TO_STRING(uint32_t, UInt32)
+        	TO_STRING(uint32_t)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
-        	TO_STRING(bool, Bool)
+        	TO_STRING(bool)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
         {
-            bool is_binary = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES;
-            if (repeated)
-            {
-                for (size_t i = 0; i != array_size; ++i)
-                {
-                    std::string value = ref->GetRepeatedString(*message, field, i);
-                    if (is_binary)
-                        value = b64_encode(value);
-                    ondecompose(env,t, field->name(), (void *) value.c_str(), value.length());
-                }
-            }
-            else
-            {
-                std::string value = ref->GetString(*message, field);
-                if (is_binary)
-                {
-                    value = b64_encode(value);
-                }
-                ondecompose(env,t, field->name(), (void *) value.c_str(), value.length());
-            }
+       		ss << std::string((char *) value, size);
             break;
         }
         case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
-            if (repeated)
-            {
-                for (size_t i = 0; i != array_size; ++i)
-                {
-                    const google::protobuf::Message *value = &(ref->GetRepeatedMessage(*message, field, i));
-                    decompose(value);
-                }
-            }
-            else
-            {
-                const google::protobuf::Message *value = &(ref->GetMessage(*message, field));
-                decompose(value);
-            }
+        	ss << "Message " << ERR_NOT_IMPLEMENTED;
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
-        	{
-        		int v;
-				if (repeated)
-				{
-					for (size_t i = 0; i != array_size; ++i)
-					{
-						const google::protobuf::EnumValueDescriptor* value = ref->GetRepeatedEnum(*message, field, i);
-						v = value->number();
-						ondecompose(env,t, field->name(), &v, sizeof(v));
-					}
-				}
-				else
-				{
-					const google::protobuf::EnumValueDescriptor* value = ref->GetEnum(*message, field);
-					v = value->number();
-					ondecompose(env,t, field->name(), &v, sizeof(v));
-				}
-        	}
+        	TO_STRING(int)
             break;
         default:
             break;
     }
-	 */
+
 	return ss.str();
 }
