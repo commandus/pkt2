@@ -33,6 +33,7 @@
 #include "pkt2optionscache.h"
 
 #include "messagedecomposer.h"
+#include "utilstring.h"
 
 using namespace google::protobuf;
 
@@ -73,17 +74,27 @@ int put_json
 /**
  * @brief Accumulate field names and values as string
  */
-class InsertSQLStrings
+class FieldNameValueStrings
 {
 private:
 	std::string table;
 	std::vector<std::string> fields;
 	std::vector<std::string> values;
-	std::string string_quote;
+	const std::string string_quote;
 	std::string quote;
 public:
-	InsertSQLStrings(const std::string &table_name)
+	FieldNameValueStrings(const std::string &table_name)
 		: table(table_name), string_quote ("'"), quote("\"")
+	{
+
+	};
+
+	FieldNameValueStrings(
+			const std::string &table_name,
+			const std::string &astring_quote,
+			const std::string &aquote
+	)
+		: table(table_name), string_quote (astring_quote), quote(aquote)
 	{
 
 	};
@@ -92,7 +103,7 @@ public:
 	 * After all message "parsed" get INSERT clause
 	 * @return String
 	 */
-	std::string toString() {
+	std::string toStringInsert() {
 		std::stringstream ss;
 		int sz = fields.size();
 		ss << "INSERT INTO " << quote << table << quote << "(";
@@ -114,6 +125,70 @@ public:
 		return ss.str();
 	};
 
+	/**
+	 * After all message "parsed" get INSERT clause
+	 * @return String
+	 */
+	std::string toStringInsert2() {
+		std::stringstream ss;
+		int sz = fields.size();
+		ss << "INSERT INTO " << quote << table << quote << "(";
+		for (int i = 0; i < sz; i++)
+		{
+			ss << quote << fields[i] << quote;
+			if (i < sz - 1)
+				ss << ", ";
+		}
+		ss << ") VALUES (";
+		sz = values.size();
+		for (int i = 0; i < sz; i++)
+		{
+			ss << values[i];
+			if (i < sz - 1)
+				ss << ", ";
+		}
+		ss << ");" << std::endl;
+		return ss.str();
+	};
+
+	/**
+	 * CSV line
+	 * @return String
+	 */
+	std::string toStringCSV() {
+		std::stringstream ss;
+		int sz = fields.size();
+		ss << quote << table << quote << ",";
+		sz = values.size();
+		for (int i = 0; i < sz; i++)
+		{
+			ss << values[i];
+			if (i < sz - 1)
+				ss << ", ";
+		}
+		ss << ";" << std::endl;
+		return ss.str();
+	};
+
+	/**
+	 * Tab delimited line
+	 * @return String
+	 */
+	std::string toStringTab() {
+		std::stringstream ss;
+		int sz = fields.size();
+		ss << quote << table << quote << "\t";
+		sz = values.size();
+		for (int i = 0; i < sz; i++)
+		{
+			ss << values[i];
+			if (i < sz - 1)
+				ss << "\t";
+		}
+		ss << std::endl;
+		return ss.str();
+	};
+
 	inline void add
 	(
 		const std::string &field,
@@ -130,13 +205,16 @@ public:
 		const std::string &value
 	)
 	{
+		std::string val(value);
+		const std::string esc = string_quote + string_quote;
+		replace(val, string_quote, esc);
 		add(field, string_quote + field + string_quote);
 	};
 
 };
 
 /**
- * @brief Use in conjunction with InsertSQLStrings class(see first parameter).
+ * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueStrings class(see first parameter).
  * @param env accumulates field names and values in the InsertSQLStrings object
  * @param message_descriptor message
  * @param field_type type of the data
@@ -144,9 +222,9 @@ public:
  * @param value pointer to the data
  * @param size  size occupied by data
  *
- * @see InsertSQLStrings
+ * @see FieldNameValueStrings
  */
-void sql_printer_pg
+void addFieldValueString
 (
 	void *env,
 	const google::protobuf::Descriptor *message_descriptor,
@@ -156,7 +234,7 @@ void sql_printer_pg
 	int size
 )
 {
-	InsertSQLStrings *sqls = (InsertSQLStrings *) env;
+	FieldNameValueStrings *sqls = (FieldNameValueStrings *) env;
 	if (field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING)
 		sqls->add_string(field_name, std::string((char *)value, size));
 	else
@@ -175,9 +253,63 @@ int put_sql
 		const google::protobuf::Message *message
 )
 {
-	InsertSQLStrings insertSQLStrings(messageTypeNAddress->message_type);
-	MessageDecomposer md(&insertSQLStrings, message, sql_printer_pg);
-	std::cout << insertSQLStrings.toString();
+	FieldNameValueStrings vals(messageTypeNAddress->message_type);
+	MessageDecomposer md(&vals, message, addFieldValueString);
+	std::cout << vals.toStringInsert();
+	return ERR_OK;
+}
+
+/**
+ * @brief Print packet to the stdout as SQL (2)
+ * @param messageTypeNAddress
+ * @param message
+ * @return
+ */
+int put_sql2
+(
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
+)
+{
+	FieldNameValueStrings vals(messageTypeNAddress->message_type);
+	MessageDecomposer md(&vals, message, addFieldValueString);
+	std::cout << vals.toStringInsert2();
+	return ERR_OK;
+}
+
+/**
+ * @brief Print packet to the stdout as CSV
+ * @param messageTypeNAddress
+ * @param message
+ * @return
+ */
+int put_csv
+(
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
+)
+{
+	FieldNameValueStrings vals(messageTypeNAddress->message_type, "\"", "\"");
+	MessageDecomposer md(&vals, message, addFieldValueString);
+	std::cout << vals.toStringCSV();
+	return ERR_OK;
+}
+
+/**
+ * @brief Print packet to the stdout as CSV
+ * @param messageTypeNAddress
+ * @param message
+ * @return
+ */
+int put_tab
+(
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
+)
+{
+	FieldNameValueStrings vals(messageTypeNAddress->message_type);
+	MessageDecomposer md(&vals, message, addFieldValueString);
+	std::cout << vals.toStringTab();
 	return ERR_OK;
 }
 
@@ -281,13 +413,22 @@ int run
 		{
 			switch (config->mode)
 			{
-			case 0:
+			case MODE_JSON:
 				put_json(&messageTypeNAddress, m);
 				break;
-			case 1:
+			case MODE_CSV:
+				put_csv(&messageTypeNAddress, m);
+				break;
+			case MODE_TAB:
+				put_tab(&messageTypeNAddress, m);
+				break;
+			case MODE_SQL:
 				put_sql(&messageTypeNAddress, m);
 				break;
-			case 2:
+			case MODE_SQL2:
+				put_sql2(&messageTypeNAddress, m);
+				break;
+			case MODE_OPTIONS:
 				put_pkt2_options(&pd, &messageTypeNAddress);
 				break;
 			default:

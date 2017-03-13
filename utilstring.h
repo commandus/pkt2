@@ -13,6 +13,9 @@ std::string &rtrim(std::string &s);
 // trim from both ends
 std::string &trim(std::string &s);
 
+// replace string
+bool replace(std::string &str, const std::string &from, const std::string &to);
+
 // read file
 std::string file2string(const std::string &filename);
 

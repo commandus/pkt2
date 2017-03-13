@@ -1,5 +1,13 @@
 #include "handlerline-config.h"
 
+// output modes
+#define MODE_JSON     0
+#define MODE_CSV      1
+#define MODE_TAB      2
+#define MODE_SQL      3
+#define MODE_SQL2     4
+#define MODE_OPTIONS  5
+
 /**
   * Return:  0- success
   *          1- can not listen port
