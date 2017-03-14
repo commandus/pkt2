@@ -15,7 +15,8 @@ message TemperaturePkt
     };
 
     // input packet description
-    option(pkt2.packet) = { 
+    option(pkt2.packet) = {
+    	id: 1001 
         name: "temperature"
         short_name: "Температура"
         full_name: "DEVICE TEMP"
