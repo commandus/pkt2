@@ -94,7 +94,7 @@ int MessageDecomposer::decomposeField
     if (options_cache)
     {
     	// check is it index
-    	index = options_cache->getIndex(message_descriptor->name(), field->name());
+    	index = options_cache->getIndex(message_descriptor->full_name(), field->name());
     }
 
     switch (t)
@@ -204,8 +204,7 @@ int MessageDecomposer::decompose
         const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
         if (!field)
             return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
-        if (!(field->is_optional() && !ref->HasField(*message, field)))
-        	decomposeField(message_descriptor, message, field);
+       	decomposeField(message_descriptor, message, field);
     }
     return ERR_OK;
 }

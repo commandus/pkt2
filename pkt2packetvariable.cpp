@@ -59,7 +59,7 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		const google::protobuf::FieldOptions foptions = md->field(f)->options();
 		std::string out;
 		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
-		variables.push_back(variable);
+		fieldname_variables.push_back(FieldNameVariable(md->field(f)->name(), variable));
 
 
 		// prepare index

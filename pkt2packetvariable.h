@@ -13,6 +13,19 @@
 #include "protobuf-declarations.h"
 #include "pkt2.pb.h"
 
+class FieldNameVariable {
+public:
+	FieldNameVariable
+	(
+		const std::string &fieldname,
+		pkt2::Variable variable
+	)
+		: field_name(fieldname), var(variable)
+	{};
+	std::string field_name;
+	pkt2::Variable var;
+};
+
 /**
  * Keep message options: packet & variables and indexes
  */
@@ -30,7 +43,7 @@ public:
 	int status;
 	std::string message_type;
 	pkt2::Packet packet;
-	std::vector<pkt2::Variable> variables;
+	std::vector<FieldNameVariable> fieldname_variables;
 	/// keep variables vector index having index in order of 1, 2
 	/// first is identifier (or hash) of the message
 	std::vector<uint64_t> keyIndexes;

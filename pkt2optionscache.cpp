@@ -4,8 +4,10 @@
 
 #include <vector>
 #include <stdlib.h>
+#include <glog/logging.h>
 #include "pbjson.hpp"
 #include "pkt2optionscache.h"
+
 
 Pkt2OptionsCache::Pkt2OptionsCache() {
 }
@@ -78,9 +80,10 @@ int Pkt2OptionsCache::getIndex(
 )
 {
 	Pkt2PacketVariable pv(pkt2packet_variable[message_type]);
+
 	for (int i = 1; i < pv.keyIndexes.size(); i++)
 	{
-		if (field_type == pv.variables[i].name())
+		if (field_type == pv.fieldname_variables[pv.keyIndexes[i]].field_name)
 			return i;
 	}
 	return 0;
@@ -117,7 +120,7 @@ size_t Pkt2OptionsCache::getKey(
     rapidjson::Value *js = pbjson::pb2jsonobject(message);
 	for (;it != pv.keyIndexes.end(); ++it)
 	{
-		pkt2::Variable v = pkt2packet_variable[messageType].variables[*it];
+		pkt2::Variable v = pkt2packet_variable[messageType].fieldname_variables[*it].var;
 		const google::protobuf::FieldDescriptor *field = message->GetDescriptor()->field(*it);
         if (!field)
             return 0;

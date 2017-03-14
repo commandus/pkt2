@@ -57,6 +57,20 @@ public:
 			const std::string &aquote
 	);
 
+	void add
+	(
+		const std::string &field,
+		const std::string &value,
+		int index
+	);
+
+	void add_string
+	(
+		const std::string &field,
+		const std::string &value,
+		int index
+	);
+
 	/**
 	 * After all message "parsed" get INSERT clause
 	 * @return String
@@ -80,20 +94,6 @@ public:
 	 * @return String
 	 */
 	std::string toStringTab();
-
-	void add
-	(
-		const std::string &field,
-		const std::string &value,
-		int index
-	);
-
-	void add_string
-	(
-		const std::string &field,
-		const std::string &value,
-		int index
-	);
 };
 
 #endif /* FIELDNAMEVALUEINDEXSTRINGS_H_ */

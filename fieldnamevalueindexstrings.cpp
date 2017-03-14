@@ -12,7 +12,7 @@
 #include "utilstring.h"
 
 static const std::string sql2table = "proto";
-static const std::string sql2names[] = {"message", "time", "device", "field"};
+static const std::string sql2names[] = {"message", "time", "device", "field", "value"};
 
 
 FieldNameValueString::FieldNameValueString(
@@ -49,6 +49,32 @@ FieldNameValueIndexStrings::FieldNameValueIndexStrings
 	index2values.push_back(options->getMessageId(message_name));
 }
 
+void FieldNameValueIndexStrings::add
+(
+	const std::string &field,
+	const std::string &value,
+	int index
+)
+{
+	if (index > 0)
+	{
+		if (index >= index2values.size())
+			index2values.resize(index + 1);
+		index2values[index] = values.size();
+	}
+	values.push_back(FieldNameValueString(index, field, value));
+}
+
+void FieldNameValueIndexStrings::add_string
+(
+	const std::string &field,
+	const std::string &value,
+	int index
+)
+{
+	add(field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote, index);
+}
+
 /**
  * After all message "parsed" get INSERT clause
  * @return String
@@ -81,31 +107,17 @@ std::string FieldNameValueIndexStrings::toStringInsert() {
  */
 std::string FieldNameValueIndexStrings::toStringInsert2()
 {
-	std::stringstream sskey;
-	sskey << "INSERT INTO " << quote << sql2table << quote << "(" << sql2names[0] << ",";
+	std::stringstream ssprefix;
+	ssprefix << "INSERT INTO " << quote << sql2table << quote << "(" << sql2names[0] << ",";
 
 	// index first
 	for (int i = 1; i < index2values.size(); i++)
 	{
-		// sskey << values[index2values[i]].field << ",";
-		sskey << sql2names[i] << ",";
+		ssprefix << sql2names[i] << ",";
 	}
-	sskey << sql2names[3] << ",";
+	ssprefix << sql2names[3] << "," << sql2names[4] << ") VALUES (" << index2values[0] << ",";
 
-	// non-index
-	for (int i = 0; i < values.size(); i++)
-	{
-		if (std::find(index2values.begin(), index2values.end(), i) != index2values.end())
-			continue;
-		sskey << values[i].field << ",";
-	}
-	// remove last ","
-	std::string key_prefix(sskey.str());
-	key_prefix = key_prefix.substr(0, key_prefix.size() - 1);
-
-	std::stringstream ssprefix;
 	// values (index first)
-	ssprefix << key_prefix << ") VALUES (" << index2values[0] << ",";
 	for (int i = 1; i < index2values.size(); i++)
 	{
 		ssprefix << values[index2values[i]].value << ",";
@@ -114,14 +126,14 @@ std::string FieldNameValueIndexStrings::toStringInsert2()
 	std::string prefix(ssprefix.str());
 	prefix = prefix.substr(0, prefix.size() - 1); // remove last ","
 
-	// each field
 	std::stringstream ss;
-	// non-index
+
+	// each non-index field
 	for (int i = 0; i < values.size(); i++)
 	{
 		if (std::find(index2values.begin(), index2values.end(), i) != index2values.end())
 			continue;
-		ss << prefix
+		ss << prefix << ",'" << values[i].field << "'"
 			<< "," << values[i].value << ");" << std::endl;
 	}
 
@@ -163,29 +175,4 @@ std::string FieldNameValueIndexStrings::toStringTab() {
 	}
 	ss << std::endl;
 	return ss.str();
-}
-
-void FieldNameValueIndexStrings::add
-(
-	const std::string &field,
-	const std::string &value,
-	int index
-)
-{
-	if (index > 0)
-	{
-		index2values.resize(index);
-		index2values[index] = values.size();
-	}
-	values.push_back(FieldNameValueString(index, field, value));
-}
-
-void FieldNameValueIndexStrings::add_string
-(
-	const std::string &field,
-	const std::string &value,
-	int index
-)
-{
-	add(field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote, index);
 }
