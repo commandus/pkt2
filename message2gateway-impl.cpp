@@ -95,13 +95,9 @@ int run_stream
 		MessageTypeNAddress messageTypeNAddress;
 		Message *m = readDelimitedMessage(&pd, &input, &messageTypeNAddress);
 		if (m)
-		{
 			sendMessage(nano_socket_out, &messageTypeNAddress, *m);
-		}
 		else
-		{
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
-		}
 		read_count++;
     }
 

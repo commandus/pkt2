@@ -153,7 +153,9 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
 	handlerline-pkt2.pb.$(OBJEXT) \
 	handlerline-pkt2optionscache.$(OBJEXT) \
-	handlerline-messagedecomposer.$(OBJEXT) $(am__objects_1)
+	handlerline-messagedecomposer.$(OBJEXT) \
+	handlerline-fieldnamevalueindexstrings.$(OBJEXT) \
+	$(am__objects_1)
 handlerline_OBJECTS = $(am_handlerline_OBJECTS)
 handlerline_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
@@ -169,12 +171,15 @@ am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
 	handlerlmdb-pkt2.pb.$(OBJEXT) \
 	handlerlmdb-pkt2packetvariable.$(OBJEXT) \
 	handlerlmdb-pkt2optionscache.$(OBJEXT) \
-	handlerlmdb-messagedecomposer.$(OBJEXT) $(am__objects_1)
+	handlerlmdb-messagedecomposer.$(OBJEXT) \
+	handlerlmdb-fieldnamevalueindexstrings.$(OBJEXT) \
+	$(am__objects_1)
 handlerlmdb_OBJECTS = $(am_handlerlmdb_OBJECTS)
 handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-handlerpq-config.$(OBJEXT) \
-	handlerpq-daemonize.$(OBJEXT) handlerpq-ieee754.$(OBJEXT) \
+	handlerpq-daemonize.$(OBJEXT) \
+	handlerpq-fieldnamevalueindexstrings.$(OBJEXT) \
 	handlerpq-utilpriority.$(OBJEXT) \
 	handlerpq-utilstring.$(OBJEXT) handlerpq-utilinet.$(OBJEXT) \
 	handlerpq-NanoMessage.$(OBJEXT) $(am__objects_1)
@@ -250,7 +255,6 @@ tcpreceiver_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
 	tcptransmitter-tcptransmitter-config.$(OBJEXT) \
 	tcptransmitter-daemonize.$(OBJEXT) \
-	tcptransmitter-ieee754.$(OBJEXT) \
 	tcptransmitter-utilpriority.$(OBJEXT) \
 	tcptransmitter-utilstring.$(OBJEXT) \
 	tcptransmitter-utilinet.$(OBJEXT) \
@@ -626,13 +630,13 @@ AUTOMAKE = ${SHELL} /home/andrei/src/pkt2/missing automake-1.15
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -g -O0
 CPP = gcc -E
 CPPFLAGS =  -I/usr/include/postgresql
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
+CXXFLAGS = -g -O0
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -742,7 +746,7 @@ ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
 
 # ----------------- REMOVE IT!!!! ------------------
-AM_CXXFLAGS = -std=c++11
+AM_CXXFLAGS = -std=c++11 -O0 -DDEBUG -std=c++11
 #COMMON_CPP_FLAGS = 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
@@ -768,7 +772,7 @@ protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-de
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
-linewriter.h handlerline-config.h messagedecomposer.h \
+linewriter.h handlerline-config.h messagedecomposer.h fieldnamevalueindexstrings.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -834,7 +838,7 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 handlerpq_SOURCES = \
 	handlerpq.cpp  handlerpq-config.cpp  \
-	daemonize.cpp  ieee754.cpp  \
+	daemonize.cpp  fieldnamevalueindexstrings.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -846,7 +850,7 @@ handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcptransmitter_SOURCES = \
 	tcptransmitter.cpp  tcptransmitter-config.cpp  \
-	daemonize.cpp  ieee754.cpp \
+	daemonize.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -861,7 +865,7 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
-	pkt2optionscache.cpp messagedecomposer.cpp \
+	pkt2optionscache.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -874,7 +878,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
-	pkt2.pb.cpp pkt2optionscache.cpp messagedecomposer.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -1119,6 +1123,7 @@ include ./$(DEPDIR)/example1message1-pkt2.pb.Po
 include ./$(DEPDIR)/example1message1-utilsnmp.Po
 include ./$(DEPDIR)/handlerline-daemonize.Po
 include ./$(DEPDIR)/handlerline-error-printer.Po
+include ./$(DEPDIR)/handlerline-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerline-handlerline-config.Po
 include ./$(DEPDIR)/handlerline-handlerline.Po
 include ./$(DEPDIR)/handlerline-linewriter.Po
@@ -1133,6 +1138,7 @@ include ./$(DEPDIR)/handlerline-utilprotobuf.Po
 include ./$(DEPDIR)/handlerline-utilstring.Po
 include ./$(DEPDIR)/handlerlmdb-daemonize.Po
 include ./$(DEPDIR)/handlerlmdb-error-printer.Po
+include ./$(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb-config.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb.Po
 include ./$(DEPDIR)/handlerlmdb-lmdbwriter.Po
@@ -1148,9 +1154,9 @@ include ./$(DEPDIR)/handlerlmdb-utilprotobuf.Po
 include ./$(DEPDIR)/handlerlmdb-utilstring.Po
 include ./$(DEPDIR)/handlerpq-NanoMessage.Po
 include ./$(DEPDIR)/handlerpq-daemonize.Po
+include ./$(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerpq-handlerpq-config.Po
 include ./$(DEPDIR)/handlerpq-handlerpq.Po
-include ./$(DEPDIR)/handlerpq-ieee754.Po
 include ./$(DEPDIR)/handlerpq-utilinet.Po
 include ./$(DEPDIR)/handlerpq-utilpriority.Po
 include ./$(DEPDIR)/handlerpq-utilstring.Po
@@ -1209,7 +1215,6 @@ include ./$(DEPDIR)/tcpreceiver-utilpriority.Po
 include ./$(DEPDIR)/tcpreceiver-utilstring.Po
 include ./$(DEPDIR)/tcptransmitter-NanoMessage.Po
 include ./$(DEPDIR)/tcptransmitter-daemonize.Po
-include ./$(DEPDIR)/tcptransmitter-ieee754.Po
 include ./$(DEPDIR)/tcptransmitter-tcptransmitter-config.Po
 include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
@@ -1658,6 +1663,20 @@ handlerline-messagedecomposer.obj: messagedecomposer.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
 
+handlerline-fieldnamevalueindexstrings.o: fieldnamevalueindexstrings.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-fieldnamevalueindexstrings.o -MD -MP -MF $(DEPDIR)/handlerline-fieldnamevalueindexstrings.Tpo -c -o handlerline-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerline-fieldnamevalueindexstrings.Po
+#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerline-fieldnamevalueindexstrings.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
+
+handlerline-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-fieldnamevalueindexstrings.obj -MD -MP -MF $(DEPDIR)/handlerline-fieldnamevalueindexstrings.Tpo -c -o handlerline-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerline-fieldnamevalueindexstrings.Po
+#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerline-fieldnamevalueindexstrings.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
+
 handlerlmdb-handlerlmdb.o: handlerlmdb.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-handlerlmdb.o -MD -MP -MF $(DEPDIR)/handlerlmdb-handlerlmdb.Tpo -c -o handlerlmdb-handlerlmdb.o `test -f 'handlerlmdb.cpp' || echo '$(srcdir)/'`handlerlmdb.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-handlerlmdb.Tpo $(DEPDIR)/handlerlmdb-handlerlmdb.Po
@@ -1868,6 +1887,20 @@ handlerlmdb-messagedecomposer.obj: messagedecomposer.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
 
+handlerlmdb-fieldnamevalueindexstrings.o: fieldnamevalueindexstrings.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-fieldnamevalueindexstrings.o -MD -MP -MF $(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Tpo -c -o handlerlmdb-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Po
+#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerlmdb-fieldnamevalueindexstrings.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
+
+handlerlmdb-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-fieldnamevalueindexstrings.obj -MD -MP -MF $(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Tpo -c -o handlerlmdb-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Po
+#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerlmdb-fieldnamevalueindexstrings.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
+
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-handlerpq.Tpo $(DEPDIR)/handlerpq-handlerpq.Po
@@ -1910,19 +1943,19 @@ handlerpq-daemonize.obj: daemonize.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
 
-handlerpq-ieee754.o: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-ieee754.o -MD -MP -MF $(DEPDIR)/handlerpq-ieee754.Tpo -c -o handlerpq-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-ieee754.Tpo $(DEPDIR)/handlerpq-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='handlerpq-ieee754.o' libtool=no \
+handlerpq-fieldnamevalueindexstrings.o: fieldnamevalueindexstrings.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-fieldnamevalueindexstrings.o -MD -MP -MF $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Tpo -c -o handlerpq-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
+#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerpq-fieldnamevalueindexstrings.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
 
-handlerpq-ieee754.obj: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-ieee754.obj -MD -MP -MF $(DEPDIR)/handlerpq-ieee754.Tpo -c -o handlerpq-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-ieee754.Tpo $(DEPDIR)/handlerpq-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='handlerpq-ieee754.obj' libtool=no \
+handlerpq-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-fieldnamevalueindexstrings.obj -MD -MP -MF $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Tpo -c -o handlerpq-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
+#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerpq-fieldnamevalueindexstrings.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
 
 handlerpq-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilpriority.o -MD -MP -MF $(DEPDIR)/handlerpq-utilpriority.Tpo -c -o handlerpq-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -2735,20 +2768,6 @@ tcptransmitter-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='tcptransmitter-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-
-tcptransmitter-ieee754.o: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-ieee754.o -MD -MP -MF $(DEPDIR)/tcptransmitter-ieee754.Tpo -c -o tcptransmitter-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-ieee754.Tpo $(DEPDIR)/tcptransmitter-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='tcptransmitter-ieee754.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-
-tcptransmitter-ieee754.obj: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-ieee754.obj -MD -MP -MF $(DEPDIR)/tcptransmitter-ieee754.Tpo -c -o tcptransmitter-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-ieee754.Tpo $(DEPDIR)/tcptransmitter-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='tcptransmitter-ieee754.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
 
 tcptransmitter-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-utilpriority.o -MD -MP -MF $(DEPDIR)/tcptransmitter-utilpriority.Tpo -c -o tcptransmitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp

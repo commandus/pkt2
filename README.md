@@ -431,6 +431,12 @@ snmpconf -g basic_setup
 sudo ./onewayticketsvc -l 50053 --user onewayticket --password 123456 --database onewayticket --snmp 1
 ```
 
+## Отладка
+
+```
+./configure CFLAGS='-g -O0' CXXFLAGS='-g -O0'
+```
+
 ## protoc
 
 ```

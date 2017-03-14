@@ -39,7 +39,7 @@ protected:
 	/// Decompose with no index
 	int decompose
 	(
-			const google::protobuf::Message *message
+		const google::protobuf::Message *message
 	);
 public:
 	MessageDecomposer();

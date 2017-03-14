@@ -27,7 +27,7 @@ public:
 	
 	virtual ~Pkt2OptionsCache();
 	
-	std::map<std::string, Pkt2PacketVariable> pkt2;
+	std::map<std::string, Pkt2PacketVariable> pkt2packet_variable;
 
 	/**
 	 * Check if field have index
@@ -35,9 +35,10 @@ public:
 	 * @param field_type field name
 	 * @return 0- no index, 1,2.. index
 	 */
-	int getIndex(
-			const std::string &message_type,
-			const std::string &field_type
+	int getIndex
+	(
+		const std::string &message_type,
+		const std::string &field_type
 	);
 	/**
 	 * Copy key from the message
@@ -47,12 +48,24 @@ public:
 	 * @param message get key values from
 	 * @return
 	 */
-	size_t getKey(
-			const std::string &messageType,
-			void *buffer,
-			size_t max_size,
-			const google::protobuf::Message *message
+	size_t getKey
+	(
+		const std::string &messageType,
+		void *buffer,
+		size_t max_size,
+		const google::protobuf::Message *message
 	);
+
+	/**
+	 * Return message identifier (or message name hash if id is not assigned)
+	 * @param messageType
+	 * @return
+	 */
+	uint64_t getMessageId
+	(
+		const std::string &messageType
+	);
+
 };
 
 #endif /* PKT2OPTIONSCACHE_H_ */

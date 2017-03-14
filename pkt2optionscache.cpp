@@ -27,7 +27,7 @@ void Pkt2OptionsCache::addDeclarations
 
 	for (std::map<std::string, const google::protobuf::Descriptor*>::iterator it = m->begin(); it != m->end(); ++it)
 	{
-		Pkt2PacketVariable pv(it->first, protobuf_declarations);
+		pkt2packet_variable[it->first] = Pkt2PacketVariable(it->first, protobuf_declarations);
 	}
 }
 
@@ -77,7 +77,7 @@ int Pkt2OptionsCache::getIndex(
 		const std::string &field_type
 )
 {
-	Pkt2PacketVariable pv(pkt2[message_type]);
+	Pkt2PacketVariable pv(pkt2packet_variable[message_type]);
 	for (int i = 1; i < pv.keyIndexes.size(); i++)
 	{
 		if (field_type == pv.variables[i].name())
@@ -101,7 +101,7 @@ size_t Pkt2OptionsCache::getKey(
 	const google::protobuf::Message *message
 )
 {
-	Pkt2PacketVariable pv(pkt2[messageType]);
+	Pkt2PacketVariable pv(pkt2packet_variable[messageType]);
 
 	size_t r = 0;
 	std::vector<uint64_t>::iterator it(pv.keyIndexes.begin());
@@ -117,7 +117,7 @@ size_t Pkt2OptionsCache::getKey(
     rapidjson::Value *js = pbjson::pb2jsonobject(message);
 	for (;it != pv.keyIndexes.end(); ++it)
 	{
-		pkt2::Variable v = pkt2[messageType].variables[*it];
+		pkt2::Variable v = pkt2packet_variable[messageType].variables[*it];
 		const google::protobuf::FieldDescriptor *field = message->GetDescriptor()->field(*it);
         if (!field)
             return 0;
@@ -176,5 +176,24 @@ size_t Pkt2OptionsCache::getKey(
         delete js;
 	}
 	return r;
+}
+
+/**
+	 * Return message identifier (or message name hash if id is not assigned)
+	 * @param messageType
+	 * @return
+	 */
+uint64_t Pkt2OptionsCache::Pkt2OptionsCache::getMessageId
+(
+	const std::string &messageType
+)
+{
+	Pkt2PacketVariable pv(pkt2packet_variable[messageType]);
+	std::vector<uint64_t>::iterator it(pv.keyIndexes.begin());
+	if (it != pv.keyIndexes.end())
+		return *it;
+	else
+		return 0;
+
 }
 

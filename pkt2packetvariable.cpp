@@ -60,9 +60,12 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		std::string out;
 		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
 		variables.push_back(variable);
+
+
 		// prepare index
-		if (variable.index())
-			indexVariable[variable.index()] = f;
+		int index = variable.index();
+		if (index)
+			indexVariable[index] = f;
 		// calculate hash of the name as identifier if identifier is 0
 	}
 
@@ -71,6 +74,14 @@ Pkt2PacketVariable::Pkt2PacketVariable
 	keyIndexes.push_back(packet.id());
 	for (int i = 1; i <= indexVariable.size(); i++)
 		keyIndexes.push_back(indexVariable[i]);
+#ifdef DEBUG
+	std::stringstream ss;
+	for (uint64_t idx : keyIndexes)
+	{
+		ss << idx << " ";
+	}
+	LOG(ERROR) << message_type << " " << " indexes: " << ss.str();
+#endif
 }
 
 Pkt2PacketVariable::~Pkt2PacketVariable() {

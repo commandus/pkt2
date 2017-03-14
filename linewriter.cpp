@@ -12,6 +12,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
@@ -29,16 +30,13 @@
 #include "json/json.h"
 #include "pbjson.hpp"
 
-#include "pkt2packetvariable.cpp"
 #include "pkt2optionscache.h"
 
 #include "messagedecomposer.h"
 #include "utilstring.h"
+#include "fieldnamevalueindexstrings.h"
 
 using namespace google::protobuf;
-
-const std::string sql2table = "proto";
-const std::string sql2names[] = {"message", "time", "device", "field"};
 
 /**
  * @brief Print packet to the stdout
@@ -73,196 +71,6 @@ int put_json
 	std::cout << out << std::endl;
 	return ERR_OK;
 }
-
-class FieldNameValueString
-{
-public:
-	int index;
-	const std::string field;
-	const std::string value;
-	FieldNameValueString(
-			int idx,
-			const std::string &fld,
-			const std::string &val)
-		: index(idx), field(fld), value(val)
-	{
-
-	};
-};
-
-/**
- * @brief Accumulate field names and values as string
- */
-class FieldNameValueStrings
-{
-private:
-	std::string table;
-	std::vector<int> index2values;
-	std::vector<FieldNameValueString> values;
-	const std::string string_quote;
-	std::string quote;
-public:
-	FieldNameValueStrings(const std::string &table_name)
-		: table(table_name), string_quote ("'"), quote("\"")
-	{
-		index2values.resize(3, 0);
-	};
-
-	FieldNameValueStrings(
-			const std::string &table_name,
-			const std::string &astring_quote,
-			const std::string &aquote
-	)
-		: table(table_name), string_quote (astring_quote), quote(aquote)
-	{
-		index2values.resize(3, 0);
-	};
-
-	/**
-	 * After all message "parsed" get INSERT clause
-	 * @return String
-	 */
-	std::string toStringInsert() {
-		std::stringstream ss;
-		int sz = values.size();
-		ss << "INSERT INTO " << quote << replace(table, ".", "_") << quote << "(";
-		for (int i = 0; i < sz; i++)
-		{
-			ss << quote << values[i].field << quote;
-			if (i < sz - 1)
-				ss << ", ";
-		}
-		ss << ") VALUES (";
-		sz = values.size();
-		for (int i = 0; i < sz; i++)
-		{
-			ss << values[i].value;
-			if (i < sz - 1)
-				ss << ", ";
-		}
-		ss << ");" << std::endl;
-		return ss.str();
-	};
-
-	/**
-	 * After all message "parsed" get INSERT clause
-	 * @return String
-	 */
-	std::string toStringInsert2() {
-		std::stringstream sskey;
-		sskey << "INSERT INTO " << quote << sql2table << quote << "(" << sql2names[0] << ",";
-
-		// index first
-		for (int i = 1; i < index2values.size(); i++)
-		{
-			if (!index2values[i])
-				break;
-			// sskey << values[index2values[i]].field << ",";
-			sskey << sql2names[i] << ",";
-		}
-		sskey << sql2names[3] << ",";
-
-		// non-index
-		for (int i = 0; i < values.size(); i++)
-		{
-			if (index2values[i])
-				continue;
-			sskey << values[i].field << ",";
-		}
-		// remove last ","
-		std::string key_prefix(sskey.str());
-		key_prefix = key_prefix.substr(0, key_prefix.size() - 1);
-
-
-		std::stringstream ssprefix;
-		ssprefix << key_prefix << ") VALUES(";
-		// ssprefix << string_quote << table << string_quote << ",";
-		// values (index first)
-		for (int i = 0; i < index2values.size(); i++)
-		{
-			if (!index2values[i])
-				break;
-			ssprefix << values[index2values[i]].value << ",";
-		}
-
-		std::string prefix(ssprefix.str());
-		// prefix = prefix.substr(0, prefix.size() - 1); // remove last ","
-
-
-		// each field
-		std::stringstream ss;
-		// non-index
-		for (int i = 0; i < values.size(); i++)
-		{
-			if (index2values[i])
-				continue;
-			ss << prefix
-				<< "," << values[i].value << ");" << std::endl;
-		}
-
-		return ss.str();
-	};
-
-	/**
-	 * CSV line
-	 * @return String
-	 */
-	std::string toStringCSV() {
-		std::stringstream ss;
-		int sz = values.size();
-		ss << quote << table << quote << ",";
-		sz = values.size();
-		for (int i = 0; i < sz; i++)
-		{
-			ss << values[i].value;
-			if (i < sz - 1)
-				ss << ", ";
-		}
-		ss << std::endl;
-		return ss.str();
-	};
-
-	/**
-	 * Tab delimited line
-	 * @return String
-	 */
-	std::string toStringTab() {
-		std::stringstream ss;
-		int sz = values.size();
-		ss << quote << table << quote << "\t";
-		for (int i = 0; i < sz; i++)
-		{
-			ss << values[i].value;
-			if (i < sz - 1)
-				ss << "\t";
-		}
-		ss << std::endl;
-		return ss.str();
-	};
-
-	inline void add
-	(
-		const std::string &field,
-		const std::string &value,
-		int index
-	)
-	{
-		if ((index > 0) && (index < index2values.size()))
-			index2values[index] = values.size();
-		values.push_back(FieldNameValueString(index, field, value));
-	};
-
-	inline void add_string
-	(
-		const std::string &field,
-		const std::string &value,
-		int index
-	)
-	{
-		add(field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote, index);
-	};
-
-};
 
 /**
  * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueStrings class(see first parameter).
@@ -301,11 +109,12 @@ void addFieldValueString
  */
 int put_sql
 (
+		Pkt2OptionsCache *options,
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(messageTypeNAddress->message_type);
+	FieldNameValueStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, message, addFieldValueString);
 	std::cout << vals.toStringInsert();
 	return ERR_OK;
@@ -319,12 +128,12 @@ int put_sql
  */
 int put_sql2
 (
-		MessageTypeNAddress *messageTypeNAddress,
 		Pkt2OptionsCache *options,
+		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(messageTypeNAddress->message_type);
+	FieldNameValueStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::cout << vals.toStringInsert2();
 	return ERR_OK;
@@ -338,11 +147,12 @@ int put_sql2
  */
 int put_csv
 (
+		Pkt2OptionsCache *options,
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(messageTypeNAddress->message_type, "\"", "\"");
+	FieldNameValueStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
 	MessageDecomposer md(&vals, message, addFieldValueString);
 	std::cout << vals.toStringCSV();
 	return ERR_OK;
@@ -356,11 +166,12 @@ int put_csv
  */
 int put_tab
 (
+		Pkt2OptionsCache *options,
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(messageTypeNAddress->message_type);
+	FieldNameValueStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, message, addFieldValueString);
 	std::cout << vals.toStringTab();
 	return ERR_OK;
@@ -471,16 +282,16 @@ int run
 				put_json(&messageTypeNAddress, m);
 				break;
 			case MODE_CSV:
-				put_csv(&messageTypeNAddress, m);
+				put_csv(&options, &messageTypeNAddress, m);
 				break;
 			case MODE_TAB:
-				put_tab(&messageTypeNAddress, m);
+				put_tab(&options, &messageTypeNAddress, m);
 				break;
 			case MODE_SQL:
-				put_sql(&messageTypeNAddress, m);
+				put_sql(&options, &messageTypeNAddress, m);
 				break;
 			case MODE_SQL2:
-				put_sql2(&messageTypeNAddress, &options, m);
+				put_sql2(&options, &messageTypeNAddress, m);
 				break;
 			case MODE_OPTIONS:
 				put_pkt2_options(&pd, &messageTypeNAddress);

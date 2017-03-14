@@ -67,6 +67,13 @@ void MessageDecomposer::setCallback
 	} \
 }
 
+/**
+ * call callback here
+ * @param message_descriptor
+ * @param message
+ * @param field
+ * @return
+ */
 int MessageDecomposer::decomposeField
 (
 	const google::protobuf::Descriptor *message_descriptor,
