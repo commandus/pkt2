@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <glog/logging.h>
 #include <google/protobuf/message.h>
+#include "utilstring.h"
 
 static const std::string sql2table = "proto";
 static const std::string sql2names[] = {"message", "time", "device", "field"};
@@ -164,7 +165,7 @@ std::string FieldNameValueIndexStrings::toStringTab() {
 	return ss.str();
 }
 
-inline void FieldNameValueIndexStrings::add
+void FieldNameValueIndexStrings::add
 (
 	const std::string &field,
 	const std::string &value,
@@ -179,7 +180,7 @@ inline void FieldNameValueIndexStrings::add
 	values.push_back(FieldNameValueString(index, field, value));
 }
 
-inline void FieldNameValueIndexStrings::add_string
+void FieldNameValueIndexStrings::add_string
 (
 	const std::string &field,
 	const std::string &value,

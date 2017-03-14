@@ -73,7 +73,7 @@ int put_json
 }
 
 /**
- * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueStrings class(see first parameter).
+ * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueIndexStrings class(see first parameter).
  * @param env accumulates field names and values in the InsertSQLStrings object
  * @param message_descriptor message
  * @param field_type type of the data
@@ -81,7 +81,7 @@ int put_json
  * @param value pointer to the data
  * @param size  size occupied by data
  *
- * @see FieldNameValueStrings
+ * @see FieldNameValueIndexStrings
  */
 void addFieldValueString
 (
@@ -94,7 +94,7 @@ void addFieldValueString
 	int index
 )
 {
-	FieldNameValueStrings *sqls = (FieldNameValueStrings *) env;
+	FieldNameValueIndexStrings *sqls = (FieldNameValueIndexStrings *) env;
 	if (field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING)
 		sqls->add_string(field_name, std::string((char *)value, size), index);
 	else
@@ -114,7 +114,7 @@ int put_sql
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(options, messageTypeNAddress->message_type);
+	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, message, addFieldValueString);
 	std::cout << vals.toStringInsert();
 	return ERR_OK;
@@ -133,7 +133,7 @@ int put_sql2
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(options, messageTypeNAddress->message_type);
+	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::cout << vals.toStringInsert2();
 	return ERR_OK;
@@ -152,7 +152,7 @@ int put_csv
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
+	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
 	MessageDecomposer md(&vals, message, addFieldValueString);
 	std::cout << vals.toStringCSV();
 	return ERR_OK;
@@ -171,7 +171,7 @@ int put_tab
 		const google::protobuf::Message *message
 )
 {
-	FieldNameValueStrings vals(options, messageTypeNAddress->message_type);
+	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, message, addFieldValueString);
 	std::cout << vals.toStringTab();
 	return ERR_OK;

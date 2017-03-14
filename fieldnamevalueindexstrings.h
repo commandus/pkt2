@@ -18,7 +18,6 @@
 #include "pkt2optionscache.h"
 
 #include "messagedecomposer.h"
-#include "utilstring.h"
 
 class FieldNameValueString
 {
@@ -82,14 +81,14 @@ public:
 	 */
 	std::string toStringTab();
 
-	inline void add
+	void add
 	(
 		const std::string &field,
 		const std::string &value,
 		int index
 	);
 
-	inline void add_string
+	void add_string
 	(
 		const std::string &field,
 		const std::string &value,
