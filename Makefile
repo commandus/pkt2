@@ -153,6 +153,7 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
 	handlerline-pkt2.pb.$(OBJEXT) \
 	handlerline-pkt2optionscache.$(OBJEXT) \
+	handlerline-pkt2packetvariable.$(OBJEXT) \
 	handlerline-messagedecomposer.$(OBJEXT) \
 	handlerline-fieldnamevalueindexstrings.$(OBJEXT) \
 	$(am__objects_1)
@@ -178,9 +179,16 @@ handlerlmdb_OBJECTS = $(am_handlerlmdb_OBJECTS)
 handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-handlerpq-config.$(OBJEXT) \
-	handlerpq-daemonize.$(OBJEXT) \
+	handlerpq-daemonize.$(OBJEXT) handlerpq-pbjson.$(OBJEXT) \
+	handlerpq-pkt2.pb.$(OBJEXT) \
+	handlerpq-pkt2packetvariable.$(OBJEXT) \
+	handlerpq-pkt2optionscache.$(OBJEXT) \
 	handlerpq-fieldnamevalueindexstrings.$(OBJEXT) \
-	handlerpq-utilpriority.$(OBJEXT) \
+	handlerpq-messagedecomposer.$(OBJEXT) \
+	handlerpq-utilprotobuf.$(OBJEXT) \
+	handlerpq-error-printer.$(OBJEXT) \
+	handlerpq-protobuf-declarations.$(OBJEXT) \
+	handlerpq-utilpriority.$(OBJEXT) handlerpq-utilfile.$(OBJEXT) \
 	handlerpq-utilstring.$(OBJEXT) handlerpq-utilinet.$(OBJEXT) \
 	handlerpq-NanoMessage.$(OBJEXT) $(am__objects_1)
 handlerpq_OBJECTS = $(am_handlerpq_OBJECTS)
@@ -630,13 +638,13 @@ AUTOMAKE = ${SHELL} /home/andrei/src/pkt2/missing automake-1.15
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O0
+CFLAGS = -g -O2
 CPP = gcc -E
 CPPFLAGS =  -I/usr/include/postgresql
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O0
+CXXFLAGS = -g -O2
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -837,12 +845,13 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 # handlerpq
 #
 handlerpq_SOURCES = \
-	handlerpq.cpp  handlerpq-config.cpp  \
-	daemonize.cpp  fieldnamevalueindexstrings.cpp \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
+	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg $(SNMPLIBS)
+handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
@@ -864,8 +873,8 @@ handlerlmdb_SOURCES = \
 	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
-	pkt2optionscache.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -878,7 +887,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
-	pkt2.pb.cpp pkt2optionscache.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -1131,6 +1140,7 @@ include ./$(DEPDIR)/handlerline-messagedecomposer.Po
 include ./$(DEPDIR)/handlerline-pbjson.Po
 include ./$(DEPDIR)/handlerline-pkt2.pb.Po
 include ./$(DEPDIR)/handlerline-pkt2optionscache.Po
+include ./$(DEPDIR)/handlerline-pkt2packetvariable.Po
 include ./$(DEPDIR)/handlerline-protobuf-declarations.Po
 include ./$(DEPDIR)/handlerline-utilfile.Po
 include ./$(DEPDIR)/handlerline-utilinet.Po
@@ -1154,11 +1164,20 @@ include ./$(DEPDIR)/handlerlmdb-utilprotobuf.Po
 include ./$(DEPDIR)/handlerlmdb-utilstring.Po
 include ./$(DEPDIR)/handlerpq-NanoMessage.Po
 include ./$(DEPDIR)/handlerpq-daemonize.Po
+include ./$(DEPDIR)/handlerpq-error-printer.Po
 include ./$(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerpq-handlerpq-config.Po
 include ./$(DEPDIR)/handlerpq-handlerpq.Po
+include ./$(DEPDIR)/handlerpq-messagedecomposer.Po
+include ./$(DEPDIR)/handlerpq-pbjson.Po
+include ./$(DEPDIR)/handlerpq-pkt2.pb.Po
+include ./$(DEPDIR)/handlerpq-pkt2optionscache.Po
+include ./$(DEPDIR)/handlerpq-pkt2packetvariable.Po
+include ./$(DEPDIR)/handlerpq-protobuf-declarations.Po
+include ./$(DEPDIR)/handlerpq-utilfile.Po
 include ./$(DEPDIR)/handlerpq-utilinet.Po
 include ./$(DEPDIR)/handlerpq-utilpriority.Po
+include ./$(DEPDIR)/handlerpq-utilprotobuf.Po
 include ./$(DEPDIR)/handlerpq-utilstring.Po
 include ./$(DEPDIR)/message2gateway-daemonize.Po
 include ./$(DEPDIR)/message2gateway-error-printer.Po
@@ -1649,6 +1668,20 @@ handlerline-pkt2optionscache.obj: pkt2optionscache.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
 
+handlerline-pkt2packetvariable.o: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/handlerline-pkt2packetvariable.Tpo -c -o handlerline-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pkt2packetvariable.Tpo $(DEPDIR)/handlerline-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handlerline-pkt2packetvariable.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+
+handlerline-pkt2packetvariable.obj: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2packetvariable.obj -MD -MP -MF $(DEPDIR)/handlerline-pkt2packetvariable.Tpo -c -o handlerline-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pkt2packetvariable.Tpo $(DEPDIR)/handlerline-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handlerline-pkt2packetvariable.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+
 handlerline-messagedecomposer.o: messagedecomposer.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-messagedecomposer.o -MD -MP -MF $(DEPDIR)/handlerline-messagedecomposer.Tpo -c -o handlerline-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-messagedecomposer.Tpo $(DEPDIR)/handlerline-messagedecomposer.Po
@@ -1943,6 +1976,62 @@ handlerpq-daemonize.obj: daemonize.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
 
+handlerpq-pbjson.o: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pbjson.o -MD -MP -MF $(DEPDIR)/handlerpq-pbjson.Tpo -c -o handlerpq-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pbjson.Tpo $(DEPDIR)/handlerpq-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='handlerpq-pbjson.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+handlerpq-pbjson.obj: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pbjson.obj -MD -MP -MF $(DEPDIR)/handlerpq-pbjson.Tpo -c -o handlerpq-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pbjson.Tpo $(DEPDIR)/handlerpq-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='handlerpq-pbjson.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+handlerpq-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pkt2.pb.o -MD -MP -MF $(DEPDIR)/handlerpq-pkt2.pb.Tpo -c -o handlerpq-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pkt2.pb.Tpo $(DEPDIR)/handlerpq-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='handlerpq-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+handlerpq-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/handlerpq-pkt2.pb.Tpo -c -o handlerpq-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pkt2.pb.Tpo $(DEPDIR)/handlerpq-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='handlerpq-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
+handlerpq-pkt2packetvariable.o: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/handlerpq-pkt2packetvariable.Tpo -c -o handlerpq-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pkt2packetvariable.Tpo $(DEPDIR)/handlerpq-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handlerpq-pkt2packetvariable.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+
+handlerpq-pkt2packetvariable.obj: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pkt2packetvariable.obj -MD -MP -MF $(DEPDIR)/handlerpq-pkt2packetvariable.Tpo -c -o handlerpq-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pkt2packetvariable.Tpo $(DEPDIR)/handlerpq-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handlerpq-pkt2packetvariable.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+
+handlerpq-pkt2optionscache.o: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/handlerpq-pkt2optionscache.Tpo -c -o handlerpq-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pkt2optionscache.Tpo $(DEPDIR)/handlerpq-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerpq-pkt2optionscache.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+
+handlerpq-pkt2optionscache.obj: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/handlerpq-pkt2optionscache.Tpo -c -o handlerpq-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pkt2optionscache.Tpo $(DEPDIR)/handlerpq-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handlerpq-pkt2optionscache.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+
 handlerpq-fieldnamevalueindexstrings.o: fieldnamevalueindexstrings.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-fieldnamevalueindexstrings.o -MD -MP -MF $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Tpo -c -o handlerpq-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
@@ -1957,6 +2046,62 @@ handlerpq-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
 
+handlerpq-messagedecomposer.o: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-messagedecomposer.o -MD -MP -MF $(DEPDIR)/handlerpq-messagedecomposer.Tpo -c -o handlerpq-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-messagedecomposer.Tpo $(DEPDIR)/handlerpq-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handlerpq-messagedecomposer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+
+handlerpq-messagedecomposer.obj: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-messagedecomposer.obj -MD -MP -MF $(DEPDIR)/handlerpq-messagedecomposer.Tpo -c -o handlerpq-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-messagedecomposer.Tpo $(DEPDIR)/handlerpq-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handlerpq-messagedecomposer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
+
+handlerpq-utilprotobuf.o: utilprotobuf.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilprotobuf.o -MD -MP -MF $(DEPDIR)/handlerpq-utilprotobuf.Tpo -c -o handlerpq-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-utilprotobuf.Tpo $(DEPDIR)/handlerpq-utilprotobuf.Po
+#	$(AM_V_CXX)source='utilprotobuf.cpp' object='handlerpq-utilprotobuf.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+
+handlerpq-utilprotobuf.obj: utilprotobuf.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/handlerpq-utilprotobuf.Tpo -c -o handlerpq-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-utilprotobuf.Tpo $(DEPDIR)/handlerpq-utilprotobuf.Po
+#	$(AM_V_CXX)source='utilprotobuf.cpp' object='handlerpq-utilprotobuf.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+
+handlerpq-error-printer.o: error-printer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-error-printer.o -MD -MP -MF $(DEPDIR)/handlerpq-error-printer.Tpo -c -o handlerpq-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-error-printer.Tpo $(DEPDIR)/handlerpq-error-printer.Po
+#	$(AM_V_CXX)source='error-printer.cpp' object='handlerpq-error-printer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+
+handlerpq-error-printer.obj: error-printer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-error-printer.obj -MD -MP -MF $(DEPDIR)/handlerpq-error-printer.Tpo -c -o handlerpq-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-error-printer.Tpo $(DEPDIR)/handlerpq-error-printer.Po
+#	$(AM_V_CXX)source='error-printer.cpp' object='handlerpq-error-printer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+
+handlerpq-protobuf-declarations.o: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/handlerpq-protobuf-declarations.Tpo -c -o handlerpq-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-protobuf-declarations.Tpo $(DEPDIR)/handlerpq-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='handlerpq-protobuf-declarations.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+
+handlerpq-protobuf-declarations.obj: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/handlerpq-protobuf-declarations.Tpo -c -o handlerpq-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-protobuf-declarations.Tpo $(DEPDIR)/handlerpq-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='handlerpq-protobuf-declarations.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+
 handlerpq-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilpriority.o -MD -MP -MF $(DEPDIR)/handlerpq-utilpriority.Tpo -c -o handlerpq-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-utilpriority.Tpo $(DEPDIR)/handlerpq-utilpriority.Po
@@ -1970,6 +2115,20 @@ handlerpq-utilpriority.obj: utilpriority.cpp
 #	$(AM_V_CXX)source='utilpriority.cpp' object='handlerpq-utilpriority.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+handlerpq-utilfile.o: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilfile.o -MD -MP -MF $(DEPDIR)/handlerpq-utilfile.Tpo -c -o handlerpq-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-utilfile.Tpo $(DEPDIR)/handlerpq-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='handlerpq-utilfile.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+handlerpq-utilfile.obj: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilfile.obj -MD -MP -MF $(DEPDIR)/handlerpq-utilfile.Tpo -c -o handlerpq-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-utilfile.Tpo $(DEPDIR)/handlerpq-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='handlerpq-utilfile.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
 
 handlerpq-utilstring.o: utilstring.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-utilstring.o -MD -MP -MF $(DEPDIR)/handlerpq-utilstring.Tpo -c -o handlerpq-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp

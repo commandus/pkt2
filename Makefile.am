@@ -122,12 +122,13 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 # handlerpq
 #
 handlerpq_SOURCES= \
-	handlerpq.cpp  handlerpq-config.cpp  \
-	daemonize.cpp  fieldnamevalueindexstrings.cpp \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
+	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lnanomsg $(SNMPLIBS)
+handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
@@ -149,8 +150,8 @@ handlerlmdb_SOURCES = \
 	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp \
-	pkt2optionscache.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
@@ -162,7 +163,7 @@ handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
-	pkt2.pb.cpp pkt2optionscache.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
