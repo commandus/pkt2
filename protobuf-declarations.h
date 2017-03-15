@@ -156,6 +156,37 @@ public:
 			const std::string &name
 	);
 
+	/**
+	 * @brief get SQL CREATE TABLE statements for message
+	 * @param messages
+	 */
+	int getStatementSQLCreate
+	(
+		std::vector<std::string> *retval,
+		int mode,
+		const google::protobuf::Descriptor* descriptor
+	);
+
+	/**
+	 * @brief get SQL CREATE TABLE statements for message
+	 * @param messages
+	 */
+	int getStatementSQLCreate
+	(
+		std::vector<std::string> *retval,
+		int mode,
+		const std::string &message_name
+	);
+
+	/**
+	 * @brief get SQL CREATE TABLE statements for all messages
+	 * @param messages
+	 */
+	int getStatementSQLCreate(
+		std::vector<std::string> *retval,
+		int mode
+	);
+
 };
 
 #endif

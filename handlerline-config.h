@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H     1
+#ifndef HANDLER_LINE_CONFIG_H
+#define HANDLER_LINE_CONFIG_H     1
 
 #include <string>
 
@@ -7,8 +7,8 @@
 #define PROGRAM_DESCRIPTION      "PKT2 stdout printer"
 
 /**
-  *      \see handlerline.cpp
-  *      \see handlerline.cpp
+  * @brief handlerline command line options
+  * @see handlerline.cpp
   */
 class Config
 {

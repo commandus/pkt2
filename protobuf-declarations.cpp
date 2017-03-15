@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 
+#include "pkt2.pb.h"
 #include "utilfile.h"
 
 #ifdef _MSC_VER
@@ -348,4 +349,80 @@ void ProtobufDeclarations::debugPrint
 	{
 		std::cout << it->first << " => " << it->second->DebugString() << std::endl;
 	}
+}
+
+/**
+ * @brief get SQL CREATE TABLE statements for message
+ * @param messages
+ */
+int ProtobufDeclarations::getStatementSQLCreate
+(
+	std::vector<std::string> *retval,
+	int mode,
+	const google::protobuf::Descriptor* message_descriptor
+)
+{
+	if (!message_descriptor)
+        return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
+
+	size_t count = message_descriptor->field_count();
+	std::stringstream ss;
+	ss << "CREATE TABLE \"" << message_descriptor->full_name() << "\"(";
+	for (size_t i = 0; i != count; ++i)
+	{
+		const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
+		if (!field)
+			return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
+		switch (field->cpp_type()) {
+			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
+				ss << "VARCHAR(32)";
+				break;
+			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
+			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
+				ss << "DOUBLE";
+				break;
+			default:
+				ss << "FLOAT";
+				break;
+		}
+
+		const google::protobuf::FieldOptions foptions = field->options();
+		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
+
+		ss << field->name() << " " << ",";
+	}
+	ss << "id bigint);";
+
+	return ERR_OK;
+}
+
+/**
+ * @brief get SQL CREATE TABLE statements for message
+ * @param messages
+ */
+int ProtobufDeclarations::getStatementSQLCreate
+(
+	std::vector<std::string> *retval,
+	int mode,
+	const std::string &message_name
+)
+{
+	return getStatementSQLCreate(retval, mode, getMessageDescriptor(message_name));
+}
+
+/**
+ * @brief get SQL CREATE TABLE statements for all messages
+ * @param messages
+ */
+int ProtobufDeclarations::getStatementSQLCreate
+(
+	std::vector<std::string> *retval,
+	int mode
+)
+{
+	for (std::map<std::string, const google::protobuf::Descriptor*>::const_iterator it(internalMessages.begin()); it != internalMessages.end(); ++it)
+	{
+		getStatementSQLCreate(retval, mode, it->second);
+	}
+	return ERR_OK;
 }

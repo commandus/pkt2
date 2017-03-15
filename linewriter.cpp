@@ -112,7 +112,10 @@ int put_sql
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, message, addFieldValueString);
-	std::cout << vals.toStringInsert();
+	std::vector<std::string> stmts;
+	vals.toStringInsert(&stmts);
+	for (std::string s : stmts)
+		std::cout << s;
 	return ERR_OK;
 }
 
@@ -131,7 +134,10 @@ int put_sql2
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
-	std::cout << vals.toStringInsert2();
+	std::vector<std::string> stmts;
+	vals.toStringInsert2(&stmts);
+	for (std::string s : stmts)
+		std::cout << s;
 	return ERR_OK;
 }
 

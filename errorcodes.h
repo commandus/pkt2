@@ -56,6 +56,8 @@
 #define ERRCODE_DECOMPOSE_NO_REFECTION			30
 #define ERRCODE_NO_CALLBACK						31
 #define ERRCODE_NOT_IMPLEMENTED					32
+#define ERRCODE_DATABASE_NO_CONNECTION			33
+#define ERRCODE_DATABASE_STATEMENT_FAIL         34
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -85,5 +87,7 @@
 #define ERR_SOCKET_SEND							"Error socket send "
 
 #define ERR_NOT_IMPLEMENTED					    "Not implemented"
+#define ERR_DATABASE_NO_CONNECTION			    "No database connection. Check credentials."
+#define ERR_DATABASE_STATEMENT_FAIL             "SQL command error "
 
 #endif /* ERRORCODES_H_ */

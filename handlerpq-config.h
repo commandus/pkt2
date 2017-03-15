@@ -1,8 +1,9 @@
-#ifndef CONFIG_H
-#define CONFIG_H     1
+#ifndef HANDLER_PQ_CONFIG_H
+#define HANDLER_PQ_CONFIG_H     1
 
 #include <string>
 #include <stdint.h>
+#include <libpq-fe.h>
 
 #define PROGRAM_NAME             "handlerpq"
 #define PROGRAM_DESCRIPTION      "PostgreSQLreceiver"
@@ -30,13 +31,36 @@ public:
     Config(int argc, char* argv[]);
     int error();
 
-    uint32_t verbosity;
-    size_t buffer_size;
+    int retries;             ///< default 1
+    int retry_delay;         ///<
 
+    uint32_t verbosity;
+
+    // Protobuf
+    std::string proto_path;
+
+    // PostgreSQL
+    std::string dbconn;
+    std::string dboptionsfile;
+    std::string dbname;
+    std::string dbuser;
+    std::string dbpassword;
+    std::string dbhost;
+    std::string dbport;
+    std::string dbsocket;
+    std::string dbcharset;
+    int dbclientflags;
+
+    int buffer_size;
+    int mode;			///< default 4- SQL(2)
     bool daemonize;
     bool stop_request;
     std::string message_url;
 };
 
+/**
+ * Establish configured database connection
+ */
+PGconn *dbconnect(struct Config *config);
 
 #endif

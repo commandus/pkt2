@@ -73,7 +73,10 @@ void FieldNameValueIndexStrings::add
  * After all message "parsed" get INSERT clause
  * @return String
  */
-std::string FieldNameValueIndexStrings::toStringInsert() {
+void FieldNameValueIndexStrings::toStringInsert
+(
+	std::vector<std::string> *stmts
+) {
 	std::stringstream ss;
 	int sz = values.size();
 	ss << "INSERT INTO " << quote << replace(table, ".", "_") << quote << "(";
@@ -92,7 +95,7 @@ std::string FieldNameValueIndexStrings::toStringInsert() {
 			ss << ", ";
 	}
 	ss << ");" << std::endl;
-	return ss.str();
+	stmts->push_back(ss.str());
 }
 
 // 		values.push_back(FieldNameValueString(index, field_type, field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote));
@@ -101,7 +104,10 @@ std::string FieldNameValueIndexStrings::toStringInsert() {
  * After all message "parsed" get INSERT clause
  * @return String
  */
-std::string FieldNameValueIndexStrings::toStringInsert2()
+void FieldNameValueIndexStrings::toStringInsert2
+(
+		std::vector<std::string> *stmts
+)
 {
 	std::stringstream ssprefix;
 	// index first
@@ -121,10 +127,10 @@ std::string FieldNameValueIndexStrings::toStringInsert2()
 	prefix = prefix.substr(0, prefix.size() - 1); // remove last ","
 
 	std::stringstream ss;
-
 	// each non-index field
 	for (int i = 0; i < values.size(); i++)
 	{
+		ss.clear();
 		if (std::find(index2values.begin(), index2values.end(), i) != index2values.end())
 			continue;
 
@@ -137,9 +143,8 @@ std::string FieldNameValueIndexStrings::toStringInsert2()
 		}
 		ss << prefix << ",'" << values[i].field << "'"
 			<< "," << values[i].value << ");" << std::endl;
+		stmts->push_back(ss.str());
 	}
-
-	return ss.str();
 }
 
 /**

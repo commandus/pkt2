@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H     1
+#ifndef HANDLER_LMDB_CONFIG_H
+#define HANDLER_LMDB_CONFIG_H     1
 
 #include <string>
 
@@ -43,6 +43,5 @@ public:
     bool stop_request;
     int verbosity;           ///< default 0
 };
-
 
 #endif

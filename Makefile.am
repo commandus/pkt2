@@ -57,7 +57,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h fieldnamevalueindexstrings.h \
-pbjson.hpp errorcodes.h pkt2optionscache.h \
+pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -122,7 +122,7 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 # handlerpq
 #
 handlerpq_SOURCES= \
-	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp \
+	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \

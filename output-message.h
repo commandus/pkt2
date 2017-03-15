@@ -1,4 +1,5 @@
 #include <string>
+#include <inttypes.h>
 
 #ifndef OUTPUT_MESSAGE_H
 #define OUTPUT_MESSAGE_H

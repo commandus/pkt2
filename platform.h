@@ -12,4 +12,4 @@
 	google::InstallFailureSignalHandler(); \
 	FLAGS_logtostderr = !config->verbosity; \
 	FLAGS_minloglevel = 2 - config->verbosity; \
-   	google::SetLogDestination(google::INFO, PROGRAM_NAME); \
+   	google::SetLogDestination(google::INFO, PROGRAM_NAME);

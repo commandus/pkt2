@@ -11,7 +11,6 @@
 #include <sstream>
 #include <vector>
 
-#include "linewriter.h"
 #include "output-message.h"
 #include "errorcodes.h"
 #include "utilprotobuf.h"
@@ -71,13 +70,19 @@ public:
 	 * After all message "parsed" get INSERT clause
 	 * @return String
 	 */
-	std::string toStringInsert();
+	void toStringInsert
+	(
+		std::vector<std::string> *stmts
+	);
 
 	/**
 	 * After all message "parsed" get INSERT clause
 	 * @return String
 	 */
-	std::string toStringInsert2();
+	void toStringInsert2
+	(
+		std::vector<std::string> *stmts
+	);
 
 	/**
 	 * CSV line

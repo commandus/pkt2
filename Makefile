@@ -179,8 +179,8 @@ handlerlmdb_OBJECTS = $(am_handlerlmdb_OBJECTS)
 handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-handlerpq-config.$(OBJEXT) \
-	handlerpq-daemonize.$(OBJEXT) handlerpq-pbjson.$(OBJEXT) \
-	handlerpq-pkt2.pb.$(OBJEXT) \
+	handlerpq-daemonize.$(OBJEXT) handlerpq-pqwriter.$(OBJEXT) \
+	handlerpq-pbjson.$(OBJEXT) handlerpq-pkt2.pb.$(OBJEXT) \
 	handlerpq-pkt2packetvariable.$(OBJEXT) \
 	handlerpq-pkt2optionscache.$(OBJEXT) \
 	handlerpq-fieldnamevalueindexstrings.$(OBJEXT) \
@@ -781,7 +781,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h fieldnamevalueindexstrings.h \
-pbjson.hpp errorcodes.h pkt2optionscache.h \
+pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -845,7 +845,7 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 # handlerpq
 #
 handlerpq_SOURCES = \
-	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp \
+	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
@@ -1173,6 +1173,7 @@ include ./$(DEPDIR)/handlerpq-pbjson.Po
 include ./$(DEPDIR)/handlerpq-pkt2.pb.Po
 include ./$(DEPDIR)/handlerpq-pkt2optionscache.Po
 include ./$(DEPDIR)/handlerpq-pkt2packetvariable.Po
+include ./$(DEPDIR)/handlerpq-pqwriter.Po
 include ./$(DEPDIR)/handlerpq-protobuf-declarations.Po
 include ./$(DEPDIR)/handlerpq-utilfile.Po
 include ./$(DEPDIR)/handlerpq-utilinet.Po
@@ -1975,6 +1976,20 @@ handlerpq-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='handlerpq-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+handlerpq-pqwriter.o: pqwriter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pqwriter.o -MD -MP -MF $(DEPDIR)/handlerpq-pqwriter.Tpo -c -o handlerpq-pqwriter.o `test -f 'pqwriter.cpp' || echo '$(srcdir)/'`pqwriter.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pqwriter.Tpo $(DEPDIR)/handlerpq-pqwriter.Po
+#	$(AM_V_CXX)source='pqwriter.cpp' object='handlerpq-pqwriter.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pqwriter.o `test -f 'pqwriter.cpp' || echo '$(srcdir)/'`pqwriter.cpp
+
+handlerpq-pqwriter.obj: pqwriter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pqwriter.obj -MD -MP -MF $(DEPDIR)/handlerpq-pqwriter.Tpo -c -o handlerpq-pqwriter.obj `if test -f 'pqwriter.cpp'; then $(CYGPATH_W) 'pqwriter.cpp'; else $(CYGPATH_W) '$(srcdir)/pqwriter.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-pqwriter.Tpo $(DEPDIR)/handlerpq-pqwriter.Po
+#	$(AM_V_CXX)source='pqwriter.cpp' object='handlerpq-pqwriter.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pqwriter.obj `if test -f 'pqwriter.cpp'; then $(CYGPATH_W) 'pqwriter.cpp'; else $(CYGPATH_W) '$(srcdir)/pqwriter.cpp'; fi`
 
 handlerpq-pbjson.o: pbjson.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pbjson.o -MD -MP -MF $(DEPDIR)/handlerpq-pbjson.Tpo -c -o handlerpq-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
