@@ -467,4 +467,16 @@ protoc -I proto --decode_raw  < 1
 
 При отключении потока публикатора (PUB) нужно пересоедить сокеты подписчиков (SUB)
 
+### Eclipse
+
+Подсветка ошибок (включить c++ 11)
+
+http://stackoverflow.com/questions/39134872/how-do-you-enable-c11-syntax-in-eclipse-neon
+
+- Right click on your project and click Properties
+- Navigate to C/C++ General and Preprocessor Include Paths, Macros etc.
+- Select the Providers tab, click on compiler settings row for the compiler you use.
+- Add -std=c++11 to Command to get compiler specs.
+
+
 Причина 
