@@ -11,16 +11,18 @@
 #include <google/protobuf/message.h>
 #include "utilstring.h"
 
-static const std::string sql2table = "proto";
+static const std::string sql2tableNumeric = "num";
+static const std::string sql2tableString = "str";
 static const std::string sql2names[] = {"message", "time", "device", "field", "value"};
 
 
 FieldNameValueString::FieldNameValueString(
 	int idx,
+	google::protobuf::FieldDescriptor::CppType fieldtype,
 	const std::string &fld,
 	const std::string &val
 )
-		: index(idx), field(fld), value(val)
+		: index(idx), field_type(fieldtype), field(fld), value(val)
 {
 
 }
@@ -51,6 +53,7 @@ FieldNameValueIndexStrings::FieldNameValueIndexStrings
 
 void FieldNameValueIndexStrings::add
 (
+	google::protobuf::FieldDescriptor::CppType field_type,
 	const std::string &field,
 	const std::string &value,
 	int index
@@ -62,17 +65,8 @@ void FieldNameValueIndexStrings::add
 			index2values.resize(index + 1);
 		index2values[index] = values.size();
 	}
-	values.push_back(FieldNameValueString(index, field, value));
-}
 
-void FieldNameValueIndexStrings::add_string
-(
-	const std::string &field,
-	const std::string &value,
-	int index
-)
-{
-	add(field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote, index);
+	values.push_back(FieldNameValueString(index, field_type, field, value));
 }
 
 /**
@@ -101,6 +95,8 @@ std::string FieldNameValueIndexStrings::toStringInsert() {
 	return ss.str();
 }
 
+// 		values.push_back(FieldNameValueString(index, field_type, field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote));
+
 /**
  * After all message "parsed" get INSERT clause
  * @return String
@@ -108,8 +104,6 @@ std::string FieldNameValueIndexStrings::toStringInsert() {
 std::string FieldNameValueIndexStrings::toStringInsert2()
 {
 	std::stringstream ssprefix;
-	ssprefix << "INSERT INTO " << quote << sql2table << quote << "(" << sql2names[0] << ",";
-
 	// index first
 	for (int i = 1; i < index2values.size(); i++)
 	{
@@ -133,6 +127,14 @@ std::string FieldNameValueIndexStrings::toStringInsert2()
 	{
 		if (std::find(index2values.begin(), index2values.end(), i) != index2values.end())
 			continue;
+
+		switch (values[i].field_type) {
+			case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
+				ss << "INSERT INTO " << quote << sql2tableString << quote << "(" << sql2names[0] << ",";
+				break;
+			default:
+				ss << "INSERT INTO " << quote << sql2tableNumeric << quote << "(" << sql2names[0] << ",";
+		}
 		ss << prefix << ",'" << values[i].field << "'"
 			<< "," << values[i].value << ");" << std::endl;
 	}

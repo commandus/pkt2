@@ -38,6 +38,7 @@ public:
 
     bool daemonize;
     bool stop_request;
+    int verbosity;          ///< default 0
 };
 
 

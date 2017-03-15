@@ -91,9 +91,6 @@ int main
     char *argv[]
 )
 {
-	google::InitGoogleLogging(argv[0]);
-    google::SetLogDestination(google::INFO, PROGRAM_NAME);
-
     // Signal handler
     setSignalHandler(SIGINT);
     reslt = 0;
@@ -107,6 +104,8 @@ int main
 		exit(config->error());
 	}
 
+    INIT_LOGGING(PROGRAM_NAME)
+    
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;

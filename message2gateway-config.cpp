@@ -43,7 +43,7 @@ int Config::parseCmd
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on repeats in seconds. Default 0");
 
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
-        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 4, "Verbosity level");
+        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
         struct arg_end *a_end = arg_end(20);
@@ -98,6 +98,8 @@ int Config::parseCmd
                 message_out_url = *a_message_out_url->sval;
         else
                 message_out_url = DEF_QUEUE_OUT;
+
+        verbosity = a_verbosity->count;
 
         daemonize = a_daemonize->count > 0;
 

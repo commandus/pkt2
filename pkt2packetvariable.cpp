@@ -74,14 +74,6 @@ Pkt2PacketVariable::Pkt2PacketVariable
 	keyIndexes.push_back(packet.id());
 	for (int i = 1; i <= indexVariable.size(); i++)
 		keyIndexes.push_back(indexVariable[i]);
-#ifdef DEBUG
-	std::stringstream ss;
-	for (uint64_t idx : keyIndexes)
-	{
-		ss << idx << " ";
-	}
-	LOG(ERROR) << message_type << " " << " indexes: " << ss.str();
-#endif
 }
 
 Pkt2PacketVariable::~Pkt2PacketVariable() {

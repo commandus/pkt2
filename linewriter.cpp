@@ -94,11 +94,7 @@ void addFieldValueString
 	int index
 )
 {
-	FieldNameValueIndexStrings *sqls = (FieldNameValueIndexStrings *) env;
-	if (field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING)
-		sqls->add_string(field_name, std::string((char *)value, size), index);
-	else
-		sqls->add(field_name, MessageDecomposer::toString(field_type, value, size), index);
+	((FieldNameValueIndexStrings *) env)->add(field_type, field_name, MessageDecomposer::toString(field_type, value, size), index);
 }
 
 /**

@@ -33,7 +33,7 @@ int Config::parseCmd
         char* argv[]
 )
 {
-        struct arg_str *a_interface = arg_str0("i", "ipaddr", "<IP address>", "Netrwotk interface name or address. Default 0.0.0.0");
+        struct arg_str *a_interface = arg_str0("i", "ipaddr", "<IP address>", "Network interface name or address. Default 0.0.0.0");
         struct arg_int *a_port = arg_int0("l", "listen", "<port>", "TCP port to listen. Default 50055");
 
         struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
@@ -41,7 +41,7 @@ int Config::parseCmd
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
-        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 4, "Verbosity level");
+        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
         struct arg_end *a_end = arg_end(20);
@@ -106,6 +106,8 @@ int Config::parseCmd
                 retry_delay = *a_retry_delay->ival;
         else
                 retry_delay = 60;
+
+        verbosity = a_verbosity->count;
         
         daemonize = a_daemonize->count > 0;
 

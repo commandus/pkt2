@@ -37,10 +37,11 @@ public:
     int flags;               ///< default 0
 
     // proto
-    std::string proto_path;	///< proto files directory path
+    std::string proto_path;	 ///< proto files directory path
 
     bool daemonize;
     bool stop_request;
+    int verbosity;           ///< default 0
 };
 
 
