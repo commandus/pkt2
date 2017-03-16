@@ -81,7 +81,7 @@ int Config::parseCmd
                 a_retries, a_retry_delay,
                 a_daemonize, a_verbosity,
 				a_conninfo, a_user, a_database, a_password, a_host, a_dbport, a_optionsfile, a_dbsocket, a_dbcharset, a_dbclientflags,
-				a_buffer_size,
+				a_mode, a_buffer_size,
                 a_help, a_end
         };
 

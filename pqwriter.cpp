@@ -123,6 +123,11 @@ int run
 	ProtobufDeclarations pd(config->proto_path);
 
 	// print out create statements
+	LOG(INFO) << "SQL CREATE TABLE statements";
+	LOG(INFO) << "===========================";
+	LOG(INFO) << "CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value NUMERIC(10, 2));";
+	LOG(INFO) << "CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));";
+
 	std::vector<std::string> clauses;
 	pd.getStatementSQLCreate(&clauses, 0);
 	for (std::string &clause : clauses)
@@ -158,7 +163,7 @@ int run
 		if (m)
 		{
 			FieldNameValueIndexStrings vals(&options, messageTypeNAddress.message_type);
-			MessageDecomposer md(&vals, m, addFieldValueString);
+			MessageDecomposer md(&vals, &options, m, addFieldValueString);
 			stmts.clear();
 			switch (config->mode)
 			{

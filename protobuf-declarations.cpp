@@ -13,6 +13,7 @@
 
 #include "pkt2.pb.h"
 #include "utilfile.h"
+#include "utilstring.h"
 
 #ifdef _MSC_VER
 #include <windows.h>
@@ -367,32 +368,38 @@ int ProtobufDeclarations::getStatementSQLCreate
 
 	size_t count = message_descriptor->field_count();
 	std::stringstream ss;
-	ss << "CREATE TABLE \"" << message_descriptor->full_name() << "\"(";
+	ss << "CREATE TABLE \"" << replace(message_descriptor->full_name(), ".", "_") << "\"(";
 	for (size_t i = 0; i != count; ++i)
 	{
 		const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
 		if (!field)
 			return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
+
+		ss << field->name() << " ";
+
 		switch (field->cpp_type()) {
 			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
 				ss << "VARCHAR(32)";
 				break;
 			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
 			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
-				ss << "DOUBLE";
+				ss << "FLOAT";
 				break;
 			default:
-				ss << "FLOAT";
+				ss << "INTEGER";
 				break;
 		}
 
+		/*
 		const google::protobuf::FieldOptions foptions = field->options();
 		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
+		*/
 
-		ss << field->name() << " " << ",";
+		ss << ", ";
 	}
 	ss << "id bigint);";
 
+	retval->push_back(ss.str());
 	return ERR_OK;
 }
 

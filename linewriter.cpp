@@ -111,7 +111,7 @@ int put_sql
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
-	MessageDecomposer md(&vals, message, addFieldValueString);
+	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
 	vals.toStringInsert(&stmts);
 	for (std::string s : stmts)
@@ -155,7 +155,7 @@ int put_csv
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
-	MessageDecomposer md(&vals, message, addFieldValueString);
+	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::cout << vals.toStringCSV();
 	return ERR_OK;
 }
@@ -174,7 +174,7 @@ int put_tab
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
-	MessageDecomposer md(&vals, message, addFieldValueString);
+	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::cout << vals.toStringTab();
 	return ERR_OK;
 }

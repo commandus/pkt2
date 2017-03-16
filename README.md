@@ -458,6 +458,43 @@ protoc -I proto --decode_raw  < 1
 
 Записывает в поток stdout сообщения в текстовом виде. Для отладки.
 
+### handlerpq
+
+Для записи значений в базу данных Postgresql 
+
+Два режима записи:
+
+- 3 SQL "нативный"
+- 4 SQL(2) c использованием view.
+
+Предварительно для режима SQL нужно создать таблицы, для которых будуту поступать данные.
+
+Запустите с опцией -vv и остановите (Ctrl+C) программу.  
+```
+./handlerpq -p proto --host localhost --user onewayticket --database onewayticket --password 123456 -vv
+Press Ctrl+C
+cat handlerpq.INFO
+```
+
+В файле журнала handlerpq.INFO будут записи следующего вида:
+
+```
+SQL CREATE TABLE statements
+===========================
+CREATE TABLE "example1_TemperaturePkt"(INTEGER device, INTEGER time, FLOAT degrees_c, id bigint);
+CREATE TABLE "iridium_GPS_Coordinates"(FLOAT latitude, FLOAT longitude, INTEGER hdop, INTEGER pdop, id bigint);
+CREATE TABLE "iridium_IE_IOHeader"(INTEGER cdrref, VARCHAR(32) imei, INTEGER status, INTEGER recvno, INTEGER sentno, INTEGER recvtime, id bigint);
+CREATE TABLE "iridium_IE_Location"(FLOAT iridium_latitude, FLOAT iridium_longitude, INTEGER cepradius, id bigint);
+CREATE TABLE "iridium_IE_Packet"(INTEGER iridium_version, INTEGER size, id bigint);
+CREATE TABLE "iridium_Packet8"(INTEGER coordinates, INTEGER measure_time, INTEGER gpsolddata, INTEGER gpsencoded, INTEGER gpsfrommemory, INTEGER gpsnoformat, INTEGER gpsnosats, INTEGER gpsbadhdop, INTEGER gpstime, INTEGER gpsnavdata, INTEGER satellite_visible_count, FLOAT battery_voltage, INTEGER battery_low, INTEGER battery_high, INTEGER temperature_c, INTEGER reserved_2, INTEGER failurepower, INTEGER failureeep, INTEGER failureclock, INTEGER failurecable, INTEGER failureint0, INTEGER software_failure, INTEGER failurewatchdog, INTEGER failurenoise, INTEGER failureworking, INTEGER key, id bigint);
+CREATE TABLE "iridium_Time5"(INTEGER date_time, id bigint);
+``` 
+
+Предварительно для режима SQL(2) нужно создать как минимум две таблицы:
+```
+CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value NUMERIC(10, 2));
+CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));
+```
 
 ## Баги и особенности реализации
 

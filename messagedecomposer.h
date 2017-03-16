@@ -43,7 +43,6 @@ protected:
 	);
 public:
 	MessageDecomposer();
-	MessageDecomposer(void *env, const google::protobuf::Message *message, ondecompose_callback callback);
 	MessageDecomposer(void *env, Pkt2OptionsCache *options, const google::protobuf::Message *message, ondecompose_callback callback);
 	virtual ~MessageDecomposer();
 	void setCallback(ondecompose_callback ondecompose);

@@ -20,17 +20,6 @@ MessageDecomposer::~MessageDecomposer() {
 
 MessageDecomposer::MessageDecomposer
 (
-	void *environment,
-	const google::protobuf::Message *message,
-	ondecompose_callback callback
-)
-	: env(environment), ondecompose(callback), options_cache(NULL)
-{
-	decompose(message);
-}
-
-MessageDecomposer::MessageDecomposer
-(
 		void *environment,
 		Pkt2OptionsCache *options,
 		const google::protobuf::Message *message,
