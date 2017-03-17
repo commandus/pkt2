@@ -57,7 +57,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h fieldnamevalueindexstrings.h \
-pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h \
+pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
@@ -77,9 +77,12 @@ commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 tcpemitter_SOURCES = \
 	tcpemitter.cpp  tcpemitter-config.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
+	tcpemitterline.cpp daemonize.cpp pbjson.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	pkt2.pb.cpp utilfile.cpp \
 	$(common_src)
 
-tcpemitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
 tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
@@ -198,7 +201,7 @@ message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
-	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp protobuf-declarations.cpp \
+	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp utilstring.cpp protobuf-declarations.cpp \
 	pbjson.cpp \
 	$(common_src)
 

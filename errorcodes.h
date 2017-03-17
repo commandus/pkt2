@@ -22,6 +22,7 @@
 #define MSG_LOOP_EXIT							"Event loop exit"
 #define MSG_PROTO_FILES_HEADER					"Protobuf files: "
 #define MSG_MESSAGE_HEADER						"Protobuf messages: "
+#define MSG_CONNECTED_TO						"Connected to: "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							1
@@ -58,6 +59,14 @@
 #define ERRCODE_NOT_IMPLEMENTED					32
 #define ERRCODE_DATABASE_NO_CONNECTION			33
 #define ERRCODE_DATABASE_STATEMENT_FAIL         34
+#define ERRCODE_GET_ADDRINFO                    35
+#define ERRCODE_SOCKET_CREATE					36
+#define ERRCODE_SOCKET_SET_OPTIONS				37
+#define ERRCODE_SOCKET_BIND						38
+#define ERRCODE_SOCKET_CONNECT                  39
+#define ERRCODE_SOCKET_LISTEN					40
+
+#define ERRCODE_NN_ACCEPT						41
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -71,6 +80,7 @@
 #define ERR_NN_SHUTDOWN							"Can not shutdown nanomsg socket "
 #define ERR_NN_RECV								"Receive nanomsg error "
 #define ERR_NN_SEND								"Send nanomsg error "
+#define ERR_NN_ACCEPT							"Accept error: "
 
 #define ERR_PACKET_PARSE						"Error parse packet "
 #define ERR_STOP								"Can not stop"
@@ -89,5 +99,13 @@
 #define ERR_NOT_IMPLEMENTED					    "Not implemented"
 #define ERR_DATABASE_NO_CONNECTION			    "No database connection. Check credentials."
 #define ERR_DATABASE_STATEMENT_FAIL             "SQL command error "
+
+#define ERR_GET_ADDRINFO                        "Address resolve error: "
+#define ERR_SOCKET_CREATE 						"Socket create error: "
+#define ERR_SOCKET_SET_OPTIONS					"Socket set options error"
+#define ERR_SOCKET_BIND							"Socket bind error "
+#define ERR_SOCKET_CONNECT                      "Socket connect error "
+#define ERR_SOCKET_LISTEN						"Socket listen error "
+#define ERR_PARSE_LINE							"Parse message line"
 
 #endif /* ERRORCODES_H_ */

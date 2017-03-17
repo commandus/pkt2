@@ -1,7 +1,7 @@
 #include "tcpreceiver-config.h"
 #include <argtable2.h>
 
-#define DEF_PORT                 50055
+#define DEF_PORT                 50052
 #define DEF_ADDRESS              "0.0.0.0"
 #define DEF_QUEUE                "ipc:///tmp/packet.pkt2"
 #define DEF_BUFFER_SIZE          256
@@ -34,7 +34,7 @@ int Config::parseCmd
 )
 {
         struct arg_str *a_interface = arg_str0("i", "ipaddr", "<IP address>", "Network interface name or address. Default 0.0.0.0");
-        struct arg_int *a_port = arg_int0("l", "listen", "<port>", "TCP port to listen. Default 50055");
+        struct arg_int *a_port = arg_int0("l", "listen", "<port>", "TCP port to listen. Default 50052");
 
         struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 256 bytes");

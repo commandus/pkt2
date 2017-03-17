@@ -20,6 +20,7 @@ message TemperaturePkt
         name: "temperature"
         short_name: "Температура"
         full_name: "DEVICE TEMP"
+        set: "device = message.device; unix_time = message.time; value = (message.degrees_c / 2) / 1.22);"
         source: {
             proto: PROTO_TCP
             address: "84.237.104.57"

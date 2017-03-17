@@ -48,7 +48,7 @@ pkt2
                                                +-------+    +---------+  | +--------+ |  |             |
                                                       Описание|          +--+         |  +-------------+
                                                       исх.пак.|             |         |  +-------------+
-Трансммиттер              Передатчик        Композер          |             |         +->| Обработчик 2|
+Трансмиттер               Передатчик        Композер          |             |         +->| Обработчик 2|
  +-------+    +----+    +-----------+    +--------------+    +-------+    +---------+    +-------------+
  |       |<---|    |<---| исх.пакет |<---| "Переменные" |    |Входн. |<---| Запись  |<---|             |
  +-------+    +----+    +-----------+    +--------------+    +-------+    +---------+    +-------------+
@@ -63,9 +63,11 @@ pkt2
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
 udpreceiver                                                                message2gateway   
                                                                            example1message   handlerline
-                                                                                             handlerlmdb    
+tcpemitter                                                                                   handlerlmdb    
                                                                            
-                                                                           
+### Порты
+
+tcpreceiver TCP 50052
                                                                            
 ### Тесты
 
@@ -341,6 +343,18 @@ extend google.protobuf.FieldOptions {
 
 ## Программы
 
+### tcpemitter
+
+```
+tcpemitter -i localhost -l 50052 << messages.txt
+```
+
+Каждая строка должна иметь тип сообщения и значения в формате JSON, разделенный знаком двоеточия ":"
+
+```
+Packet.MessageType:{"json-object-in-one-line"}
+```
+
 ### handlerlmdb
 
 Значения
@@ -423,12 +437,12 @@ Warning: no access control information configured.
 snmpconf -g basic_setup
 ```
 
-#### Error opening specified endpoint "udp:161"
+#### SNMP Error opening specified endpoint "udp:161"
 
 161 привелигирпованный порт, запустить от рута.
 
 ```
-sudo ./onewayticketsvc -l 50053 --user onewayticket --password 123456 --database onewayticket --snmp 1
+sudo ...
 ```
 
 ## Отладка

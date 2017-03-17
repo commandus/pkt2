@@ -1,98 +1,107 @@
-#include<stdio.h>
-#include<string.h>
-#include<unistd.h>
-#include<sys/socket.h>
-#include<sys/types.h>
-#include<netdb.h>
-#include<arpa/inet.h>
+#include <stdio.h>
+#include <signal.h>
 
 #include <iostream>
+#include <glog/logging.h>
 #include <stdlib.h>
 
+#include "platform.h"
+#include "daemonize.h"
 #include "tcpemitter-config.h"
-
+#include "tcpemitterline.h"
 #include "errorcodes.h"
-#include "utilstring.h"
+
+Config *config;
+
+void stopNWait()
+{
+    LOG(INFO) << MSG_STOP;
+	if (config)
+		stop(config);
+}
+
+void done()
+{
+    LOG(INFO) << MSG_DONE;
+}
+
+int reslt;
+
+void run()
+{
+	if (!config)
+	{
+		LOG(ERROR) << ERR_PARSE_COMMAND;
+		return;
+	}
+	int n = 0;
+	while (!config->stop_request)
+	{
+		reslt = tcp_emitter_line(config);
+		if (n >= config->retries)
+			break;
+		n++;
+		sleep(config->retry_delay);
+	}
+}
+
+void signalHandler(int signal)
+{
+        switch(signal)
+        {
+        case SIGINT:
+                std::cerr << MSG_INTERRUPTED;
+                stopNWait();
+                done();
+                break;
+        default:
+                std::cerr << MSG_SIGNAL << signal;
+        }
+}
+
+void setSignalHandler(int signal)
+{
+        struct sigaction action;
+        memset(&action, 0, sizeof(struct sigaction));
+        action.sa_handler = &signalHandler;
+        sigaction(signal, &action, NULL);
+}
 
 int main
 (
     int argc, 
-    char * argv[]
+    char *argv[]
 )
 {
-	// Before using hint you have to make sure that the data structure is empty 
-    struct addrinfo hints;
-	memset(& hints, 0, sizeof hints);
-	// Set the attribute for hint
-	hints.ai_family = AF_UNSPEC;        // We don't care V4 AF_INET or 6 AF_INET6
-	hints.ai_socktype = SOCK_STREAM;    // TCP Socket SOCK_DGRAM 
-	hints.ai_flags = AI_PASSIVE; 
-	
-	// Fill the res data structure and make sure that the results make sense. 
-   	struct addrinfo *res;
-	int status = getaddrinfo(NULL, "8888" , &hints, &res);
-	if (status != 0)
+    // Signal handler
+    setSignalHandler(SIGINT);
+    reslt = 0;
+
+	config = new Config(argc, argv);
+	if (!config)
 	{
-        std::cerr << "getaddrinfo error: " << gai_strerror(status) << std::endl;        
+		LOG(ERROR) << ERR_PARSE_COMMAND;
+		exit(ERRCODE_PARSE_COMMAND);
 	}
-	
-	// Create Socket and check if error occured afterwards
-	int listner = socket(res->ai_family,res->ai_socktype, res->ai_protocol);
-	if(listner < 0 )
+    if (config->error() != 0)
 	{
-        std::cerr << "socket error: " << gai_strerror(status) << std::endl;
-	}
-	
-	// Bind the socket to the address of my local machine and port number 
-	status = bind(listner, res->ai_addr, res->ai_addrlen); 
-	if(status < 0)
-	{
-        std::cerr << "bind: " << gai_strerror(status) << std::endl;
+		LOG(ERROR) << ERR_COMMAND;
+		exit(ERRCODE_COMMAND);
 	}
 
-	status = listen(listner, 10); 
-	if (status < 0)
+    INIT_LOGGING(PROGRAM_NAME)
+
+	if (config->daemonize)
 	{
-		std::cerr << "listen: " << gai_strerror(status) << std::endl;
+		LOG(INFO) << MSG_DAEMONIZE;
+		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done);
 	}
-	
-	// Free the res linked list after we are done with it	
-	freeaddrinfo(res);
-
-	// We should wait now for a connection to accept
-	int new_conn_fd;
-	struct sockaddr_storage client_addr;
-	socklen_t addr_size;
-	char s[INET6_ADDRSTRLEN]; // an empty string 
-		
-	// Calculate the size of the data structure	
-	addr_size = sizeof client_addr;
-	
-	std::cout << "accepting connections" << std::endl;        	
-
-	while (1)
-    {
-		// Accept a new connection and return back the socket desciptor 
-		new_conn_fd = accept(listner, (struct sockaddr *) & client_addr, &addr_size);	
-		if(new_conn_fd < 0)
-		{
-			fprintf(stderr,"accept: %s\n",gai_strerror(new_conn_fd));
-			continue;
-		}
-	
-		inet_ntop(client_addr.ss_family, 
-			get_in_addr((struct sockaddr *) &client_addr), s, sizeof(s)); 
-		std::cout << "connected to " << s << std::endl;        	
-		status = send(new_conn_fd,"Welcome", 7,0);
-		if (status == -1)
-		{
-			close(new_conn_fd);
-			exit(ERRCODE_SOCKET_SEND);
-		}
-		
+	else
+	{
+		LOG(INFO) << MSG_START;
+		run();
+		done();
 	}
-	// Close the socket before we finish 
-	close(new_conn_fd);	
-	
-	return ERR_OK;
+
+	return reslt;
 }

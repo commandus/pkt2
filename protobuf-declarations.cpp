@@ -11,6 +11,7 @@
 #include <iostream>
 #include <vector>
 
+#include "pbjson.hpp"
 #include "pkt2.pb.h"
 #include "utilfile.h"
 #include "utilstring.h"
@@ -206,6 +207,52 @@ Message *ProtobufDeclarations::decode
 		return NULL;
 	}
 	return message;
+}
+
+/**
+ * Decode JSON data
+ * @param message_name message name
+ * @param json message value
+ * @return NULL if no protobuf found or error occurred
+ */
+google::protobuf::Message *ProtobufDeclarations::decode
+(
+	const std::string &message_name,
+	const std::string &json
+)
+{
+	// Look up the type
+	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
+	if (type == NULL)
+		return NULL;
+
+	Message *message(dynamic_factory->GetPrototype(type)->New());
+
+	if (message)
+	{
+		std::string err;
+		if (pbjson::json2pb(json, message, err))
+		{
+			LOG(ERROR) << ERR_INVALID_JSON << " " << err << ": " << json;
+			return NULL;
+		}
+	}
+	return message;
+}
+
+/**
+ * Encode message to the packet
+ * @param buffer can be NULL. Return size
+ * @param message
+ * @return NULL if no protobuf found or error occurred
+ */
+size_t ProtobufDeclarations::encode
+(
+	void **buffer,
+	const google::protobuf::Message * message
+)
+{
+	return 0;
 }
 
 bool ProtobufDeclarations::parseProtoFile

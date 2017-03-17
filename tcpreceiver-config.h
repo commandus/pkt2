@@ -29,8 +29,8 @@ public:
     Config(int argc, char* argv[]);
     int error();
 
-    std::string intface;
-    uint32_t port;
+    std::string intface;    ///< default 0.0.0.0
+    uint32_t port;          ///< default 50052
     uint32_t verbosity;
     size_t buffer_size;
 

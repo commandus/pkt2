@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H     1
+#ifndef MESSAGE2GATEWAY_CONFIG_H
+#define MESSAGE2GATEWAY_CONFIG_H     1
 
 #include <string>
 

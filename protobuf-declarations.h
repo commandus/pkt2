@@ -138,6 +138,30 @@ public:
 	);
 
 	/**
+	 * Decode JSON data
+	 * @param message_name message name
+	 * @param json message value
+	 * @return NULL if no protobuf found or error occurred
+	 */
+	google::protobuf::Message *decode
+	(
+		const std::string &message_name,
+		const std::string &json
+	);
+
+	/**
+	 * Encode message to the packet
+	 * @param buffer can be NULL. Return size
+	 * @param message
+	 * @return NULL if no protobuf found or error occurred
+	 */
+	size_t encode
+	(
+		void **buffer,
+		const google::protobuf::Message * message
+	);
+
+	/**
 	 * Print out messages to stdout
 	 * @param messages
 	 */
