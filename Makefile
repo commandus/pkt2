@@ -770,7 +770,7 @@ AM_CXXFLAGS = -std=c++11 -O0 -DDEBUG -std=c++11
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
-gengrpcs = pkt2.pb.h pkt2.pb.cpp
+gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 
 #
 #	Exclude generated sources from distribution
@@ -3868,6 +3868,7 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
+	protoc -I proto --cpp_out=. proto/example/example1.proto
 	sed -i '/#include "descriptor.pb.h"/d' pkt2.pb.h
 	sed -i '/protobuf_InitDefaults_descriptor_2eproto();/d' pkt2.pb.cc
 	sed -i '/protobuf_AddDesc_descriptor_2eproto();/d' pkt2.pb.cc

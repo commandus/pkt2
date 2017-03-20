@@ -50,8 +50,36 @@ bool open_lmdb
 )
 {
 	int rc = mdb_env_create(&env->env);
-	rc |= mdb_env_open(env->env, config->path.c_str(), config->flags, config->mode);
-	rc |= mdb_open(env->txn, NULL, 0, &env->dbi);
+	if (rc)
+	{
+		LOG(ERROR) << "mdb_env_create error " << rc << " " << mdb_strerror(rc);
+		env->env = NULL;
+		return false;
+	}
+
+	rc = mdb_env_open(env->env, config->path.c_str(), config->flags, config->mode);
+	if (rc)
+	{
+		LOG(ERROR) << "mdb_env_open path: " << config->path.c_str() << " error " << rc << " " << mdb_strerror(rc);
+		env->env = NULL;
+		return false;
+	}
+
+	rc = mdb_txn_begin(env->env, NULL, 0, &env->txn);
+	if (rc)
+	{
+		LOG(ERROR) << "mdb_txn_begin error " << rc << " " << mdb_strerror(rc);
+		env->env = NULL;
+		return false;
+	}
+
+	rc = mdb_open(env->txn, NULL, 0, &env->dbi);
+	if (rc)
+	{
+		LOG(ERROR) << "mdb_open error " << rc << " " << mdb_strerror(rc);
+		env->env = NULL;
+		return false;
+	}
 	return rc == 0;
 }
 
