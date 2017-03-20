@@ -8,6 +8,7 @@
 #define DEF_FLAGS              		0
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
 #define DEF_PROTO_PATH				"proto"
+#define DEF_BUFFER_SIZE				4096
 
 Config::Config
 (
@@ -47,6 +48,8 @@ int Config::parseCmd
         struct arg_int *a_flags = arg_int0("f", "flags", "<number>", "LMDB flags. Default 0");
         struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "LMDB file open mode. Default 0664");
 
+        struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Buffer size in bytes. Default 4096. 0- dynamic");
+
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
         struct arg_end *a_end = arg_end(20);
 
@@ -56,6 +59,7 @@ int Config::parseCmd
                 a_retries, a_retry_delay,
                 a_daemonize, a_verbosity,
 				a_db_path, a_flags, a_mode,
+				a_buffer_size,
                 a_help, a_end 
         };
 
@@ -121,6 +125,11 @@ int Config::parseCmd
         	flags = *a_flags->ival;
         else
         	flags = DEF_FLAGS;
+
+        if (a_buffer_size->count)
+        	buffer_size = *a_buffer_size->ival;
+        else
+        	buffer_size = DEF_BUFFER_SIZE;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return ERR_OK;

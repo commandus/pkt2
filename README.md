@@ -529,5 +529,7 @@ http://stackoverflow.com/questions/39134872/how-do-you-enable-c11-syntax-in-ecli
 - Select the Providers tab, click on compiler settings row for the compiler you use.
 - Add -std=c++11 to Command to get compiler specs.
 
-
-Причина 
+При застревании индексатора кода C/C++ Indexer:
+```
+rm ~/workspace/.metadata/.plugins/org.eclipse.cdt.core/*
+```

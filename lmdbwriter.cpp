@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 
 #include <nanomsg/nn.h>
-#include <nanomsg/pipeline.h>
+#include <nanomsg/pubsub.h>
 
 #include <glog/logging.h>
 
@@ -73,6 +73,7 @@ bool open_lmdb
 		return false;
 	}
 
+
 	rc = mdb_open(env->txn, NULL, 0, &env->dbi);
 	if (rc)
 	{
@@ -80,6 +81,9 @@ bool open_lmdb
 		env->env = NULL;
 		return false;
 	}
+
+	rc = mdb_txn_commit(env->txn);
+
 	return rc == 0;
 }
 
@@ -121,9 +125,9 @@ int put_db
 	char keybuffer[2048];
 
 	key.mv_size = options->getKey(messageTypeNAddress->message_type, keybuffer, sizeof(keybuffer), message);
-	if (key.mv_size)
+	if (key.mv_size == 0)
 		return 0;	// No key, no store
-
+return 0;
 	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
 	if (r)
 	{
@@ -136,9 +140,10 @@ int put_db
 	data.mv_data = buffer;
 
 	r = mdb_put(env->txn, env->dbi, &key, &data, 0);
-
-	if (r)
-		return r;
+	{
+		LOG(ERROR) << ERR_LMDB_PUT << r;
+		return ERRCODE_LMDB_PUT;
+	}
 
 	r = mdb_txn_commit(env->txn);
 	if (r)
@@ -161,8 +166,17 @@ int run
 		Config *config
 )
 {
-	int nano_socket = nn_socket(AF_SP, NN_PUSH);
-	if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
+	int nano_socket = nn_socket(AF_SP, NN_SUB);
+	int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (r < 0)
+	{
+		LOG(ERROR) << ERR_NN_SUBSCRIBE << config->message_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_SUBSCRIBE;
+	}
+
+	int eid = nn_connect(nano_socket, config->message_url.c_str());
+
+	if (eid < 0)
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
 		return ERRCODE_NN_CONNECT;
@@ -184,10 +198,27 @@ int run
 	}
 	Pkt2OptionsCache options(&pd);
 
+	void *buffer;
+	if (config->buffer_size > 0)
+	{
+		buffer = malloc(config->buffer_size);
+	    if (!buffer)
+		{
+	    	LOG(ERROR) << ERR_NO_MEMORY;
+	    	return ERRCODE_NO_MEMORY;
+		}
+	}
+	else
+		buffer = NULL;
+
     while (!config->stop_request)
     {
-    	char *buffer = NULL;
-    	int bytes = nn_recv(nano_socket, &buffer, NN_MSG, 0);
+
+    	int bytes;
+    	if (config->buffer_size > 0)
+    		bytes = nn_recv(nano_socket, buffer, config->buffer_size, 0);
+    	else
+    		bytes = nn_recv(nano_socket, &buffer, NN_MSG, 0);
 
     	if (bytes < 0)
     	{
@@ -201,10 +232,11 @@ int run
 		else
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
 
-		nn_freemsg(buffer);
+		if (config->buffer_size <= 0)
+			nn_freemsg(buffer);
     }
 
-	int r = 0;
+	r = 0;
 
 	if (!close_lmdb(&env))
 	{
@@ -212,7 +244,7 @@ int run
 		r = ERRCODE_LMDB_CLOSE;
 	}
 
-	r = nn_shutdown(nano_socket, 0);
+	r = nn_shutdown(nano_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url;

@@ -32,41 +32,43 @@
 #define ERRCODE_LMDB_TXN_COMMIT					11
 #define ERRCODE_LMDB_OPEN						12
 #define ERRCODE_LMDB_CLOSE						13
+#define ERRCODE_LMDB_PUT						14
+#define ERRCODE_LMDB_GET						15
 
-#define ERRCODE_NN_CONNECT	 					14
-#define ERRCODE_NN_SUBSCRIBE					15
-#define ERRCODE_NN_SHUTDOWN 					16
-#define ERRCODE_NN_RECV							17
-#define ERRCODE_NN_SEND							18
+#define ERRCODE_NN_CONNECT	 					16
+#define ERRCODE_NN_SUBSCRIBE					17
+#define ERRCODE_NN_SHUTDOWN 					18
+#define ERRCODE_NN_RECV							19
+#define ERRCODE_NN_SEND							20
 
-#define ERRCODE_PACKET_PARSE					19
-#define ERRCODE_STOP							20
-#define ERRCODE_NO_CONFIG						21
+#define ERRCODE_PACKET_PARSE					21
+#define ERRCODE_STOP							22
+#define ERRCODE_NO_CONFIG						23
 
-#define ERRCODE_LOAD_PROTO 						22
-#define ERRCODE_NO_MEMORY						23
-#define ERRCODE_DECODE_MESSAGE					24
+#define ERRCODE_LOAD_PROTO 						24
+#define ERRCODE_NO_MEMORY						25
+#define ERRCODE_DECODE_MESSAGE					26
 
-#define ERRCODE_SOCKET_SEND						25
+#define ERRCODE_SOCKET_SEND						27
 
-#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			26
+#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			28
 
-#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	27
-#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	28
-#define ERRCODE_DECOMPOSE_FATAL					29
-#define ERRCODE_DECOMPOSE_NO_REFECTION			30
-#define ERRCODE_NO_CALLBACK						31
-#define ERRCODE_NOT_IMPLEMENTED					32
-#define ERRCODE_DATABASE_NO_CONNECTION			33
-#define ERRCODE_DATABASE_STATEMENT_FAIL         34
-#define ERRCODE_GET_ADDRINFO                    35
-#define ERRCODE_SOCKET_CREATE					36
-#define ERRCODE_SOCKET_SET_OPTIONS				37
-#define ERRCODE_SOCKET_BIND						38
-#define ERRCODE_SOCKET_CONNECT                  39
-#define ERRCODE_SOCKET_LISTEN					40
+#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	29
+#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	30
+#define ERRCODE_DECOMPOSE_FATAL					31
+#define ERRCODE_DECOMPOSE_NO_REFECTION			32
+#define ERRCODE_NO_CALLBACK						33
+#define ERRCODE_NOT_IMPLEMENTED					34
+#define ERRCODE_DATABASE_NO_CONNECTION			35
+#define ERRCODE_DATABASE_STATEMENT_FAIL         36
+#define ERRCODE_GET_ADDRINFO                    37
+#define ERRCODE_SOCKET_CREATE					38
+#define ERRCODE_SOCKET_SET_OPTIONS				39
+#define ERRCODE_SOCKET_BIND						40
+#define ERRCODE_SOCKET_CONNECT                  41
+#define ERRCODE_SOCKET_LISTEN					42
 
-#define ERRCODE_NN_ACCEPT						41
+#define ERRCODE_NN_ACCEPT						43
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -74,6 +76,8 @@
 #define ERR_LMDB_TXN_COMMIT						"Can not commit LMDB transaction "
 #define ERR_LMDB_OPEN							"Can not open database file "
 #define ERR_LMDB_CLOSE							"Can not close database file "
+#define ERR_LMDB_PUT							"Can not put LMDB "
+#define ERR_LMDB_GET							"Can not get LMDB "
 
 #define ERR_NN_CONNECT							"Can not connect to the IPC url "
 #define ERR_NN_SUBSCRIBE						"Can not subscribe to the IPC url "

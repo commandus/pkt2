@@ -42,6 +42,7 @@ public:
     bool daemonize;
     bool stop_request;
     int verbosity;           ///< default 0
+    int buffer_size;		 ///< default 4096
 };
 
 #endif

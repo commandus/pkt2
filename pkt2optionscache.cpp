@@ -4,10 +4,8 @@
 
 #include <vector>
 #include <stdlib.h>
-#include <glog/logging.h>
-#include "pbjson.hpp"
 #include "pkt2optionscache.h"
-
+#include "bin2ascii.h"
 
 Pkt2OptionsCache::Pkt2OptionsCache() {
 }
@@ -89,6 +87,13 @@ int Pkt2OptionsCache::getIndex(
 	return 0;
 }
 
+#define PUSH_KEY(TYPE, PROTO_CPP_TYPE) \
+{ \
+	TYPE v = ref->Get ## PROTO_CPP_TYPE(*message, field); \
+	memmove(&(((char*)buffer)[r]), &v, sizeof(v)); \
+	r += sizeof(v); \
+}
+
 /**
  * get values from message fields with index 1, 2... into key buffer
  * @param messageType
@@ -116,67 +121,58 @@ size_t Pkt2OptionsCache::getKey(
 		r+= sizeof(uint64_t);
 		it++;
 	}
-
-    rapidjson::Value *js = pbjson::pb2jsonobject(message);
 	for (;it != pv.keyIndexes.end(); ++it)
 	{
 		pkt2::Variable v = pkt2packet_variable[messageType].fieldname_variables[*it].var;
 		const google::protobuf::FieldDescriptor *field = message->GetDescriptor()->field(*it);
+		const google::protobuf::Reflection *ref = message->GetReflection();
         if (!field)
             return 0;
-
-        rapidjson::Value::ConstMemberIterator itr = js->FindMember(field->name().c_str());
-        if (itr == js->MemberEnd())
-        	return 0;
-        switch (itr->value.GetType()) {
-			case rapidjson::kNumberType:
-				if (itr->value.IsInt64())
-				{
-					int64_t v = itr->value.GetInt64();
+		google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
+		switch (t) 
+		{
+	        case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+	        	PUSH_KEY(double, Double)
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+	        	PUSH_KEY(float, Float)
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+	        	PUSH_KEY(int64_t, Int64)
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+	        	PUSH_KEY(uint64_t, UInt64)
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+	        	PUSH_KEY(int32_t, Int32)
+				break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+	        	PUSH_KEY(uint32_t, UInt32)
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+	        	PUSH_KEY(bool, Bool)
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
+	        {
+	            bool is_binary = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES;
+                std::string value = ref->GetString(*message, field);
+                if (is_binary)
+                    value = b64_encode(value);
+				memmove(&(((char*)buffer)[r]), value.c_str(), value.size());
+				r += value.size();
+	            break;
+	        }
+	        case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+	        	{
+					const google::protobuf::EnumValueDescriptor* value = ref->GetEnum(*message, field);
+					int v = value->number();
 					memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-					r += sizeof(v);
-				} else
-					if (itr->value.IsUint64())
-					{
-						uint64_t v = itr->value.GetUint64();
-						memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-						r += sizeof(v);
-					} else
-						if (itr->value.IsInt())
-						{
-							int v = itr->value.GetInt();
-							memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-							r += sizeof(v);
-						} else
-							if (itr->value.IsUint())
-							{
-								uint v = itr->value.GetUint();
-								memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-								r += sizeof(v);
-							} else
-								if (itr->value.IsDouble())
-								{
-									double v = itr->value.GetDouble();
-									memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-									r += sizeof(v);
-								} else
-									if (itr->value.IsFloat())
-									{
-										float v = itr->value.GetFloat();
-										memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-										r += sizeof(v);
-									} else
-										if (itr->value.IsBool())
-										{
-											bool v = itr->value.GetBool();
-											memmove(&(((char*)buffer)[r]), &v, sizeof(v));
-											r += sizeof(v);
-										}
-				break;
-			default:
-				break;
-        }
-        delete js;
+	        	}
+	            break;
+	        case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
+	        default:
+	            break;
+	    }
 	}
 	return r;
 }
