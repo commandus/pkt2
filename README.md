@@ -10,6 +10,7 @@ pkt2
 Назначение
 ----------
 
+
 Разбор приходящих пакетов.
 
 Сервер соержит список  поддерживаемых протоколов.
@@ -17,8 +18,25 @@ pkt2
 Протокол содержит 
 
 - описание входящего пакета данных, опционально- адреса источника данных и адреса, на который пришел пакет.
-- описание извлекаемых в БД данных
+- описание извлекаемых в БД данных (выходных данных)
 - описание исходящего пакета данных (ответа), опционально- адрес куда отправить пакет.
+
+Выходные данные записываются для последующей обработки в базы данных обработчиками на языке Protobuf в виде сообщений (message).
+
+Каждое сообщение содержит атрибуты целого, вещественного тиов, реже типов перечислений и строк. Сообщения могут быть вложенными. 
+
+В языке Protobuf есть понятие опций сообщений и атрибутов. 
+
+В этом приложении опции сообщения используются для записи структуры входящих пакетов, а опции атрибутов- описание того, как значение атрибута получается из входного пакета.
+
+В опции сообщения pkt2.packet записываются смещения и размеры полей входного пакета и присваивается имя.
+
+В опции атрибута pkt2.variable записывается код функции преобразования. 
+
+Два атрибута должны помечаться в опциях как индексные поля времени и номера устройства для всех сообщений, которые планируется записывать в базу данных. 
+Вложенные сообщения не должны иметь индексы, перекрывающие индексы сообщений, куда они вложены.  
+
+
 
 ```
                ipc:///tmp/packet.pkt2                                      ipc:///tmp/message.pkt2
@@ -63,15 +81,21 @@ pkt2
 tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
 udpreceiver                                                                message2gateway   
                                                                            example1message   handlerline
-tcpemitter                                                                                   handlerlmdb    
-                                                                           
+tcpemitter                                                                                   handlerlmdb
+tcpemitter-example1    
+    
+
+## Описание выходных данных
+
+
 ### Порты
 
 tcpreceiver TCP 50052
                                                                            
 ### Тесты
 
-example1message1
+
+#### example1message1
 
 Сериализует в stdout одно случайное сообщение (сообщение TemperaturePkt, файл описания example/example1.proto)
 
@@ -84,6 +108,15 @@ codex -protofile proto/example/example1.proto -message_name TemperaturePkt 1
            ipc:///tmp/packet.pkt2                                           ipc:///tmp/message.pkt2
 
 ```
+
+#### tcpemitter-example1
+
+Отправляет TCP пакеты как в примере 1.
+ 
+По умолчанию шлет в порт 50052.
+
+Один экземпляр tcpreceiver должен быть запущен. По умолчанию он слушает порт 50052.
+
 
 ## Запись
 
@@ -510,6 +543,16 @@ CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARC
 CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));
 ```
 
+## Описание работы 
+
+### Генерация кода
+
+Входной пакет 
+
+Message *parse(MessageTypeNAddress *descriptor, void *input_packet)
+
+ 
+
 ## Баги и особенности реализации
 
 ### nanomsg
@@ -533,3 +576,7 @@ http://stackoverflow.com/questions/39134872/how-do-you-enable-c11-syntax-in-ecli
 ```
 rm ~/workspace/.metadata/.plugins/org.eclipse.cdt.core/*
 ```
+
+#### Пропала иконка в Unity launcher
+
+http://askubuntu.com/questions/80013/how-to-pin-eclipse-to-the-unity-launcher

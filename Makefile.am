@@ -45,7 +45,7 @@ CLEANFILES = $(gengrpcs)
 bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	handlerpq handlerline handlerlmdb \
 	protoc-gen-pkt2 \
-	message2gateway example1message example1message1
+	message2gateway example1message example1message1 tcpemitter-example1
 
 #
 # Headers
@@ -218,6 +218,17 @@ example1message1_SOURCES = \
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
 example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# tcpemitter-example1
+#
+tcpemitter_example1_SOURCES = \
+	tcpemitter-example1.cpp \
+	$(common_src)
+
+tcpemitter_example1_LDADD = 
+tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
 
 #
 # Configs, readme, CMake etc.

@@ -95,7 +95,8 @@ bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	tcptransmitter$(EXEEXT) handlerpq$(EXEEXT) \
 	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
-	example1message$(EXEEXT) example1message1$(EXEEXT)
+	example1message$(EXEEXT) example1message1$(EXEEXT) \
+	tcpemitter-example1$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -256,6 +257,11 @@ am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	$(am__objects_1)
 tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
 tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
+am_tcpemitter_example1_OBJECTS =  \
+	tcpemitter_example1-tcpemitter-example1.$(OBJEXT) \
+	$(am__objects_1)
+tcpemitter_example1_OBJECTS = $(am_tcpemitter_example1_OBJECTS)
+tcpemitter_example1_DEPENDENCIES =
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
@@ -338,14 +344,15 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
 	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
 	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(tcpemitter_example1_SOURCES) $(tcpreceiver_SOURCES) \
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handlerline_SOURCES) $(handlerlmdb_SOURCES) \
 	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
 	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
 	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(tcpemitter_example1_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -954,6 +961,16 @@ example1message1_LDADD = -lprotobuf $(SNMPLIBS)
 example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
+# tcpemitter-example1
+#
+tcpemitter_example1_SOURCES = \
+	tcpemitter-example1.cpp \
+	$(common_src)
+
+tcpemitter_example1_LDADD = 
+tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
 # Configs, readme, CMake etc.
 #
 configdir = $(datadir)
@@ -1119,6 +1136,10 @@ tcpemitter$(EXEEXT): $(tcpemitter_OBJECTS) $(tcpemitter_DEPENDENCIES) $(EXTRA_tc
 	@rm -f tcpemitter$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpemitter_OBJECTS) $(tcpemitter_LDADD) $(LIBS)
 
+tcpemitter-example1$(EXEEXT): $(tcpemitter_example1_OBJECTS) $(tcpemitter_example1_DEPENDENCIES) $(EXTRA_tcpemitter_example1_DEPENDENCIES) 
+	@rm -f tcpemitter-example1$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tcpemitter_example1_OBJECTS) $(tcpemitter_example1_LDADD) $(LIBS)
+
 tcpreceiver$(EXEEXT): $(tcpreceiver_OBJECTS) $(tcpreceiver_DEPENDENCIES) $(EXTRA_tcpreceiver_DEPENDENCIES) 
 	@rm -f tcpreceiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpreceiver_OBJECTS) $(tcpreceiver_LDADD) $(LIBS)
@@ -1247,6 +1268,7 @@ include ./$(DEPDIR)/tcpemitter-utilinet.Po
 include ./$(DEPDIR)/tcpemitter-utilpriority.Po
 include ./$(DEPDIR)/tcpemitter-utilprotobuf.Po
 include ./$(DEPDIR)/tcpemitter-utilstring.Po
+include ./$(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
 include ./$(DEPDIR)/tcpreceiver-NanoMessage.Po
 include ./$(DEPDIR)/tcpreceiver-daemonize.Po
 include ./$(DEPDIR)/tcpreceiver-get_rss.Po
@@ -2954,6 +2976,20 @@ tcpemitter-utilfile.obj: utilfile.cpp
 #	$(AM_V_CXX)source='utilfile.cpp' object='tcpemitter-utilfile.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+tcpemitter_example1-tcpemitter-example1.o: tcpemitter-example1.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-tcpemitter-example1.o -MD -MP -MF $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo -c -o tcpemitter_example1-tcpemitter-example1.o `test -f 'tcpemitter-example1.cpp' || echo '$(srcdir)/'`tcpemitter-example1.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
+#	$(AM_V_CXX)source='tcpemitter-example1.cpp' object='tcpemitter_example1-tcpemitter-example1.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_example1-tcpemitter-example1.o `test -f 'tcpemitter-example1.cpp' || echo '$(srcdir)/'`tcpemitter-example1.cpp
+
+tcpemitter_example1-tcpemitter-example1.obj: tcpemitter-example1.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-tcpemitter-example1.obj -MD -MP -MF $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo -c -o tcpemitter_example1-tcpemitter-example1.obj `if test -f 'tcpemitter-example1.cpp'; then $(CYGPATH_W) 'tcpemitter-example1.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-example1.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
+#	$(AM_V_CXX)source='tcpemitter-example1.cpp' object='tcpemitter_example1-tcpemitter-example1.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_example1-tcpemitter-example1.obj `if test -f 'tcpemitter-example1.cpp'; then $(CYGPATH_W) 'tcpemitter-example1.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-example1.cpp'; fi`
 
 tcpreceiver-tcpreceiver.o: tcpreceiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-tcpreceiver.o -MD -MP -MF $(DEPDIR)/tcpreceiver-tcpreceiver.Tpo -c -o tcpreceiver-tcpreceiver.o `test -f 'tcpreceiver.cpp' || echo '$(srcdir)/'`tcpreceiver.cpp

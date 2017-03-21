@@ -47,7 +47,8 @@ int main(int args, char **argv)
 	int count = 0;
 	cont = true;
 
-	MessageTypeNAddress messageTypeNAddress("example1.TemperaturePkt");
+
+	MessageTypeNAddress messageTypeNAddress(m.GetDescriptor()->full_name());	// "example1.TemperaturePkt"
 
 	while (cont)
 	{

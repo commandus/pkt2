@@ -103,7 +103,7 @@ int tcp_receiever_nano(Config *config)
 		return ERRCODE_SOCKET_LISTEN;
 	}
 
-    int nano_socket = nn_socket(AF_SP, NN_PUSH);
+    int nano_socket = nn_socket(AF_SP, NN_BUS);
     if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
     {
         LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
@@ -123,7 +123,7 @@ int tcp_receiever_nano(Config *config)
     while (!config->stop_request)
     {
 		// Wait now for a connection to accept
-		// Accept a new connection and return back the socket desciptor 
+		// Accept a new connection and return back the socket descriptor
     	socklen_t addr_size = sizeof(struct sockaddr_storage);
 		int new_conn_fd = accept(socket, (struct sockaddr *) client_addr, &addr_size);	
 		if (new_conn_fd < 0)
@@ -132,9 +132,8 @@ int tcp_receiever_nano(Config *config)
 			continue;
 		}
 
-        LOG(INFO) << MSG_CONNECTED_TO << sockaddrToString(client_addr);
-
         packet.length = read(new_conn_fd, packet.data(), packet.size);
+        LOG(INFO) << MSG_CONNECTED_TO << sockaddrToString(client_addr) << ", " << packet.length;
    
         if (packet.length < 0) 
         {

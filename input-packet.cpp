@@ -9,6 +9,7 @@ InputPacket::InputPacket(
     char typ,
     size_t adata_size
 ) 
+	: message(NULL)
 {
     data_size = adata_size;
     size = sizeof(struct PacketHeader) + data_size + sizeof(struct sockaddr_storage) + sizeof(struct sockaddr_storage);
@@ -29,6 +30,7 @@ InputPacket::InputPacket
     void *data,
     size_t adata_size
 ) 
+	: message(NULL)
 {
     buffer = data;
     size = adata_size;
