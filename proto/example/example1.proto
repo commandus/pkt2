@@ -16,7 +16,7 @@ message TemperaturePkt
 
     // input packet description
     option(pkt2.packet) = {
-    	id: 1001 
+    	id: 5001 
         name: "temperature"
         short_name: "Температура"
         full_name: "DEVICE TEMP"
@@ -24,7 +24,7 @@ message TemperaturePkt
         source: {
             proto: PROTO_TCP
             address: "84.237.104.57"
-            port: 0 // any port
+            port: 50052 // 0- any port
         }
         fields: [
         {
@@ -74,7 +74,7 @@ message TemperaturePkt
         short_name: "Температура"
         full_name: "Температура, C"
         measure_unit: "C"
-        get: "1.22 * ((value & 0x0f) << 1)"
+        get: "1.22 * value"
         priority: 0                                 // required
         format: "%8.2f"
     }];
