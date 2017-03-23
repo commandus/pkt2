@@ -38,7 +38,12 @@ public:
 
     struct sockaddr_storage *get_socket_addr_src();
     struct sockaddr_storage *get_socket_addr_dst();
+    struct sockaddr_in *get_sockaddr_src();
+    struct sockaddr_in *get_sockaddr_dst();
     
+    bool set_socket_addr_src(struct addrinfo *value);
+    bool set_socket_addr_dst(struct addrinfo *value);
+
     void *data();
     /// max data buffer size
     int data_size;

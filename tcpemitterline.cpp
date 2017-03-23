@@ -64,6 +64,7 @@ int tcp_emitter_line(Config *config)
     	LOG(ERROR) << ERR_SOCKET_CREATE;
     	return ERRCODE_SOCKET_CREATE;
     }
+
     struct hostent *server = gethostbyname(config->intface.c_str());
 
     if (server == NULL)

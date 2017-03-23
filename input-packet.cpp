@@ -2,6 +2,8 @@
 
 #include <cstdlib>
 #include <string.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 #include "errorcodes.h"
 
@@ -12,7 +14,7 @@ InputPacket::InputPacket(
 	: message(NULL)
 {
     data_size = adata_size;
-    size = sizeof(struct PacketHeader) + data_size + sizeof(struct sockaddr_storage) + sizeof(struct sockaddr_storage);
+    size = sizeof(struct PacketHeader) + (2 * sizeof(struct sockaddr_storage)) + data_size;
     buffer = malloc(size);
     if (buffer)
     {
@@ -66,6 +68,35 @@ struct sockaddr_storage *InputPacket::get_socket_addr_src()
 struct sockaddr_storage *InputPacket::get_socket_addr_dst()
 {
     return (struct sockaddr_storage *) buffer + sizeof(struct PacketHeader) + sizeof(struct sockaddr_storage);
+}
+
+struct sockaddr_in *InputPacket::get_sockaddr_src()
+{
+	return (sockaddr_in *) get_socket_addr_src();
+
+}
+
+struct sockaddr_in *InputPacket::get_sockaddr_dst()
+{
+	return (sockaddr_in *) get_socket_addr_dst();
+}
+
+bool InputPacket::set_socket_addr_src
+(
+	struct addrinfo *value
+)
+{
+	memmove(get_socket_addr_src(), value->ai_addr, sizeof(struct sockaddr));
+	return true;
+}
+
+bool InputPacket::set_socket_addr_dst
+(
+	struct addrinfo *value
+)
+{
+	memmove(get_socket_addr_dst(), value->ai_addr, sizeof(struct sockaddr));
+	return true;
 }
 
 void *InputPacket::data()

@@ -67,8 +67,10 @@
 #define ERRCODE_SOCKET_BIND						40
 #define ERRCODE_SOCKET_CONNECT                  41
 #define ERRCODE_SOCKET_LISTEN					42
+#define ERRCODE_SOCKET_READ						43
+#define ERRCODE_SOCKET_WRITE					44
 
-#define ERRCODE_NN_ACCEPT						43
+#define ERRCODE_NN_ACCEPT						45
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -110,6 +112,9 @@
 #define ERR_SOCKET_BIND							"Socket bind error "
 #define ERR_SOCKET_CONNECT                      "Socket connect error "
 #define ERR_SOCKET_LISTEN						"Socket listen error "
+#define ERR_SOCKET_READ							"Socket read error "
+#define ERR_SOCKET_WRITE						"Socket write error "
 #define ERR_PARSE_LINE							"Parse message line"
+
 
 #endif /* ERRORCODES_H_ */

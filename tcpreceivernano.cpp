@@ -5,6 +5,7 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 
 #include <glog/logging.h>
 
@@ -27,7 +28,7 @@ int get_addr_info
 	hints.ai_flags = AI_PASSIVE; 
 	
 	// Fill the res data structure and make sure that the results make sense. 
-	int status = getaddrinfo(NULL, toString(config->port).c_str(), &hints, res);
+	int status = getaddrinfo(config->intface.c_str(), toString(config->port).c_str(), &hints, res);
 	if (status != 0)
 	{
         LOG(ERROR) << ERR_GET_ADDRINFO << gai_strerror(status);
@@ -81,16 +82,15 @@ int listen_port(
   */
 int tcp_receiever_nano(Config *config)
 {
-    InputPacket packet('T', config->buffer_size);
-
     struct addrinfo *res;
     if (get_addr_info(config, &res))
     {
 		LOG(ERROR) << ERR_GET_ADDRINFO;
 		return ERRCODE_GET_ADDRINFO;
     }
-    struct sockaddr_storage *svc_addr = packet.get_socket_addr_dst();
-    //svc_addr
+
+    InputPacket packet('T', config->buffer_size);
+    packet.set_socket_addr_dst(res);
 
 	int socket = listen_port(config, res);
 
@@ -111,7 +111,6 @@ int tcp_receiever_nano(Config *config)
 		return ERRCODE_NN_CONNECT;
     }
 
-    struct sockaddr_storage *client_addr = packet.get_socket_addr_src();
 
     if (packet.error() != 0)
     {
@@ -123,41 +122,32 @@ int tcp_receiever_nano(Config *config)
     while (!config->stop_request)
     {
 		// Wait now for a connection to accept
+    	struct addrinfo *res;
+        struct sockaddr_in *src = packet.get_sockaddr_src();
+		socklen_t addr_size = sizeof(struct sockaddr_in);
+
 		// Accept a new connection and return back the socket descriptor
-    	socklen_t addr_size = sizeof(struct sockaddr_storage);
-		int new_conn_fd = accept(socket, (struct sockaddr *) client_addr, &addr_size);	
+		int new_conn_fd = accept(socket, (struct sockaddr *) src, &addr_size);
 		if (new_conn_fd < 0)
 		{
-            LOG(ERROR) << ERR_NN_ACCEPT << new_conn_fd << ": " << gai_strerror(new_conn_fd);
+            LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno);
 			continue;
 		}
 
+
+		// Read
         packet.length = read(new_conn_fd, packet.data(), packet.size);
-        LOG(INFO) << MSG_CONNECTED_TO << sockaddrToString(client_addr) << ", " << packet.length;
-   
-        if (packet.length < 0) 
-        {
-            LOG(ERROR) << "error reading from socket " << packet.length << ": " << gai_strerror(new_conn_fd);
-            close(new_conn_fd);
-            continue;
-        }
-
-        // Send immediate reply if provided
-        /*
-		int status = send(new_conn_fd, "Welcome", 7, 0);
-		if (status == -1)
-		{
-            LOG(ERROR) << "send error";
-			close(new_conn_fd);
-
-            close(socket);	
-            nn_shutdown(nano_socket, 0);
-			return 4;
-		}
-        */
-
 		// Close the socket
 		close(new_conn_fd);
+
+        if (packet.length <= 0)
+        {
+            LOG(ERROR) << ERR_SOCKET_READ << gai_strerror(errno);
+            continue;
+        }
+        else
+    		LOG(INFO) << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
+    			inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << packet.length;
 
         // send message to the nano queue
 

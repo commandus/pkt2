@@ -551,7 +551,12 @@ CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARC
 
 Message *parse(MessageTypeNAddress *descriptor, void *input_packet)
 
- 
+## Ошибки
+
+
+Socket connect error localhost:50052. Cannot assign requested address 
+
+Переполнение стека TCP/IP из-за того, что сервис не успевает обрабатывать данные из сокета.
 
 ## Баги и особенности реализации
 

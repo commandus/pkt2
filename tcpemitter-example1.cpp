@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <utilstring.h>
 #include <signal.h>
 #include <string.h>
 
@@ -15,6 +16,7 @@
 
 #define PROGRAM_NAME		"tcpemitter-example1"
 #define PROGRAM_DESCRIPTION "Send packets see proto/example/example1.proto"
+#define DEF_DELAY_SEC		1
 
 bool cont;
 
@@ -53,6 +55,31 @@ typedef ALIGN struct EXAMPLE1PACKET {
         int16_t temperature;
 } PACKED EXAMPLE1PACKET;
 
+int get_addr_info
+(
+	const std::string &host,
+	int port,
+    struct addrinfo **res
+)
+{
+	// Before using hint you have to make sure that the data structure is empty
+    struct addrinfo hints;
+    memset(&hints, 0, sizeof(hints));
+	// Set the attribute for hint
+	hints.ai_family = AF_UNSPEC;        // We don't care V4 AF_INET or 6 AF_INET6
+	hints.ai_socktype = SOCK_STREAM;    // TCP Socket SOCK_DGRAM
+	hints.ai_flags = AI_PASSIVE;
+
+	// Fill the res data structure and make sure that the results make sense.
+	int status = getaddrinfo(host.c_str(), toString(port).c_str(), &hints, res);
+	if (status != 0)
+	{
+        std::cerr << ERR_GET_ADDRINFO << gai_strerror(status);
+        return ERRCODE_GET_ADDRINFO;
+	}
+    return ERR_OK;
+}
+
 int open_socket
 (
 	int &sock,
@@ -67,29 +94,28 @@ int open_socket
     	return ERRCODE_SOCKET_CREATE;
     }
 
-    struct hostent *server = gethostbyname(host.c_str());
+	int optval = 1;
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
 
-    if (server == NULL)
+    struct addrinfo *res;
+    if (get_addr_info(host, port, &res))
     {
-    	std::cerr << ERR_GET_ADDRINFO << host << std::endl;;
-    	return ERRCODE_GET_ADDRINFO;
+		std::cerr << ERR_GET_ADDRINFO;
+		return ERRCODE_GET_ADDRINFO;
     }
 
-    struct sockaddr_in serv_addr;
-	bzero((char *) &serv_addr, sizeof(serv_addr));
-	serv_addr.sin_family = AF_INET;
-	bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
-	serv_addr.sin_port = htons(port);
-
-	// int optval = 1;
-	// setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
-
-    if (connect(sock,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
+    if (connect(sock, (struct sockaddr *) res->ai_addr, res->ai_addrlen) < 0)
     {
     	std::cerr << ERR_SOCKET_CONNECT << host << ":" << port << ". " << strerror(errno) << std::endl;
+    	freeaddrinfo(res);
+    	shutdown(sock, SHUT_RDWR);
     	close(sock);
     	return ERRCODE_SOCKET_CONNECT;
     }
+
+	// Free the res linked list after we are done with it
+	freeaddrinfo(res);
+
     return ERR_OK;
 }
 
@@ -100,7 +126,7 @@ int main(int argc, char **argv)
 
     struct arg_str *a_intface = arg_str0("i", "intface", "<host>", "Host name or address. Default 0.0.0.0");
     struct arg_int *a_port = arg_int0("p", "port", "<port number>", "Destination port. Default 50052.");
-    struct arg_int *a_delay = arg_int0("d", "delay", "<seconds>", "Delay after send packet. Default 0 (no delay).");
+    struct arg_int *a_delay = arg_int0("d", "delay", "<seconds>", "Delay after send packet. Default 1 (0- no delay).");
     struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
     struct arg_end *a_end = arg_end(20);
 
@@ -140,7 +166,7 @@ int main(int argc, char **argv)
 	if (a_delay->count)
 		delay = *a_delay->ival;
 	else
-		delay = 0;
+		delay = DEF_DELAY_SEC;
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 
@@ -148,7 +174,6 @@ int main(int argc, char **argv)
 	srand(t);
 	int count = 0;
 	cont = true;
-
 	int sock;
 	EXAMPLE1PACKET pkt;
 
@@ -167,15 +192,13 @@ int main(int argc, char **argv)
 
 				int n = write(sock, &pkt, sizeof(pkt));
 				if (n < 0)
-				{
 					std::cerr << ERR_SOCKET_SEND << intface << ":" << port << ". " << strerror(errno) << std::endl;
-					close(sock);
-					r = !ERR_OK;
-				}
+				shutdown(sock, SHUT_RDWR);
 				close(sock);
 			}
 			else
 			{
+				std::cerr << count << std::endl;
 			}
 			if (delay > 0)
 				sleep(delay);
