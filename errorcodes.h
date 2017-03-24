@@ -71,6 +71,7 @@
 #define ERRCODE_SOCKET_WRITE					44
 
 #define ERRCODE_NN_ACCEPT						45
+#define ERRCODE_PARSE_PACKET					46
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -115,6 +116,6 @@
 #define ERR_SOCKET_READ							"Socket read error "
 #define ERR_SOCKET_WRITE						"Socket write error "
 #define ERR_PARSE_LINE							"Parse message line"
-
+#define ERR_PARSE_PACKET						"Parse packet error "
 
 #endif /* ERRORCODES_H_ */

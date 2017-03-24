@@ -78,7 +78,7 @@ pkt2
 
 Программы
 
-tcpreceiver                  pkt2receiver                                  pkt2gateway       handlerpq
+tcpreceiver                  pkt2receiver                                  [pkt2gateway]     handlerpq
 udpreceiver                                                                message2gateway   
                                                                            example1message   handlerline
 tcpemitter                                                                                   handlerlmdb
@@ -487,7 +487,6 @@ sudo ...
 ```
 ./tcpreceiver --maxfd 100000
 ```
-
  
 ### Запуск демонов
 
@@ -576,10 +575,26 @@ Message *parse(MessageTypeNAddress *descriptor, void *input_packet)
 
 ## Ошибки
 
-
-Socket connect error localhost:50052. Cannot assign requested address 
+### Socket connect error localhost:50052. Cannot assign requested address 
 
 Переполнение стека TCP/IP из-за того, что сервис не успевает обрабатывать данные из сокета.
+
+### Ошибки доступа IPC
+ 
+Operation not permitted [1] (...bipc.c:309)
+
+E0324 13:26:53.405812 16817 tcpreceivernano.cpp:114] Can not connect to the IPC url ipc:///tmp/packet.pkt2
+
+```
+sudo chown <user>:<group> /tmp/packet.pkt2
+```
+## Тесты
+
+Запуск генератора пакета example/example1 и слушателя TCP 
+```
+./tcpreceiver -vv & ./tcpemitter-example1 -vv && fg
+```
+
 
 ## Баги и особенности реализации
 
@@ -608,3 +623,4 @@ rm ~/workspace/.metadata/.plugins/org.eclipse.cdt.core/*
 #### Пропала иконка в Unity launcher
 
 http://askubuntu.com/questions/80013/how-to-pin-eclipse-to-the-unity-launcher
+

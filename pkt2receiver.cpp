@@ -80,7 +80,7 @@ int main
 
 	config = new Config(argc, argv);
 	if (!config)
-		exit(5);
+		exit(ERRCODE_PARSE_COMMAND);
     if (config->error() != 0)
 	{
 		LOG(ERROR) << ERR_COMMAND;
@@ -92,11 +92,13 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done);
+		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done, config->max_fd);
 	}
 	else
 	{
 		LOG(INFO) << MSG_START;
+		if (config->max_fd > 0)
+			Daemonize::setFdLimit(config->max_fd);
 		run();
 		done();
 	}

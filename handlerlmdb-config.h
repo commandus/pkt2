@@ -40,6 +40,7 @@ public:
     std::string proto_path;	 ///< proto files directory path
 
     bool daemonize;
+    int max_fd;				///< 0- use default max file descriptor count per process
     bool stop_request;
     int verbosity;           ///< default 0
     int buffer_size;		 ///< default 4096

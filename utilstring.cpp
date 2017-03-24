@@ -182,3 +182,23 @@ std::string hexString(void *buffer, size_t size)
         return r.str();
 }
 
+std::string readHex(std::istream &s)
+{
+	std::stringstream r;
+	s >> std::noskipws;
+	char c[3] = {0, 0, 0};
+	while (s >> c[0])
+	{
+		if (!(s >> c[1]))
+			break;
+		unsigned char x = (unsigned char) strtol(c, NULL, 16);
+		r << x;
+	}
+	return r.str();
+}
+
+std::string hex2string(const std::string &hex)
+{
+	std::stringstream ss(hex);
+    return readHex(ss);
+}

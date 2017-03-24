@@ -47,6 +47,7 @@ int Config::parseCmd
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
+        struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
@@ -55,7 +56,7 @@ int Config::parseCmd
         void* argtable[] = { 
                 a_in_url, a_out_url, a_buffer_size,
                 a_retries, a_retry_delay,
-                a_daemonize, a_verbosity,
+                a_daemonize, a_max_fd, a_verbosity,
                 a_help, a_end 
         };
 
@@ -111,6 +112,11 @@ int Config::parseCmd
         verbosity = a_verbosity->count;
 
         daemonize = a_daemonize->count > 0;
+
+        if (a_max_fd > 0)
+        	max_fd = *a_max_fd->ival;
+        else
+        	max_fd = 0;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return ERR_OK;

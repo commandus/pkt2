@@ -37,6 +37,7 @@ public:
     int buffer_size;        ///< default 2048
 
     bool daemonize;
+    int max_fd;				///< 0- use default max file descriptor count per process
     bool stop_request;
     int verbosity;          ///< default 0
 };

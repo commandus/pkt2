@@ -59,3 +59,5 @@ std::string spaces(char ch, int count);
  */
 std::string hexString(void *buffer, size_t size);
 
+std::string hex2string(const std::string &hex);
+

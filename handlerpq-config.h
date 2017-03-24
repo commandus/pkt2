@@ -52,10 +52,14 @@ public:
     int dbclientflags;
 
     int buffer_size;
-    int mode;			///< default 4- SQL(2)
+    int mode;				///< default 4- SQL(2)
     bool daemonize;
+    int max_fd;				///< 0- use default max file descriptor count per process
+
     bool stop_request;
     std::string message_url;
+
+
 };
 
 /**

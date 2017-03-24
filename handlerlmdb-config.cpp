@@ -41,6 +41,7 @@ int Config::parseCmd
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
+        struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
         struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
@@ -57,7 +58,7 @@ int Config::parseCmd
         		a_proto_path,
                 a_message_url,
                 a_retries, a_retry_delay,
-                a_daemonize, a_verbosity,
+                a_daemonize, a_max_fd, a_verbosity,
 				a_db_path, a_flags, a_mode,
 				a_buffer_size,
                 a_help, a_end 
@@ -110,6 +111,10 @@ int Config::parseCmd
         verbosity = a_verbosity->count;
 
         daemonize = a_daemonize->count > 0;
+        if (a_max_fd > 0)
+        	max_fd = *a_max_fd->ival;
+        else
+        	max_fd = 0;
 
         if (a_db_path->count)
         	path = *a_db_path->sval;
