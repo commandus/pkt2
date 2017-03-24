@@ -94,11 +94,13 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done);
+		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done, config->max_fd);
 	}
 	else
 	{
 		LOG(INFO) << MSG_START;
+		if (config->max_fd > 0)
+			Daemonize::setFdLimit(config->max_fd);
 		run();
 		done();
 	}

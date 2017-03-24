@@ -40,7 +40,8 @@ public:
 
     bool daemonize;
     bool stop_request;
-    std::string message_url;
+    std::string in_url;
+    std::string out_url;
 };
 
 

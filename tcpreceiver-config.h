@@ -38,6 +38,7 @@ public:
     int retry_delay;        ///< default 60 seconds
 
     bool daemonize;
+    int max_fd;				///< 0- use default max file descriptor count per process
     bool stop_request;
     std::string message_url;
 };

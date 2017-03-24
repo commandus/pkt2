@@ -14,12 +14,13 @@
 
 SERVICE_STATUS        g_ServiceStatus = {0}; 
 SERVICE_STATUS_HANDLE g_StatusHandle = NULL;
+#define DEF_PID_PATH ""
 
 #else
-
+#include <sys/resource.h>
 #include <unistd.h>
 #include <syslog.h>
-
+#define DEF_PID_PATH "/var/run/"
 #endif
 
 static std::string serviceName;
@@ -27,12 +28,23 @@ static TDaemonRunner daemonRun;
 static TDaemonRunner daemonStopRequest;
 static TDaemonRunner daemonDone;
 
+#define DEF_FD_LIMIT			1024*10
 
-Daemonize::Daemonize(const std::string &daemonName, 
-	TDaemonRunner runner, TDaemonRunner stopRequest, TDaemonRunner done)
-	
+Daemonize::Daemonize(
+		const std::string &daemonName,
+		TDaemonRunner runner,
+		TDaemonRunner stopRequest,
+		TDaemonRunner done,
+		const int maxfile_descriptors,
+		const std::string pid_file_name
+)
+	: maxFileDescriptors(maxfile_descriptors)
 {
 	serviceName = daemonName;
+	if (pidFileName.empty())
+		pidFileName = DEF_PID_PATH + daemonName + ".pid";
+	else
+		pidFileName = pid_file_name;
 	daemonRun = runner;
 	daemonStopRequest = stopRequest;
 	daemonDone = done;
@@ -155,6 +167,16 @@ int Daemonize::init()
 	return 0;
 }
 
+int Daemonize::setFdLimit(int value)
+{
+	return 0;
+}
+
+bool Daemonize::setPidFile()
+{
+	return true;
+}
+
 #else
 //See http://stackoverflow.com/questions/17954432/creating-a-daemon-in-linux
 int Daemonize::init()
@@ -207,9 +229,42 @@ int Daemonize::init()
 		close(x);
 	}
 	
+	if (maxFileDescriptors > 0)
+		setFdLimit(maxFileDescriptors);
+	setPidFile();
 	daemonRun();
 	daemonDone();
 	return 0;
 }
+
+/**
+ * Set
+ * @param value	file descriptors per process. Default 1024 on Linux
+ * @return 0- success
+ */
+int Daemonize::setFdLimit(int value)
+{
+    struct rlimit lim;
+    int status;
+
+    // current limit
+    lim.rlim_cur = value;
+    // max limit
+    lim.rlim_max = value;
+    return setrlimit(RLIMIT_NOFILE, &lim);
+}
+
+bool Daemonize::setPidFile()
+{
+	FILE* f = fopen(pidFileName.c_str(), "w+");
+	if (f)
+	{
+		fprintf(f, "%u", getpid());
+		fclose(f);
+		return true;
+	}
+	return false;
+}
+
 
 #endif

@@ -50,3 +50,12 @@ std::string sockaddrToString(struct sockaddr_storage *value);
 std::string timeToString(time_t value);
 
 std::string spaces(char ch, int count);
+
+/**
+ * Return hex string
+ * @param buffer
+ * @param size
+ * @return hex string
+ */
+std::string hexString(void *buffer, size_t size);
+

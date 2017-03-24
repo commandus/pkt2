@@ -5,9 +5,10 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <netinet/in.h>
 
 #include <nanomsg/nn.h>
-#include <nanomsg/pipeline.h>
+#include <nanomsg/pubsub.h>
 
 #include <glog/logging.h>
 
@@ -24,17 +25,23 @@
   */
 int pkt2_receiever_nano(Config *config)
 {
-    int nano_socket = nn_socket(AF_SP, NN_PUSH);
-    if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
+    int nn_sock_in = nn_socket(AF_SP, NN_SUB);
+    int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (r < 0)
+	{
+			LOG(ERROR) << ERR_NN_SUBSCRIBE << config->in_url << " " << errno << " " << strerror(errno);
+			return ERRCODE_NN_SUBSCRIBE;
+	}
+    if (nn_connect(nn_sock_in, config->in_url.c_str()) < 0)
     {
-        LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
+        LOG(ERROR) << ERR_NN_CONNECT << config->in_url;
 		return ERRCODE_NN_CONNECT;
     }
 
     while (!config->stop_request)
     {
         char *buf = NULL;
-        int bytes = nn_recv(nano_socket, &buf, NN_MSG, 0);
+        int bytes = nn_recv(nn_sock_in, &buf, NN_MSG, 0);
 
         if (bytes < 0)
         {
@@ -44,8 +51,10 @@ int pkt2_receiever_nano(Config *config)
         if (buf)
         {
             InputPacket packet(buf, bytes);
-            LOG(INFO) << "packet " << std::string(1, packet.header()->name) << " "
-                << packet.get_socket_addr_src() << " ";
+
+    		LOG(ERROR) << "packet " << std::string(1, packet.header()->name) << " " <<
+    				inet_ntoa(packet.get_sockaddr_src()->sin_addr) << ":" << ntohs(packet.get_sockaddr_src()->sin_port) << "->" <<
+					inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << packet.length << " bytes.";
 
             if (packet.error() != 0)
             {
@@ -55,7 +64,7 @@ int pkt2_receiever_nano(Config *config)
             nn_freemsg(buf);
         }
 	}
-    return nn_shutdown(nano_socket, 0);
+    return nn_shutdown(nn_sock_in, 0);
 }
 
 /**

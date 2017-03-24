@@ -4,8 +4,9 @@
 
 #include "errorcodes.h"
 
-#define DEF_QUEUE                "ipc:///tmp/packet.pkt2"
-#define DEF_BUFFER_SIZE          256
+#define DEF_IN_QUEUE                "ipc:///tmp/packet.pkt2"
+#define DEF_OUT_QUEUE               "ipc:///tmp/message.pkt2"
+#define DEF_BUFFER_SIZE 	         4096
 
 /**
  * Parse command line options
@@ -40,8 +41,9 @@ int Config::parseCmd
         char* argv[]
 )
 {
-        struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
-        struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 256 bytes");
+        struct arg_str *a_in_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
+        struct arg_str *a_out_url = arg_str0("o", "output", "<queue url>", "Default ipc:///tmp/message.pkt2");
+        struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
@@ -51,7 +53,7 @@ int Config::parseCmd
         struct arg_end *a_end = arg_end(20);
 
         void* argtable[] = { 
-                a_message_url, a_buffer_size, 
+                a_in_url, a_out_url, a_buffer_size,
                 a_retries, a_retry_delay,
                 a_daemonize, a_verbosity,
                 a_help, a_end 
@@ -82,10 +84,14 @@ int Config::parseCmd
         }
 
 
-        if (a_message_url->count)
-                message_url = *a_message_url->sval;
+        if (a_in_url->count)
+        	in_url = *a_in_url->sval;
         else
-                message_url = DEF_QUEUE;
+        	in_url = DEF_IN_QUEUE;
+        if (a_out_url->count)
+        	out_url = *a_out_url->sval;
+        else
+            out_url = DEF_OUT_QUEUE;
 
         if (a_buffer_size->count)
                 buffer_size = *a_buffer_size->ival;

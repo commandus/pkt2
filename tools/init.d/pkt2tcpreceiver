@@ -1,0 +1,44 @@
+#!/bin/sh
+set -e
+NAME=tcpreceiver
+PIDFILE=/var/run/$NAME.pid
+DAEMON=/home/andrei/src/pkt2/$NAME
+DAEMON_OPTS="-d"
+
+export PATH="${PATH:+$PATH:}/usr/sbin:/sbin:/home/andrei/src/pkt2"
+
+case "$1" in
+  start)
+        echo -n "Starting daemon: "$NAME
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+        echo "."
+	;;
+  stop)
+        echo -n "Stopping daemon: "$NAME
+	start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE
+        echo "."
+	rm -f $PIDFILE
+	;;
+  restart)
+        echo -n "Restarting daemon: "$NAME
+	start-stop-daemon --stop --quiet --oknodo --retry 30 --pidfile $PIDFILE
+	start-stop-daemon --start --quiet --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS
+	echo "."
+	;;
+  status)
+        printf "%-50s" "Checking $NAME..."
+        if [ -f $PIDFILE ]; then
+            PID=`cat $PIDFILE`
+            if [ -z "`ps axf | grep ${PID} | grep -v grep`" ]; then
+                printf "%s\n" "$NAME dead but pidfile exists"
+            else
+                echo "Running"
+            fi
+        else
+            printf "%s\n" "$NAME not running"
+        fi
+	;;
+  *)
+	echo "Usage: "$0" {start|stop|restart|status}"
+	exit 1
+esac

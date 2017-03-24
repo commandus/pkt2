@@ -12,15 +12,22 @@ typedef void(*TDaemonRunner)();
 class Daemonize
 {
 private:
+	std::string pidFileName;
 	int init();
+	bool setPidFile();
+	int maxFileDescriptors;
 public:
 	Daemonize(
 		const std::string &daemonName,
-		TDaemonRunner runner,				///< function to run as deamon
-		TDaemonRunner stopRequest, 			///< function to stop
-		TDaemonRunner done					///< function to clean after runner exit
+		TDaemonRunner runner,					///< function to run as deamon
+		TDaemonRunner stopRequest, 				///< function to stop
+		TDaemonRunner done,						///< function to clean after runner exit
+		const int maxfile_descriptors = 0,		///< 0- default 1024
+		const std::string pid_file_name = ""	///< if empty, /var/run/program_name.pid is used
+
 	);
 	~Daemonize();
+	static int setFdLimit(int value);
 };
 
 #endif

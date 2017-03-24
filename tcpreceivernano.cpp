@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -104,13 +105,16 @@ int tcp_receiever_nano(Config *config)
 	}
 
     int nano_socket = nn_socket(AF_SP, NN_BUS);
-    if (nn_connect(nano_socket, config->message_url.c_str()) < 0)
+    sleep (1); // wait for connections
+	int timeout = 100;
+	nn_setsockopt(nano_socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
+
+    if (nn_bind(nano_socket, config->message_url.c_str()) < 0)
     {
         LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
         close(socket);	
 		return ERRCODE_NN_CONNECT;
     }
-
 
     if (packet.error() != 0)
     {
@@ -134,7 +138,6 @@ int tcp_receiever_nano(Config *config)
 			continue;
 		}
 
-
 		// Read
         packet.length = read(new_conn_fd, packet.data(), packet.size);
 		// Close the socket
@@ -146,9 +149,20 @@ int tcp_receiever_nano(Config *config)
             continue;
         }
         else
-    		LOG(INFO) << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
-    			inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << packet.length;
-
+        {
+    		if (config->verbosity >= 1)
+    		{
+        		LOG(INFO) << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
+        			inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << packet.length << " bytes.";
+    			if (config->verbosity >= 2)
+    			{
+    				std::cerr << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
+    						inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " "
+							<< packet.length << " bytes: " << hexString(packet.data(), packet.length)
+							<< std::endl;
+    			}
+    		}
+        }
         // send message to the nano queue
 
         int bytes = nn_send(nano_socket, packet.get(), packet.length, 0);

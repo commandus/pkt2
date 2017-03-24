@@ -127,10 +127,11 @@ int main(int argc, char **argv)
     struct arg_str *a_intface = arg_str0("i", "intface", "<host>", "Host name or address. Default 0.0.0.0");
     struct arg_int *a_port = arg_int0("p", "port", "<port number>", "Destination port. Default 50052.");
     struct arg_int *a_delay = arg_int0("d", "delay", "<seconds>", "Delay after send packet. Default 1 (0- no delay).");
+    struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
     struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
     struct arg_end *a_end = arg_end(20);
 
-    void* argtable[] = {a_intface, a_port, a_delay, a_help, a_end};
+    void* argtable[] = {a_intface, a_port, a_delay, a_verbosity, a_help, a_end};
 	// verify the argtable[] entries were allocated successfully
 	if (arg_nullcheck(argtable) != 0)
 	{
@@ -155,6 +156,7 @@ int main(int argc, char **argv)
 	std::string intface;
     int port;
     int delay;
+    int verbosity;
 	if (a_intface->count)
 		intface = *a_intface->sval;
 	else
@@ -167,6 +169,7 @@ int main(int argc, char **argv)
 		delay = *a_delay->ival;
 	else
 		delay = DEF_DELAY_SEC;
+	verbosity = a_verbosity->count;
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 
@@ -179,7 +182,7 @@ int main(int argc, char **argv)
 
 	while (cont)
 	{
-		for (int d = 0; d < 3; d++)
+		for (int d = 0; cont && (d < 3); d++)
 		{
 			int r = open_socket(sock, intface, port);
 			if (r == ERR_OK)
@@ -195,6 +198,15 @@ int main(int argc, char **argv)
 					std::cerr << ERR_SOCKET_SEND << intface << ":" << port << ". " << strerror(errno) << std::endl;
 				shutdown(sock, SHUT_RDWR);
 				close(sock);
+				if (verbosity >= 1)
+				{
+					std::cerr << count;
+					if (verbosity >= 2)
+					{
+						std::cerr << " " << count << " " << d << " " << c;
+					}
+					std::cerr << std::endl;
+				}
 			}
 			else
 			{

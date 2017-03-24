@@ -9,6 +9,7 @@
 #include <fstream>
 #include <sstream>
 #include <streambuf>
+#include <iomanip>
 
 #include <arpa/inet.h>
 
@@ -144,3 +145,40 @@ std::string spaces(char ch, int count)
     }
     return ss.str();
 }
+
+// http://stackoverflow.com/questions/673240/how-do-i-print-an-unsigned-char-as-hex-in-c-using-ostream
+struct HexCharStruct
+{
+        unsigned char c;
+        HexCharStruct(unsigned char _c) : c(_c) { }
+};
+
+inline std::ostream& operator<<(std::ostream& o, const HexCharStruct& hs)
+{
+        return (o << std::setfill('0') << std::setw(2) << std::hex << (int) hs.c);
+}
+
+inline HexCharStruct hex(unsigned char c)
+{
+        return HexCharStruct(c);
+}
+
+void bufferPrintHex(std::ostream &sout, void* value, size_t size)
+{
+        if (value == NULL)
+                return;
+        unsigned char *p = (unsigned char*) value;
+        for (size_t i = 0; i < size; i++)
+        {
+                sout << hex(*p);
+                p++;
+        }
+}
+
+std::string hexString(void *buffer, size_t size)
+{
+        std::stringstream r;
+        bufferPrintHex(r, buffer, size);
+        return r.str();
+}
+
