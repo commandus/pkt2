@@ -51,7 +51,7 @@ bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 # Headers
 #
 nobase_dist_include_HEADERS = \
-NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
+NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  packet2message.h \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-declarations.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
@@ -91,7 +91,7 @@ tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcpreceiver_SOURCES = \
 	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp     ieee754.cpp  snmpagentpkt2.c get_rss.c \
+	daemonize.cpp     snmpagentpkt2.c get_rss.c \
 	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
 	$(common_src)
 
@@ -103,7 +103,7 @@ tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2receiver_SOURCES= \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
-	daemonize.cpp  ieee754.cpp  \
+	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -114,8 +114,8 @@ pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #  pkt2gateway
 #
 pkt2gateway_SOURCES= \
-	pkt2gateway.cpp  pkt2gateway-config.cpp  \
-	daemonize.cpp  ieee754.cpp  \
+	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
+	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -228,7 +228,6 @@ tcpemitter_example1_SOURCES = \
 
 tcpemitter_example1_LDADD = 
 tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
-
 
 #
 # Configs, readme, CMake etc.

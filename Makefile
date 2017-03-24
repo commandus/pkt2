@@ -212,7 +212,8 @@ message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-pkt2gateway-config.$(OBJEXT) \
-	pkt2gateway-daemonize.$(OBJEXT) pkt2gateway-ieee754.$(OBJEXT) \
+	pkt2gateway-packet2message.$(OBJEXT) \
+	pkt2gateway-daemonize.$(OBJEXT) \
 	pkt2gateway-utilpriority.$(OBJEXT) \
 	pkt2gateway-utilstring.$(OBJEXT) \
 	pkt2gateway-utilinet.$(OBJEXT) \
@@ -224,7 +225,6 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-pkt2receivernano.$(OBJEXT) \
 	pkt2receiver-input-packet.$(OBJEXT) \
 	pkt2receiver-daemonize.$(OBJEXT) \
-	pkt2receiver-ieee754.$(OBJEXT) \
 	pkt2receiver-utilpriority.$(OBJEXT) \
 	pkt2receiver-utilstring.$(OBJEXT) \
 	pkt2receiver-utilinet.$(OBJEXT) \
@@ -266,7 +266,7 @@ am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
 	tcpreceiver-input-packet.$(OBJEXT) \
-	tcpreceiver-daemonize.$(OBJEXT) tcpreceiver-ieee754.$(OBJEXT) \
+	tcpreceiver-daemonize.$(OBJEXT) \
 	tcpreceiver-snmpagentpkt2.$(OBJEXT) \
 	tcpreceiver-get_rss.$(OBJEXT) \
 	tcpreceiver-utilpriority.$(OBJEXT) \
@@ -792,7 +792,7 @@ CLEANFILES = $(gengrpcs)
 # Headers
 #
 nobase_dist_include_HEADERS = \
-NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  \
+NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  packet2message.h \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-declarations.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
@@ -831,7 +831,7 @@ tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcpreceiver_SOURCES = \
 	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp     ieee754.cpp  snmpagentpkt2.c get_rss.c \
+	daemonize.cpp     snmpagentpkt2.c get_rss.c \
 	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
 	$(common_src)
 
@@ -843,7 +843,7 @@ tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2receiver_SOURCES = \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
-	daemonize.cpp  ieee754.cpp  \
+	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -854,8 +854,8 @@ pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #  pkt2gateway
 #
 pkt2gateway_SOURCES = \
-	pkt2gateway.cpp  pkt2gateway-config.cpp  \
-	daemonize.cpp  ieee754.cpp  \
+	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
+	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -1230,7 +1230,7 @@ include ./$(DEPDIR)/message2gateway-utilprotobuf.Po
 include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
 include ./$(DEPDIR)/pkt2gateway-daemonize.Po
-include ./$(DEPDIR)/pkt2gateway-ieee754.Po
+include ./$(DEPDIR)/pkt2gateway-packet2message.Po
 include ./$(DEPDIR)/pkt2gateway-pkt2gateway-config.Po
 include ./$(DEPDIR)/pkt2gateway-pkt2gateway.Po
 include ./$(DEPDIR)/pkt2gateway-utilinet.Po
@@ -1238,7 +1238,6 @@ include ./$(DEPDIR)/pkt2gateway-utilpriority.Po
 include ./$(DEPDIR)/pkt2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2receiver-NanoMessage.Po
 include ./$(DEPDIR)/pkt2receiver-daemonize.Po
-include ./$(DEPDIR)/pkt2receiver-ieee754.Po
 include ./$(DEPDIR)/pkt2receiver-input-packet.Po
 include ./$(DEPDIR)/pkt2receiver-pkt2receiver-config.Po
 include ./$(DEPDIR)/pkt2receiver-pkt2receiver.Po
@@ -1272,7 +1271,6 @@ include ./$(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
 include ./$(DEPDIR)/tcpreceiver-NanoMessage.Po
 include ./$(DEPDIR)/tcpreceiver-daemonize.Po
 include ./$(DEPDIR)/tcpreceiver-get_rss.Po
-include ./$(DEPDIR)/tcpreceiver-ieee754.Po
 include ./$(DEPDIR)/tcpreceiver-input-packet.Po
 include ./$(DEPDIR)/tcpreceiver-snmpagentpkt2.Po
 include ./$(DEPDIR)/tcpreceiver-tcpreceiver-config.Po
@@ -2445,6 +2443,20 @@ pkt2gateway-pkt2gateway-config.obj: pkt2gateway-config.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2gateway-config.obj `if test -f 'pkt2gateway-config.cpp'; then $(CYGPATH_W) 'pkt2gateway-config.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2gateway-config.cpp'; fi`
 
+pkt2gateway-packet2message.o: packet2message.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-packet2message.o -MD -MP -MF $(DEPDIR)/pkt2gateway-packet2message.Tpo -c -o pkt2gateway-packet2message.o `test -f 'packet2message.cpp' || echo '$(srcdir)/'`packet2message.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-packet2message.Tpo $(DEPDIR)/pkt2gateway-packet2message.Po
+#	$(AM_V_CXX)source='packet2message.cpp' object='pkt2gateway-packet2message.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-packet2message.o `test -f 'packet2message.cpp' || echo '$(srcdir)/'`packet2message.cpp
+
+pkt2gateway-packet2message.obj: packet2message.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-packet2message.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-packet2message.Tpo -c -o pkt2gateway-packet2message.obj `if test -f 'packet2message.cpp'; then $(CYGPATH_W) 'packet2message.cpp'; else $(CYGPATH_W) '$(srcdir)/packet2message.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-packet2message.Tpo $(DEPDIR)/pkt2gateway-packet2message.Po
+#	$(AM_V_CXX)source='packet2message.cpp' object='pkt2gateway-packet2message.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-packet2message.obj `if test -f 'packet2message.cpp'; then $(CYGPATH_W) 'packet2message.cpp'; else $(CYGPATH_W) '$(srcdir)/packet2message.cpp'; fi`
+
 pkt2gateway-daemonize.o: daemonize.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-daemonize.o -MD -MP -MF $(DEPDIR)/pkt2gateway-daemonize.Tpo -c -o pkt2gateway-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-daemonize.Tpo $(DEPDIR)/pkt2gateway-daemonize.Po
@@ -2458,20 +2470,6 @@ pkt2gateway-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='pkt2gateway-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-
-pkt2gateway-ieee754.o: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-ieee754.o -MD -MP -MF $(DEPDIR)/pkt2gateway-ieee754.Tpo -c -o pkt2gateway-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-ieee754.Tpo $(DEPDIR)/pkt2gateway-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='pkt2gateway-ieee754.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-
-pkt2gateway-ieee754.obj: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-ieee754.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-ieee754.Tpo -c -o pkt2gateway-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-ieee754.Tpo $(DEPDIR)/pkt2gateway-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='pkt2gateway-ieee754.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
 
 pkt2gateway-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-utilpriority.o -MD -MP -MF $(DEPDIR)/pkt2gateway-utilpriority.Tpo -c -o pkt2gateway-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -2598,20 +2596,6 @@ pkt2receiver-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='pkt2receiver-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-
-pkt2receiver-ieee754.o: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-ieee754.o -MD -MP -MF $(DEPDIR)/pkt2receiver-ieee754.Tpo -c -o pkt2receiver-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-ieee754.Tpo $(DEPDIR)/pkt2receiver-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='pkt2receiver-ieee754.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-
-pkt2receiver-ieee754.obj: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-ieee754.obj -MD -MP -MF $(DEPDIR)/pkt2receiver-ieee754.Tpo -c -o pkt2receiver-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-ieee754.Tpo $(DEPDIR)/pkt2receiver-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='pkt2receiver-ieee754.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
 
 pkt2receiver-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-utilpriority.o -MD -MP -MF $(DEPDIR)/pkt2receiver-utilpriority.Tpo -c -o pkt2receiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -3060,20 +3044,6 @@ tcpreceiver-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='tcpreceiver-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-
-tcpreceiver-ieee754.o: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-ieee754.o -MD -MP -MF $(DEPDIR)/tcpreceiver-ieee754.Tpo -c -o tcpreceiver-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-ieee754.Tpo $(DEPDIR)/tcpreceiver-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='tcpreceiver-ieee754.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-ieee754.o `test -f 'ieee754.cpp' || echo '$(srcdir)/'`ieee754.cpp
-
-tcpreceiver-ieee754.obj: ieee754.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-ieee754.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-ieee754.Tpo -c -o tcpreceiver-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-ieee754.Tpo $(DEPDIR)/tcpreceiver-ieee754.Po
-#	$(AM_V_CXX)source='ieee754.cpp' object='tcpreceiver-ieee754.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-ieee754.obj `if test -f 'ieee754.cpp'; then $(CYGPATH_W) 'ieee754.cpp'; else $(CYGPATH_W) '$(srcdir)/ieee754.cpp'; fi`
 
 tcpreceiver-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilpriority.o -MD -MP -MF $(DEPDIR)/tcpreceiver-utilpriority.Tpo -c -o tcpreceiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
