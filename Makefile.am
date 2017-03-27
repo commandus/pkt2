@@ -117,9 +117,10 @@ pkt2gateway_SOURCES= \
 	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
 	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	$(common_src)
 
-pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #

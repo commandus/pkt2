@@ -217,7 +217,15 @@ am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-utilpriority.$(OBJEXT) \
 	pkt2gateway-utilstring.$(OBJEXT) \
 	pkt2gateway-utilinet.$(OBJEXT) \
-	pkt2gateway-NanoMessage.$(OBJEXT) $(am__objects_1)
+	pkt2gateway-NanoMessage.$(OBJEXT) \
+	pkt2gateway-pkt2optionscache.$(OBJEXT) \
+	pkt2gateway-protobuf-declarations.$(OBJEXT) \
+	pkt2gateway-pkt2packetvariable.$(OBJEXT) \
+	pkt2gateway-pkt2.pb.$(OBJEXT) \
+	pkt2gateway-utilprotobuf.$(OBJEXT) \
+	pkt2gateway-error-printer.$(OBJEXT) \
+	pkt2gateway-utilfile.$(OBJEXT) pkt2gateway-pbjson.$(OBJEXT) \
+	$(am__objects_1)
 pkt2gateway_OBJECTS = $(am_pkt2gateway_OBJECTS)
 pkt2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
@@ -857,9 +865,10 @@ pkt2gateway_SOURCES = \
 	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
 	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	$(common_src)
 
-pkt2gateway_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
@@ -1230,11 +1239,19 @@ include ./$(DEPDIR)/message2gateway-utilprotobuf.Po
 include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
 include ./$(DEPDIR)/pkt2gateway-daemonize.Po
+include ./$(DEPDIR)/pkt2gateway-error-printer.Po
 include ./$(DEPDIR)/pkt2gateway-packet2message.Po
+include ./$(DEPDIR)/pkt2gateway-pbjson.Po
+include ./$(DEPDIR)/pkt2gateway-pkt2.pb.Po
 include ./$(DEPDIR)/pkt2gateway-pkt2gateway-config.Po
 include ./$(DEPDIR)/pkt2gateway-pkt2gateway.Po
+include ./$(DEPDIR)/pkt2gateway-pkt2optionscache.Po
+include ./$(DEPDIR)/pkt2gateway-pkt2packetvariable.Po
+include ./$(DEPDIR)/pkt2gateway-protobuf-declarations.Po
+include ./$(DEPDIR)/pkt2gateway-utilfile.Po
 include ./$(DEPDIR)/pkt2gateway-utilinet.Po
 include ./$(DEPDIR)/pkt2gateway-utilpriority.Po
+include ./$(DEPDIR)/pkt2gateway-utilprotobuf.Po
 include ./$(DEPDIR)/pkt2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2receiver-NanoMessage.Po
 include ./$(DEPDIR)/pkt2receiver-daemonize.Po
@@ -2526,6 +2543,118 @@ pkt2gateway-NanoMessage.obj: NanoMessage.cpp
 #	$(AM_V_CXX)source='NanoMessage.cpp' object='pkt2gateway-NanoMessage.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+
+pkt2gateway-pkt2optionscache.o: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2optionscache.Tpo -c -o pkt2gateway-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pkt2optionscache.Tpo $(DEPDIR)/pkt2gateway-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='pkt2gateway-pkt2optionscache.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+
+pkt2gateway-pkt2optionscache.obj: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2optionscache.Tpo -c -o pkt2gateway-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pkt2optionscache.Tpo $(DEPDIR)/pkt2gateway-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='pkt2gateway-pkt2optionscache.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+
+pkt2gateway-protobuf-declarations.o: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/pkt2gateway-protobuf-declarations.Tpo -c -o pkt2gateway-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-protobuf-declarations.Tpo $(DEPDIR)/pkt2gateway-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='pkt2gateway-protobuf-declarations.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+
+pkt2gateway-protobuf-declarations.obj: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-protobuf-declarations.Tpo -c -o pkt2gateway-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-protobuf-declarations.Tpo $(DEPDIR)/pkt2gateway-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='pkt2gateway-protobuf-declarations.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+
+pkt2gateway-pkt2packetvariable.o: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2packetvariable.Tpo -c -o pkt2gateway-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pkt2packetvariable.Tpo $(DEPDIR)/pkt2gateway-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='pkt2gateway-pkt2packetvariable.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+
+pkt2gateway-pkt2packetvariable.obj: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2packetvariable.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2packetvariable.Tpo -c -o pkt2gateway-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pkt2packetvariable.Tpo $(DEPDIR)/pkt2gateway-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='pkt2gateway-pkt2packetvariable.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+
+pkt2gateway-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2.pb.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2.pb.Tpo -c -o pkt2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pkt2.pb.Tpo $(DEPDIR)/pkt2gateway-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='pkt2gateway-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+pkt2gateway-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2.pb.Tpo -c -o pkt2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pkt2.pb.Tpo $(DEPDIR)/pkt2gateway-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='pkt2gateway-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
+pkt2gateway-utilprotobuf.o: utilprotobuf.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-utilprotobuf.o -MD -MP -MF $(DEPDIR)/pkt2gateway-utilprotobuf.Tpo -c -o pkt2gateway-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-utilprotobuf.Tpo $(DEPDIR)/pkt2gateway-utilprotobuf.Po
+#	$(AM_V_CXX)source='utilprotobuf.cpp' object='pkt2gateway-utilprotobuf.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+
+pkt2gateway-utilprotobuf.obj: utilprotobuf.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-utilprotobuf.Tpo -c -o pkt2gateway-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-utilprotobuf.Tpo $(DEPDIR)/pkt2gateway-utilprotobuf.Po
+#	$(AM_V_CXX)source='utilprotobuf.cpp' object='pkt2gateway-utilprotobuf.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+
+pkt2gateway-error-printer.o: error-printer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-error-printer.o -MD -MP -MF $(DEPDIR)/pkt2gateway-error-printer.Tpo -c -o pkt2gateway-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-error-printer.Tpo $(DEPDIR)/pkt2gateway-error-printer.Po
+#	$(AM_V_CXX)source='error-printer.cpp' object='pkt2gateway-error-printer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+
+pkt2gateway-error-printer.obj: error-printer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-error-printer.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-error-printer.Tpo -c -o pkt2gateway-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-error-printer.Tpo $(DEPDIR)/pkt2gateway-error-printer.Po
+#	$(AM_V_CXX)source='error-printer.cpp' object='pkt2gateway-error-printer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+
+pkt2gateway-utilfile.o: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-utilfile.o -MD -MP -MF $(DEPDIR)/pkt2gateway-utilfile.Tpo -c -o pkt2gateway-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-utilfile.Tpo $(DEPDIR)/pkt2gateway-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='pkt2gateway-utilfile.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+pkt2gateway-utilfile.obj: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-utilfile.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-utilfile.Tpo -c -o pkt2gateway-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-utilfile.Tpo $(DEPDIR)/pkt2gateway-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='pkt2gateway-utilfile.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+pkt2gateway-pbjson.o: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pbjson.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pbjson.Tpo -c -o pkt2gateway-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pbjson.Tpo $(DEPDIR)/pkt2gateway-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='pkt2gateway-pbjson.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+pkt2gateway-pbjson.obj: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pbjson.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-pbjson.Tpo -c -o pkt2gateway-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-pbjson.Tpo $(DEPDIR)/pkt2gateway-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='pkt2gateway-pbjson.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
 pkt2receiver-pkt2receiver.o: pkt2receiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-pkt2receiver.o -MD -MP -MF $(DEPDIR)/pkt2receiver-pkt2receiver.Tpo -c -o pkt2receiver-pkt2receiver.o `test -f 'pkt2receiver.cpp' || echo '$(srcdir)/'`pkt2receiver.cpp
