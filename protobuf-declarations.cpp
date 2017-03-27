@@ -45,6 +45,7 @@ const std::string fileNameSuffixProto = (".proto");
  * @brief After addPath() and parseProtoPath()
  */
 ProtobufDeclarations::ProtobufDeclarations()
+	: verbosity(0)
 {
 	// Allocate the Importer.
 	importer = new Importer(&source_tree, &mf_error_printer);
@@ -56,8 +57,10 @@ ProtobufDeclarations::ProtobufDeclarations()
  * @param path
  */
 ProtobufDeclarations::ProtobufDeclarations(
-	const std::string &path
+	const std::string &path,
+	int verbose
 )
+	: verbosity(verbose)
 {
 	// Allocate the Importer.
 	importer = new Importer(&source_tree, &mf_error_printer);
@@ -346,16 +349,22 @@ size_t ProtobufDeclarations::parseProtoPath
 	std::vector<std::string> protoFiles;
 	filesInPath(path, ".proto", 2, &protoFiles);
 
-	LOG(INFO) << MSG_PROTO_FILES_HEADER;
-	for (std::vector<std::string>::iterator iter = protoFiles.begin(); iter != protoFiles.end(); ++iter)
-		LOG(INFO) << *iter;
+	if (verbosity >= 2)
+	{
+		LOG(INFO) << MSG_PROTO_FILES_HEADER;
+		for (std::vector<std::string>::iterator iter = protoFiles.begin(); iter != protoFiles.end(); ++iter)
+			LOG(INFO) << *iter;
+	}
 
 	size_t r = parseProtoFiles(protoFiles);
 
-	LOG(INFO) << MSG_PARSE_PROTO_COUNT << r;
-	LOG(INFO) << MSG_MESSAGE_HEADER;
-	for (std::map<std::string, const google::protobuf::Descriptor*>::iterator iter = internalMessages.begin(); iter != internalMessages.end(); ++iter)
-		LOG(INFO) << iter->first;
+	if (verbosity >= 2)
+	{
+		LOG(INFO) << MSG_PARSE_PROTO_COUNT << r;
+		LOG(INFO) << MSG_MESSAGE_HEADER;
+		for (std::map<std::string, const google::protobuf::Descriptor*>::iterator iter = internalMessages.begin(); iter != internalMessages.end(); ++iter)
+			LOG(INFO) << iter->first;
+	}
 	return r;
 }
 

@@ -40,6 +40,7 @@ public:
     std::string file_name;
     std::string mode;				///< "raw", "hex", <Packet.message>
     std::string proto_path;			///< proto files directory path
+    std::string force_message;
 
     bool daemonize;
     bool stop_request;

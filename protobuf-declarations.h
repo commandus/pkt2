@@ -20,6 +20,7 @@
 
 class ProtobufDeclarations {
 private:
+	int verbosity;
 	std::map<std::string, const google::protobuf::Descriptor*> internalMessages;
 	// google::protobuf::Arena arena;
 	std::vector<std::string> paths;
@@ -56,7 +57,8 @@ public:
 	 */
 	ProtobufDeclarations
 	(
-		const std::string &path
+		const std::string &path,
+		int verbose
 	);
 
 	virtual ~ProtobufDeclarations();

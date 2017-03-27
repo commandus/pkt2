@@ -96,7 +96,7 @@ int tcp_emitter_line(Config *config)
     	strm = &std::cin;
     }
 
-    ProtobufDeclarations pd(config->proto_path);
+    ProtobufDeclarations pd(config->proto_path, config->verbosity);
     Pkt2OptionsCache poc(&pd);
     // read lines from the file or stdin
     while ((!config->stop_request) && (!strm->eof()))

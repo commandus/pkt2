@@ -23,6 +23,7 @@
 #define MSG_PROTO_FILES_HEADER					"Protobuf files: "
 #define MSG_MESSAGE_HEADER						"Protobuf messages: "
 #define MSG_CONNECTED_TO						"Connected to: "
+#define MSG_PACKET_HEX							"Packet (hex): "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							1

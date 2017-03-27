@@ -190,7 +190,7 @@ int run
 		return ERRCODE_LMDB_OPEN;
 	}
 
-	ProtobufDeclarations pd(config->proto_path);
+	ProtobufDeclarations pd(config->proto_path, config->verbosity);
 	if (!pd.getMessageCount())
 	{
 		LOG(ERROR) << ERR_LOAD_PROTO << config->proto_path;

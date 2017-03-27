@@ -1,4 +1,5 @@
 #include <string>
+#include <iostream>
 #include <sstream>
 #include <vector>
 #include <stdint.h>
@@ -15,6 +16,9 @@ std::string &trim(std::string &s);
 
 // replace string
 std::string replace(const std::string &str, const std::string &from, const std::string &to);
+
+// read file
+std::string file2string(std::istream &strm);
 
 // read file
 std::string file2string(const std::string &filename);
@@ -58,6 +62,13 @@ std::string spaces(char ch, int count);
  * @return hex string
  */
 std::string hexString(void *buffer, size_t size);
+
+/**
+ * Return hex string
+ * @param data
+ * @return
+ */
+std::string hexString(const std::string &data);
 
 std::string hex2string(const std::string &hex);
 

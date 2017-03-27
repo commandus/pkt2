@@ -66,6 +66,18 @@ int Pkt2OptionsCache::size_of
 	}
 }
 
+const Pkt2PacketVariable &Pkt2OptionsCache::getPacketVariable
+(
+	const std::string &message_type,
+	bool *found
+)
+{
+	std::map<std::string, Pkt2PacketVariable>::iterator m = pkt2packet_variable.find(message_type);
+	if (found)
+		*found = (m == pkt2packet_variable.end());
+	return pkt2packet_variable[message_type];
+}
+
 /**
  * Check if field have index
  * @param message_type message name

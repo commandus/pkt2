@@ -29,6 +29,12 @@ public:
 	
 	std::map<std::string, Pkt2PacketVariable> pkt2packet_variable;
 
+	const Pkt2PacketVariable &getPacketVariable
+	(
+			const std::string &message_type,
+			bool *found
+	);
+
 	/**
 	 * Check if field have index
 	 * @param message_type message name

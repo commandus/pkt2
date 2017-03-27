@@ -44,9 +44,11 @@ std::string replace(const std::string &str, const std::string &from, const std::
 	return ret;
 }
 
-std::string file2string(const std::string &filename)
+std::string file2string(std::istream &strm)
 {
-	return file2string(filename.c_str());
+	if (!strm)
+		return "";
+	return std::string((std::istreambuf_iterator<char>(strm)), std::istreambuf_iterator<char>());
 }
 
 std::string file2string(const char *filename)
@@ -54,7 +56,12 @@ std::string file2string(const char *filename)
 	if (!filename)
 		return "";
 	std::ifstream t(filename);
-	return std::string((std::istreambuf_iterator<char>(t)), std::istreambuf_iterator<char>());
+	return file2string(t);
+}
+
+std::string file2string(const std::string &filename)
+{
+	return file2string(filename.c_str());
 }
 
 bool string2file(const std::string &filename, const std::string &value)
@@ -181,6 +188,17 @@ std::string hexString(void *buffer, size_t size)
         bufferPrintHex(r, buffer, size);
         return r.str();
 }
+
+/**
+ * Return hex string
+ * @param data
+ * @return
+ */
+std::string hexString(const std::string &data)
+{
+	return hexString((void *) data.c_str(), data.size());
+}
+
 
 std::string readHex(std::istream &s)
 {

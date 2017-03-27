@@ -39,6 +39,7 @@ int Config::parseCmd
         struct arg_str *a_mode = arg_str0("m", "mode", "raw|hex|<packet.message>", "Data format. Default raw.");
         struct arg_file *a_input_file = arg_file0("f", "file", "<file name>", "otherwise stdin");
         struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
+        struct arg_str *a_force_message = arg_str0(NULL, "message", "<packet.message>", "force message");
 
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Repeat each message. Default 1.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on repeats in seconds. Default 0");
@@ -49,7 +50,7 @@ int Config::parseCmd
         struct arg_end *a_end = arg_end(20);
 
         void* argtable[] = {
-        		a_proto_path,
+        		a_proto_path, a_force_message,
         		a_packet, a_mode, a_input_file, a_message_out_url,
 				a_retries, a_retry_delay, a_verbosity,
                 a_help, a_end
@@ -83,6 +84,11 @@ int Config::parseCmd
         	proto_path = *a_proto_path->sval;
         else
         	proto_path = DEF_PROTO_PATH;
+
+        if (a_force_message->count)
+        	force_message = *a_force_message->sval;
+        else
+        	force_message = "";
 
         if (a_mode->count)
         	mode = *a_mode->sval;
