@@ -54,7 +54,7 @@ message TemperaturePkt
         name: "device_id"
         short_name: "Устройство"
         full_name: "Номер устройства"
-        get: "device"
+        get: "field.device"
         priority: 0                                 // required
         index: 2
     }];
@@ -64,7 +64,7 @@ message TemperaturePkt
         short_name: "Время"
         full_name: "Время, с"
         measure_unit: "s"
-        get: "unix_time"
+        get: "field.unix_time"
         priority: 0                                 // required
         index: 1
     }];
@@ -74,7 +74,7 @@ message TemperaturePkt
         short_name: "Температура"
         full_name: "Температура, C"
         measure_unit: "C"
-        get: "1.22 * value"
+        get: "1.22 * field.value"
         priority: 0                                 // required
         format: "%8.2f"
     }];
