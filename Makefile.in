@@ -225,7 +225,7 @@ am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-utilprotobuf.$(OBJEXT) \
 	pkt2gateway-error-printer.$(OBJEXT) \
 	pkt2gateway-utilfile.$(OBJEXT) pkt2gateway-pbjson.$(OBJEXT) \
-	$(am__objects_1)
+	duk/pkt2gateway-duktape.$(OBJEXT) $(am__objects_1)
 pkt2gateway_OBJECTS = $(am_pkt2gateway_OBJECTS)
 pkt2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
@@ -815,7 +815,8 @@ rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybu
 rapidjson/error/en.h             rapidjson/error/error.h \
 rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
-rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h 
+rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
+duk/duk_config.h  duk/duktape.h 
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
@@ -866,6 +867,7 @@ pkt2gateway_SOURCES = \
 	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
+	duk/duktape.c \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
@@ -1128,6 +1130,14 @@ handlerpq$(EXEEXT): $(handlerpq_OBJECTS) $(handlerpq_DEPENDENCIES) $(EXTRA_handl
 message2gateway$(EXEEXT): $(message2gateway_OBJECTS) $(message2gateway_DEPENDENCIES) $(EXTRA_message2gateway_DEPENDENCIES) 
 	@rm -f message2gateway$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(message2gateway_OBJECTS) $(message2gateway_LDADD) $(LIBS)
+duk/$(am__dirstamp):
+	@$(MKDIR_P) duk
+	@: > duk/$(am__dirstamp)
+duk/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) duk/$(DEPDIR)
+	@: > duk/$(DEPDIR)/$(am__dirstamp)
+duk/pkt2gateway-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
 
 pkt2gateway$(EXEEXT): $(pkt2gateway_OBJECTS) $(pkt2gateway_DEPENDENCIES) $(EXTRA_pkt2gateway_DEPENDENCIES) 
 	@rm -f pkt2gateway$(EXEEXT)
@@ -1159,6 +1169,7 @@ tcptransmitter$(EXEEXT): $(tcptransmitter_OBJECTS) $(tcptransmitter_DEPENDENCIES
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f duk/*.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
 
 distclean-compile:
@@ -1303,6 +1314,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilinet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@duk/$(DEPDIR)/pkt2gateway-duktape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/example1message-example1.pb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/example1message1-example1.pb.Po@am__quote@
 
@@ -1329,6 +1341,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+duk/pkt2gateway-duktape.o: duk/duktape.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2gateway-duktape.o -MD -MP -MF duk/$(DEPDIR)/pkt2gateway-duktape.Tpo -c -o duk/pkt2gateway-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/pkt2gateway-duktape.Tpo duk/$(DEPDIR)/pkt2gateway-duktape.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='duk/duktape.c' object='duk/pkt2gateway-duktape.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/pkt2gateway-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/pkt2gateway-duktape.obj: duk/duktape.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2gateway-duktape.obj -MD -MP -MF duk/$(DEPDIR)/pkt2gateway-duktape.Tpo -c -o duk/pkt2gateway-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/pkt2gateway-duktape.Tpo duk/$(DEPDIR)/pkt2gateway-duktape.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='duk/duktape.c' object='duk/pkt2gateway-duktape.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/pkt2gateway-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
 tcpreceiver-snmpagentpkt2.o: snmpagentpkt2.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-snmpagentpkt2.o -MD -MP -MF $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo -c -o tcpreceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
@@ -3887,6 +3913,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f duk/$(DEPDIR)/$(am__dirstamp)
+	-rm -f duk/$(am__dirstamp)
 	-rm -f example/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/$(am__dirstamp)
 
@@ -3900,7 +3928,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) example/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -3949,7 +3977,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) example/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

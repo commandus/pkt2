@@ -74,7 +74,7 @@ const Pkt2PacketVariable &Pkt2OptionsCache::getPacketVariable
 {
 	std::map<std::string, Pkt2PacketVariable>::iterator m = pkt2packet_variable.find(message_type);
 	if (found)
-		*found = (m == pkt2packet_variable.end());
+		*found = (m != pkt2packet_variable.end());
 	return pkt2packet_variable[message_type];
 }
 

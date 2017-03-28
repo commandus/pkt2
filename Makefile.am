@@ -66,7 +66,8 @@ rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybu
 rapidjson/error/en.h             rapidjson/error/error.h \
 rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
-rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h 
+rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
+duk/duk_config.h  duk/duktape.h 
 
 common_src =
 
@@ -118,6 +119,7 @@ pkt2gateway_SOURCES= \
 	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
+	duk/duktape.c \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
