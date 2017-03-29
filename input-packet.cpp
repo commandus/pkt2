@@ -42,6 +42,15 @@ InputPacket::InputPacket
     parse();
 }
 
+InputPacket::InputPacket
+(
+	const std::string &data
+)
+	: InputPacket((void *) &data[0], (size_t) data.size())
+{
+
+}
+
 InputPacket::~InputPacket() 
 {
     if (message)

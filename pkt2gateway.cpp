@@ -106,7 +106,7 @@ int main(int argc, char **argv)
     }
 
     Packet2Message packet2Message(config->proto_path, config->verbosity);
-    google::protobuf::Message *m = packet2Message.parse(packet, config->force_message);
+    google::protobuf::Message *m = packet2Message.parse(NULL, NULL, packet, config->force_message);
 
     if (m == NULL)
     {

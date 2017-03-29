@@ -24,6 +24,8 @@ public:
 	virtual ~Packet2Message();
 	google::protobuf::Message *parse
 	(
+	    struct sockaddr *socket_address_src,
+	    struct sockaddr *socket_address_dst,
 		const std::string &packet,
 		const std::string &force_message
 	);

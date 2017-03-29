@@ -27,6 +27,7 @@ public:
 
     InputPacket(char typ, size_t data_size);
     InputPacket(void *data, size_t data_size);
+    InputPacket(const std::string &data);
     virtual ~InputPacket();
 
     /// buffer

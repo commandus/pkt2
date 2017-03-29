@@ -1,14 +1,38 @@
 /*
  * packet2message.cpp
  *
- *  Created on: Mar 24, 2017
- *      Author: andrei
+ * time
+ * src.ip
+ *
+ *
+ *
+	// src.ip, src.port
+	putSocketAddress(ctx, "src", socket_src);
+	// dst
+	putSocketAddress(ctx, "dst", socket_dst);
+
+	// field
+	duk_push_global_object(ctx);
+	duk_push_object(ctx);
+
+	for (int i = 0; i < pv.packet.fields_size(); i++)
+	{
+		const pkt2::Field &f = pv.packet.fields(i);
+		pushField(ctx, packet, f);
+		duk_put_prop_string(ctx, -2, f.name().c_str());
+	}
+	duk_put_global_string(ctx, "field");
+
  */
 
 #include <string.h>
 #include <algorithm>
 
 #include <glog/logging.h>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "duk/duktape.h"
 
@@ -156,30 +180,80 @@ void pushField
 
 }
 
-static duk_ret_t native_print
+void putSocketAddress
 (
-		duk_context *ctx
-)
+	duk_context * ctx,
+	const std::string &objectName,
+	struct sockaddr *socket_addr
+	)
 {
-        duk_push_string(ctx, " ");
-        duk_insert(ctx, 0);
-        duk_join(ctx, duk_get_top(ctx) - 1);
-        printf("%s\n", duk_safe_to_string(ctx, -1));
-        return 0;
+	duk_push_global_object(ctx);
+	duk_push_object(ctx);
+	std::string ip = "";
+	uint32_t ip4 = 0;
+	uint32_t port = 0;
+	char str[INET6_ADDRSTRLEN];
+
+	if (socket_addr)
+	{
+		if (socket_addr->sa_family == AF_INET)
+		{
+			struct sockaddr_in *in = (struct sockaddr_in*) socket_addr;
+			ip4 = in->sin_addr.s_addr;
+			port = in->sin_port;
+			inet_ntop(AF_INET, &(in->sin_addr.s_addr), str, INET_ADDRSTRLEN);
+			ip = std::string(str);
+		}
+		if (socket_addr->sa_family == AF_INET6)
+		{
+			struct sockaddr_in6 *in = (struct sockaddr_in6*) socket_addr;
+			port = in->sin6_port;
+			inet_ntop(AF_INET6, &(in->sin6_addr), str, INET6_ADDRSTRLEN);
+			ip = std::string(str);
+
+		}
+	}
+
+	duk_push_uint(ctx, ip4);
+	duk_put_prop_string(ctx, -2, "ip4");
+
+	duk_push_uint(ctx, port);
+	duk_put_prop_string(ctx, -2, "port");
+
+	duk_push_string(ctx, ip.c_str());
+	duk_put_prop_string(ctx, -2, "ip");
+
+	duk_put_global_string(ctx, objectName.c_str());
 }
 
+/**
+ * Create Javascript context with global object field.xxx
+ * @param pv
+ * @param socket_address_src
+ * @param socket_address_dst
+ * @param packet
+ * @return
+ */
 duk_context *makeJavascriptContext
 (
-		const Pkt2PacketVariable &pv,
-		const std::string &packet
+	const Pkt2PacketVariable &pv,
+	struct sockaddr *socket_src,
+	struct sockaddr *socket_dst,
+	const std::string &packet
 )
 {
 	duk_context *ctx = duk_create_heap_default();
 
-	duk_push_c_function(ctx, native_print, DUK_VARARGS);
-	duk_put_global_string(ctx, "print");
+	// current time
+	duk_push_uint(ctx, time(NULL));
+	duk_put_prop_string(ctx, -2, "time");
 
-	// field--
+	// src.ip, src.port
+	putSocketAddress(ctx, "src", socket_src);
+	// dst
+	putSocketAddress(ctx, "dst", socket_dst);
+
+	// field
 	duk_push_global_object(ctx);
 	duk_push_object(ctx);
 
@@ -190,45 +264,37 @@ duk_context *makeJavascriptContext
 		duk_put_prop_string(ctx, -2, f.name().c_str());
 	}
 	duk_put_global_string(ctx, "field");
-
-	/*
-	for (int i = 0; i < pv.fieldname_variables.size(); i++)
-	{
-		const FieldNameVariable &v = pv.fieldname_variables[i];
-
-		duk_push_int(ctx, extractFieldUInt(packet, v));
-		duk_put_prop_string(ctx, -2, v.field_name.c_str());
-	}
-	*/
-
-	// --field
 	return ctx;
 }
 
 /**
  * Get variable from the packet as string
- * @param packet
+ * @param ctx
  * @param variable
  * @return
  */
 std::string extractVariable
 (
-	const Pkt2PacketVariable &pv,
-	const FieldNameVariable &variable,
-	const std::string &packet
+	duk_context *ctx,
+	const FieldNameVariable &variable
 )
 {
-	// js(pv, variable, packet);
-	return variable.var.get();
+	duk_eval_string(ctx, variable.var.get().c_str());
+    return duk_safe_to_string(ctx, -1);
 }
 
 /**
- *
+ * Parse packet
+ * @param socket_address_src can be NULL
+ * @param socket_address_dst can be NULL
  * @param packet
  * @param force_message packet.message or "" (no force)
  * @return
- */google::protobuf::Message *Packet2Message::parse
+ */
+google::protobuf::Message *Packet2Message::parse
 (
+    struct sockaddr *socket_address_src,
+    struct sockaddr *socket_address_dst,
 	const std::string &packet,
 	const std::string &force_message
 )
@@ -244,7 +310,8 @@ std::string extractVariable
 		return NULL;
 	}
 
-	duk_context *jsCtx = makeJavascriptContext(pv, packet);
+	// Create Javascript context with global object field.xxx
+	duk_context *jsCtx = makeJavascriptContext(pv, socket_address_src, socket_address_dst, packet);
 	if (verbosity >= 2)
 	{
 		// packet input fields
@@ -257,12 +324,9 @@ std::string extractVariable
 		for (int i = 0; i < pv.fieldname_variables.size(); i++)
 		{
 			FieldNameVariable v = pv.fieldname_variables[i];
-			LOG(INFO) << v.field_name << "(" << v.var.full_name() << ") = " << extractVariable(pv, v, packet) << v.var.measure_unit();
+			LOG(INFO) << v.field_name << "(" << v.var.full_name() << ") = " << extractVariable(jsCtx, v) << v.var.measure_unit();
 		}
-
 	}
-
-	duk_eval_string(jsCtx, "print(field.device);print(field.unix_time);print(field.value);");
 
 	duk_pop(jsCtx);
 	duk_destroy_heap(jsCtx);
