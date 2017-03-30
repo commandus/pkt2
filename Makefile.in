@@ -225,6 +225,7 @@ am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-utilprotobuf.$(OBJEXT) \
 	pkt2gateway-error-printer.$(OBJEXT) \
 	pkt2gateway-utilfile.$(OBJEXT) pkt2gateway-pbjson.$(OBJEXT) \
+	pkt2gateway-messagecomposer.$(OBJEXT) \
 	duk/pkt2gateway-duktape.$(OBJEXT) $(am__objects_1)
 pkt2gateway_OBJECTS = $(am_pkt2gateway_OBJECTS)
 pkt2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
@@ -806,7 +807,7 @@ protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-de
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
-linewriter.h handlerline-config.h messagedecomposer.h fieldnamevalueindexstrings.h \
+linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -867,6 +868,7 @@ pkt2gateway_SOURCES = \
 	daemonize.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
+	messagecomposer.cpp \
 	duk/duktape.c \
 	$(common_src)
 
@@ -1251,6 +1253,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-NanoMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-error-printer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-messagecomposer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-packet2message.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-pbjson.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-pkt2.pb.Po@am__quote@
@@ -2681,6 +2684,20 @@ pkt2gateway-pbjson.obj: pbjson.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='pkt2gateway-pbjson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+pkt2gateway-messagecomposer.o: messagecomposer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-messagecomposer.o -MD -MP -MF $(DEPDIR)/pkt2gateway-messagecomposer.Tpo -c -o pkt2gateway-messagecomposer.o `test -f 'messagecomposer.cpp' || echo '$(srcdir)/'`messagecomposer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-messagecomposer.Tpo $(DEPDIR)/pkt2gateway-messagecomposer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='messagecomposer.cpp' object='pkt2gateway-messagecomposer.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-messagecomposer.o `test -f 'messagecomposer.cpp' || echo '$(srcdir)/'`messagecomposer.cpp
+
+pkt2gateway-messagecomposer.obj: messagecomposer.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-messagecomposer.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-messagecomposer.Tpo -c -o pkt2gateway-messagecomposer.obj `if test -f 'messagecomposer.cpp'; then $(CYGPATH_W) 'messagecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagecomposer.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-messagecomposer.Tpo $(DEPDIR)/pkt2gateway-messagecomposer.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='messagecomposer.cpp' object='pkt2gateway-messagecomposer.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-messagecomposer.obj `if test -f 'messagecomposer.cpp'; then $(CYGPATH_W) 'messagecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagecomposer.cpp'; fi`
 
 pkt2receiver-pkt2receiver.o: pkt2receiver.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-pkt2receiver.o -MD -MP -MF $(DEPDIR)/pkt2receiver-pkt2receiver.Tpo -c -o pkt2receiver-pkt2receiver.o `test -f 'pkt2receiver.cpp' || echo '$(srcdir)/'`pkt2receiver.cpp

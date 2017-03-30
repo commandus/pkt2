@@ -38,6 +38,7 @@
 
 #include "packet2message.h"
 #include "pkt2packetvariable.h"
+#include "messagecomposer.h"
 #include "platform.h"
 #include "errorcodes.h"
 #include "utilstring.h"
@@ -245,7 +246,9 @@ duk_context *makeJavascriptContext
 	duk_context *ctx = duk_create_heap_default();
 
 	// current time
-	duk_push_uint(ctx, time(NULL));
+	time_t t =  time(NULL);
+	duk_push_global_object(ctx);
+	duk_push_uint(ctx, t);
 	duk_put_prop_string(ctx, -2, "time");
 
 	// src.ip, src.port
@@ -281,6 +284,32 @@ std::string extractVariable
 {
 	duk_eval_string(ctx, variable.var.get().c_str());
     return duk_safe_to_string(ctx, -1);
+}
+
+bool oncomposefield (
+	void* env,
+	const google::protobuf::Descriptor *message_descriptor,
+	const google::protobuf::FieldDescriptor::CppType field_type,
+	const std::string &message_name,
+	const std::string &field_name,
+	bool repeated,
+	int index,
+	std::string &retval
+)
+{
+	LOG(INFO) << message_name << "." << field_name;
+	retval = "0";
+	return false;
+}
+
+bool onnextmessage
+(
+	void* env,
+	google::protobuf::Message* message,
+	int index
+)
+{
+	return false;
 }
 
 /**
@@ -328,8 +357,16 @@ google::protobuf::Message *Packet2Message::parse
 		}
 	}
 
+	google::protobuf::Message *m = declarations->getMessage(pv.message_type);
+
+	if (m)
+	{
+		// TODO
+		MessageComposer mc(this, options_cache, m, oncomposefield, onnextmessage);
+	}
+
 	duk_pop(jsCtx);
 	duk_destroy_heap(jsCtx);
 
-	return NULL;	
+	return m;
 }

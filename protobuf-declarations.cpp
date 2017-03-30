@@ -127,6 +127,25 @@ const google::protobuf::Descriptor* ProtobufDeclarations::getMessageDescriptor
 }
 
 /**
+ * Get a new message
+ * @param message_name
+ * @return NULL if not found
+ */
+Message *ProtobufDeclarations::getMessage
+(
+	const std::string &message_name
+)
+{
+	// Look up the type.
+	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
+	if (type == NULL)
+		return NULL;
+
+	Message *message(dynamic_factory->GetPrototype(type)->New());
+	return message;
+}
+
+/**
  * @brief decode message from the stream
  * @param message_name Protobuf message name
  * @param stream
@@ -138,12 +157,9 @@ Message *ProtobufDeclarations::decode
 	google::protobuf::io::CodedInputStream *stream
 )
 {
-	// Look up the type.
-	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);
-	if (type == NULL)
+	Message *message = getMessage(message_name);
+	if (!message)
 		return NULL;
-
-	Message *message(dynamic_factory->GetPrototype(type)->New());
 
 	// Input is binary.
 	if (!message->ParsePartialFromCodedStream(stream))

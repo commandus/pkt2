@@ -13,6 +13,7 @@
 #include "pkt2optionscache.h"
 
 /**
+  * Parse Protobuf message
   * @brief "Parse" message using callback
   */
 class MessageDecomposer {

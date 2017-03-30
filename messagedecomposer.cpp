@@ -184,9 +184,11 @@ int MessageDecomposer::decompose
     const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
     if (!message_descriptor)
         return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
+    /*
     const google::protobuf::Reflection *ref = message->GetReflection();
     if (!ref)
-        return ERRCODE_DECOMPOSE_NO_REFECTION;
+       return ERRCODE_DECOMPOSE_NO_REFECTION;
+       */
     size_t count = message_descriptor->field_count();
     for (size_t i = 0; i != count; ++i)
     {

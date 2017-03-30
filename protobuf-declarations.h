@@ -126,6 +126,16 @@ public:
 		google::protobuf::io::IstreamInputStream *stream
 	);
 
+	/**
+	 * Get a new message
+	 * @param message_name
+	 * @return NULL if not found
+	 */
+	google::protobuf::Message *getMessage
+	(
+		const std::string &message_name
+	);
+
 	google::protobuf::Message *decode
 	(
 		const std::string &message_name,
