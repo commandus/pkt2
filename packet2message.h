@@ -7,8 +7,24 @@
 #define PACKET2MESSAGE_H_
 
 #include <google/protobuf/message.h>
+
+#include "duk/duktape.h"
+
 #include "pkt2optionscache.h"
 #include "protobuf-declarations.h"
+
+class PacketParseEnvironment
+{
+public:
+	const Pkt2PacketVariable *pv;
+	duk_context *context;
+	PacketParseEnvironment
+	(
+			const Pkt2PacketVariable *pvar,
+			duk_context *ctx
+	);
+};
+
 
 class Packet2Message {
 private:

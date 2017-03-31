@@ -8,6 +8,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <google/protobuf/message.h>
 
 #include "protobuf-declarations.h"
@@ -30,6 +31,9 @@ public:
  * Keep message options: packet & variables and indexes
  */
 class Pkt2PacketVariable {
+private:
+	// keep field number to the vector index
+	std::map<int, int> fieldNumbers;
 public:
 	Pkt2PacketVariable();
 	Pkt2PacketVariable
@@ -47,6 +51,7 @@ public:
 	/// keep variables vector index having index in order of 1, 2
 	/// first is identifier (or hash) of the message
 	std::vector<uint64_t> keyIndexes;
+	const FieldNameVariable* getVariableByFieldNumber(int number) const;
 };
 
 #endif /* PKT2PACKETVARIABLE_H_ */

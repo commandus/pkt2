@@ -34,14 +34,23 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#include "duk/duktape.h"
-
 #include "packet2message.h"
 #include "pkt2packetvariable.h"
 #include "messagecomposer.h"
 #include "platform.h"
 #include "errorcodes.h"
 #include "utilstring.h"
+
+
+PacketParseEnvironment::PacketParseEnvironment
+(
+		const Pkt2PacketVariable *pvar,
+		duk_context *ctx
+)
+: pv(pvar), context(ctx)
+{
+
+}
 
 Packet2Message::Packet2Message(
 		const std::string &protopath,
@@ -290,15 +299,20 @@ bool oncomposefield (
 	void* env,
 	const google::protobuf::Descriptor *message_descriptor,
 	const google::protobuf::FieldDescriptor::CppType field_type,
-	const std::string &message_name,
-	const std::string &field_name,
+	int field_number,
 	bool repeated,
 	int index,
 	std::string &retval
 )
 {
-	LOG(INFO) << message_name << "." << field_name;
-	retval = "0";
+	PacketParseEnvironment *e = (PacketParseEnvironment *) env;
+	const FieldNameVariable *v = e->pv->getVariableByFieldNumber(field_number);
+	// std::string formula = v->var.get();
+	// LOG(INFO) << formula;
+	duk_eval_string(e->context, v->var.get().c_str());
+	retval = duk_safe_to_string(e->context, -1);
+	LOG(INFO) << message_descriptor->full_name() << " field number: " << field_number << " "
+			<< v->field_name << "[ " << retval;
 	return false;
 }
 
@@ -357,12 +371,13 @@ google::protobuf::Message *Packet2Message::parse
 		}
 	}
 
+	PacketParseEnvironment env(&pv, jsCtx);
 	google::protobuf::Message *m = declarations->getMessage(pv.message_type);
 
 	if (m)
 	{
 		// TODO
-		MessageComposer mc(this, options_cache, m, oncomposefield, onnextmessage);
+		MessageComposer mc(&env, options_cache, m, oncomposefield, onnextmessage);
 	}
 
 	duk_pop(jsCtx);

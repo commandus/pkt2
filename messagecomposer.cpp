@@ -81,7 +81,7 @@ void MessageComposer::setCallbacks
     if (repeated) \
     { \
         int i = 0; \
-        while (onComposeField(env, message_descriptor, t, message->GetTypeName(), field->name(), true, i, value)) \
+        while (onComposeField(env, message_descriptor, t, field->number(), true, i, value)) \
         { \
             ref->Add ## PROTO_TYPE(message, field, parse_ ## NATIVE_TYPE(value)); \
             i++; \
@@ -89,7 +89,7 @@ void MessageComposer::setCallbacks
     } \
     else \
     { \
-        onComposeField(env, message_descriptor, t, message->GetTypeName(), field->name(), false, 0, value); \
+        onComposeField(env, message_descriptor, t, field->number(), false, 0, value); \
         ref->Set ## PROTO_TYPE(message, field, parse_ ## NATIVE_TYPE(value)); \
     } \
 }
@@ -154,7 +154,7 @@ int MessageComposer::composeField
             if (repeated)
             {
                 int i = 0;
-                while (onComposeField(env, message_descriptor, t, message->GetTypeName(), field->name(), true, i, value))
+                while (onComposeField(env, message_descriptor, t, field->number(), true, i, value))
                 {
                     if (is_binary)
                         value = b64_encode(value);
@@ -164,7 +164,7 @@ int MessageComposer::composeField
             }
             else
             {
-                onComposeField(env, message_descriptor, t, message->GetTypeName(), field->name(), false, 0, value);
+                onComposeField(env, message_descriptor, t, field->number(), false, 0, value);
                 if (is_binary)
                     value = b64_encode(value);
                 ref->SetString(message, field, value);
@@ -192,7 +192,7 @@ int MessageComposer::composeField
                 if (repeated)
                 {
                     int i = 0;
-                    while (onComposeField(env, message_descriptor, t, message->GetTypeName(), field->name(), true, i, value))
+                    while (onComposeField(env, message_descriptor, t, field->number(), true, i, value))
                     {
                         ref->AddEnumValue(message, field, parse_int32_t(value));
                         i++;
@@ -200,7 +200,7 @@ int MessageComposer::composeField
                 }
                 else
                 {
-                    onComposeField(env, message_descriptor, t, message->GetTypeName(), field->name(), false, 0, value);
+                    onComposeField(env, message_descriptor, t, field->number(), false, 0, value);
                     ref->SetEnumValue(message, field, parse_int32_t(value));
                 }
         	}
