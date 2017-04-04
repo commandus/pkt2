@@ -46,7 +46,15 @@ message TemperaturePkt
             size: 2
             offset: 5
             endian: ENDIAN_BIG_ENDIAN
-        }]
+        },
+        {
+            name: "tag"
+            type: INPUT_UINT
+            size: 1
+            offset: 6
+            tag: 255
+        }
+        ]
     };
 
     // output 
@@ -62,7 +70,7 @@ message TemperaturePkt
     uint32 time = 2 [(pkt2.variable) = {
         name: "time"
         short_name: "Время"
-        full_name: "Время, с"
+        full_name: "секунд после 1970 г."
         measure_unit: "s"
         get: "field.unix_time"
         priority: 0                                 // required
@@ -72,7 +80,7 @@ message TemperaturePkt
     double degrees_c = 3 [(pkt2.variable) = {
         name: "degrees_c"
         short_name: "Температура"
-        full_name: "Температура, C"
+        full_name: "Температура"
         measure_unit: "C"
         get: "1.22 * field.value"
         priority: 0                                 // required
