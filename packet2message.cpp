@@ -41,7 +41,6 @@
 #include "errorcodes.h"
 #include "utilstring.h"
 
-
 PacketParseEnvironment::PacketParseEnvironment
 (
 		const Pkt2PacketVariable *pvar,
@@ -295,6 +294,17 @@ std::string extractVariable
     return duk_safe_to_string(ctx, -1);
 }
 
+/**
+ * MessageComposer callback
+ * @param env
+ * @param message_descriptor
+ * @param field_type
+ * @param field_number
+ * @param repeated
+ * @param index
+ * @param retval
+ * @return
+ */
 bool oncomposefield (
 	void* env,
 	const google::protobuf::Descriptor *message_descriptor,
@@ -307,12 +317,9 @@ bool oncomposefield (
 {
 	PacketParseEnvironment *e = (PacketParseEnvironment *) env;
 	const FieldNameVariable *v = e->pv->getVariableByFieldNumber(field_number);
-	// std::string formula = v->var.get();
-	// LOG(INFO) << formula;
 	duk_eval_string(e->context, v->var.get().c_str());
 	retval = duk_safe_to_string(e->context, -1);
-	LOG(INFO) << message_descriptor->full_name() << " field number: " << field_number << " "
-			<< v->field_name << "[ " << retval;
+	// LOG(INFO) << message_descriptor->full_name() << "." << v->field_name << "=" << retval;
 	return false;
 }
 
@@ -355,29 +362,28 @@ google::protobuf::Message *Packet2Message::parse
 
 	// Create Javascript context with global object field.xxx
 	duk_context *jsCtx = makeJavascriptContext(pv, socket_address_src, socket_address_dst, packet);
-	if (verbosity >= 2)
-	{
-		// packet input fields
-		for (int i = 0; i < pv.packet.fields_size(); i++)
-		{
-			pkt2::Field f = pv.packet.fields(i);
-			LOG(INFO) << f.name() << ": " << hexString(extractField(packet, f));
-		}
-		// packet output variables
-		for (int i = 0; i < pv.fieldname_variables.size(); i++)
-		{
-			FieldNameVariable v = pv.fieldname_variables[i];
-			LOG(INFO) << v.field_name << "(" << v.var.full_name() << ") = " << extractVariable(jsCtx, v) << v.var.measure_unit();
-		}
-	}
 
 	PacketParseEnvironment env(&pv, jsCtx);
 	google::protobuf::Message *m = declarations->getMessage(pv.message_type);
-
 	if (m)
 	{
-		// TODO
 		MessageComposer mc(&env, options_cache, m, oncomposefield, onnextmessage);
+
+		if (verbosity >= 2)
+		{
+			// packet input fields
+			for (int i = 0; i < pv.packet.fields_size(); i++)
+			{
+				pkt2::Field f = pv.packet.fields(i);
+				LOG(INFO) << f.name() << ": " << hexString(extractField(packet, f));
+			}
+			// packet output variables
+			for (int i = 0; i < pv.fieldname_variables.size(); i++)
+			{
+				FieldNameVariable v = pv.fieldname_variables[i];
+				LOG(INFO) << m->GetTypeName() << "." << v.field_name << " = " << extractVariable(jsCtx, v) << " " << v.var.measure_unit() << " (" << v.var.full_name() << ")";
+			}
+		}
 	}
 
 	duk_pop(jsCtx);

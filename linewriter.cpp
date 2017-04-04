@@ -276,6 +276,11 @@ int run
     	}
 		MessageTypeNAddress messageTypeNAddress;
 		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
+		if (config->verbosity >= 2)
+		{
+			LOG(INFO) << MSG_RECEIVED << bytes << ": " << hexString(buffer, bytes) ;
+		}
+
 		if (m)
 		{
 			switch (config->mode)
@@ -303,7 +308,7 @@ int run
 			}
     	}
 		else
-			LOG(ERROR) << ERR_DECODE_MESSAGE;
+			LOG(ERROR) << ERR_DECODE_MESSAGE << " " << hexString(buffer, bytes);
     }
 
     free(buffer);

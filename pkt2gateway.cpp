@@ -14,10 +14,16 @@
 #include <netdb.h>
 #include <argtable2.h>
 
+#include <nanomsg/nn.h>
+#include <nanomsg/pubsub.h>
+
+#include <glog/logging.h>
+
 #include <google/protobuf/message.h>
 
 #include "errorcodes.h"
 #include "utilstring.h"
+#include "utilprotobuf.h"
 #include "packet2message.h"
 
 bool cont;
@@ -105,6 +111,15 @@ int main(int argc, char **argv)
     	std::cerr << MSG_PACKET_HEX << hexString(packet) << std::endl;
     }
 
+	// open socket to write
+	int nano_socket_out = nn_socket(AF_SP, NN_PUB);
+	int eoutid = nn_bind(nano_socket_out, config->message_out_url.c_str());
+	if (eoutid < 0)
+	{
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_out_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_CONNECT;
+	}
+
     Packet2Message packet2Message(config->proto_path, config->verbosity);
     google::protobuf::Message *m = packet2Message.parse(NULL, NULL, packet, config->force_message);
 
@@ -114,10 +129,33 @@ int main(int argc, char **argv)
 		exit(ERRCODE_PARSE_PACKET);
     }
 
+	cont = true;
+	
+	// send message
 	for (int d = 0; d < config->retries; d++)
 	{
-		if (config->retry_delay > 0)
-			sleep(config->retry_delay);
+		if (!cont)
+			break;
+		MessageTypeNAddress messageTypeNAddress(m->GetTypeName());
+		std::string outstr = stringDelimitedMessage(&messageTypeNAddress, *m);
+		int sent = nn_send(nano_socket_out, outstr.c_str(), outstr.size(), 0);
+		if (sent < 0)
+			LOG(ERROR) << ERR_NN_SEND << sent;
+		else
+		{
+			if (config->verbosity >= 2)
+			{
+				LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
+			}
+		}
+		sleep(config->retry_delay);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
+	}
+
+	int r = nn_shutdown(nano_socket_out, eoutid);
+	if (r)
+	{
+		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_out_url << " " << errno << " " << strerror(errno);
+		r = ERRCODE_NN_SHUTDOWN;
 	}
 
 	delete m;

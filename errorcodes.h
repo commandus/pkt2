@@ -24,6 +24,8 @@
 #define MSG_MESSAGE_HEADER						"Protobuf messages: "
 #define MSG_CONNECTED_TO						"Connected to: "
 #define MSG_PACKET_HEX							"Packet (hex): "
+#define MSG_SENT								"Sent bytes: "
+#define MSG_RECEIVED							"Received bytes: "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							1

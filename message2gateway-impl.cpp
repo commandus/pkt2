@@ -119,7 +119,7 @@ int run_stream
 }
 
 /**
-  * @brief Receives message from nanomsg socket
+  * @brief Receives message from nanomsg socket from socket ipc:///tmp/packet.pkt2, write to socket ipc:///tmp/message.pkt2
   * @return:  0- success
   */
 int run_socket
@@ -179,7 +179,7 @@ int run_socket
 
 	free(buffer);
 
-    int r = nn_shutdown(nano_socket_out, einid) | nn_shutdown(nano_socket_in, eoutid);
+    int r = nn_shutdown(nano_socket_out, eoutid) | nn_shutdown(nano_socket_in, einid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_in_url << " " << errno << " " << strerror(errno);
@@ -187,7 +187,6 @@ int run_socket
 	}
 	return r;
 }
-
 
 /**
   * @brief Receives message from stream or nanomsg socket

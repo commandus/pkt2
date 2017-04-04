@@ -116,12 +116,12 @@ int Config::parseCmd
         if (a_retries->count)
                 retries = *a_retries->ival;
         else
-                retries = 0;
+                retries = 1;
 
         if (a_retry_delay->count)
                 retry_delay = *a_retry_delay->ival;
         else
-                retry_delay = 60;
+                retry_delay = 0;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return 0;
