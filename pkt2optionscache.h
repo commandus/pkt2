@@ -35,6 +35,12 @@ public:
 			bool *found
 	);
 
+	const Pkt2PacketVariable &find1
+	(
+			const std::string &packet,
+			bool *found
+	);
+
 	/**
 	 * Check if field have index
 	 * @param message_type message name

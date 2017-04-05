@@ -384,11 +384,11 @@ class Field : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   ::google::protobuf::uint32 size() const;
   void set_size(::google::protobuf::uint32 value);
 
-  // uint32 tag = 6;
+  // uint64 tag = 6;
   void clear_tag();
   static const int kTagFieldNumber = 6;
-  ::google::protobuf::uint32 tag() const;
-  void set_tag(::google::protobuf::uint32 value);
+  ::google::protobuf::uint64 tag() const;
+  void set_tag(::google::protobuf::uint64 value);
 
   // @@protoc_insertion_point(class_scope:pkt2.Field)
  private:
@@ -402,7 +402,7 @@ class Field : public ::google::protobuf::Message /* @@protoc_insertion_point(cla
   int endian_;
   ::google::protobuf::uint32 offset_;
   ::google::protobuf::uint32 size_;
-  ::google::protobuf::uint32 tag_;
+  ::google::protobuf::uint64 tag_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -1365,15 +1365,15 @@ inline void Field::set_size(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Field.size)
 }
 
-// uint32 tag = 6;
+// uint64 tag = 6;
 inline void Field::clear_tag() {
-  tag_ = 0u;
+  tag_ = GOOGLE_ULONGLONG(0);
 }
-inline ::google::protobuf::uint32 Field::tag() const {
+inline ::google::protobuf::uint64 Field::tag() const {
   // @@protoc_insertion_point(field_get:pkt2.Field.tag)
   return tag_;
 }
-inline void Field::set_tag(::google::protobuf::uint32 value) {
+inline void Field::set_tag(::google::protobuf::uint64 value) {
   
   tag_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Field.tag)

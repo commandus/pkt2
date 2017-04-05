@@ -608,6 +608,13 @@ sudo chown <user>:<group> /tmp/packet.pkt2
 
 ## Баги и особенности реализации
 
+### DEBUG
+
+```
+./configure --enable-debug
+```
+
+
 ### nanomsg
 
 [Issue 182](https://github.com/nanomsg/nanomsg/issues/182)

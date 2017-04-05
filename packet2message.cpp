@@ -34,19 +34,21 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "pkt2.pb.h"
 #include "packet2message.h"
 #include "pkt2packetvariable.h"
 #include "messagecomposer.h"
 #include "platform.h"
 #include "errorcodes.h"
 #include "utilstring.h"
+#include "utilprotobuf.h"
 
 PacketParseEnvironment::PacketParseEnvironment
 (
 		const Pkt2PacketVariable *pvar,
 		duk_context *ctx
 )
-: pv(pvar), context(ctx)
+	: pv(pvar), context(ctx)
 {
 
 }
@@ -61,96 +63,11 @@ Packet2Message::Packet2Message(
 	options_cache = new Pkt2OptionsCache(declarations);
 }
 
-Packet2Message::~Packet2Message() {
+Packet2Message::~Packet2Message()
+{
 	delete options_cache;
 	delete declarations;
 }
-
-/**
- * Get field value from the packet
- * @param packet
- * @param field
- * @return
- */
-std::string extractField
-(
-		const std::string &packet,
-		const pkt2::Field &field
-)
-{
-	int sz = packet.size();
-	if (sz < field.offset() + field.size())
-	{
-		LOG(ERROR) << ERR_PACKET_TOO_SMALL << field.name() << " " << field.offset() << " " << field.size() << " " << sz;
-		return "";
-	}
-	std::string r = packet.substr(field.offset(), field.size());
-	if (ENDIAN_NEED_SWAP(field.endian()))
-	{
-		char *p = &r[0];
-		std::reverse(p, p + field.size());
-	}
-	return r;
-}
-
-/**
- * Get field value from the packet as 32 bit integer
- * @param packet
- * @param field
- * @return
- */
-uint32_t extractFieldUInt
-(
-		const std::string &packet,
-		const pkt2::Field &field
-)
-{
-	std::string r = extractField(packet, field);
-	int sz = field.size();
-	switch (sz)
-	{
-	case 0:
-		return 0;
-	case 1:
-		return *((uint8_t*) &r[0]);
-	case 2:
-		return *((uint16_t*) &r[0]);
-	case 4:
-		return *((uint32_t*) &r[0]);
-	default:
-	{
-		uint64_t v = 0;
-		memmove(&v, &r[0], (sz < sizeof(uint64_t) ? sz : sizeof(uint64_t)));
-		return v;
-	}
-	}
-	return 0;
-}
-
-/**
- * Get field value from the packet as double
- * @param packet
- * @param field
- * @return
- */
-double extractFieldDouble
-(
-		const std::string &packet,
-		const pkt2::Field &field
-)
-{
-	std::string r = extractField(packet, field);
-	int sz = field.size();
-	switch (sz)
-	{
-	case 4:
-		return *((float*) &r[0]);
-	case 8:
-		return *((double*) &r[0]);
-	}
-	return 0;
-}
-
 
 void pushField
 (
@@ -194,7 +111,7 @@ void putSocketAddress
 	duk_context * ctx,
 	const std::string &objectName,
 	struct sockaddr *socket_addr
-	)
+)
 {
 	duk_push_global_object(ctx);
 	duk_push_object(ctx);
@@ -352,7 +269,7 @@ google::protobuf::Message *Packet2Message::parse
 	bool found;
 	const Pkt2PacketVariable &pv = (!force_message.empty()
 			? options_cache->getPacketVariable(force_message, &found)
-					: options_cache->getPacketVariable("example1.TemperaturePkt", &found));
+					: options_cache->find1(packet, &found));
 
 	if (!found)
 	{

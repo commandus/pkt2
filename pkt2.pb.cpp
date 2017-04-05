@@ -197,7 +197,7 @@ void protobuf_AddDesc_pkt2_2eproto_impl() {
       "riptor.proto\"}\n\005Field\022\014\n\004name\030\001 \001(\t\022\035\n\004t"
       "ype\030\002 \001(\0162\017.pkt2.InputType\022\034\n\006endian\030\003 \001"
       "(\0162\014.pkt2.Endian\022\016\n\006offset\030\004 \001(\r\022\014\n\004size"
-      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\r\"\344\001\n\010Variable\022\r\n\005fiel"
+      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\004\"\344\001\n\010Variable\022\r\n\005fiel"
       "d\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\036\n\004type\030\003 \001(\0162\020.pk"
       "t2.OutputType\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tful"
       "l_name\030\005 \001(\t\022\024\n\014measure_unit\030\006 \001(\t\022\013\n\003ge"
@@ -528,12 +528,12 @@ bool Field::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 tag = 6;
+      // uint64 tag = 6;
       case 6: {
         if (tag == 48u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                   ::google::protobuf::uint64, ::google::protobuf::internal::WireFormatLite::TYPE_UINT64>(
                  input, &tag_)));
         } else {
           goto handle_unusual;
@@ -597,9 +597,9 @@ void Field::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(5, this->size(), output);
   }
 
-  // uint32 tag = 6;
+  // uint64 tag = 6;
   if (this->tag() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(6, this->tag(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt64(6, this->tag(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:pkt2.Field)
@@ -642,9 +642,9 @@ void Field::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(5, this->size(), target);
   }
 
-  // uint32 tag = 6;
+  // uint64 tag = 6;
   if (this->tag() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(6, this->tag(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt64ToArray(6, this->tag(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Field)
@@ -688,10 +688,10 @@ size_t Field::ByteSizeLong() const {
         this->size());
   }
 
-  // uint32 tag = 6;
+  // uint64 tag = 6;
   if (this->tag() != 0) {
     total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::UInt32Size(
+      ::google::protobuf::internal::WireFormatLite::UInt64Size(
         this->tag());
   }
 
@@ -918,15 +918,15 @@ void Field::set_size(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Field.size)
 }
 
-// uint32 tag = 6;
+// uint64 tag = 6;
 void Field::clear_tag() {
-  tag_ = 0u;
+  tag_ = GOOGLE_ULONGLONG(0);
 }
-::google::protobuf::uint32 Field::tag() const {
+::google::protobuf::uint64 Field::tag() const {
   // @@protoc_insertion_point(field_get:pkt2.Field.tag)
   return tag_;
 }
-void Field::set_tag(::google::protobuf::uint32 value) {
+void Field::set_tag(::google::protobuf::uint64 value) {
   
   tag_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Field.tag)

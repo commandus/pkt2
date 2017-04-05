@@ -82,6 +82,49 @@ void debugProto
 }
 
 /**
+ * Get field value from the packet
+ * @param packet
+ * @param field
+ * @return
+ */
+std::string extractField
+(
+		const std::string &packet,
+		const pkt2::Field &field
+);
+
+/**
+ * Get field value from the packet as double
+ * @param packet
+ * @param field
+ * @return
+ */
+double extractFieldDouble
+(
+		const std::string &packet,
+		const pkt2::Field &field
+);
+
+/**
+ * Get field value from the packet as 64 bit integer
+ * @param packet
+ * @param field
+ * @return
+ */
+uint64_t extractFieldUInt
+(
+		const std::string &packet,
+		const pkt2::Field &field
+);
+
+/**
+ * Return minimum size of the packet
+ * @param packet
+ * @return
+ */
+size_t getPacketSize(const pkt2::Packet &packet);
+
+/**
  * @brief Write Message type string, size of message and message itself
  *
  * @param messageTypeName

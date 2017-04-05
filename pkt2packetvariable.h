@@ -47,11 +47,13 @@ public:
 	int status;
 	std::string message_type;
 	pkt2::Packet packet;
+	size_t packet_size;
 	std::vector<FieldNameVariable> fieldname_variables;
 	/// keep variables vector index having index in order of 1, 2
 	/// first is identifier (or hash) of the message
 	std::vector<uint64_t> keyIndexes;
 	const FieldNameVariable* getVariableByFieldNumber(int number) const;
+	bool validTags(const std::string &packet);
 };
 
 #endif /* PKT2PACKETVARIABLE_H_ */

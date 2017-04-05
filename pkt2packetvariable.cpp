@@ -9,11 +9,12 @@
 #include "pkt2packetvariable.h"
 
 #include "errorcodes.h"
+#include "utilprotobuf.h"
 
 using namespace google::protobuf;
 
 Pkt2PacketVariable::Pkt2PacketVariable()
-	: status(ERR_OK), message_type("")
+	: status(ERR_OK), message_type(""), packet_size(0)
 {
 
 }
@@ -71,6 +72,8 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		// calculate hash of the name as identifier if identifier is 0
 	}
 
+	packet_size = getPacketSize(packet);
+
 	// create index
 	// first is message identifier itself
 	keyIndexes.push_back(packet.id());
@@ -90,4 +93,28 @@ const FieldNameVariable* Pkt2PacketVariable::getVariableByFieldNumber
 	if (f == fieldNumbers.end())
 		return NULL;
 	return &fieldname_variables[f->second];
+}
+
+bool Pkt2PacketVariable::validTags(const std::string &data)
+{
+	if (data.size() != packet_size)
+		return false;
+	for (int i = 0; i < packet.fields_size(); i++)
+	{
+		uint64_t t = packet.fields(i).tag();
+		if (t)
+		{
+			if (t == 0xFFFFFFFFFFFFFFFF)
+				t = 0;
+			uint64_t f = extractFieldUInt(data, packet.fields(i));
+			LOG(INFO) << "tag " << packet.fields(i).name() << " request: " << t << ", value: " << f;
+			if (f != t)
+			{
+				LOG(INFO) << "Not found ";
+				return false;
+			}
+		}
+	}
+	LOG(INFO) << "Found ";
+	return true;
 }

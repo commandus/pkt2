@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <stdlib.h>
+#include <glog/logging.h>
 #include "pkt2optionscache.h"
 #include "bin2ascii.h"
 
@@ -75,6 +76,36 @@ const Pkt2PacketVariable &Pkt2OptionsCache::getPacketVariable
 	std::map<std::string, Pkt2PacketVariable>::iterator m = pkt2packet_variable.find(message_type);
 	if (found)
 		*found = (m != pkt2packet_variable.end());
+	return pkt2packet_variable[message_type];
+}
+
+/**
+ * Find out first found by size and tag
+ * @param packet
+ * @param found
+ * @return
+ */
+const Pkt2PacketVariable &Pkt2OptionsCache::find1
+(
+		const std::string &packet,
+		bool *found
+)
+{
+	std::string message_type;
+	if (found)
+		*found = false;
+	for (std::map<std::string, Pkt2PacketVariable>::iterator m(pkt2packet_variable.begin());
+			m != pkt2packet_variable.end(); ++m)
+	{
+		if (m->second.validTags(packet))
+		{
+			message_type = m->first;
+			if (found)
+				*found = true;
+			LOG(INFO) << "Found " << message_type;
+			break;
+		}
+	}
 	return pkt2packet_variable[message_type];
 }
 

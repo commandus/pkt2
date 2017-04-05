@@ -51,7 +51,7 @@ message TemperaturePkt
             name: "tag"
             type: INPUT_UINT
             size: 1
-            offset: 6
+            offset: 7
             tag: 255
         }
         ]

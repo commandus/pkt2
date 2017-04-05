@@ -1,8 +1,7 @@
 #include <string>
 #include <string.h>
 #include <iostream>
-#include "utilprotobuf.h"
-#include "utilfile.h"
+#include <algorithm>
 
 #ifdef _MSC_VER
 #include <windows.h>
@@ -24,8 +23,11 @@
 
 #include <glog/logging.h>
 
+#include "platform.h"
 #include "error-printer.h"
 #include "errorcodes.h"
+#include "utilprotobuf.h"
+#include "utilfile.h"
 
 MessageTypeNAddress::MessageTypeNAddress()
 	: message_type(""), message_size(0)
@@ -363,5 +365,109 @@ google::protobuf::Message *readDelimitedMessage
 	google::protobuf::io::CodedInputStream input(&isistream);
 	input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
 	return readDelimitedMessage(pd, &input, messageTypeNAddress);
+}
+
+/**
+ * Get field value from the packet
+ * @param packet
+ * @param field
+ * @return
+ */
+std::string extractField
+(
+		const std::string &packet,
+		const pkt2::Field &field
+)
+{
+	int sz = packet.size();
+	if (sz < field.offset() + field.size())
+	{
+		LOG(ERROR) << ERR_PACKET_TOO_SMALL << field.name() << " " << field.offset() << " " << field.size() << " " << sz;
+		return "";
+	}
+	std::string r = packet.substr(field.offset(), field.size());
+	if (ENDIAN_NEED_SWAP(field.endian()))
+	{
+		char *p = &r[0];
+		std::reverse(p, p + field.size());
+	}
+	return r;
+}
+
+/**
+ * Get field value from the packet as 64 bit integer
+ * @param packet
+ * @param field
+ * @return
+ */
+uint64_t extractFieldUInt
+(
+		const std::string &packet,
+		const pkt2::Field &field
+)
+{
+	std::string r = extractField(packet, field);
+	int sz = field.size();
+	switch (sz)
+	{
+	case 0:
+		return 0;
+	case 1:
+		return *((uint8_t*) &r[0]);
+	case 2:
+		return *((uint16_t*) &r[0]);
+	case 4:
+		return *((uint32_t*) &r[0]);
+	case 8:
+		return *((uint64_t*) &r[0]);
+	default:
+	{
+		uint64_t v = 0;
+		memmove(&v, &r[0], (sz < sizeof(uint64_t) ? sz : sizeof(uint64_t)));
+		return v;
+	}
+	}
+	return 0;
+}
+
+/**
+ * Return minimum size of the packet
+ * @param packet
+ * @return
+ */
+size_t getPacketSize(const pkt2::Packet &packet)
+{
+	size_t r = 0;
+	for (int i = 0; i < packet.fields_size(); i++)
+	{
+		size_t c = packet.fields(i).offset() + packet.fields(i).size();
+		if (c > r)
+			r = c;
+	}
+	return r;
+};
+
+/**
+ * Get field value from the packet as double
+ * @param packet
+ * @param field
+ * @return
+ */
+double extractFieldDouble
+(
+		const std::string &packet,
+		const pkt2::Field &field
+)
+{
+	std::string r = extractField(packet, field);
+	int sz = field.size();
+	switch (sz)
+	{
+	case 4:
+		return *((float*) &r[0]);
+	case 8:
+		return *((double*) &r[0]);
+	}
+	return 0;
 }
 
