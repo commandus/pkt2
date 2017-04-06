@@ -43,7 +43,7 @@ CLEANFILES = $(gengrpcs)
 # Binaries
 #
 bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
-	handlerpq handlerline handlerlmdb \
+	handlerpq handlerline handlerlmdb handler-google-sheets \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 tcpemitter-example1
 
@@ -58,6 +58,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
+oauth2.h sslhelper.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -176,6 +177,21 @@ handlerline_SOURCES = \
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# handler-google-sheets
+#
+handler_google_sheets_SOURCES = \
+	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp \
+	pbjson.cpp jsoncpp.cpp \
+	oauth2.cpp sslhelper.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	$(common_src)
+
+handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -loauthcpp -lssl -lcrypto $(SNMPLIBS)
+handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # protoc-gen-pkt2
