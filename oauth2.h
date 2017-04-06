@@ -15,8 +15,8 @@
   */
 std::string getJWT
 (
-	const std::string &p12filename,
-	const std::string &password,
+	const std::string &subject_email,
+	const std::string &pemkey,
 	const std::string &scope,
 	const std::string &audience,
 	const std::string &service_account,

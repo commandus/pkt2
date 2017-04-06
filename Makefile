@@ -689,13 +689,13 @@ AUTOMAKE = ${SHELL} /home/andrei/src/pkt2/missing automake-1.15
 AWK = gawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
-CFLAGS = -g -O2
+CFLAGS = -g -O0
 CPP = gcc -E
 CPPFLAGS =  -I/usr/include/postgresql
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
-CXXFLAGS = -g -O2
+CXXFLAGS = -g -O0
 CYGPATH_W = echo
 DEFS = -DHAVE_CONFIG_H
 DEPDIR = .deps
@@ -4370,10 +4370,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 .PRECIOUS: Makefile
 
 
-	AM_CFLAGS = -g3 -O0
-	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
-#	AM_CFLAGS = -O2
-#	AM_CXXFLAGS = -O2 -std=c++11
+#	AM_CFLAGS = -g3 -O0
+#	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
+	AM_CFLAGS = -O2
+	AM_CXXFLAGS = -O2 -std=c++11
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto

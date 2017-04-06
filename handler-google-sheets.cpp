@@ -100,11 +100,11 @@ int main
 
 
     getJWT(
-    		"cert/oneway-ticket-sheets.p12",
-			"",
-    		"https://www.googleapis.com/auth/spreadsheets",
+    		"andrei.i.ivanov@gmail.com",
+    		file2string("cert/oneway-ticket-notasecret.p12.key"),
+    		"https://www.googleapis.com/auth/spreadsheets", // "https://www.googleapis.com/auth/prediction" "https://www.googleapis.com/auth/spreadsheets",
 			"https://www.googleapis.com/oauth2/v4/token",
-    		"995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com",
+    		"995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com", // "995029341446-compute@developer.gserviceaccount.com""995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com",
     		3600
     );
 	config = new Config(argc, argv);

@@ -65,8 +65,8 @@ EVP_PKEY *p12ReadPKey(
 {
 	FILE *p12_file;
 	PKCS12 *p12_cert = NULL;
-	EVP_PKEY *pkey;
-	X509 *x509_cert;
+	EVP_PKEY *pkey = NULL;
+	X509 *x509_cert = NULL;
 	STACK_OF(X509) *additional_certs = NULL;
 
 	p12_file = fopen(p12file.c_str(), "rb");

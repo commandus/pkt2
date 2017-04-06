@@ -124,8 +124,7 @@ std::string OAuth2::getToken
 std::string jws_sign
 (
 	const std::string &data, 
-	const std::string &p12filename,
-	const char *password
+	const std::string &pemkey
 )
 {
     SHA256_CTX mctx;
@@ -137,34 +136,26 @@ std::string jws_sign
 	unsigned char *sig;
 	size_t slen;
 	
-    EVP_PKEY *key = p12ReadPKey(p12filename, password);
+    EVP_PKEY *key = getPKey(pemkey);
     EVP_PKEY_CTX *kctx = EVP_PKEY_CTX_new(key, NULL);
-LOG(INFO) << "jws_sign 1";    
     if (!kctx) 
     	goto err;
-LOG(INFO) << "jws_sign 2";
     if (EVP_PKEY_sign_init(kctx) <= 0) 
     	goto err;
-LOG(INFO) << "jws_sign 3";
     if (EVP_PKEY_CTX_set_rsa_padding(kctx, RSA_PKCS1_PADDING) <= 0) 
     	goto err;
-LOG(INFO) << "jws_sign 4";
     if (EVP_PKEY_CTX_set_signature_md(kctx, EVP_sha256()) <= 0) 
     	goto err;
-LOG(INFO) << "jws_sign 5";
     // Determine buffer length
     slen = 0;
     if (EVP_PKEY_sign(kctx, NULL, &slen, hash, SHA256_DIGEST_LENGTH) <= 0) 
     	goto err;
-LOG(INFO) << "jws_sign 6";
     sig = (unsigned char *) OPENSSL_malloc(slen);
     if (!sig) 
     	goto err;
-LOG(INFO) << "jws_sign 7";
     if (EVP_PKEY_sign(kctx, sig, &slen, hash, SHA256_DIGEST_LENGTH) <= 0) 
     	goto err;
-LOG(INFO) << "jws_sign 8";
-    return Base64Encode(sig, (unsigned int) slen);
+    return Base64UrlEncode(sig, (unsigned int) slen);
 
 err:
     // Clean up
@@ -181,8 +172,8 @@ err:
   */
 std::string getJWT
 (
-	const std::string &p12filename,
-	const std::string &password,
+	const std::string &subject_email,
+	const std::string &pemkey,
 	const std::string &scope,
 	const std::string &audience,
 	const std::string &service_account,
@@ -191,7 +182,6 @@ std::string getJWT
 {
 	Json::Value jwt_header;
     Json::Value jwt_claim_set;
-    std::string jwt_b64;
     std::time_t t = std::time(NULL);
     Json::FastWriter jfw;
     Json::StyledWriter jsw;
@@ -201,47 +191,38 @@ std::string getJWT
     jwt_header["typ"] = "JWT";
 
     // jwt claim set
+
+	// jwt_claim_set["sub"] = subject_email;
     jwt_claim_set["iss"] = service_account;
     jwt_claim_set["scope"] = scope;
     // intended target of the assertion for an access token
     jwt_claim_set["aud"] = audience;
-    jwt_claim_set["iat"] = std::to_string(t);
-    jwt_claim_set["exp"] = std::to_string(t + expires);
+    jwt_claim_set["iat"] = Json::UInt64(t);
+    jwt_claim_set["exp"] = Json::UInt64(t + expires);
 
     std::cout << jsw.write(jwt_header) << "." << jsw.write(jwt_claim_set);
 
-    // create http POST request body
+    // header base64url
     // for header
-    std::string json_buffer;
-    std::string json_buffer1;
-    json_buffer = jfw.write(jwt_header);
-    json_buffer = json_buffer.substr(0, json_buffer.size() - 1);
-    json_buffer = Base64Encode(reinterpret_cast<const unsigned char*>(json_buffer.c_str()), json_buffer.length()); 
-    json_buffer1.clear();
-    std::remove_copy(json_buffer.begin(), json_buffer.end(), std::back_inserter(json_buffer1), '=');
-    jwt_b64 = json_buffer1;
-    jwt_b64 += ".";
-LOG(INFO) << "header: " << json_buffer1;
-    // for claim set
-    json_buffer = jfw.write(jwt_claim_set);
-    json_buffer = json_buffer.substr(0, json_buffer.size() - 1);
-    json_buffer = Base64Encode(reinterpret_cast<const unsigned char*>(json_buffer.c_str()), json_buffer.length());
-    json_buffer1.clear();
-    std::remove_copy(json_buffer.begin(), json_buffer.end(), std::back_inserter(json_buffer1), '=');
-    jwt_b64 += json_buffer1;
-LOG(INFO) << "claim set: " << json_buffer1;
+    std::string header = jfw.write(jwt_header);
+    std::string base64url_header = base64urlencode(header);	// .substr(0, header.size() - 1)
+LOG(INFO) << "header: " << header << " " << base64url_header;
+
+	// claim set
+	std::string claim_set= jfw.write(jwt_claim_set);
+    std::string base64url_claim_set = base64urlencode(claim_set);	// .substr(0, claim_set.size() - 1)
+LOG(INFO) << "claim set: " << claim_set << base64url_claim_set;
+
+	std::string jwt_b64 = base64url_header + "." + base64url_claim_set;
     // for signature
-    std::string jwt_signature = jws_sign(jwt_b64, p12filename, (password.empty() ? NULL : password.c_str()));
-    
-    jwt_b64 += ".";
-    json_buffer1.clear();
-    std::remove_copy(jwt_signature.begin(), jwt_signature.end(), std::back_inserter(json_buffer1), '=');
-LOG(INFO) << "signature: " << json_buffer1;
-    jwt_b64 += json_buffer1;
+    std::string jwt_signature = jws_sign(jwt_b64, pemkey);
+LOG(INFO) << "signature: " << jwt_signature;
+    jwt_b64 = jwt_b64 + "." + jwt_signature;
+LOG(INFO) << "JWT: " << jwt_b64;
     
 	// for test purpose calling with curl
     std::cout << "curl -d 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" << jwt_b64
-    	<< "' https://www.googleapis.com/oauth2/v4/token";
+    	<< "' https://www.googleapis.com/oauth2/v4/token" << std::endl;
 
 LOG(INFO) << "jwt_b64: " <<  jwt_b64;
     return jwt_b64;
