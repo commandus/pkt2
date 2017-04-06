@@ -575,17 +575,30 @@ CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARC
 CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));
 ```
 
+### handler-goole-sheets
+
+#### Удаление (смена) пароля сертификата с приватным ключом сервиса Google Sheets
+
+```
+tools/p12-remove-password cert/pkt2-sheets.p12 
+Enter Import Password:[notasecret]
+MAC verified OK
+Enter Export Password:
+Verifying - Enter Export Password:
+```
+
 ## Описание работы 
 
 ### Генерация кода
 
 Входной пакет 
 
-Message *parse(MessageTypeNAddress *descriptor, void *input_packet)
 
 ## Ошибки
 
-### Socket connect error localhost:50052. Cannot assign requested address 
+### Ошибка открытия сокета
+
+Socket connect error localhost:50052. Cannot assign requested address 
 
 Переполнение стека TCP/IP из-за того, что сервис не успевает обрабатывать данные из сокета.
 
