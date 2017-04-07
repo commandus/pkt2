@@ -58,6 +58,7 @@ public:
 
 	virtual ~GoogleSheets();
 	int getRange(const std::string &range, ValueRange &retval);
+	int putRange(const std::string &range, ValueRange &retval);
 };
 
 #endif /* GOOGLE_SHEETS_H_ */

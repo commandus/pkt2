@@ -55,6 +55,66 @@ static CURLcode curl_post
 	return res;
 }
 
+CURLcode curl_get
+(
+	const std::string &token,
+	const std::string &url,
+	std::string &retval
+)
+{
+	CURL *curl = curl_easy_init();
+	if (!curl)
+		return CURLE_FAILED_INIT; 
+	struct curl_slist *chunk = NULL;
+	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
+    CURLcode res = curl_easy_perform(curl);
+    if (res != CURLE_OK)
+		retval = curl_easy_strerror(res);
+	curl_slist_free_all(chunk);
+	curl_easy_cleanup(curl);
+	return res;
+}
+
+CURLcode curl_put
+(
+	const std::string &token,
+	const std::string &url,
+	const std::string &data,
+	std::string &retval
+)
+{
+	CURL *curl = curl_easy_init();
+	if (!curl)
+		return CURLE_FAILED_INIT;
+std::cerr << "PUT " << 	data << std::endl;		 
+	struct curl_slist *chunk = NULL;
+	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
+    CURLcode res = curl_easy_perform(curl);
+std::cerr << "PUT " << 	retval << std::endl;	
+    
+    if (res != CURLE_OK)
+		retval = curl_easy_strerror(res);
+	curl_slist_free_all(chunk);
+	curl_easy_cleanup(curl);
+	return res;
+}
+
 /**
  * If error occurred, retval contains error descrtiption
  * @param data
@@ -282,32 +342,6 @@ std::string ValueRange::toString()
 	return ss.str();	
 }
 
-CURLcode curl_get
-(
-	const std::string &token,
-	const std::string &url,
-	std::string &retval
-)
-{
-	CURL *curl = curl_easy_init();
-	if (!curl)
-		return CURLE_FAILED_INIT; 
-	struct curl_slist *chunk = NULL;
-	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
-	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
-
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
-    CURLcode res = curl_easy_perform(curl);
-    if (res != CURLE_OK)
-		retval = curl_easy_strerror(res);
-	curl_easy_cleanup(curl);
-	return res;
-}
-
 GoogleSheets::GoogleSheets
 (
 	const std::string sheetid,
@@ -338,3 +372,45 @@ int GoogleSheets::getRange
 	int pr = retval.parse(json);
 	return pr;
 }
+
+/**
+ * @param range Sheet1!A1:D5
+ */
+int GoogleSheets::putRange
+(
+	const std::string &range, 
+	ValueRange &value
+)
+{
+	// std::string rang = "Sheet1!K1:N5";
+	std::string rang = "Class!A1:D2";
+	
+	std::string json = "{ \
+  \"range\": \"" + rang + "\", \
+  \"majorDimension\": \"ROWS\", \
+  \"values\": [ \
+    [\"Student\", \"Name\", \"Gender\", \"Class\"], \
+    [\"SSSS\", \"NNNN\", \"Male\", \"222\"] \
+  ] \
+	}";
+	/*
+	std::string json = "{ \
+  \"range\": \"" + rang + "\", \
+  \"majorDimension\": \"ROWS\", \
+  \"values\": [ \
+    [\"Item\", \"Cost\", \"Stocked\", \"Ship Date\"], \
+    [\"Wheel\", \"$20.50\", \"4\", \"3/1/2016\"], \
+    [\"Door\", \"$15\", \"2\", \"3/15/2016\"], \
+    [\"Engine\", \"$100\", \"1\", \"30/20/2016\"], \
+    [\"Totals\", \"=SUM(L2:L4)\", \"=SUM(M2:M4)\", \"=MAX(N2:N4)\"] \
+  ] \
+	}";
+	*/
+	std::string response;
+	CURLcode r = curl_put(token, "https://sheets.googleapis.com/v4/spreadsheets/" + sheet_id + "/values/" + rang + "?valueInputOption=USER_ENTERED", json, response);
+	if (r != CURLE_OK)
+		return r;
+	return 0;
+}
+
+

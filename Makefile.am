@@ -74,7 +74,8 @@ rapidjson/error/en.h             rapidjson/error/error.h \
 rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
 rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
-duk/duk_config.h  duk/duktape.h 
+duk/duk_config.h  duk/duktape.h  \
+handler-google-sheets-config.h google-sheets-writer.h
 
 common_src =
 

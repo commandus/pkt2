@@ -136,13 +136,15 @@ int main
 	GoogleSheets gs(config->sheet, config->token);
 	std::string range = "A1:A2"; // Класс!
 	ValueRange cells;
-	if (gs.getRange(range, cells))
+	if (gs.getRange("A1:A2", cells))
 	{
 		LOG(ERROR) << ERR_GS_RANGE;
 		exit(ERRCODE_GS_RANGE);
 	}
 	else
 		LOG(ERROR) << cells.toString();
+		
+	gs.putRange("K1:N5", cells);
 
 	if (config->verbosity >= 2)
 		LOG(INFO) << "Token bearer: " << config->token;
