@@ -1,8 +1,7 @@
 /*
  * google-sheets.h
+ * @brief read/write Google speadsheet
  *
- *  Created on: Apr 7, 2017
- *      Author: andrei
  */
 
 #ifndef GOOGLE_SHEETS_H_
@@ -10,39 +9,53 @@
 
 #include <string>
 #include <vector>
+
+#include <curl/curl.h>
+
 /**
-  *
-  {
-  "range": "Sheet1!A1:D5",
-  "majorDimension": "ROWS",
-  "values": [
-    ["Item", "Cost", "Stocked", "Ship Date"],
-    ["Wheel", "$20.50", "4", "3/1/2016"],
-    ["Door", "$15", "2", "3/15/2016"],
-    ["Engine", "$100", "1", "30/20/2016"],
-    ["Totals", "$135.5", "7", "3/20/2016"]
-  ],
-}
+  * @brief load Google service token bearer
+  * @return "" if fails
   */
-  
+int loadGoogleToken
+(
+	const std::string &service_account,
+	const std::string &subject_email,
+	const std::string &pemkey,
+	const std::string &scope,
+	const std::string &audience,
+	int expires,
+	std::string &retval
+);
+
+/**
+ * @brief Keep cell range values in two-dimensional array
+ */ 
 class ValueRange {
 public:
-	ValueRange();
-	virtual ~ValueRange();
-	bool parse(const std::string &json);
+	std::string range;				///< e.g. 'Sheet'!A1:A2
+	std::string major_dimension;	///< e.g. "ROWS"
 	std::vector<std::vector<std::string>> values;
+
+	int parse(const std::string &json);
 	std::string toString();
 };
 
+/**
+  * @brief read/write Google spreadsheet cells values
+  */
 class GoogleSheets {
 private:
 	std::string sheet_id;
 	std::string token;
 public:
+	/**
+	  * @brief token bearer already exists
+	  */
 	GoogleSheets(
 		const std::string sheetid,
 		const std::string tokenbearer
 	);
+
 	virtual ~GoogleSheets();
 	int getRange(const std::string &range, ValueRange &retval);
 };

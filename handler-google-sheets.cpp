@@ -24,7 +24,6 @@
 #include "handler-google-sheets-config.h"
 #include "google-sheets-writer.h"
 
-#include "oauth2.h"
 #include "utilstring.h"
 
 #include "errorcodes.h"
@@ -110,36 +109,40 @@ int main
 
     INIT_LOGGING(PROGRAM_NAME)
 
-	// "sheets@oneway-ticket.iam.gserviceaccount.com",
-	config->token = loadGoogleToken(
+	// In windows, this will init the winsock stuff
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	int r = loadGoogleToken(
 		config->service_account,
 		config->subject_email, 
 		file2string(config->pemkeyfilename),
 		config->scope, 
 		config->audience,
-		config->expires
+		config->expires,
+		config->token
     );
-
-	config->sheet = "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo";
-	
-	std::cerr << config->token << std::endl;
-	
-	GoogleSheets gs(config->sheet, config->token);
-	std::string range = "A1:A2"; // Класс!
-	ValueRange cells;
-	if (!gs.getRange(range, cells))
-	{
-		LOG(ERROR) << ERR_GS_RANGE << " " << config->pemkeyfilename;
-		exit(ERRCODE_GS_RANGE);
-	}
-	else
-		LOG(ERROR) << cells.toString();
-
-	if (config->token.empty())
+    
+	if (r || config->token.empty())
 	{
 		LOG(ERROR) << ERR_TOKEN_BEARER << " " << config->pemkeyfilename;
 		exit(ERRCODE_TOKEN_BEARER);
 	}
+
+	if (config->verbosity >= 2)
+		LOG(INFO) << "Token bearer: " << config->token;
+
+	config->sheet = "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo";
+	
+	GoogleSheets gs(config->sheet, config->token);
+	std::string range = "A1:A2"; // Класс!
+	ValueRange cells;
+	if (gs.getRange(range, cells))
+	{
+		LOG(ERROR) << ERR_GS_RANGE;
+		exit(ERRCODE_GS_RANGE);
+	}
+	else
+		LOG(ERROR) << cells.toString();
 
 	if (config->verbosity >= 2)
 		LOG(INFO) << "Token bearer: " << config->token;

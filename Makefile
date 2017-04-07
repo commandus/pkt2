@@ -156,7 +156,6 @@ am_handler_google_sheets_OBJECTS =  \
 	handler_google_sheets-utilinet.$(OBJEXT) \
 	handler_google_sheets-pbjson.$(OBJEXT) \
 	handler_google_sheets-jsoncpp.$(OBJEXT) \
-	handler_google_sheets-oauth2.$(OBJEXT) \
 	handler_google_sheets-google-sheets.$(OBJEXT) \
 	handler_google_sheets-sslhelper.$(OBJEXT) \
 	handler_google_sheets-pkt2.pb.$(OBJEXT) \
@@ -833,7 +832,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
-oauth2.h sslhelper.h \
+sslhelper.h \
 cppcodec/base32_crockford.hpp cppcodec/base32_hex.hpp  cppcodec/base64_default_url_unpadded.hpp cppcodec/hex_lower.hpp \
 cppcodec/base32_default_crockford.hpp cppcodec/base32_rfc4648.hpp cppcodec/base64_rfc4648.hpp cppcodec/hex_upper.hpp \
 cppcodec/base32_default_hex.hpp cppcodec/base64_default_rfc4648.hpp cppcodec/base64_url.hpp cppcodec/hex_default_lower.hpp cppcodec/parse_error.hpp \
@@ -967,7 +966,7 @@ handler_google_sheets_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp jsoncpp.cpp \
-	oauth2.cpp google-sheets.cpp sslhelper.cpp \
+	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
@@ -1248,7 +1247,6 @@ include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Po
 include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets.Po
 include ./$(DEPDIR)/handler_google_sheets-jsoncpp.Po
 include ./$(DEPDIR)/handler_google_sheets-messagedecomposer.Po
-include ./$(DEPDIR)/handler_google_sheets-oauth2.Po
 include ./$(DEPDIR)/handler_google_sheets-pbjson.Po
 include ./$(DEPDIR)/handler_google_sheets-pkt2.pb.Po
 include ./$(DEPDIR)/handler_google_sheets-pkt2optionscache.Po
@@ -1831,20 +1829,6 @@ handler_google_sheets-jsoncpp.obj: jsoncpp.cpp
 #	$(AM_V_CXX)source='jsoncpp.cpp' object='handler_google_sheets-jsoncpp.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-jsoncpp.obj `if test -f 'jsoncpp.cpp'; then $(CYGPATH_W) 'jsoncpp.cpp'; else $(CYGPATH_W) '$(srcdir)/jsoncpp.cpp'; fi`
-
-handler_google_sheets-oauth2.o: oauth2.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-oauth2.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-oauth2.Tpo -c -o handler_google_sheets-oauth2.o `test -f 'oauth2.cpp' || echo '$(srcdir)/'`oauth2.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-oauth2.Tpo $(DEPDIR)/handler_google_sheets-oauth2.Po
-#	$(AM_V_CXX)source='oauth2.cpp' object='handler_google_sheets-oauth2.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-oauth2.o `test -f 'oauth2.cpp' || echo '$(srcdir)/'`oauth2.cpp
-
-handler_google_sheets-oauth2.obj: oauth2.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-oauth2.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-oauth2.Tpo -c -o handler_google_sheets-oauth2.obj `if test -f 'oauth2.cpp'; then $(CYGPATH_W) 'oauth2.cpp'; else $(CYGPATH_W) '$(srcdir)/oauth2.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-oauth2.Tpo $(DEPDIR)/handler_google_sheets-oauth2.Po
-#	$(AM_V_CXX)source='oauth2.cpp' object='handler_google_sheets-oauth2.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-oauth2.obj `if test -f 'oauth2.cpp'; then $(CYGPATH_W) 'oauth2.cpp'; else $(CYGPATH_W) '$(srcdir)/oauth2.cpp'; fi`
 
 handler_google_sheets-google-sheets.o: google-sheets.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets.Tpo -c -o handler_google_sheets-google-sheets.o `test -f 'google-sheets.cpp' || echo '$(srcdir)/'`google-sheets.cpp

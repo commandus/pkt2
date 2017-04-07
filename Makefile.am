@@ -58,7 +58,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
-oauth2.h sslhelper.h \
+sslhelper.h \
 cppcodec/base32_crockford.hpp cppcodec/base32_hex.hpp  cppcodec/base64_default_url_unpadded.hpp cppcodec/hex_lower.hpp \
 cppcodec/base32_default_crockford.hpp cppcodec/base32_rfc4648.hpp cppcodec/base64_rfc4648.hpp cppcodec/hex_upper.hpp \
 cppcodec/base32_default_hex.hpp cppcodec/base64_default_rfc4648.hpp cppcodec/base64_url.hpp cppcodec/hex_default_lower.hpp cppcodec/parse_error.hpp \
@@ -192,7 +192,7 @@ handler_google_sheets_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp jsoncpp.cpp \
-	oauth2.cpp google-sheets.cpp sslhelper.cpp \
+	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
