@@ -157,6 +157,7 @@ am_handler_google_sheets_OBJECTS =  \
 	handler_google_sheets-pbjson.$(OBJEXT) \
 	handler_google_sheets-jsoncpp.$(OBJEXT) \
 	handler_google_sheets-oauth2.$(OBJEXT) \
+	handler_google_sheets-google-sheets.$(OBJEXT) \
 	handler_google_sheets-sslhelper.$(OBJEXT) \
 	handler_google_sheets-pkt2.pb.$(OBJEXT) \
 	handler_google_sheets-pkt2optionscache.$(OBJEXT) \
@@ -840,7 +841,7 @@ cppcodec/base32_default_rfc4648.hpp cppcodec/base64_default_url.hpp cppcodec/bas
 cppcodec/data/access.hpp cppcodec/data/raw_result_buffer.hpp \
 cppcodec/detail/base32.hpp cppcodec/detail/base64.hpp cppcodec/detail/codec.hpp cppcodec/detail/config.hpp cppcodec/detail/hex.hpp cppcodec/detail/stream_codec.hpp \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
-json/json.h  json/json-forwards.h \
+json/json.h  json/json-forwards.h google-sheets.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
 rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybuffer.h    rapidjson/pointer.h         rapidjson/reader.h        rapidjson/stringbuffer.h \
@@ -966,7 +967,7 @@ handler_google_sheets_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp jsoncpp.cpp \
-	oauth2.cpp sslhelper.cpp \
+	oauth2.cpp google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
@@ -1242,6 +1243,7 @@ include ./$(DEPDIR)/handler_google_sheets-daemonize.Po
 include ./$(DEPDIR)/handler_google_sheets-error-printer.Po
 include ./$(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handler_google_sheets-google-sheets-writer.Po
+include ./$(DEPDIR)/handler_google_sheets-google-sheets.Po
 include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Po
 include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets.Po
 include ./$(DEPDIR)/handler_google_sheets-jsoncpp.Po
@@ -1843,6 +1845,20 @@ handler_google_sheets-oauth2.obj: oauth2.cpp
 #	$(AM_V_CXX)source='oauth2.cpp' object='handler_google_sheets-oauth2.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-oauth2.obj `if test -f 'oauth2.cpp'; then $(CYGPATH_W) 'oauth2.cpp'; else $(CYGPATH_W) '$(srcdir)/oauth2.cpp'; fi`
+
+handler_google_sheets-google-sheets.o: google-sheets.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets.Tpo -c -o handler_google_sheets-google-sheets.o `test -f 'google-sheets.cpp' || echo '$(srcdir)/'`google-sheets.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-google-sheets.Po
+#	$(AM_V_CXX)source='google-sheets.cpp' object='handler_google_sheets-google-sheets.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-google-sheets.o `test -f 'google-sheets.cpp' || echo '$(srcdir)/'`google-sheets.cpp
+
+handler_google_sheets-google-sheets.obj: google-sheets.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets.Tpo -c -o handler_google_sheets-google-sheets.obj `if test -f 'google-sheets.cpp'; then $(CYGPATH_W) 'google-sheets.cpp'; else $(CYGPATH_W) '$(srcdir)/google-sheets.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-google-sheets.Po
+#	$(AM_V_CXX)source='google-sheets.cpp' object='handler_google_sheets-google-sheets.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-google-sheets.obj `if test -f 'google-sheets.cpp'; then $(CYGPATH_W) 'google-sheets.cpp'; else $(CYGPATH_W) '$(srcdir)/google-sheets.cpp'; fi`
 
 handler_google_sheets-sslhelper.o: sslhelper.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-sslhelper.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-sslhelper.Tpo -c -o handler_google_sheets-sslhelper.o `test -f 'sslhelper.cpp' || echo '$(srcdir)/'`sslhelper.cpp

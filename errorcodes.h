@@ -77,6 +77,7 @@
 #define ERRCODE_PARSE_PACKET					46
 #define ERRCODE_PACKET_TOO_SMALL				47
 #define ERRCODE_TOKEN_BEARER					48
+#define ERRCODE_GS_RANGE						49
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -124,5 +125,6 @@
 #define ERR_PARSE_PACKET						"Parse packet error "
 #define ERR_PACKET_TOO_SMALL					"Packet size is too small, field "
 #define ERR_TOKEN_BEARER						"Token bearer error "
+#define ERR_GS_RANGE							"Google Sheet get range error "
 
 #endif /* ERRORCODES_H_ */

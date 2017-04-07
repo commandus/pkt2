@@ -28,6 +28,7 @@
 #include "utilstring.h"
 
 #include "errorcodes.h"
+#include "google-sheets.h"
 
 Config *config;
 
@@ -118,6 +119,21 @@ int main
 		config->audience,
 		config->expires
     );
+
+	config->sheet = "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo";
+	
+	std::cerr << config->token << std::endl;
+	
+	GoogleSheets gs(config->sheet, config->token);
+	std::string range = "A1:A2"; // Класс!
+	ValueRange cells;
+	if (!gs.getRange(range, cells))
+	{
+		LOG(ERROR) << ERR_GS_RANGE << " " << config->pemkeyfilename;
+		exit(ERRCODE_GS_RANGE);
+	}
+	else
+		LOG(ERROR) << cells.toString();
 
 	if (config->token.empty())
 	{

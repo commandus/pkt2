@@ -66,7 +66,7 @@ cppcodec/base32_default_rfc4648.hpp cppcodec/base64_default_url.hpp cppcodec/bas
 cppcodec/data/access.hpp cppcodec/data/raw_result_buffer.hpp \
 cppcodec/detail/base32.hpp cppcodec/detail/base64.hpp cppcodec/detail/codec.hpp cppcodec/detail/config.hpp cppcodec/detail/hex.hpp cppcodec/detail/stream_codec.hpp \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
-json/json.h  json/json-forwards.h \
+json/json.h  json/json-forwards.h google-sheets.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
 rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybuffer.h    rapidjson/pointer.h         rapidjson/reader.h        rapidjson/stringbuffer.h \
@@ -192,7 +192,7 @@ handler_google_sheets_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp jsoncpp.cpp \
-	oauth2.cpp sslhelper.cpp \
+	oauth2.cpp google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
