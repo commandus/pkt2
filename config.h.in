@@ -3,6 +3,9 @@
 /* Define to 1 if you have the <argtable2.h> header file. */
 #undef HAVE_ARGTABLE2_H
 
+/* Define to 1 if you have the <curl/curl.h> header file. */
+#undef HAVE_CURL_CURL_H
+
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
@@ -17,6 +20,9 @@
 
 /* Define to 1 if you have the `argtable2' library (-largtable2). */
 #undef HAVE_LIBARGTABLE2
+
+/* Have CURL */
+#undef HAVE_LIBCURL
 
 /* Define to 1 if you have the `pq' library (-lpq). */
 #undef HAVE_LIBPQ

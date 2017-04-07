@@ -25,11 +25,30 @@ esac],
 
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 
-# Checks for libraries.
+# Header only https://github.com/tplgy/cppcodec
+CPPFLAGS="$CPPFLAGS -Icppcodec"
 
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h limits.h stdint.h string.h sys/time.h termios.h unistd.h])
 AC_CHECK_HEADERS([argtable2.h], [], AC_MSG_ERROR([Could not find argtable2.h. Try $ ./configure CFLAGS='-Iyour-argtable2-include-path]))
+
+AC_CHECK_HEADERS([curl/curl.h], [], AC_MSG_ERROR([Could not find curl/curl.h. Try $ ./configure CFLAGS='-Iyour-curl-include-path]))
+AC_CHECK_LIB(curl, curl_easy_init, [], AC_MSG_ERROR([Could not find libcurl. Try $ ./configure LDFLAGS='-Lyour-curl-lib-path']))
+
+
+if test x$curl = xfalse
+then
+	AM_CONDITIONAL(HAVE_LIBCURL, false)
+if test "$gnurl" = 0
+then
+	AC_MSG_WARN([GNUnet requires libcurl-gnutls or gnurl >= 7.34])
+fi
+else
+	AM_CONDITIONAL(HAVE_LIBCURL, true)
+	AC_DEFINE([HAVE_LIBCURL],[1],[Have CURL])
+fi
+
+
 # postresgql header
 AC_CHECK_HEADERS(libpq-fe.h)
 if test "$ac_cv_header_libpq_fe_h" = "yes"; then

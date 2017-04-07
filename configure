@@ -636,6 +636,8 @@ ac_subst_vars='am__EXEEXT_FALSE
 am__EXEEXT_TRUE
 LTLIBOBJS
 LIBOBJS
+HAVE_LIBCURL_FALSE
+HAVE_LIBCURL_TRUE
 DEBUG_FALSE
 DEBUG_TRUE
 CXXCPP
@@ -16014,7 +16016,8 @@ else
 fi
 
 
-# Checks for libraries.
+# Header only https://github.com/tplgy/cppcodec
+CPPFLAGS="$CPPFLAGS -Icppcodec"
 
 # Checks for header files.
 for ac_header in fcntl.h limits.h stdint.h string.h sys/time.h termios.h unistd.h
@@ -16043,6 +16046,100 @@ else
 fi
 
 done
+
+
+for ac_header in curl/curl.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "curl/curl.h" "ac_cv_header_curl_curl_h" "$ac_includes_default"
+if test "x$ac_cv_header_curl_curl_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_CURL_CURL_H 1
+_ACEOF
+
+else
+  as_fn_error $? "Could not find curl/curl.h. Try $ ./configure CFLAGS='-Iyour-curl-include-path" "$LINENO" 5
+fi
+
+done
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for curl_easy_init in -lcurl" >&5
+$as_echo_n "checking for curl_easy_init in -lcurl... " >&6; }
+if ${ac_cv_lib_curl_curl_easy_init+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lcurl  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char curl_easy_init ();
+int
+main ()
+{
+return curl_easy_init ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_curl_curl_easy_init=yes
+else
+  ac_cv_lib_curl_curl_easy_init=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_curl_curl_easy_init" >&5
+$as_echo "$ac_cv_lib_curl_curl_easy_init" >&6; }
+if test "x$ac_cv_lib_curl_curl_easy_init" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBCURL 1
+_ACEOF
+
+  LIBS="-lcurl $LIBS"
+
+else
+  as_fn_error $? "Could not find libcurl. Try $ ./configure LDFLAGS='-Lyour-curl-lib-path'" "$LINENO" 5
+fi
+
+
+
+if test x$curl = xfalse
+then
+	 if false; then
+  HAVE_LIBCURL_TRUE=
+  HAVE_LIBCURL_FALSE='#'
+else
+  HAVE_LIBCURL_TRUE='#'
+  HAVE_LIBCURL_FALSE=
+fi
+
+if test "$gnurl" = 0
+then
+	{ $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: GNUnet requires libcurl-gnutls or gnurl >= 7.34" >&5
+$as_echo "$as_me: WARNING: GNUnet requires libcurl-gnutls or gnurl >= 7.34" >&2;}
+fi
+else
+	 if true; then
+  HAVE_LIBCURL_TRUE=
+  HAVE_LIBCURL_FALSE='#'
+else
+  HAVE_LIBCURL_TRUE='#'
+  HAVE_LIBCURL_FALSE=
+fi
+
+
+$as_echo "#define HAVE_LIBCURL 1" >>confdefs.h
+
+fi
+
 
 # postresgql header
 for ac_header in libpq-fe.h
@@ -16790,6 +16887,14 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${DEBUG_TRUE}" && test -z "${DEBUG_FALSE}"; then
   as_fn_error $? "conditional \"DEBUG\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_LIBCURL_TRUE}" && test -z "${HAVE_LIBCURL_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LIBCURL\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${HAVE_LIBCURL_TRUE}" && test -z "${HAVE_LIBCURL_FALSE}"; then
+  as_fn_error $? "conditional \"HAVE_LIBCURL\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
