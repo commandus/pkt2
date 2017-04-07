@@ -96,11 +96,6 @@ int run
 		Config *config
 )
 {
-	OAuth2 oauth2;
-	oauth2.getToken("995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com",
-			"https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fspreadsheets",
-			"", "");
-//			"andrei.i.ivanov@commandus.com", "vjhlthKTYL");
 	int nano_socket = nn_socket(AF_SP, NN_SUB);
 	int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (r < 0)

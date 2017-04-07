@@ -59,6 +59,12 @@ handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-mess
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
 oauth2.h sslhelper.h \
+cppcodec/base32_crockford.hpp cppcodec/base32_hex.hpp  cppcodec/base64_default_url_unpadded.hpp cppcodec/hex_lower.hpp \
+cppcodec/base32_default_crockford.hpp cppcodec/base32_rfc4648.hpp cppcodec/base64_rfc4648.hpp cppcodec/hex_upper.hpp \
+cppcodec/base32_default_hex.hpp cppcodec/base64_default_rfc4648.hpp cppcodec/base64_url.hpp cppcodec/hex_default_lower.hpp cppcodec/parse_error.hpp \
+cppcodec/base32_default_rfc4648.hpp cppcodec/base64_default_url.hpp cppcodec/base64_url_unpadded.hpp cppcodec/hex_default_upper.hpp \
+cppcodec/data/access.hpp cppcodec/data/raw_result_buffer.hpp \
+cppcodec/detail/base32.hpp cppcodec/detail/base64.hpp cppcodec/detail/codec.hpp cppcodec/detail/config.hpp cppcodec/detail/hex.hpp cppcodec/detail/stream_codec.hpp \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
 json/json.h  json/json-forwards.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
@@ -190,7 +196,7 @@ handler_google_sheets_SOURCES = \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -loauthcpp -lssl -lcrypto $(SNMPLIBS)
+handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS)
 handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #

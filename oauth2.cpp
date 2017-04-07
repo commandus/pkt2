@@ -2,165 +2,52 @@
  * oauth2.cpp
  *
  */
+#include "oauth2.h"
 #include <iostream>
 #include <algorithm>
 #include <json/json.h>
 #include <glog/logging.h>
+#include <curl/curl.h>
 
-#include <openssl/conf.h>
-#include <openssl/x509v3.h>
+#include "cppcodec/base64_url.hpp"
 
-#include "sslhelper.h"
 #include "utilstring.h"
-#include "oauth2.h"
-#include <liboauthcpp/liboauthcpp.h>
+#include "sslhelper.h"
 
-std::string getUserString(std::string prompt) {
-    std::cout << prompt << " ";
+#define GOOGLE_TOKEN_URL "https://www.googleapis.com/oauth2/v4/token"
 
-    std::string res;
-    std::cin >> res;
-    std::cout << std::endl;
-    return res;
-}
-
-OAuth2::OAuth2() {
-	// TODO Auto-generated constructor stub
-
-}
-
-OAuth2::~OAuth2() {
-	// TODO Auto-generated destructor stub
-}
-
-std::string OAuth2::getToken
-(
-	const std::string &client,
-	const std::string &scope,
-	const std::string &consumer_key, 
-	const std::string &consumer_secret
-) 
+static size_t write_string(void *contents, size_t size, size_t nmemb, void *userp)
 {
-	https://accounts.google.com/o/oauth2/auth?client_id=995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com&oauth_consumer_key=995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com&oauth_nonce=14913771112cff0a79&oauth_signature=TcY7N6Y4K%2BYfqPFOoKA4vsf4M40%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1491377111&oauth_version=1.0&redirect_uri=https%3A%2F%2Flocalhost&response_type=code&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fspreadsheets
-
-	std::string request_token_url = "https://accounts.google.com/o/oauth2/auth";
-	std::string authorize_url = "https://api.twitter.com/oauth/authorize";
-	std::string access_token_url = "https://api.twitter.com/oauth/access_token";
-
-    OAuth::Consumer consumer(consumer_key, consumer_secret);
-    OAuth::Client oauth(&consumer);
-    std::string base_request_token_url = request_token_url + "?response_type=code&redirect_uri=https%3A%2F%2Flocalhost&client_id=" 
-    	+ client + "&scope=" + scope;
-    std::string oAuthQueryString = oauth.getURLQueryString(OAuth::Http::Get, base_request_token_url);
-
-    std::cout << "Enter the following in your browser to get the request token: " << std::endl;
-    std::cout << request_token_url << "?" << oAuthQueryString << std::endl;
-    std::cout << std::endl;
-
-    // Extract the token and token_secret from the response
-    std::string request_token_resp = getUserString("Enter the response:");
-    // This time we pass the response directly and have the library do the
-    // parsing (see next extractToken call for alternative)
-    OAuth::Token request_token = OAuth::Token::extract( request_token_resp );
-
-    // Get access token and secret from OAuth object
-    std::cout << "Request Token:" << std::endl;
-    std::cout << "    - oauth_token        = " << request_token.key() << std::endl;
-    std::cout << "    - oauth_token_secret = " << request_token.secret() << std::endl;
-    std::cout << std::endl;
-
-    // Step 2: Redirect to the provider. Since this is a CLI script we
-    // do not redirect. In a web application you would redirect the
-    // user to the URL below.
-    std::cout << "Go to the following link in your browser to authorize this application on a user's account:" << std::endl;
-    std::cout << authorize_url << "?oauth_token=" << request_token.key() << std::endl;
-
-    // After the user has granted access to you, the consumer, the
-    // provider will redirect you to whatever URL you have told them
-    // to redirect to. You can usually define this in the
-    // oauth_callback argument as well.
-    std::string pin = getUserString("What is the PIN?");
-    request_token.setPin(pin);
-
-    // Step 3: Once the consumer has redirected the user back to the
-    // oauth_callback URL you can request the access token the user
-    // has approved. You use the request token to sign this
-    // request. After this is done you throw away the request token
-    // and use the access token returned. You should store the oauth
-    // token and token secret somewhere safe, like a database, for
-    // future use.
-    oauth = OAuth::Client(&consumer, &request_token);
-    // Note that we explicitly specify an empty body here (it's a GET) so we can
-    // also specify to include the oauth_verifier parameter
-    oAuthQueryString = oauth.getURLQueryString( OAuth::Http::Get, access_token_url, std::string( "" ), true );
-    std::cout << "Enter the following in your browser to get the final access token & secret: " << std::endl;
-    std::cout << access_token_url << "?" << oAuthQueryString;
-    std::cout << std::endl;
-
-    // Once they've come back from the browser, extract the token and token_secret from the response
-    std::string access_token_resp = getUserString("Enter the response:");
-    // On this extractToken, we do the parsing ourselves (via the library) so we
-    // can extract additional keys that are sent back, in the case of twitter,
-    // the screen_name
-    OAuth::KeyValuePairs access_token_resp_data = OAuth::ParseKeyValuePairs(access_token_resp);
-    OAuth::Token access_token = OAuth::Token::extract( access_token_resp_data );
-
-    std::cout << "Access token:" << std::endl;
-    std::cout << "    - oauth_token        = " << access_token.key() << std::endl;
-    std::cout << "    - oauth_token_secret = " << access_token.secret() << std::endl;
-    std::cout << std::endl;
-    std::cout << "You may now access protected resources using the access tokens above." << std::endl;
-    std::cout << std::endl;
-
-    std::pair<OAuth::KeyValuePairs::iterator, OAuth::KeyValuePairs::iterator> screen_name_its = access_token_resp_data.equal_range("screen_name");
-    for(OAuth::KeyValuePairs::iterator it = screen_name_its.first; it != screen_name_its.second; it++)
-        std::cout << "Also extracted screen name from access token response: " << it->second << std::endl;
-
-    // E.g., to use the access token, you'd create a new OAuth using
-    // it, discarding the request_token:
-    // oauth = OAuth::Client(&consumer, &access_token);
+	((std::string*)userp)->append((char*)contents, size * nmemb);
+    return size * nmemb;
 }
 
-std::string jws_sign
+std::string curl_post
 (
-	const std::string &data, 
-	const std::string &pemkey
+		const std::string &url,
+		const std::string &data
 )
 {
-    SHA256_CTX mctx;
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256_Init(&mctx);
-    SHA256_Update(&mctx, data.c_str(), data.size());
-    SHA256_Final(hash, &mctx);
+	std::string r;
+	// In windows, this will init the winsock stuff
+	curl_global_init(CURL_GLOBAL_ALL);
+	// get a curl handle
+	CURL *curl = curl_easy_init();
+	if (curl) {
+		curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
-	unsigned char *sig;
-	size_t slen;
-	
-    EVP_PKEY *key = getPKey(pemkey);
-    EVP_PKEY_CTX *kctx = EVP_PKEY_CTX_new(key, NULL);
-    if (!kctx) 
-    	goto err;
-    if (EVP_PKEY_sign_init(kctx) <= 0) 
-    	goto err;
-    if (EVP_PKEY_CTX_set_rsa_padding(kctx, RSA_PKCS1_PADDING) <= 0) 
-    	goto err;
-    if (EVP_PKEY_CTX_set_signature_md(kctx, EVP_sha256()) <= 0) 
-    	goto err;
-    // Determine buffer length
-    slen = 0;
-    if (EVP_PKEY_sign(kctx, NULL, &slen, hash, SHA256_DIGEST_LENGTH) <= 0) 
-    	goto err;
-    sig = (unsigned char *) OPENSSL_malloc(slen);
-    if (!sig) 
-    	goto err;
-    if (EVP_PKEY_sign(kctx, sig, &slen, hash, SHA256_DIGEST_LENGTH) <= 0) 
-    	goto err;
-    return Base64UrlEncode(sig, (unsigned int) slen);
-
-err:
-    // Clean up
-    EVP_cleanup();
-    return "";
+	    curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+	    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
+	    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &r);
+	    CURLcode res = curl_easy_perform(curl);
+	    if (res != CURLE_OK)
+	      LOG(ERROR) << "Error post data: " << curl_easy_strerror(res);
+	    curl_easy_cleanup(curl);
+	}
+	curl_global_cleanup();
+	return r;
 }
 
 /**
@@ -170,19 +57,19 @@ err:
   * @param audience app's client IDs 
   * @param expires 3600
   */
-std::string getJWT
+static std::string getJWT
 (
+	const std::string &service_account,
 	const std::string &subject_email,
 	const std::string &pemkey,
 	const std::string &scope,
 	const std::string &audience,
-	const std::string &service_account,
 	int expires
 )
 {
 	Json::Value jwt_header;
     Json::Value jwt_claim_set;
-    std::time_t t = std::time(NULL);
+    time_t t = time(NULL);
     Json::FastWriter jfw;
     Json::StyledWriter jsw;
 
@@ -191,8 +78,8 @@ std::string getJWT
     jwt_header["typ"] = "JWT";
 
     // jwt claim set
-
-	// jwt_claim_set["sub"] = subject_email;
+    if (!subject_email.empty())
+    	jwt_claim_set["sub"] = subject_email;
     jwt_claim_set["iss"] = service_account;
     jwt_claim_set["scope"] = scope;
     // intended target of the assertion for an access token
@@ -200,30 +87,52 @@ std::string getJWT
     jwt_claim_set["iat"] = Json::UInt64(t);
     jwt_claim_set["exp"] = Json::UInt64(t + expires);
 
-    std::cout << jsw.write(jwt_header) << "." << jsw.write(jwt_claim_set);
-
     // header base64url
     // for header
     std::string header = jfw.write(jwt_header);
-    std::string base64url_header = base64urlencode(header);	// .substr(0, header.size() - 1)
-LOG(INFO) << "header: " << header << " " << base64url_header;
+    std::string base64url_header = cppcodec::base64_url::encode(header);
 
 	// claim set
 	std::string claim_set= jfw.write(jwt_claim_set);
-    std::string base64url_claim_set = base64urlencode(claim_set);	// .substr(0, claim_set.size() - 1)
-LOG(INFO) << "claim set: " << claim_set << base64url_claim_set;
+    std::string base64url_claim_set = cppcodec::base64_url::encode(claim_set);
 
 	std::string jwt_b64 = base64url_header + "." + base64url_claim_set;
     // for signature
-    std::string jwt_signature = jws_sign(jwt_b64, pemkey);
-LOG(INFO) << "signature: " << jwt_signature;
-    jwt_b64 = jwt_b64 + "." + jwt_signature;
-LOG(INFO) << "JWT: " << jwt_b64;
-    
-	// for test purpose calling with curl
-    std::cout << "curl -d 'grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" << jwt_b64
-    	<< "' https://www.googleapis.com/oauth2/v4/token" << std::endl;
 
-LOG(INFO) << "jwt_b64: " <<  jwt_b64;
+    std::string jwt_signature;
+    int c = jws_sign(jwt_b64, pemkey, jwt_signature);
+    if (c != 0)
+    {
+    	LOG(ERROR) << "Error " << c << ": " << jwt_signature;
+    	return "";
+    }
+    jwt_b64 = jwt_b64 + "." + cppcodec::base64_url::encode(jwt_signature);
     return jwt_b64;
+}
+
+std::string loadGoogleToken
+(
+	const std::string &service_account,
+	const std::string &subject_email,
+	const std::string &pemkey,
+	const std::string &scope,
+	const std::string &audience,
+	int expires
+)
+{
+	std::string jwt = getJWT(service_account, subject_email, pemkey, scope, audience, expires);
+	if (jwt.empty())
+		return "";
+	std::string json = curl_post(GOOGLE_TOKEN_URL,
+				"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + jwt);
+	Json::Reader reader;
+	Json::Value v;
+
+	bool r = reader.parse(json, v, false);
+	if (!r)
+	{
+	   	LOG(ERROR) << "Failed to parse " << json;
+	    return "";
+	}
+	return v.get("access_token", "UTF-8").asString();
 }

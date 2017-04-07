@@ -71,8 +71,3 @@ std::string hexString(void *buffer, size_t size);
 std::string hexString(const std::string &data);
 
 std::string hex2string(const std::string &hex);
-
-std::string Base64UrlEncode(const void *value, size_t size);
-
-std::string base64urlencode(const std::string &value);
-std::string base64urldecode(const std::string &value);

@@ -98,15 +98,6 @@ int main
     setSignalHandler(SIGINT);
     reslt = 0;
 
-
-    getJWT(
-    		"andrei.i.ivanov@gmail.com",
-    		file2string("cert/oneway-ticket-notasecret.p12.key"),
-    		"https://www.googleapis.com/auth/spreadsheets", // "https://www.googleapis.com/auth/prediction" "https://www.googleapis.com/auth/spreadsheets",
-			"https://www.googleapis.com/oauth2/v4/token",
-    		"995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com", // "995029341446-compute@developer.gserviceaccount.com""995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com",
-    		3600
-    );
 	config = new Config(argc, argv);
 	if (!config)
 		exit(3);
@@ -117,6 +108,25 @@ int main
 	}
 
     INIT_LOGGING(PROGRAM_NAME)
+
+	// "sheets@oneway-ticket.iam.gserviceaccount.com",
+	config->token = loadGoogleToken(
+		config->service_account,
+		config->subject_email, 
+		file2string(config->pemkeyfilename),
+		config->scope, 
+		config->audience,
+		config->expires
+    );
+
+	if (config->token.empty())
+	{
+		LOG(ERROR) << ERR_TOKEN_BEARER << " " << config->pemkeyfilename;
+		exit(ERRCODE_TOKEN_BEARER);
+	}
+
+	if (config->verbosity >= 2)
+		LOG(INFO) << "Token bearer: " << config->token;
     
 	if (config->daemonize)
 	{

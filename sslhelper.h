@@ -80,4 +80,18 @@ std::string Base64Encode
 	size_t length
 );
 
+/**
+ * If error occurred, retval contains error descrtiption
+ * @param data
+ * @param pemkey PEM private key
+ * @param retval
+ * @return
+ */
+int jws_sign
+(
+	const std::string &data,
+	const std::string &pemkey,
+	std::string &retval
+);
+
 #endif /* SSLHELPER_H_ */

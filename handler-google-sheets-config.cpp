@@ -11,15 +11,16 @@
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
 #define DEF_PROTO_PATH				"proto"
 
-#define DEF_CLIENT_ID				"995029341446-8lsujer4ttgomr0lllt4vpeflbjpeoof.apps.googleusercontent.com"
-#define DEF_SECRET					"ztJe0qcE8ajG-FgIwW8xYpL_"
 #define DEF_SHEET_ID				"1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo"
 
-#define DEF_SHEET_SCOPE				"https://www.googleapis.com/auth/spreadsheets"
-const std::string request_token_url = "https://api.twitter.com/oauth/request_token";
-const std::string request_token_query_args = "oauth_callback=oob";
-const std::string authorize_url = "https://api.twitter.com/oauth/authorize";
-const std::string access_token_url = "https://api.twitter.com/oauth/access_token";
+// Google service
+#define DEF_SERVICE_ACCOUNT			"102274909249528994829"
+#define DEF_SUBJECT_EMAIL			"andrei.i.ivanov@commandus.com"
+#define DEF_PEM_PKEY_FN				"cert/pkt2-sheets.key"
+
+#define DEF_SCOPE					"https://www.googleapis.com/auth/spreadsheets"
+#define DEF_AUDIENCE				"https://www.googleapis.com/oauth2/v4/token"
+#define DEF_EXPIRES					3600
 
 Config::Config
 (
@@ -57,11 +58,12 @@ int Config::parseCmd
 
         struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
         struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "Reserved. Default 0");
-        
-        // OAuth, Google sheets
-        struct arg_str *a_client = arg_str0(NULL, "client", "<id>", "Google app client id. Default " DEF_CLIENT_ID );
-        struct arg_str *a_secret = arg_str0(NULL, "secret", "<id>", "Google app client secret " DEF_SECRET);
-        struct arg_str *a_sheet = arg_str0(NULL, "sheet", "<id>", "Google app client id " DEF_SHEET_ID);
+
+        // Google service auth
+    	struct arg_str *a_service_account = arg_str0("a", "service_account", "<id>", "Google service id. Default " DEF_SERVICE_ACCOUNT);
+        struct arg_str *a_subject_email = arg_str0("e", "sub", "<email>", "subject email. Default " DEF_SUBJECT_EMAIL);
+        struct arg_file *a_pemkeyfilename = arg_file0("k", "key", "<file>", "PEM private key file. Default " DEF_PEM_PKEY_FN);
+        struct arg_str *a_sheet = arg_str0("s", "sheet", "<id>", "Spreadsheet id");
 
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
@@ -71,10 +73,9 @@ int Config::parseCmd
         		a_proto_path,
                 a_message_url,
                 a_retries, a_retry_delay,
-                a_daemonize, a_max_fd, a_verbosity, a_mode, 
 				// OAuth, Google sheets
-				a_client, a_secret, a_sheet,
-
+				a_service_account, a_subject_email, a_pemkeyfilename, a_sheet,
+                a_daemonize, a_max_fd, a_verbosity, a_mode, 
 				a_buffer_size, a_help, a_end 
         };
 
@@ -137,14 +138,6 @@ int Config::parseCmd
             mode = DEF_MODE;
 
 		// OAuth, Google sheets
-        if (a_client->count)
-            client = *a_client->sval;
-        else
-            client = DEF_CLIENT_ID;
-        if (a_secret->count)
-            secret = *a_secret->sval;
-        else
-            secret = DEF_SECRET;
         if (a_sheet->count)
             sheet = *a_sheet->sval;
         else
@@ -154,6 +147,25 @@ int Config::parseCmd
         	buffer_size = *a_buffer_size->ival;
         else
         	buffer_size = DEF_BUFFER_SIZE;
+
+        if (a_service_account->count)
+        	service_account = *a_service_account->sval;
+        else
+        	service_account = DEF_SERVICE_ACCOUNT;
+
+        if (a_subject_email->count)
+        	subject_email = *a_service_account->sval;
+        else
+        	subject_email = DEF_SUBJECT_EMAIL;
+
+        if (a_pemkeyfilename->count)
+        	pemkeyfilename = *a_pemkeyfilename->filename;
+        else
+        	pemkeyfilename = DEF_PEM_PKEY_FN;
+
+        scope = DEF_SCOPE;
+    	audience = DEF_AUDIENCE;
+    	expires = DEF_EXPIRES;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return ERR_OK;
