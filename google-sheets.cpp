@@ -96,7 +96,11 @@ CURLcode curl_put
 std::cerr << "PUT " << 	data << std::endl;		 
 	struct curl_slist *chunk = NULL;
 	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
+	chunk = curl_slist_append(chunk, "Content-Type: application/json");
+	
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+	
+	
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -382,30 +386,31 @@ int GoogleSheets::putRange
 	ValueRange &value
 )
 {
-	// std::string rang = "Sheet1!K1:N5";
-	std::string rang = "Class!A1:D2";
-	
-	std::string json = "{ \
-  \"range\": \"" + rang + "\", \
-  \"majorDimension\": \"ROWS\", \
-  \"values\": [ \
-    [\"Student\", \"Name\", \"Gender\", \"Class\"], \
-    [\"SSSS\", \"NNNN\", \"Male\", \"222\"] \
-  ] \
-	}";
+	std::string rang = "Class!K11:N15";
 	/*
 	std::string json = "{ \
   \"range\": \"" + rang + "\", \
   \"majorDimension\": \"ROWS\", \
   \"values\": [ \
-    [\"Item\", \"Cost\", \"Stocked\", \"Ship Date\"], \
-    [\"Wheel\", \"$20.50\", \"4\", \"3/1/2016\"], \
-    [\"Door\", \"$15\", \"2\", \"3/15/2016\"], \
-    [\"Engine\", \"$100\", \"1\", \"30/20/2016\"], \
-    [\"Totals\", \"=SUM(L2:L4)\", \"=SUM(M2:M4)\", \"=MAX(N2:N4)\"] \
+    [\"Student\", \"Name\", \"Gender\", \"Class\"], \
+    [\"SSSS\", \"NNNN\", \"Male\", \"222\"], \
+    [\"SSSS\", \"NNNN\", \"Male\", \"2222333322\"] \
   ] \
 	}";
 	*/
+	
+	std::string json = "{ \
+  \"range\": \"" + rang + "\", \
+  \"majorDimension\": \"ROWS\", \
+  \"values\": [ \
+    [\"Item\", \"Cost\", \"Stocked\", \"Ship Date\"], \
+    [\"Wheel\", \"20.50\", \"4\", \"3/1/2016\"], \
+    [\"Door\", \"15\", \"2\", \"3/15/2016\"], \
+    [\"Engine\", \"100\", \"1\", \"30/20/2016\"], \
+    [\"Totals\", \"=SUM(L12:L14)\", \"=SUM(M12:M14)\", \"=MAX(N12:N14)\"] \
+  ] \
+	}";
+	
 	std::string response;
 	CURLcode r = curl_put(token, "https://sheets.googleapis.com/v4/spreadsheets/" + sheet_id + "/values/" + rang + "?valueInputOption=USER_ENTERED", json, response);
 	if (r != CURLE_OK)
