@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <iostream>
+#include <fstream>
 
 #include <glog/logging.h>
 
@@ -112,29 +113,31 @@ int main
 	// In windows, this will init the winsock stuff
 	curl_global_init(CURL_GLOBAL_ALL);
 
-	int r = loadGoogleToken(
-		config->service_account,
-		config->subject_email, 
-		file2string(config->pemkeyfilename),
-		config->scope, 
-		config->audience,
-		config->expires,
-		config->token
-    );
-    
-	if (r || config->token.empty())
+	std::string json_google_service = file2string(config->json);
+	int r;
+	
+	std::string s = config->service_account;
+	readGoogleTokenJSON(config->json, s, config->pemkey);
+	if (config->pemkey.empty())
+		config->pemkey = file2string(config->pemkeyfilename);
+	else
+		config->service_account = s;
+	
+	if (config->verbosity >= 2)
 	{
-		LOG(ERROR) << ERR_TOKEN_BEARER << " " << config->pemkeyfilename;
-		exit(ERRCODE_TOKEN_BEARER);
+		LOG(INFO) << "subject email: " << config->subject_email;
 	}
 
-	if (config->verbosity >= 2)
-		LOG(INFO) << "Token bearer: " << config->token;
+	GoogleSheets gs
+	(
+		config->sheet, 
+		config->service_account,
+		config->subject_email, 
+		config->pemkey,
+		config->scope, 
+		config->audience
+	);
 
-	config->sheet = "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo";
-	
-	GoogleSheets gs(config->sheet, config->token);
-	std::string range = "A1:A2"; // Класс!
 	ValueRange cells;
 	if (gs.getRange("A1:A2", cells))
 	{
@@ -143,8 +146,15 @@ int main
 	}
 	else
 		LOG(ERROR) << cells.toString();
-		
-	gs.putRange("K1:N5", cells);
+	
+	std::ifstream myfile("1.csv");
+	if (myfile.is_open())
+	{
+		ValueRange newcells("Class!K11:N15", myfile);
+LOG(ERROR) << "Values: " << newcells.toJSON();;
+		gs.putRange(newcells);
+		myfile.close();
+	}
 
 	if (config->verbosity >= 2)
 		LOG(INFO) << "Token bearer: " << config->token;

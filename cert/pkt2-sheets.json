@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "oneway-ticket",
+  "private_key_id": "c0a2d89a6554bf03950da6acad8d7ff4235e215d",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCyL7t5AZ1+kxPu\niif4HzS+bJ5xWd7RCXlCVtxxaPB0lJcRaAfUzIhE4rr12Wu/S8ovMWSaL219s+F9\nM7x+ulAwh185V5L0SlGPwsfZLygRlXTo+ViMgSR925NtP+R2YhUVQ0XMAVSs5vx3\n5q+WHbLFHSvrtAPtfkoIc8QowJHK6I+7INlUGp89F7jg0dg7j3LwgTGKo7PKstbX\nonot1fOTkQnPuGV8aI9zQQFpfbVr3g7Kx3MRqyJJ4P/0sLBhAuTHh+2xTO6E+jTK\nVzMSfU+0L/JEohv2E6BZoYkNVr6zt26sABwxl+nwqsiNBdTZ8bc0FsPsC2CexrLP\nC9kuBBbhAgMBAAECggEAJvVqvu1MexU7QWdxj7168bub9NqabgftPETzk9RG5qZq\nVULym2NQ1Abiq8gq17uBbEoXXeLKxLYkshQyvV6NE981QbtVBRaOuKj0uxalYxrT\nYfDKnIXL7bypgjR7BisxwuFfjFgqJFeokaqdb2v030YeiT1lsnJvS2PMWsCn374V\n8XmW5vVnPjMahpixUDEDE4TPpO4E0ddGZFpvWKAPebQp6M4VYnI4xNbuyI7dlJqd\nv1cDAWI8a5BOZN8vZJWCsLcMQM7ybP3ZjXHEENQISCO/OpD2SGOEg3o49aaZvC52\nk4PuQfP9Fp6kmicmcxV8+blG2IMAP2+zmIIZ2MkTMQKBgQDWubMPypVXsNWNT11V\nQEQLM6f4rwcAT9gWDr5cY16ro1HY8kZCzBVZ+hZSA8CWT0yzHHN2viR6L0JLa97B\niAHDVMoqWnwh8VbE+ffzfa++QUZXYBZ6Bx00t7UJBDSvNM7RDiBfUrQQ7GlG7cSM\nUgi8KSHLz7j5xC1nrE3BDl78BQKBgQDUcAJRPIyMGzcG2/OuuCYYtR1XfA25nEMR\nVKiqBNy4utoqk6jx0O/xOX+E3i3H/T7UVHeRezg6oCLuZhiow5XAfHJ1gAdSUloE\nJiPxQ7nXn3gvmkYMNhKB4CfFcmODoLUTteBrtUapwCNc1wTQgPqvRRaC18X2Zfip\nMhzUoN7CLQKBgFXa0jnSKnxxfDGQNiVMGOjRsqvAb/Az/JZ1NrACG2xNVQCFfope\nx3q+gAYy8eInuucyzQgBZtxj4QH/E4YWN34+fMcKfu+ja6o+uGFnM8nCl7l/9fy8\ns3TMr1n3kIkteDQmjdMPYmgR3tY5Y4knk86IM7cmSzOyuOTnA//ZGylxAoGAF/iH\nmmkNpuWPQPvitE1dJx6QsAV0ewQx4Su/WGfyC/oxkepVfuvHl12YkQKNAesGgukB\nEO5petwE9QeaMrjXFgA03iNTMCvQsnUnSxsMRlNdOWncC5ayYetMMZBlwD2LES1N\npHmw/oiKtPgiN/DF2K8gCiWU1efNtjHMZQW9/QUCgYBBqBiceZIudm80KC1RDLEw\nqT6IGKcPdkuRLedbKZBdK1BJVeEbyXlAlVmgNCDr/oUNcr97nDfKmdExGw0uwJne\nK40BtQUMepitMOj1xP/Awrx7JuCTRh8K6cL1WLeVA3FhYdrbPygI5nfA/d7pvRGA\n6ci4PYhOm15Lcstxyit1mA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "sheets@oneway-ticket.iam.gserviceaccount.com",
+  "client_id": "102274909249528994829",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/sheets%40oneway-ticket.iam.gserviceaccount.com"
+}

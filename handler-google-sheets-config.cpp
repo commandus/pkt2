@@ -11,9 +11,10 @@
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
 #define DEF_PROTO_PATH				"proto"
 
-#define DEF_SHEET_ID				"1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo"
+#define DEF_SHEET_ID				""
 
 // Google service
+#define DEF_GOOGLE_JSON				"cert/pkt2-sheets.json"
 #define DEF_SERVICE_ACCOUNT			"102274909249528994829"
 #define DEF_SUBJECT_EMAIL			"andrei.i.ivanov@commandus.com"
 #define DEF_PEM_PKEY_FN				"cert/pkt2-sheets.key"
@@ -60,10 +61,12 @@ int Config::parseCmd
         struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "Reserved. Default 0");
 
         // Google service auth
-    	struct arg_str *a_service_account = arg_str0("a", "service_account", "<id>", "Google service id. Default " DEF_SERVICE_ACCOUNT);
+        // JSON contains all others
+        struct arg_file *a_json = arg_file0("g", "google", "<file>", "JSON service file name. Default " DEF_GOOGLE_JSON);
+        struct arg_str *a_service_account = arg_str0("a", "service_account", "<id>", "Google service id. Default " DEF_SERVICE_ACCOUNT);
         struct arg_str *a_subject_email = arg_str0("e", "sub", "<email>", "subject email. Default " DEF_SUBJECT_EMAIL);
         struct arg_file *a_pemkeyfilename = arg_file0("k", "key", "<file>", "PEM private key file. Default " DEF_PEM_PKEY_FN);
-        struct arg_str *a_sheet = arg_str0("s", "sheet", "<id>", "Spreadsheet id");
+        struct arg_str *a_sheet = arg_str1("s", "sheet", "<id>", "Spreadsheet id");
 
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
@@ -74,7 +77,7 @@ int Config::parseCmd
                 a_message_url,
                 a_retries, a_retry_delay,
 				// OAuth, Google sheets
-				a_service_account, a_subject_email, a_pemkeyfilename, a_sheet,
+				a_json, a_service_account, a_subject_email, a_pemkeyfilename, a_sheet,
                 a_daemonize, a_max_fd, a_verbosity, a_mode, 
 				a_buffer_size, a_help, a_end 
         };
@@ -147,6 +150,11 @@ int Config::parseCmd
         	buffer_size = *a_buffer_size->ival;
         else
         	buffer_size = DEF_BUFFER_SIZE;
+
+        if (a_json->count)
+                	json = *a_json->filename;
+		else
+			json = DEF_GOOGLE_JSON;
 
         if (a_service_account->count)
         	service_account = *a_service_account->sval;

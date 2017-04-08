@@ -47,9 +47,12 @@ public:
     int verbosity;			        ///< default 0
 
     // Google service
-	std::string service_account;	///< default "102274909249528994829"
+    std::string json;				///< JSON contains all others
+
+	std::string service_account;	///< Client id. default "102274909249528994829"
 	std::string subject_email;		///< default "andrei.i.ivanov@commandus.com"
 	std::string pemkeyfilename;		///< default "cert/pkt2-sheets.key"
+	std::string pemkey;				///<
 	std::string scope;				///< default "https://www.googleapis.com/auth/spreadsheets"
 	std::string audience;			///< default "https://www.googleapis.com/oauth2/v4/token"
 	int expires;					/// default 3600
