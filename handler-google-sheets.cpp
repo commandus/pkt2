@@ -99,6 +99,9 @@ int main
     setSignalHandler(SIGINT);
     reslt = 0;
 
+	// In windows, this will init the winsock stuff
+	curl_global_init(CURL_GLOBAL_ALL);
+
 	config = new Config(argc, argv);
 	if (!config)
 		exit(3);
@@ -110,51 +113,49 @@ int main
 
     INIT_LOGGING(PROGRAM_NAME)
 
-	// In windows, this will init the winsock stuff
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	std::string json_google_service = file2string(config->json);
-	int r;
-	
-	std::string s = config->service_account;
-	readGoogleTokenJSON(config->json, s, config->pemkey);
-	if (config->pemkey.empty())
-		config->pemkey = file2string(config->pemkeyfilename);
-	else
-		config->service_account = s;
-	
 	if (config->verbosity >= 2)
 	{
+		LOG(INFO) << "speadsheet: " << config->sheet;
 		LOG(INFO) << "subject email: " << config->subject_email;
 	}
 
-	GoogleSheets gs
-	(
-		config->sheet, 
-		config->service_account,
-		config->subject_email, 
-		config->pemkey,
-		config->scope, 
-		config->audience
-	);
-
+// #define TEST
+#ifdef TEST	
 	ValueRange cells;
-	if (gs.getRange("A1:A2", cells))
+	if (!config->google_sheets->get("A1:A2", cells))
 	{
 		LOG(ERROR) << ERR_GS_RANGE;
 		exit(ERRCODE_GS_RANGE);
 	}
 	else
 		LOG(ERROR) << cells.toString();
-	
+	/*
 	std::ifstream myfile("1.csv");
 	if (myfile.is_open())
 	{
 		ValueRange newcells("Class!K11:N15", myfile);
-LOG(ERROR) << "Values: " << newcells.toJSON();;
-		gs.putRange(newcells);
+		if (!config->google_sheets->put(newcells))
+		{
+			LOG(ERROR) << ERR_GS_RANGE;
+			exit(ERRCODE_GS_RANGE);
+		}
 		myfile.close();
 	}
+	*/
+	
+	std::ifstream myfile2("1.csv");
+	if (myfile2.is_open())
+	{
+		ValueRange newcells("Class!A1:D1", myfile2);
+		if (!config->google_sheets->append(newcells))
+		{
+			LOG(ERROR) << ERR_GS_RANGE;
+			exit(ERRCODE_GS_RANGE);
+		}
+		
+		myfile2.close();
+	}
+#endif
 
 	if (config->verbosity >= 2)
 		LOG(INFO) << "Token bearer: " << config->token;

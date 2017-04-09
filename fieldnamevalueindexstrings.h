@@ -40,10 +40,11 @@ private:
 	Pkt2OptionsCache *options;
 	const std::string &table;
 	std::vector<uint64_t> index2values;
-	std::vector<FieldNameValueString> values;
 	const std::string string_quote;
 	std::string quote;
 public:
+	std::vector<FieldNameValueString> values;
+
 	FieldNameValueIndexStrings
 	(
 		Pkt2OptionsCache *pkt2_options,

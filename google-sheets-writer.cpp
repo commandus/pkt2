@@ -71,14 +71,32 @@ void addFieldValueString
  */
 int put
 (
-		Pkt2OptionsCache *options,
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
+	Config *config,
+	Pkt2OptionsCache *options,
+	MessageTypeNAddress *messageTypeNAddress,
+	const google::protobuf::Message *message
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::cout << vals.toStringTab();
+	
+	int count = vals.values.size();
+	ValueRange newcells;
+	newcells.range = GoogleSheets::A1(config->sheet, 0, 0, count - 1, 0);
+	
+	std::vector<std::string> row;
+	for (int i = 0; i < count; i++)
+	{
+		row.push_back(vals.values[i].value);
+	}
+	newcells.values.push_back(row);
+
+	if (!config->google_sheets->append(newcells))
+	{
+		std::cerr << "Error append data";
+	}
+
 	return ERR_OK;
 }
 
@@ -144,7 +162,7 @@ int run
 			switch (config->mode)
 			{
 			case MODE_1:
-				put(&options, &messageTypeNAddress, m);
+				put(config, &options, &messageTypeNAddress, m);
 				break;
 			}
     	}

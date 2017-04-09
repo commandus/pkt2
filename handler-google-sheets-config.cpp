@@ -2,6 +2,7 @@
 #include <iostream>
 #include <argtable2.h>
 
+#include "utilstring.h"
 #include "errorcodes.h"
 
 #define DEF_DB_PATH              	"db"
@@ -16,6 +17,7 @@
 // Google service
 #define DEF_GOOGLE_JSON				"cert/pkt2-sheets.json"
 #define DEF_SERVICE_ACCOUNT			"102274909249528994829"
+#define DEF_TOKEN_FILE				".token-bearer.txt"
 #define DEF_SUBJECT_EMAIL			"andrei.i.ivanov@commandus.com"
 #define DEF_PEM_PKEY_FN				"cert/pkt2-sheets.key"
 
@@ -23,14 +25,61 @@
 #define DEF_AUDIENCE				"https://www.googleapis.com/oauth2/v4/token"
 #define DEF_EXPIRES					3600
 
+void ontokenbearer
+(
+    void *env,
+	const std::string &value,
+	int status
+)
+{
+	Config *config = (Config *) env;
+	if (status == 0)
+	{
+		string2file(config->token_file, value);
+		std::cerr << "New token bearer: " << value << " saved in " << config->token_file << std::endl;
+	}
+	else
+		std::cerr << "Error " << status << " getting token bearer: " << value << std::endl;;
+}
+
 Config::Config
 (
     int argc, 
     char* argv[]
 )
 {
-        stop_request = false;
-        lastError = parseCmd(argc, argv);
+	stop_request = false;
+	lastError = parseCmd(argc, argv);
+
+	if (lastError != 0)
+		return;
+	std::string json_google_service = file2string(json);
+	int r;
+	std::string s = service_account;
+	readGoogleTokenJSON(json, s, pemkey);
+	if (pemkey.empty())
+		pemkey = file2string(pemkeyfilename);
+	else
+		service_account = s;
+
+	std::string last_token = file2string(token_file);
+	google_sheets = new GoogleSheets(
+		sheet,
+		last_token,
+		service_account,
+		subject_email,
+		pemkey,
+		scope,
+		audience,
+		&ontokenbearer,
+		this
+	);
+}
+
+Config::~Config()
+{
+	if (google_sheets)
+		delete google_sheets;
 }
 
 int Config::error() 
@@ -63,6 +112,7 @@ int Config::parseCmd
         // Google service auth
         // JSON contains all others
         struct arg_file *a_json = arg_file0("g", "google", "<file>", "JSON service file name. Default " DEF_GOOGLE_JSON);
+        struct arg_file *a_token_file = arg_file0("b", "bearer", "<file>", "save token bearer. Default " DEF_TOKEN_FILE);
         struct arg_str *a_service_account = arg_str0("a", "service_account", "<id>", "Google service id. Default " DEF_SERVICE_ACCOUNT);
         struct arg_str *a_subject_email = arg_str0("e", "sub", "<email>", "subject email. Default " DEF_SUBJECT_EMAIL);
         struct arg_file *a_pemkeyfilename = arg_file0("k", "key", "<file>", "PEM private key file. Default " DEF_PEM_PKEY_FN);
@@ -77,7 +127,7 @@ int Config::parseCmd
                 a_message_url,
                 a_retries, a_retry_delay,
 				// OAuth, Google sheets
-				a_json, a_service_account, a_subject_email, a_pemkeyfilename, a_sheet,
+				a_json, a_token_file, a_service_account, a_subject_email, a_pemkeyfilename, a_sheet,
                 a_daemonize, a_max_fd, a_verbosity, a_mode, 
 				a_buffer_size, a_help, a_end 
         };
@@ -155,6 +205,12 @@ int Config::parseCmd
                 	json = *a_json->filename;
 		else
 			json = DEF_GOOGLE_JSON;
+
+
+        if (a_token_file->count)
+        	token_file = *a_json->filename;
+		else
+			token_file = DEF_TOKEN_FILE;
 
         if (a_service_account->count)
         	service_account = *a_service_account->sval;

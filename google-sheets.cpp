@@ -29,6 +29,9 @@ enum class CSVState
 	QuotedQuote
 };
 
+/**
+  * @brief parse SCV record
+  */
 static std::vector<std::string> readCSVRow
 (
 	const std::string &row
@@ -39,44 +42,53 @@ static std::vector<std::string> readCSVRow
     size_t i = 0; // index of the current field
     for (char c : row) 
     {
-        switch (state) {
-            case CSVState::UnquotedField:
-                switch (c) {
-                    case ',': // end of field
-                              fields.push_back(""); i++;
-                              break;
-                    case '"': state = CSVState::QuotedField;
-                              break;
-                    default:  fields[i].push_back(c);
-                              break; }
-                break;
-            case CSVState::QuotedField:
-                switch (c) {
-                    case '"': state = CSVState::QuotedQuote;
-                              break;
-                    default:  fields[i].push_back(c);
-                              break; }
-                break;
-            case CSVState::QuotedQuote:
-                switch (c) {
-                    case ',': // , after closing quote
-                              fields.push_back(""); i++;
-                              state = CSVState::UnquotedField;
-                              break;
-                    case '"': // "" -> "
-                              fields[i].push_back('"');
-                              state = CSVState::QuotedField;
-                              break;
-                    default:  // end of quote
-                              state = CSVState::UnquotedField;
-                              break; }
-                break;
-        }
-    }
-    return fields;
+		switch (state) {
+		case CSVState::UnquotedField:
+			switch (c) {
+			case ',': // end of field
+				fields.push_back(""); i++;
+				break;
+			case '"': 
+				state = CSVState::QuotedField;
+				break;
+			default:  
+				fields[i].push_back(c);
+				break;
+			}
+			break;
+		case CSVState::QuotedField:
+			switch (c) {
+			case '"': 
+				state = CSVState::QuotedQuote;
+				break;
+			default:
+				fields[i].push_back(c);
+				break;
+			}
+			break;
+		case CSVState::QuotedQuote:
+			switch (c) {
+			case ',': // , after closing quote
+				fields.push_back("");
+				i++;
+				state = CSVState::UnquotedField;
+				break;
+			case '"': // "" -> "
+				fields[i].push_back('"');
+				state = CSVState::QuotedField;
+				break;
+			default:  // end of quote
+				state = CSVState::UnquotedField;
+				break;
+			}
+			break;
+		}
+	}
+	return fields;
 }
 
-/** Read CSV file
+/** 
+  * @brief Read CSV file
   * http://stackoverflow.com/questions/1120140/how-can-i-read-and-parse-csv-files-in-c
   */
 static void readCSV
@@ -95,6 +107,9 @@ static void readCSV
     }
 }
 
+/**
+  * @brief CURL write callback
+  */
 static size_t write_string(void *contents, size_t size, size_t nmemb, void *userp)
 {
 	((std::string*)userp)->append((char*)contents, size * nmemb);
@@ -105,7 +120,7 @@ static size_t write_string(void *contents, size_t size, size_t nmemb, void *user
   * @brief POST data, return received data in retval
   * Return 0- success, otherwise error code. retval contains error description
   */
-static CURLcode curl_post
+static CURLcode curl_post0
 (
 	const std::string &url,
 	const std::string &data,
@@ -130,6 +145,9 @@ static CURLcode curl_post
 	return res;
 }
 
+/**
+  * @brief GET
+  */
 CURLcode curl_get
 (
 	const std::string &token,
@@ -157,6 +175,9 @@ CURLcode curl_get
 	return res;
 }
 
+/**
+  * @brief PUT
+  */
 CURLcode curl_put
 (
 	const std::string &token,
@@ -173,8 +194,6 @@ CURLcode curl_put
 	chunk = curl_slist_append(chunk, "Content-Type: application/json");
 	
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
-	
-	
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -189,11 +208,48 @@ CURLcode curl_put
 		retval = curl_easy_strerror(res);
 	curl_slist_free_all(chunk);
 	curl_easy_cleanup(curl);
+std::cerr << retval << std::endl;
 	return res;
 }
 
 /**
- * If error occurred, retval contains error descrtiption
+  * @brief POST
+  */
+CURLcode curl_post
+(
+	const std::string &token,
+	const std::string &url,
+	const std::string &data,
+	std::string &retval
+)
+{
+	CURL *curl = curl_easy_init();
+	if (!curl)
+		return CURLE_FAILED_INIT;
+	struct curl_slist *chunk = NULL;
+	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
+	chunk = curl_slist_append(chunk, "Content-Type: application/json");
+	
+	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
+	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
+	curl_easy_setopt(curl, CURLOPT_POSTFIELDS, data.c_str());
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
+    CURLcode res = curl_easy_perform(curl);
+  
+    if (res != CURLE_OK)
+		retval = curl_easy_strerror(res);
+	curl_slist_free_all(chunk);
+	curl_easy_cleanup(curl);
+std::cerr << retval << std::endl;
+	return res;
+}
+
+/**
+ * @brief JWT signing. If error occurred, retval contains error descrtiption
  * @param data
  * @param pemkey PEM private key
  * @param retval
@@ -346,7 +402,8 @@ int loadGoogleToken
 		return r;
 	}
 	std::string json;
-	CURLcode res = curl_post(GOOGLE_TOKEN_URL,
+	
+	CURLcode res = curl_post0(GOOGLE_TOKEN_URL,
 			"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + jwt, json);
 	if (res != CURLE_OK)
 	{
@@ -395,12 +452,24 @@ bool readGoogleTokenJSON
     return true;
 }
 
+/**
+  * @brief clear values
+  */
+void ValueRange::clear()
+{
+	range = "";
+	values.clear();
+}
+
+/**
+  * @brief parse data to the values
+  */
 int ValueRange::parseJSON(const std::string &json)
 {
 	Json::Reader reader;
 	Json::Value v;
 
-	values.clear();
+	clear();
 	
 	if (!reader.parse(json, v))
 	{
@@ -464,6 +533,9 @@ std::string ValueRange::toString() const
 	return ss.str();	
 }
 
+/**
+  * @brief get JSON string
+  */
 std::string ValueRange::toJSON() const
 {
     Json::Value root;
@@ -485,43 +557,61 @@ std::string ValueRange::toJSON() const
     return jfw.write(root);
 }    
 
-
-GoogleSheets::GoogleSheets
-(
-	const std::string sheetid,
-	const std::string tokenbearer
-)
-	: sheet_id(sheetid), token(tokenbearer)
-{
-}
-
 GoogleSheets::GoogleSheets
 (
 	const std::string &sheetid,
+	const std::string tokenbearer,
 	const std::string &service_account,
 	const std::string &subject_email,
 	const std::string &pemkey,
 	const std::string &scope,
-	const std::string &audience
+	const std::string &audience,
+	on_token_bearer onTokenbearer,
+	void *environ
 )
+	: ontokenbearer(onTokenbearer), env(environ)
 {
-	sheet_id = sheetid;	
+	sheet_id = sheetid;
+	token = tokenbearer;	
 	genTokenParams.push_back(service_account);
 	genTokenParams.push_back(subject_email);
 	genTokenParams.push_back(pemkey);
 	genTokenParams.push_back(scope);
 	genTokenParams.push_back(audience);
-	genToken();
+	if (token.empty())
+		genToken();
+}
+
+GoogleSheets::~GoogleSheets() 
+{
 }
 
 /**
-  * Re-generate token
+  * @brief Assign a new token received event handler
+  * Use to store token bearer
+  */
+void GoogleSheets::setOnTokenBearer
+(
+	void *environ,
+	on_token_bearer value
+)
+{
+	env = environ;
+	ontokenbearer = value;
+}
+
+/**
+  * @brief Re-generate token
   */
 bool GoogleSheets::genToken()
 {
 	if (genTokenParams.size() < 5)
+	{
+		if (ontokenbearer)
+			ontokenbearer(env, token, -1);
 		return false;
-	loadGoogleToken(
+	}
+	int r = loadGoogleToken(
 		genTokenParams[0],
 		genTokenParams[1],
 		genTokenParams[2],
@@ -530,45 +620,209 @@ bool GoogleSheets::genToken()
 		3600,
 		token
 	);
+	
+	if (ontokenbearer)
+		ontokenbearer(env, token, r);
+	if (r != 0)
+		token = "";
 	return true;
 }
 
-GoogleSheets::~GoogleSheets() 
+/**
+  * @brief A1 notation
+  * @param column 0-> A
+  */
+static std::string columnFromNumber
+(
+	int column
+)
 {
+	std::string columnString;
+	int columnNumber = column + 1;
+	while (columnNumber > 0)
+    {
+        int currentLetterNumber = (columnNumber - 1) % 26;
+        char currentLetter = (char)(currentLetterNumber + 65);
+        columnString = currentLetter + columnString;
+        columnNumber = (columnNumber - (currentLetterNumber + 1)) / 26;
+    }
+    return columnString;
 }
 
 /**
- * @param range Sheet1!A1:D5
- */
-int GoogleSheets::getRange
+  * @brief return A1 notation. column and row are zero based index 
+  * @param column 0->A
+  * @param row 0->1
+  */
+std::string GoogleSheets::A1
 (
-	const std::string &range, 
+	const std::string &sheet,
+	int col, 
+	int row
+)
+{
+	std::stringstream ss;
+	if (!sheet.empty())
+		ss << sheet << "!";
+	ss << columnFromNumber(col) << row + 1;
+	return ss.str(); 
+}
+
+std::string GoogleSheets::A1(
+	const std::string &sheet,
+	int col0, 
+	int row0,
+	int col1, 
+	int row1
+)
+{
+	std::stringstream ss;
+	if (!sheet.empty())
+		ss << sheet << "!";
+	ss << columnFromNumber(col0) << row0 + 1 << ":" << columnFromNumber(col1) << row1 + 1; 
+	return ss.str(); 
+}
+
+
+/**
+  * @brief get values in range
+  */
+bool GoogleSheets::get
+(
+	const std::string &sheet,
+	int col, 
+	int row,
 	ValueRange &retval
 )
 {
-	std::string json;
-	CURLcode r = curl_get(token, API_SHEET + sheet_id + "/values/" + range, json);
-	if (r != CURLE_OK)
-		return r;
-	int pr = retval.parseJSON(json);
-	return pr;
+	return get(A1(sheet, col, row), retval);
 }
 
 /**
- * @param values
- */
-int GoogleSheets::putRange
+  * @brief check is Google sheets request a new token bearer
+  * Error response e.g.
+  * {
+  * "error": {
+  *   "code": 401,
+  *   "message": "Request had invalid authentication credentials. Expected OAuth 2 access token, login cookie or other valid authentication credential. See https://developers.google.com/identity/sign-in/web/devconsole-project.",
+  *   "status": "UNAUTHENTICATED"
+  * }
+}
+
+  */
+bool GoogleSheets::needNewToken
 (
+	const std::string &response
+)
+{
+	if (!response.empty())
+	{
+		// parse response
+		Json::Reader reader;
+		Json::Value v;
+		if (!reader.parse(response, v))
+			return false;
+		if (v.isMember("error")) 
+			return true;
+	}
+	return false;	
+}
+
+/**
+  * @brief GET spreadsheet range values. If token expires, regenerate token bearer and try again
+  */
+bool GoogleSheets::token_get(
+	const std::string &url,
+	ValueRange &retval
+)
+{
+	std::string response;
+	CURLcode r = curl_get(token, url, response);
+	if (needNewToken(response))
+	{
+		genToken();
+		r = curl_get(token, url, response);
+	}
+	if (r == CURLE_OK)
+		retval.parseJSON(response);
+	else
+		retval.clear();
+	return r == CURLE_OK;
+}
+
+/**
+  * @brief PUT spreadsheet range values. If token expires, regenerate token bearer and try again
+  */
+bool GoogleSheets::token_put(
+	const std::string &url,
 	const ValueRange &values
 )
 {
 	std::string json = values.toJSON();
-std::cerr << json;	
 	std::string response;
-	CURLcode r = curl_put(token, API_SHEET + sheet_id + "/values/" + values.range + "?valueInputOption=USER_ENTERED", json, response);
-	if (r != CURLE_OK)
-		return r;
-	return 0;
+	CURLcode r = curl_put(token, url, json, response);
+	if (needNewToken(response))
+	{
+		genToken();
+		r = curl_put(token, url, json, response);
+	}
+	
+	return r == CURLE_OK;
+}
+
+/**
+  * @brief POST spreadsheet range values. If token expires, regenerate token bearer and try again
+  */
+bool GoogleSheets::token_post(
+	const std::string &url,
+	const ValueRange &values
+)
+{
+	std::string json = values.toJSON();
+	std::string response;
+	CURLcode r = curl_post(token, url, json, response);
+	if (needNewToken(response))
+	{
+		genToken();
+		r = curl_put(token, url, json, response);
+	}
+	return r == CURLE_OK;
 }
 
 
+/**
+ * @brief get values in a range
+ * @param range Sheet1!A1:D5
+ */
+bool GoogleSheets::get
+(
+	const std::string &range, 
+	ValueRange &response
+)
+{
+	return token_get(API_SHEET + sheet_id + "/values/" + range, response);
+}
+
+/**
+ * @brief Replace values in a range 
+ * @param values
+ */
+bool GoogleSheets::put
+(
+	const ValueRange &values
+)
+{
+	return token_put(API_SHEET + sheet_id + "/values/" + values.range + "?valueInputOption=USER_ENTERED", values);
+}
+
+/**
+ * @brief Append values to a range
+ * @param values
+ */
+bool GoogleSheets::append
+(
+	const ValueRange &values
+)
+{
+	return token_post(API_SHEET + sheet_id + "/values/" + values.range + ":append?valueInputOption=USER_ENTERED", values);
+}

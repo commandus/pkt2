@@ -2,9 +2,17 @@
 #define HANDLER_LINE_CONFIG_H     1
 
 #include <string>
+#include "google-sheets.h"
 
 #define PROGRAM_NAME             "handler-google-sheets"
 #define PROGRAM_DESCRIPTION      "Google sheet printer"
+
+void ontokenbearer
+(
+    void *env,
+	const std::string &value,
+	int status
+);
 
 /**
   * @brief google-sheets-writer command line options
@@ -25,6 +33,7 @@ private:
     );
 public:
     Config(int argc, char* argv[]);
+    virtual ~Config();
     int error();
 
     std::string message_url; 		///< nano message URL
@@ -60,6 +69,8 @@ public:
 	std::string sheet_id;			///<
 	// Google token
 	std::string token;
+	std::string token_file;			///< save token bearer in the file
+	GoogleSheets *google_sheets;
 };
 
 
