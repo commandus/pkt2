@@ -12,14 +12,9 @@
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
 #define DEF_PROTO_PATH				"proto"
 
-#define DEF_SHEET_ID				""
-
 // Google service
 #define DEF_GOOGLE_JSON				"cert/pkt2-sheets.json"
-#define DEF_SERVICE_ACCOUNT			"102274909249528994829"
 #define DEF_TOKEN_FILE				".token-bearer.txt"
-#define DEF_SUBJECT_EMAIL			"andrei.i.ivanov@commandus.com"
-#define DEF_PEM_PKEY_FN				"cert/pkt2-sheets.key"
 
 #define DEF_SCOPE					"https://www.googleapis.com/auth/spreadsheets"
 #define DEF_AUDIENCE				"https://www.googleapis.com/oauth2/v4/token"
@@ -55,16 +50,19 @@ Config::Config
 		return;
 	std::string json_google_service = file2string(json);
 	int r;
-	std::string s = service_account;
-	readGoogleTokenJSON(json, s, pemkey);
-	if (pemkey.empty())
-		pemkey = file2string(pemkeyfilename);
-	else
-		service_account = s;
+
+	google_sheets = NULL;
+
+	std::string pub_email;
+	readGoogleTokenJSON(json_google_service, service_account, pemkey, pub_email);
+	if (pemkey.empty() || service_account.empty())
+		return;
+	if (subject_email.empty())
+		subject_email = pub_email;
 
 	std::string last_token = file2string(token_file);
 	google_sheets = new GoogleSheets(
-		sheet,
+		spreadsheet,
 		last_token,
 		service_account,
 		subject_email,
@@ -113,10 +111,9 @@ int Config::parseCmd
         // JSON contains all others
         struct arg_file *a_json = arg_file0("g", "google", "<file>", "JSON service file name. Default " DEF_GOOGLE_JSON);
         struct arg_file *a_token_file = arg_file0("b", "bearer", "<file>", "save token bearer. Default " DEF_TOKEN_FILE);
-        struct arg_str *a_service_account = arg_str0("a", "service_account", "<id>", "Google service id. Default " DEF_SERVICE_ACCOUNT);
-        struct arg_str *a_subject_email = arg_str0("e", "sub", "<email>", "subject email. Default " DEF_SUBJECT_EMAIL);
-        struct arg_file *a_pemkeyfilename = arg_file0("k", "key", "<file>", "PEM private key file. Default " DEF_PEM_PKEY_FN);
-        struct arg_str *a_sheet = arg_str1("s", "sheet", "<id>", "Spreadsheet id");
+        struct arg_str *a_subject_email = arg_str1("e", "sub", "<email>", "subject email.");
+        struct arg_str *a_spreadsheet = arg_str1("s", "spreadsheet", "<id>", "Google spreadsheet id");
+        struct arg_str *a_sheet = arg_str1("t", "sheet", "<name>", "Sheet name");
 
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
@@ -127,7 +124,7 @@ int Config::parseCmd
                 a_message_url,
                 a_retries, a_retry_delay,
 				// OAuth, Google sheets
-				a_json, a_token_file, a_service_account, a_subject_email, a_pemkeyfilename, a_sheet,
+				a_json, a_token_file, a_subject_email, a_spreadsheet, a_sheet,
                 a_daemonize, a_max_fd, a_verbosity, a_mode, 
 				a_buffer_size, a_help, a_end 
         };
@@ -191,10 +188,11 @@ int Config::parseCmd
             mode = DEF_MODE;
 
 		// OAuth, Google sheets
+        if (a_spreadsheet->count)
+        	spreadsheet = *a_spreadsheet->sval;
+
         if (a_sheet->count)
             sheet = *a_sheet->sval;
-        else
-            sheet = DEF_SHEET_ID;
 
         if (a_buffer_size->count)
         	buffer_size = *a_buffer_size->ival;
@@ -212,20 +210,8 @@ int Config::parseCmd
 		else
 			token_file = DEF_TOKEN_FILE;
 
-        if (a_service_account->count)
-        	service_account = *a_service_account->sval;
-        else
-        	service_account = DEF_SERVICE_ACCOUNT;
-
         if (a_subject_email->count)
-        	subject_email = *a_service_account->sval;
-        else
-        	subject_email = DEF_SUBJECT_EMAIL;
-
-        if (a_pemkeyfilename->count)
-        	pemkeyfilename = *a_pemkeyfilename->filename;
-        else
-        	pemkeyfilename = DEF_PEM_PKEY_FN;
+        	subject_email = *a_subject_email->sval;
 
         scope = DEF_SCOPE;
     	audience = DEF_AUDIENCE;

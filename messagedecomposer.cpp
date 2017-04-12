@@ -46,13 +46,13 @@ void MessageDecomposer::setCallback
 		for (size_t i = 0; i != array_size; ++i) \
 		{ \
 			value = ref->GetRepeated ## PROTO_TYPE(*message, field, i); \
-			ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE), index); \
+			ondecompose(this, env, message_descriptor, field, &value, sizeof(NATIVE_TYPE), index); \
 		} \
 	} \
 	else \
 	{ \
 		value = ref->Get ## PROTO_TYPE(*message, field); \
-		ondecompose(env, message_descriptor, t, field->name(), &value, sizeof(NATIVE_TYPE), index); \
+		ondecompose(this, env, message_descriptor, field, &value, sizeof(NATIVE_TYPE), index); \
 	} \
 }
 
@@ -119,7 +119,7 @@ int MessageDecomposer::decomposeField
                     std::string value = ref->GetRepeatedString(*message, field, i);
                     if (is_binary)
                         value = b64_encode(value);
-                    ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length(), index);
+                    ondecompose(this, env, message_descriptor, field, (void *) value.c_str(), value.length(), index);
                 }
             }
             else
@@ -129,7 +129,7 @@ int MessageDecomposer::decomposeField
                 {
                     value = b64_encode(value);
                 }
-                ondecompose(env, message_descriptor, t, field->name(), (void *) value.c_str(), value.length(), index);
+                ondecompose(this, env, message_descriptor, field, (void *) value.c_str(), value.length(), index);
             }
             break;
         }
@@ -157,14 +157,14 @@ int MessageDecomposer::decomposeField
 					{
 						const google::protobuf::EnumValueDescriptor* value = ref->GetRepeatedEnum(*message, field, i);
 						v = value->number();
-						ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v), index);
+						ondecompose(this, env, message_descriptor, field, &v, sizeof(v), index);
 					}
 				}
 				else
 				{
 					const google::protobuf::EnumValueDescriptor* value = ref->GetEnum(*message, field);
 					v = value->number();
-					ondecompose(env, message_descriptor, t, field->name(), &v, sizeof(v), index);
+					ondecompose(this, env, message_descriptor, field, &v, sizeof(v), index);
 				}
         	}
             break;
@@ -212,13 +212,13 @@ int MessageDecomposer::decompose
   */
 std::string MessageDecomposer::toString
 (
-	google::protobuf::FieldDescriptor::CppType field_type,
-	void* value,
+	const google::protobuf::FieldDescriptor *field,
+	const void* value,
 	int size
 )
 {
 	std::stringstream ss;
-    switch (field_type)
+    switch (field->cpp_type())
     {
         case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
         	TO_STRING(double)

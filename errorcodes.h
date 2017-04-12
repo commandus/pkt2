@@ -26,6 +26,8 @@
 #define MSG_PACKET_HEX							"Packet (hex): "
 #define MSG_SENT								"Sent bytes: "
 #define MSG_RECEIVED							"Received bytes: "
+#define MSG_NN_BIND_SUCCESS						"nanomsg socket bind successfully to "
+#define MSG_NN_SENT_SUCCESS						"nanomsg socket sent data successfully to "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							1
@@ -43,41 +45,43 @@
 #define ERRCODE_NN_SHUTDOWN 					18
 #define ERRCODE_NN_RECV							19
 #define ERRCODE_NN_SEND							20
+#define ERRCODE_NN_SET_SOCKET_OPTION			21
+#define ERRCODE_NN_FREE_MSG						22
 
-#define ERRCODE_PACKET_PARSE					21
-#define ERRCODE_STOP							22
-#define ERRCODE_NO_CONFIG						23
+#define ERRCODE_PACKET_PARSE					23
+#define ERRCODE_STOP							24
+#define ERRCODE_NO_CONFIG						25
 
-#define ERRCODE_LOAD_PROTO 						24
-#define ERRCODE_NO_MEMORY						25
-#define ERRCODE_DECODE_MESSAGE					26
+#define ERRCODE_LOAD_PROTO 						26
+#define ERRCODE_NO_MEMORY						27
+#define ERRCODE_DECODE_MESSAGE					28
 
-#define ERRCODE_SOCKET_SEND						27
+#define ERRCODE_SOCKET_SEND						29
 
-#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			28
+#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			30
 
-#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	29
-#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	30
-#define ERRCODE_DECOMPOSE_FATAL					31
-#define ERRCODE_DECOMPOSE_NO_REFECTION			32
-#define ERRCODE_NO_CALLBACK						33
-#define ERRCODE_NOT_IMPLEMENTED					34
-#define ERRCODE_DATABASE_NO_CONNECTION			35
-#define ERRCODE_DATABASE_STATEMENT_FAIL         36
-#define ERRCODE_GET_ADDRINFO                    37
-#define ERRCODE_SOCKET_CREATE					38
-#define ERRCODE_SOCKET_SET_OPTIONS				39
-#define ERRCODE_SOCKET_BIND						40
-#define ERRCODE_SOCKET_CONNECT                  41
-#define ERRCODE_SOCKET_LISTEN					42
-#define ERRCODE_SOCKET_READ						43
-#define ERRCODE_SOCKET_WRITE					44
+#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	31
+#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	32
+#define ERRCODE_DECOMPOSE_FATAL					33
+#define ERRCODE_DECOMPOSE_NO_REFECTION			34
+#define ERRCODE_NO_CALLBACK						35
+#define ERRCODE_NOT_IMPLEMENTED					36
+#define ERRCODE_DATABASE_NO_CONNECTION			37
+#define ERRCODE_DATABASE_STATEMENT_FAIL         38
+#define ERRCODE_GET_ADDRINFO                    39
+#define ERRCODE_SOCKET_CREATE					40
+#define ERRCODE_SOCKET_SET_OPTIONS				41
+#define ERRCODE_SOCKET_BIND						42
+#define ERRCODE_SOCKET_CONNECT                  43
+#define ERRCODE_SOCKET_LISTEN					44
+#define ERRCODE_SOCKET_READ						45
+#define ERRCODE_SOCKET_WRITE					46
 
-#define ERRCODE_NN_ACCEPT						45
-#define ERRCODE_PARSE_PACKET					46
-#define ERRCODE_PACKET_TOO_SMALL				47
-#define ERRCODE_TOKEN_BEARER					48
-#define ERRCODE_GS_RANGE						49
+#define ERRCODE_NN_ACCEPT						47
+#define ERRCODE_PARSE_PACKET					48
+#define ERRCODE_PACKET_TOO_SMALL				49
+#define ERRCODE_TOKEN_BEARER					50
+#define ERRCODE_GS_RANGE						51
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -88,12 +92,14 @@
 #define ERR_LMDB_PUT							"Can not put LMDB "
 #define ERR_LMDB_GET							"Can not get LMDB "
 
-#define ERR_NN_CONNECT							"Can not connect to the IPC url "
-#define ERR_NN_SUBSCRIBE						"Can not subscribe to the IPC url "
+#define ERR_NN_CONNECT							"Can not connect nanomsg socket to the IPC url "
+#define ERR_NN_SUBSCRIBE						"Can not subscribe nanomsg socket to the IPC url "
 #define ERR_NN_SHUTDOWN							"Can not shutdown nanomsg socket "
 #define ERR_NN_RECV								"Receive nanomsg error "
-#define ERR_NN_SEND								"Send nanomsg error "
-#define ERR_NN_ACCEPT							"Accept error: "
+#define ERR_NN_SEND								"Send nanomsg socket error "
+#define ERR_NN_ACCEPT							"nanomsg accept socket error: "
+#define ERR_NN_SET_SOCKET_OPTION				"nanomsg set socket option error: "
+#define ERR_NN_FREE_MSG							"nanomsg free message error: "
 
 #define ERR_PACKET_PARSE						"Error parse packet "
 #define ERR_STOP								"Can not stop"
@@ -105,6 +111,7 @@
 #define ERR_PROTO_GET_DESCRIPTOR 				"Cannot get proto file descriptor from file "
 #define ERR_NO_MEMORY							"Can not allocate buffer size "
 #define ERR_DECODE_MESSAGE						"Error decode message "
+#define ERR_DECODE_MESSAGE_OR_EOF				"Error decode message or EOF, exit "
 #define ERR_MESSAGE_TYPE_NOT_FOUND				"Protobuf message not found "
 
 #define ERR_SOCKET_SEND							"Error socket send "

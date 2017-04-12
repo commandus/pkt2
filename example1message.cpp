@@ -9,6 +9,8 @@
 #include "utilprotobuf.h"
 #include "example/example1.pb.h"
 
+#define MAX_COUNT	1000000
+
 bool cont;
 
 void signalHandler(int signal)
@@ -47,9 +49,9 @@ int main(int args, char **argv)
 	int count = 0;
 	cont = true;
 
-
 	MessageTypeNAddress messageTypeNAddress(m.GetDescriptor()->full_name());	// "example1.TemperaturePkt"
 
+	int i = 0;
 	while (cont)
 	{
 		for (int d = 0; d < 3; d++)
@@ -62,5 +64,8 @@ int main(int args, char **argv)
 			writeDelimitedMessage(&messageTypeNAddress, m, &strm);
 			count++;
 		}
+		i++;
+		if (i >= MAX_COUNT)
+			break;
 	}
 }

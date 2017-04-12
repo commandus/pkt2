@@ -18,10 +18,10 @@
   */
 class MessageDecomposer {
 	typedef void (*ondecompose_callback)(
+		MessageDecomposer *decomposer,
 		void* env,
 		const google::protobuf::Descriptor *message_descriptor,
-		const google::protobuf::FieldDescriptor::CppType field_type,
-		const std::string &field_name,
+		const google::protobuf::FieldDescriptor *field_descriptor,
 		void* value,
 		int size,
 		int index
@@ -51,10 +51,10 @@ public:
 	/**
 	  * @brief return human readable value of message buffer as string
 	  */
-	static std::string toString
+	std::string toString
 	(
-		google::protobuf::FieldDescriptor::CppType field_type,
-		void* value,
+		const google::protobuf::FieldDescriptor *field,
+		const void* value,
 		int size
 	);
 };

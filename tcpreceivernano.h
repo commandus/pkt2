@@ -1,5 +1,4 @@
 #include <nanomsg/nn.h>
-#include <nanomsg/bus.h>
 
 #include "tcpreceiver-config.h"
 #include "utilstring.h"

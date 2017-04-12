@@ -18,7 +18,7 @@ static const std::string sql2names[] = {"message", "time", "device", "field", "v
 
 FieldNameValueString::FieldNameValueString(
 	int idx,
-	google::protobuf::FieldDescriptor::CppType fieldtype,
+	const google::protobuf::FieldDescriptor::CppType fieldtype,
 	const std::string &fld,
 	const std::string &val
 )

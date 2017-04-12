@@ -1,5 +1,4 @@
 #include <iostream>
-#include "pkt2gateway-config.h"
 
 #include <string>
 #include <iostream>
@@ -20,6 +19,8 @@
 #include <glog/logging.h>
 
 #include <google/protobuf/message.h>
+
+#include "pkt2gateway-config.h"
 
 #include "errorcodes.h"
 #include "utilstring.h"

@@ -60,13 +60,13 @@ public:
 
 	std::string service_account;	///< Client id. default "102274909249528994829"
 	std::string subject_email;		///< default "andrei.i.ivanov@commandus.com"
-	std::string pemkeyfilename;		///< default "cert/pkt2-sheets.key"
 	std::string pemkey;				///<
 	std::string scope;				///< default "https://www.googleapis.com/auth/spreadsheets"
 	std::string audience;			///< default "https://www.googleapis.com/oauth2/v4/token"
-	int expires;					/// default 3600
+	int expires;					///< default 3600
 	// Google sheet
-	std::string sheet_id;			///<
+	std::string spreadsheet;		///< Google spreadsheet id
+	std::string sheet_id;			///< Sheet name
 	// Google token
 	std::string token;
 	std::string token_file;			///< save token bearer in the file

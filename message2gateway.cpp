@@ -42,7 +42,11 @@ void stopNWait()
 
 void done()
 {
-	std::cerr << MSG_DONE;
+	if (config)
+	{
+		if (config->verbosity >= 2)
+			std::cerr << MSG_DONE;
+	}
 }
 
 int reslt;

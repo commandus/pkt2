@@ -36,7 +36,8 @@ bool readGoogleTokenJSON
 (
 	const std::string &json,
 	std::string &ret_service_account,
-	std::string &ret_pemkey
+	std::string &ret_pemkey,
+	std::string &subject_email
 );
 
 /**
@@ -139,7 +140,7 @@ public:
 	std::string token;
 	std::vector<std::string> genTokenParams;
 	
-	bool needNewToken(
+	int checkJSONErrorCode(
 		const std::string &response
 	);
 

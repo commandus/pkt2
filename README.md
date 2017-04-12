@@ -39,6 +39,7 @@ pkt2
 
 
 ```
+               Очередь пакетов (bus)                                       Очередь обработчиков
                ipc:///tmp/packet.pkt2                                      ipc:///tmp/message.pkt2
                                               Файлы
                                             (плагины)
@@ -77,13 +78,15 @@ pkt2
                                                                                         
 
 Программы
-
-tcpreceiver                  pkt2receiver                                  [pkt2gateway]     handlerpq
-udpreceiver                                                                message2gateway   
-                                                                           example1message   handlerline
-tcpemitter                                                                                   handlerlmdb
-tcpemitter-example1    
+[tcpemitter-example1]
+tcpemitter
+              tcpreceiver    pkt2receiver                                  [pkt2gateway]     handlerpq
+              udpreceiver                                                  message2gateway   
+                                                                           [example1message] handlerline
+                                                                                             handlerlmdb
     
+
+В квадратных скобках ([]) тестирующие программы
 
 ## Порядок запуска и останова
 
@@ -118,6 +121,10 @@ codex -protofile proto/example/example1.proto -message_name TemperaturePkt 1
            ipc:///tmp/packet.pkt2                                           ipc:///tmp/message.pkt2
 
 ```
+
+#### pkt2gateway
+
+Отправляет подготовленные заранее тестовые сообщения в очередь обработчиков ipc:///tmp/message.pkt2 
 
 #### tcpemitter-example1
 
@@ -383,6 +390,16 @@ extend google.protobuf.FieldOptions {
 }
 
 ```
+
+## Поля
+
+В field
+
+field.name
+
+В format можно указать значение: 
+
+value
 
 ## Программы
 

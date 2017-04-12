@@ -8,7 +8,7 @@
 #include <netinet/in.h>
 
 #include <nanomsg/nn.h>
-#include <nanomsg/pubsub.h>
+#include <nanomsg/bus.h>
 
 #include <glog/logging.h>
 
@@ -25,16 +25,18 @@
   */
 int pkt2_receiever_nano(Config *config)
 {
-    int nn_sock_in = nn_socket(AF_SP, NN_SUB);
-    int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-	if (r < 0)
+    int nn_sock_in = nn_socket(AF_SP, NN_BUS); // was NN_SUB
+    // int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (nn_sock_in < 0)
 	{
 			LOG(ERROR) << ERR_NN_SUBSCRIBE << config->in_url << " " << errno << " " << strerror(errno);
 			return ERRCODE_NN_SUBSCRIBE;
 	}
+	int r;
+
     if (nn_connect(nn_sock_in, config->in_url.c_str()) < 0)
     {
-        LOG(ERROR) << ERR_NN_CONNECT << config->in_url;
+        LOG(ERROR) << ERR_NN_CONNECT << config->in_url << " " << errno << ": " << nn_strerror(errno);;
 		return ERRCODE_NN_CONNECT;
     }
 
@@ -52,19 +54,30 @@ int pkt2_receiever_nano(Config *config)
         {
             InputPacket packet(buf, bytes);
 
-    		LOG(ERROR) << "packet " << std::string(1, packet.header()->name) << " " <<
+    		LOG(ERROR) << ERR_PACKET_PARSE << std::string(1, packet.header()->name) << " (addresses may be invalid) " <<
     				inet_ntoa(packet.get_sockaddr_src()->sin_addr) << ":" << ntohs(packet.get_sockaddr_src()->sin_port) << "->" <<
-					inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << packet.length << " bytes.";
+					inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << bytes
+					<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
+					<< "  all: " << hexString(packet.get(), packet.size);
 
             if (packet.error() != 0)
             {
                 LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
                 continue;
             }
-            nn_freemsg(buf);
+            if (nn_freemsg(buf))
+			{
+            	LOG(ERROR) << ERR_NN_FREE_MSG << " " << errno << ": " << nn_strerror(errno);
+			}
         }
 	}
-    return nn_shutdown(nn_sock_in, 0);
+    if (nn_shutdown(nn_sock_in, 0))
+    {
+    	LOG(ERROR) << ERR_NN_SHUTDOWN << " " << errno << ": " << nn_strerror(errno);
+    	return ERRCODE_NN_SHUTDOWN;
+    }
+    else
+    	return ERR_OK;
 }
 
 /**

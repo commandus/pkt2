@@ -27,7 +27,7 @@ public:
 	const std::string value;
 	FieldNameValueString(
 			int idx,
-			google::protobuf::FieldDescriptor::CppType field_type,
+			const google::protobuf::FieldDescriptor::CppType field_type,
 			const std::string &fld,
 			const std::string &val);
 };

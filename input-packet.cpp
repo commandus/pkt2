@@ -5,6 +5,8 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+#include <iostream>
+
 #include "errorcodes.h"
 
 InputPacket::InputPacket(
@@ -13,9 +15,11 @@ InputPacket::InputPacket(
 ) 
 	: message(NULL)
 {
-    data_size = adata_size;
-    size = sizeof(struct PacketHeader) + (2 * sizeof(struct sockaddr_storage)) + data_size;
+    max_data_size = adata_size;
+    size = sizeof(struct PacketHeader) + (2 * sizeof(struct sockaddr_storage)) + max_data_size;
+    length = 0;
     buffer = malloc(size);
+    memset(buffer, 0, size);
     if (buffer)
     {
         header()->name = typ;
@@ -37,8 +41,8 @@ InputPacket::InputPacket
     buffer = data;
     size = adata_size;
     allocated = false;
-    length = 0;
-    data_size = 0;
+    length = size - sizeof(struct PacketHeader) - (2 * sizeof(struct sockaddr_storage));
+    max_data_size = length;
     parse();
 }
 
@@ -138,4 +142,10 @@ int InputPacket::error()
     if (!buffer)
         return ERRCODE_PACKET_PARSE;
     return ERR_OK;
+}
+
+void InputPacket::setLength(int value)
+{
+	length = value;
+	size = value + sizeof(struct PacketHeader) + (2 * sizeof(struct sockaddr_storage));
 }

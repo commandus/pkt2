@@ -29,8 +29,8 @@ public:
 
     int verbosity;
 
-    int retries;            ///< default 0
-    int retry_delay;        ///< default 60 seconds
+    int retries;            ///< default 1
+    int retry_delay;        ///< default 0 seconds
 
     std::string message_in_url;
     std::string message_out_url;

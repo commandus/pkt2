@@ -7,6 +7,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <nanomsg/bus.h>
 
 #include <glog/logging.h>
 
@@ -83,20 +84,20 @@ int listen_port(
   */
 int tcp_receiever_nano(Config *config)
 {
-    struct addrinfo *res;
-    if (get_addr_info(config, &res))
+    struct addrinfo *addr_dst;
+    if (get_addr_info(config, &addr_dst))
     {
 		LOG(ERROR) << ERR_GET_ADDRINFO;
 		return ERRCODE_GET_ADDRINFO;
     }
 
     InputPacket packet('T', config->buffer_size);
-    packet.set_socket_addr_dst(res);
+    packet.set_socket_addr_dst(addr_dst);
 
-	int socket = listen_port(config, res);
+	int socket = listen_port(config, addr_dst);
 
 	// Free the res linked list after we are done with it	
-	freeaddrinfo(res);
+	freeaddrinfo(addr_dst);
 
 	if (socket == -1)
 	{
@@ -107,11 +108,18 @@ int tcp_receiever_nano(Config *config)
     int nano_socket = nn_socket(AF_SP, NN_BUS);
     sleep (1); // wait for connections
 	int timeout = 100;
-	nn_setsockopt(nano_socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
+	int r = nn_setsockopt(nano_socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
+	if (r < 0)
+	{
+        LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->message_url << " " << errno << ": " << nn_strerror(errno);
+        close(socket);
+		return ERRCODE_NN_SET_SOCKET_OPTION;
+	}
 
-    if (nn_bind(nano_socket, config->message_url.c_str()) < 0)
+	r = nn_bind(nano_socket, config->message_url.c_str());
+    if (r < 0)
     {
-        LOG(ERROR) << ERR_NN_CONNECT << config->message_url;
+        LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
         close(socket);	
 		return ERRCODE_NN_CONNECT;
     }
@@ -123,10 +131,14 @@ int tcp_receiever_nano(Config *config)
 		return ERRCODE_NN_CONNECT;
     }
 
+    if (config->verbosity >= 2)
+    {
+    	LOG(INFO) << MSG_NN_BIND_SUCCESS << config->message_url << " with time out: " << timeout;
+    }
+
     while (!config->stop_request)
     {
-		// Wait now for a connection to accept
-    	struct addrinfo *res;
+		// Wait now for a connection to accept, write source IP address into packet
         struct sockaddr_in *src = packet.get_sockaddr_src();
 		socklen_t addr_size = sizeof(struct sockaddr_in);
 
@@ -139,7 +151,8 @@ int tcp_receiever_nano(Config *config)
 		}
 
 		// Read
-        packet.length = read(new_conn_fd, packet.data(), packet.size);
+        packet.setLength(read(new_conn_fd, packet.data(), packet.max_data_size));
+
 		// Close the socket
 		close(new_conn_fd);
 
@@ -153,26 +166,56 @@ int tcp_receiever_nano(Config *config)
     		if (config->verbosity >= 1)
     		{
         		LOG(INFO) << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
-        			inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << packet.length << " bytes.";
+        			inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port)
+					<< " " << packet.length << " bytes.";
     			if (config->verbosity >= 2)
     			{
     				std::cerr << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
     						inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " "
-							<< packet.length << " bytes: " << hexString(packet.data(), packet.length)
+							<< packet.size
 							<< std::endl;
     			}
     		}
         }
-        // send message to the nano queue
 
-        int bytes = nn_send(nano_socket, packet.get(), packet.length, 0);
-        if (bytes != packet.length)
+        // send message to the nano queue
+        int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
+        if (bytes != packet.size)
         {
-            LOG(ERROR) << ERR_NN_SEND << bytes << " of " << packet.length;
+        	if (bytes < 0)
+        		LOG(ERROR) << ERR_NN_SEND << " " << errno << ": " << nn_strerror(errno);
+        	else
+        		LOG(ERROR) << ERR_NN_SEND << bytes << ",  payload " << packet.length;
+        }
+        else
+        {
+            if (config->verbosity >= 1)
+            {
+            	LOG(INFO) << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size);
+                if (config->verbosity >= 2)
+                {
+
+                	std::cerr << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size)
+                	<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
+					<< std::endl;
+
+                    InputPacket packettest(packet.get(), packet.size);
+            		LOG(ERROR) << "TEST: " << std::string(1, packettest.header()->name) << " (addresses may be invalid) " <<
+            				inet_ntoa(packettest.get_sockaddr_src()->sin_addr) << ":" << ntohs(packettest.get_sockaddr_src()->sin_port) << "->" <<
+        					inet_ntoa(packettest.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packettest.get_sockaddr_dst()->sin_port);
+
+                }
+            }
         }
 	}
    	close(socket);	
-    return nn_shutdown(nano_socket, 0);
+    r = nn_shutdown(nano_socket, 0);
+    if (r < 0)
+    {
+    	LOG(ERROR) << ERR_NN_SHUTDOWN << " " << errno << ": " << nn_strerror(errno);
+    	return ERRCODE_NN_SHUTDOWN;
+    }
+    return ERR_OK;
 }
 
 /**

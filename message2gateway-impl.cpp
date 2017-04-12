@@ -87,21 +87,27 @@ int run_stream
 
     while (!config->stop_request)
     {
-		if (strm->eof())
-		{
-			LOG(INFO) << MSG_EOF << " " << read_count;
-			break;
-		}
 		MessageTypeNAddress messageTypeNAddress;
 		Message *m = readDelimitedMessage(&pd, &input, &messageTypeNAddress);
 		if (m)
-			sendMessage(nano_socket_out, &messageTypeNAddress, *m);
+		{
+			for (int i = 0; i < config->retries; i++)
+			{
+				sendMessage(nano_socket_out, &messageTypeNAddress, *m);
+				if (i < config->retries - 1)
+					sleep(config->retry_delay);
+			}
+		}
 		else
-			LOG(ERROR) << ERR_DECODE_MESSAGE;
+		{
+			LOG(INFO) << read_count << " sent";
+			break;
+		}
 		read_count++;
+		sleep(config->retry_delay);
     }
 
-    LOG(INFO) << MSG_LOOP_EXIT;
+    LOG(INFO) << MSG_LOOP_EXIT << read_count << " sent";
 
 	if (strm && (!config->file_name.empty()))
 	{
@@ -175,6 +181,7 @@ int run_socket
 			sendMessage(nano_socket_out, &messageTypeNAddress, *m);
 		else
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
+		sleep(0);
     }
 
 	free(buffer);

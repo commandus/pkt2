@@ -208,7 +208,6 @@ CURLcode curl_put
 		retval = curl_easy_strerror(res);
 	curl_slist_free_all(chunk);
 	curl_easy_cleanup(curl);
-std::cerr << retval << std::endl;
 	return res;
 }
 
@@ -244,7 +243,6 @@ CURLcode curl_post
 		retval = curl_easy_strerror(res);
 	curl_slist_free_all(chunk);
 	curl_easy_cleanup(curl);
-std::cerr << retval << std::endl;
 	return res;
 }
 
@@ -432,7 +430,8 @@ bool readGoogleTokenJSON
 (
 	const std::string &json,
 	std::string &ret_service_account,
-	std::string &ret_pemkey
+	std::string &ret_pemkey,
+	std::string &email
 )
 {
 	Json::Reader reader;
@@ -443,6 +442,8 @@ bool readGoogleTokenJSON
 	
 	ret_service_account = v["client_id"].asString();
 	ret_pemkey = v["private_key"].asString();
+	email = v["client_email"].asString();
+
 	size_t start_pos = 0;
     while((start_pos = ret_pemkey.find("\\n", start_pos)) != std::string::npos) 
     {
@@ -559,7 +560,7 @@ std::string ValueRange::toJSON() const
 
 GoogleSheets::GoogleSheets
 (
-	const std::string &sheetid,
+	const std::string &spreadsheet,
 	const std::string tokenbearer,
 	const std::string &service_account,
 	const std::string &subject_email,
@@ -571,7 +572,7 @@ GoogleSheets::GoogleSheets
 )
 	: ontokenbearer(onTokenbearer), env(environ)
 {
-	sheet_id = sheetid;
+	sheet_id = spreadsheet;
 	token = tokenbearer;	
 	genTokenParams.push_back(service_account);
 	genTokenParams.push_back(subject_email);
@@ -710,7 +711,7 @@ bool GoogleSheets::get
 }
 
   */
-bool GoogleSheets::needNewToken
+int GoogleSheets::checkJSONErrorCode
 (
 	const std::string &response
 )
@@ -721,11 +722,15 @@ bool GoogleSheets::needNewToken
 		Json::Reader reader;
 		Json::Value v;
 		if (!reader.parse(response, v))
-			return false;
-		if (v.isMember("error")) 
-			return true;
+			return 200;
+		if (v.isMember("error"))
+		{
+			Json::Value e = v["error"];
+			if (e["code"].isInt())
+				return e["error"].asInt();
+		}
 	}
-	return false;	
+	return 200;
 }
 
 /**
@@ -738,16 +743,18 @@ bool GoogleSheets::token_get(
 {
 	std::string response;
 	CURLcode r = curl_get(token, url, response);
-	if (needNewToken(response))
+	if (checkJSONErrorCode(response) != 200)
 	{
 		genToken();
 		r = curl_get(token, url, response);
 	}
-	if (r == CURLE_OK)
+	int c = checkJSONErrorCode(response);
+	bool ok = (r == CURLE_OK) && (c == 200);
+	if (ok)
 		retval.parseJSON(response);
 	else
 		retval.clear();
-	return r == CURLE_OK;
+	return ok;
 }
 
 /**
@@ -761,13 +768,14 @@ bool GoogleSheets::token_put(
 	std::string json = values.toJSON();
 	std::string response;
 	CURLcode r = curl_put(token, url, json, response);
-	if (needNewToken(response))
+	if (checkJSONErrorCode(response))
 	{
 		genToken();
 		r = curl_put(token, url, json, response);
 	}
-	
-	return r == CURLE_OK;
+	int c = checkJSONErrorCode(response);
+	bool ok = (r == CURLE_OK) && (c == 200);
+	return ok;
 }
 
 /**
@@ -781,12 +789,14 @@ bool GoogleSheets::token_post(
 	std::string json = values.toJSON();
 	std::string response;
 	CURLcode r = curl_post(token, url, json, response);
-	if (needNewToken(response))
+	if (checkJSONErrorCode(response) != 200)
 	{
 		genToken();
 		r = curl_put(token, url, json, response);
 	}
-	return r == CURLE_OK;
+	int c = checkJSONErrorCode(response);
+	bool ok = (r == CURLE_OK) && (c == 200);
+	return ok;
 }
 
 

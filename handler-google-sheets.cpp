@@ -121,8 +121,8 @@ int main
 
 // #define TEST
 #ifdef TEST	
-	ValueRange cells;
-	if (!config->google_sheets->get("A1:A2", cells))
+    ValueRange cells;
+	if (!config->google_sheets->get("Sheet1!A1:A2", cells))
 	{
 		LOG(ERROR) << ERR_GS_RANGE;
 		exit(ERRCODE_GS_RANGE);

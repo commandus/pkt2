@@ -85,16 +85,16 @@ int put_json
  */
 void addFieldValueString
 (
+	MessageDecomposer *decomposer,
 	void *env,
 	const google::protobuf::Descriptor *message_descriptor,
-	google::protobuf::FieldDescriptor::CppType field_type,
-	const std::string &field_name,
+	const google::protobuf::FieldDescriptor *field,
 	void* value,
 	int size,
 	int index
 )
 {
-	((FieldNameValueIndexStrings *) env)->add(field_type, field_name, MessageDecomposer::toString(field_type, value, size), index);
+	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(), decomposer->toString(field, value, size), index);
 }
 
 /**

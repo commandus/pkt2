@@ -47,9 +47,10 @@ public:
 
     void *data();
     /// max data buffer size
-    int data_size;
+    int max_data_size;
     /// actual data length
     int length;
+    void setLength(int length);
     int error();
 };
 
