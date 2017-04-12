@@ -75,6 +75,7 @@ message TemperaturePkt
         get: "field.unix_time"
         priority: 0                                 // required
         index: 1
+        format: "new Date(value * 1000).toString()"
     }];
 
     double degrees_c = 3 [(pkt2.variable) = {
@@ -84,6 +85,6 @@ message TemperaturePkt
         measure_unit: "C"
         get: "1.22 * field.value"
         priority: 0                                 // required
-        format: "%8.2f"
+        format: "value.toFixed(2)"
     }];
 }
