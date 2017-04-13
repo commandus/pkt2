@@ -255,6 +255,32 @@ bool onnextmessage
  * @param socket_address_src can be NULL
  * @param socket_address_dst can be NULL
  * @param packet
+ * @param size
+ * @param force_message packet.message or "" (no force)
+ * @return
+ */
+google::protobuf::Message *Packet2Message::parse
+(
+    struct sockaddr *socket_address_src,
+    struct sockaddr *socket_address_dst,
+	void *packet,
+	int size,
+	const std::string &force_message
+)
+{
+	std::string str((const char *) packet, (size_t) size);
+	return parse(
+			socket_address_src,
+			socket_address_dst,
+			str,
+			force_message);
+}
+
+/**
+ * Parse packet
+ * @param socket_address_src can be NULL
+ * @param socket_address_dst can be NULL
+ * @param packet
  * @param force_message packet.message or "" (no force)
  * @return
  */

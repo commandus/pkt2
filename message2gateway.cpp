@@ -71,16 +71,16 @@ void runner()
 
 void signalHandler(int signal)
 {
-        switch(signal)
-        {
-        case SIGINT:
-        	std::cerr << MSG_INTERRUPTED;
-			stopNWait();
-			done();
-			break;
-        default:
-        	std::cerr << MSG_SIGNAL;
-        }
+	switch(signal)
+	{
+	case SIGINT:
+		std::cerr << MSG_INTERRUPTED;
+		stopNWait();
+		done();
+		break;
+	default:
+		std::cerr << MSG_SIGNAL;
+	}
 }
 
 void setSignalHandler(int signal)

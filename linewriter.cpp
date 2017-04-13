@@ -15,7 +15,7 @@
 #include <algorithm>
 
 #include <nanomsg/nn.h>
-#include <nanomsg/pubsub.h>
+#include <nanomsg/bus.h>
 
 #include <glog/logging.h>
 
@@ -236,12 +236,12 @@ int run
 		Config *config
 )
 {
-	int nano_socket = nn_socket(AF_SP, NN_SUB);
-	int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-	if (r < 0)
+	int nano_socket = nn_socket(AF_SP, NN_BUS);
+	// int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (nano_socket < 0)
 	{
-		LOG(ERROR) << ERR_NN_SUBSCRIBE << config->message_url << " " << errno << " " << strerror(errno);
-		return ERRCODE_NN_SUBSCRIBE;
+		LOG(ERROR) << ERR_NN_SOCKET << config->message_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_SOCKET;
 	}
 	int eid = nn_connect(nano_socket, config->message_url.c_str());
 	if (eid < 0)
@@ -313,7 +313,7 @@ int run
 
     free(buffer);
 
-	r = nn_shutdown(nano_socket, eid);
+	int r = nn_shutdown(nano_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url << " " << errno << " " << strerror(errno);

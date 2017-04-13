@@ -35,14 +35,17 @@ public:
     uint32_t verbosity;
     size_t buffer_size;
 
+    std::string in_url;
+    std::string out_url;
+    std::string proto_path;			///< proto files directory path
+    std::string force_message;
+
     int retries;            ///< default 0
     int retry_delay;        ///< default 60 seconds
 
     bool daemonize;
     int max_fd;				///< 0- use default max file descriptor count per process
     bool stop_request;
-    std::string in_url;
-    std::string out_url;
 };
 
 

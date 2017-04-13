@@ -53,6 +53,7 @@ typedef ALIGN struct EXAMPLE1PACKET {
         uint8_t device;
         uint32_t unixtime;
         int16_t temperature;
+        uint8_t tag;			///< always 0xff
 } PACKED EXAMPLE1PACKET;
 
 int get_addr_info
@@ -192,6 +193,7 @@ int main(int argc, char **argv)
 				double c = 20.0 + ((10. * rand()) / RAND_MAX);
 				int16_t cc = c / 1.22;
 				pkt.temperature = htons(cc);
+				pkt.tag = 0xff;
 
 				int n = write(sock, &pkt, sizeof(pkt));
 				if (n < 0)

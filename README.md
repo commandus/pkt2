@@ -81,7 +81,7 @@ pkt2
 [tcpemitter-example1]
 tcpemitter
               tcpreceiver    pkt2receiver                                  [pkt2gateway]     handlerpq
-              udpreceiver                                                  message2gateway   
+              udpreceiver                                                  [message2gateway]   
                                                                            [example1message] handlerline
                                                                                              handlerlmdb
     

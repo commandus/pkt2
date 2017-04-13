@@ -106,17 +106,16 @@ int Config::parseCmd
         	file_name = "";	// stdin
 
         if (a_message_out_url->count)
-                message_out_url = *a_message_out_url->sval;
+        	message_out_url = *a_message_out_url->sval;
         else
-                message_out_url = DEF_QUEUE_OUT;
+        	message_out_url = DEF_QUEUE_OUT;
 
         verbosity = a_verbosity->count;
 
-
         if (a_retries->count)
-                retries = *a_retries->ival;
+        	retries = *a_retries->ival;
         else
-                retries = 1;
+        	retries = 1;
 
         if (a_retry_delay->count)
                 retry_delay = *a_retry_delay->ival;

@@ -42,6 +42,15 @@ protected:
 	(
 		const google::protobuf::Message *message
 	);
+
+	/**
+	  * @brief format
+	  */
+	std::string format
+	(
+		const google::protobuf::FieldDescriptor *field,
+		const std::string& value
+	);
 public:
 	MessageDecomposer();
 	MessageDecomposer(void *env, Pkt2OptionsCache *options, const google::protobuf::Message *message, ondecompose_callback callback);

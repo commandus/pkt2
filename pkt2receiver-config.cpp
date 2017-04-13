@@ -4,6 +4,7 @@
 
 #include "errorcodes.h"
 
+#define DEF_PROTO_PATH				"proto"
 #define DEF_IN_QUEUE                "ipc:///tmp/packet.pkt2"
 #define DEF_OUT_QUEUE               "ipc:///tmp/message.pkt2"
 #define DEF_BUFFER_SIZE 	         4096
@@ -43,6 +44,10 @@ int Config::parseCmd
 {
         struct arg_str *a_in_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
         struct arg_str *a_out_url = arg_str0("o", "output", "<queue url>", "Default ipc:///tmp/message.pkt2");
+
+        struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
+        struct arg_str *a_force_message = arg_str0(NULL, "message", "<packet.message>", "force message");
+
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
@@ -93,6 +98,16 @@ int Config::parseCmd
         	out_url = *a_out_url->sval;
         else
             out_url = DEF_OUT_QUEUE;
+
+        if (a_proto_path->count)
+        	proto_path = *a_proto_path->sval;
+        else
+        	proto_path = DEF_PROTO_PATH;
+
+        if (a_force_message->count)
+        	force_message = *a_force_message->sval;
+        else
+        	force_message = "";
 
         if (a_buffer_size->count)
                 buffer_size = *a_buffer_size->ival;

@@ -116,12 +116,12 @@ int tcp_receiever_nano(Config *config)
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
-	r = nn_bind(nano_socket, config->message_url.c_str());
-    if (r < 0)
+	int eid = nn_bind(nano_socket, config->message_url.c_str());
+    if (eid < 0)
     {
-        LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
+        LOG(ERROR) << ERR_NN_BIND << config->message_url << " " << errno << ": " << nn_strerror(errno);
         close(socket);	
-		return ERRCODE_NN_CONNECT;
+		return ERRCODE_NN_BIND;
     }
 
     if (packet.error() != 0)
@@ -209,7 +209,7 @@ int tcp_receiever_nano(Config *config)
         }
 	}
    	close(socket);	
-    r = nn_shutdown(nano_socket, 0);
+    r = nn_shutdown(nano_socket, eid);
     if (r < 0)
     {
     	LOG(ERROR) << ERR_NN_SHUTDOWN << " " << errno << ": " << nn_strerror(errno);

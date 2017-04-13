@@ -97,6 +97,7 @@ const Pkt2PacketVariable &Pkt2OptionsCache::find1
 	for (std::map<std::string, Pkt2PacketVariable>::iterator m(pkt2packet_variable.begin());
 			m != pkt2packet_variable.end(); ++m)
 	{
+
 		if (m->second.validTags(packet))
 		{
 			message_type = m->first;

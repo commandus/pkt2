@@ -38,6 +38,7 @@ public:
 		int verbosity
 	);
 	virtual ~Packet2Message();
+
 	google::protobuf::Message *parse
 	(
 	    struct sockaddr *socket_address_src,
@@ -45,6 +46,24 @@ public:
 		const std::string &packet,
 		const std::string &force_message
 	);
+	/**
+	 * Parse packet
+	 * @param socket_address_src can be NULL
+	 * @param socket_address_dst can be NULL
+	 * @param packet
+	 * @param size
+	 * @param force_message packet.message or "" (no force)
+	 * @return
+	 */
+	google::protobuf::Message *parse
+	(
+	    struct sockaddr *socket_address_src,
+	    struct sockaddr *socket_address_dst,
+		void *packet,
+		int size,
+		const std::string &force_message
+	);
+
 };
 
 #endif /* PACKET2MESSAGE_H_ */

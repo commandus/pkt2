@@ -256,5 +256,18 @@ std::string MessageDecomposer::toString
             break;
     }
 
-	return ss.str();
+	return format(field, ss.str());
+}
+
+
+/**
+  * @brief format
+  */
+std::string MessageDecomposer::format
+(
+	const google::protobuf::FieldDescriptor *field,
+	const std::string& value
+)
+{
+	return field->name() + ": " + value;
 }

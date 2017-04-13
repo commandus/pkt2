@@ -14,7 +14,7 @@
 #include <argtable2.h>
 
 #include <nanomsg/nn.h>
-#include <nanomsg/pubsub.h>
+#include <nanomsg/bus.h>
 
 #include <glog/logging.h>
 
@@ -98,7 +98,6 @@ int main(int argc, char **argv)
 		std::cerr << ERR_COMMAND << std::endl;
 		exit(ERRCODE_COMMAND);
 	}
-
     // Read packet
     std::string packet = readPacket(config);
     if (packet.empty())
@@ -113,7 +112,7 @@ int main(int argc, char **argv)
     }
 
 	// open socket to write
-	int nano_socket_out = nn_socket(AF_SP, NN_PUB);
+	int nano_socket_out = nn_socket(AF_SP, NN_BUS);
 	int eoutid = nn_bind(nano_socket_out, config->message_out_url.c_str());
 	if (eoutid < 0)
 	{
@@ -144,9 +143,13 @@ int main(int argc, char **argv)
 			LOG(ERROR) << ERR_NN_SEND << sent;
 		else
 		{
-			if (config->verbosity >= 2)
+			if (config->verbosity >= 1)
 			{
 				LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
+				if (config->verbosity >= 2)
+				{
+					std::cerr << MSG_SENT << sent << " " << hexString(outstr);
+				}
 			}
 		}
 		sleep(config->retry_delay);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182

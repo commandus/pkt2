@@ -15,6 +15,12 @@
 #include "pkt2receivernano.h"
 #include "input-packet.h"
 #include "errorcodes.h"
+#include "utilprotobuf.h"
+#include "utilstring.h"
+#include "packet2message.h"
+
+using namespace google::protobuf;
+using namespace google::protobuf::io;
 
 /**
   * @return: 0- success
@@ -25,20 +31,39 @@
   */
 int pkt2_receiever_nano(Config *config)
 {
+	// IN socket
     int nn_sock_in = nn_socket(AF_SP, NN_BUS); // was NN_SUB
     // int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (nn_sock_in < 0)
 	{
-			LOG(ERROR) << ERR_NN_SUBSCRIBE << config->in_url << " " << errno << " " << strerror(errno);
-			return ERRCODE_NN_SUBSCRIBE;
+			LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << " " << strerror(errno);
+			return ERRCODE_NN_SOCKET;
 	}
-	int r;
 
-    if (nn_connect(nn_sock_in, config->in_url.c_str()) < 0)
+	int eid = nn_connect(nn_sock_in, config->in_url.c_str());
+    if (eid < 0)
     {
-        LOG(ERROR) << ERR_NN_CONNECT << config->in_url << " " << errno << ": " << nn_strerror(errno);;
-		return ERRCODE_NN_CONNECT;
+        LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << ": " << nn_strerror(errno);;
+		return ERRCODE_NN_SOCKET;
     }
+
+	// OUT socket
+    int nn_sock_out = nn_socket(AF_SP, NN_BUS); // was NN_SUB
+    // int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (nn_sock_out < 0)
+	{
+			LOG(ERROR) << ERR_NN_SOCKET << config->out_url << " " << errno << " " << strerror(errno);
+			return ERRCODE_NN_SOCKET;
+	}
+
+	int eoid = nn_bind(nn_sock_out, config->out_url.c_str());
+    if (eoid < 0)
+    {
+        LOG(ERROR) << ERR_NN_BIND << config->out_url << " " << errno << ": " << nn_strerror(errno);;
+		return ERRCODE_NN_BIND;
+    }
+
+    Packet2Message packet2Message(config->proto_path, config->verbosity);
 
     while (!config->stop_request)
     {
@@ -54,24 +79,53 @@ int pkt2_receiever_nano(Config *config)
         {
             InputPacket packet(buf, bytes);
 
-    		LOG(ERROR) << ERR_PACKET_PARSE << std::string(1, packet.header()->name) << " (addresses may be invalid) " <<
-    				inet_ntoa(packet.get_sockaddr_src()->sin_addr) << ":" << ntohs(packet.get_sockaddr_src()->sin_port) << "->" <<
-					inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " " << bytes
-					<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
-					<< "  all: " << hexString(packet.get(), packet.size);
-
             if (packet.error() != 0)
             {
                 LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
                 continue;
             }
+
+            // packet -> message
+            google::protobuf::Message *m = packet2Message.parse(
+            		(sockaddr *) packet.get_sockaddr_src(),
+					(sockaddr *) packet.get_sockaddr_dst(),
+					packet.data(), packet.length, config->force_message);
+            if (m == NULL)
+            {
+        		LOG(ERROR) << ERR_PARSE_PACKET << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
+        		continue;
+            }
+            // send message
+			MessageTypeNAddress messageTypeNAddress(m->GetTypeName());
+			std::string outstr = stringDelimitedMessage(&messageTypeNAddress, *m);
+			int sent = nn_send(nn_sock_out, outstr.c_str(), outstr.size(), 0);
+			if (sent < 0)
+				LOG(ERROR) << ERR_NN_SEND << sent;
+			else
+			{
+				if (config->verbosity >= 1)
+				{
+					LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
+					if (config->verbosity >= 2)
+					{
+						std::cerr << MSG_SENT << sent << " " << hexString(outstr) << std::endl;
+					}
+				}
+			}
+
             if (nn_freemsg(buf))
 			{
             	LOG(ERROR) << ERR_NN_FREE_MSG << " " << errno << ": " << nn_strerror(errno);
 			}
+			sleep(0);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
+
         }
 	}
-    if (nn_shutdown(nn_sock_in, 0))
+
+    int r = nn_shutdown(nn_sock_out, eoid);
+    r = r | nn_shutdown(nn_sock_in, eid);
+
+    if (r)
     {
     	LOG(ERROR) << ERR_NN_SHUTDOWN << " " << errno << ": " << nn_strerror(errno);
     	return ERRCODE_NN_SHUTDOWN;

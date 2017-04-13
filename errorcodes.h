@@ -40,48 +40,50 @@
 #define ERRCODE_LMDB_PUT						14
 #define ERRCODE_LMDB_GET						15
 
-#define ERRCODE_NN_CONNECT	 					16
-#define ERRCODE_NN_SUBSCRIBE					17
-#define ERRCODE_NN_SHUTDOWN 					18
-#define ERRCODE_NN_RECV							19
-#define ERRCODE_NN_SEND							20
-#define ERRCODE_NN_SET_SOCKET_OPTION			21
-#define ERRCODE_NN_FREE_MSG						22
+#define ERRCODE_NN_SOCKET						16
+#define ERRCODE_NN_CONNECT	 					17
+#define ERRCODE_NN_BIND		 					18
+#define ERRCODE_NN_SUBSCRIBE					19
+#define ERRCODE_NN_SHUTDOWN 					20
+#define ERRCODE_NN_RECV							21
+#define ERRCODE_NN_SEND							22
+#define ERRCODE_NN_SET_SOCKET_OPTION			23
+#define ERRCODE_NN_FREE_MSG						24
 
-#define ERRCODE_PACKET_PARSE					23
-#define ERRCODE_STOP							24
-#define ERRCODE_NO_CONFIG						25
+#define ERRCODE_PACKET_PARSE					25
+#define ERRCODE_STOP							26
+#define ERRCODE_NO_CONFIG						27
 
-#define ERRCODE_LOAD_PROTO 						26
-#define ERRCODE_NO_MEMORY						27
-#define ERRCODE_DECODE_MESSAGE					28
+#define ERRCODE_LOAD_PROTO 						28
+#define ERRCODE_NO_MEMORY						29
+#define ERRCODE_DECODE_MESSAGE					30
 
-#define ERRCODE_SOCKET_SEND						29
+#define ERRCODE_SOCKET_SEND						31
 
-#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			30
+#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			32
 
-#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	31
-#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	32
-#define ERRCODE_DECOMPOSE_FATAL					33
-#define ERRCODE_DECOMPOSE_NO_REFECTION			34
-#define ERRCODE_NO_CALLBACK						35
-#define ERRCODE_NOT_IMPLEMENTED					36
-#define ERRCODE_DATABASE_NO_CONNECTION			37
-#define ERRCODE_DATABASE_STATEMENT_FAIL         38
-#define ERRCODE_GET_ADDRINFO                    39
-#define ERRCODE_SOCKET_CREATE					40
-#define ERRCODE_SOCKET_SET_OPTIONS				41
-#define ERRCODE_SOCKET_BIND						42
-#define ERRCODE_SOCKET_CONNECT                  43
-#define ERRCODE_SOCKET_LISTEN					44
-#define ERRCODE_SOCKET_READ						45
-#define ERRCODE_SOCKET_WRITE					46
+#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	33
+#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	34
+#define ERRCODE_DECOMPOSE_FATAL					35
+#define ERRCODE_DECOMPOSE_NO_REFECTION			36
+#define ERRCODE_NO_CALLBACK						37
+#define ERRCODE_NOT_IMPLEMENTED					38
+#define ERRCODE_DATABASE_NO_CONNECTION			39
+#define ERRCODE_DATABASE_STATEMENT_FAIL         40
+#define ERRCODE_GET_ADDRINFO                    41
+#define ERRCODE_SOCKET_CREATE					42
+#define ERRCODE_SOCKET_SET_OPTIONS				43
+#define ERRCODE_SOCKET_BIND						44
+#define ERRCODE_SOCKET_CONNECT                  45
+#define ERRCODE_SOCKET_LISTEN					46
+#define ERRCODE_SOCKET_READ						47
+#define ERRCODE_SOCKET_WRITE					48
 
-#define ERRCODE_NN_ACCEPT						47
-#define ERRCODE_PARSE_PACKET					48
-#define ERRCODE_PACKET_TOO_SMALL				49
-#define ERRCODE_TOKEN_BEARER					50
-#define ERRCODE_GS_RANGE						51
+#define ERRCODE_NN_ACCEPT						48
+#define ERRCODE_PARSE_PACKET					49
+#define ERRCODE_PACKET_TOO_SMALL				50
+#define ERRCODE_TOKEN_BEARER					51
+#define ERRCODE_GS_RANGE						52
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -92,7 +94,9 @@
 #define ERR_LMDB_PUT							"Can not put LMDB "
 #define ERR_LMDB_GET							"Can not get LMDB "
 
+#define ERR_NN_SOCKET							"Can create nanomsg socket "
 #define ERR_NN_CONNECT							"Can not connect nanomsg socket to the IPC url "
+#define ERR_NN_BIND								"Can not bind nanomsg socket to the IPC url "
 #define ERR_NN_SUBSCRIBE						"Can not subscribe nanomsg socket to the IPC url "
 #define ERR_NN_SHUTDOWN							"Can not shutdown nanomsg socket "
 #define ERR_NN_RECV								"Receive nanomsg error "

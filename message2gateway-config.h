@@ -29,13 +29,15 @@ public:
 
     int verbosity;
 
-    int retries;            ///< default 1
-    int retry_delay;        ///< default 0 seconds
-
     std::string message_in_url;
     std::string message_out_url;
     std::string file_name;
+    bool from_stdin;
     std::string proto_path;	///< proto files directory path
+
+    std::string force_message;
+    int retries;             ///< default 1
+    int retry_delay;         ///<
 
     bool daemonize;
     bool stop_request;
