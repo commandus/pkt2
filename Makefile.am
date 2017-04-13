@@ -112,11 +112,13 @@ tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2receiver_SOURCES= \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
-	daemonize.cpp \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	daemonize.cpp pbjson.cpp utilfile.cpp \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
+	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
+	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
 	$(common_src)
 
-pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
@@ -217,8 +219,8 @@ protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
-	utilprotobuf.cpp \
-	pbjson.cpp pkt2.pb.cpp \
+	utilprotobuf.cpp packet2message.cpp \
+	pbjson.cpp pkt2.pb.cpp duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
