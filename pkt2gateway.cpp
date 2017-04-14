@@ -120,8 +120,13 @@ int main(int argc, char **argv)
 		return ERRCODE_NN_CONNECT;
 	}
 
-    Packet2Message packet2Message(config->proto_path, config->verbosity);
-    google::protobuf::Message *m = packet2Message.parse(NULL, NULL, packet, config->force_message);
+    ProtobufDeclarations declarations(config->proto_path, config->verbosity);
+    Pkt2OptionsCache options_cache(&declarations);
+    Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
+
+    PacketParseEnvironment packet_env(NULL, NULL, packet, &options_cache, config->force_message);
+
+    google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
 
     if (m == NULL)
     {

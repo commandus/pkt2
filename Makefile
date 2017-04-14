@@ -156,6 +156,8 @@ am_handler_google_sheets_OBJECTS =  \
 	handler_google_sheets-utilinet.$(OBJEXT) \
 	handler_google_sheets-pbjson.$(OBJEXT) \
 	handler_google_sheets-jsoncpp.$(OBJEXT) \
+	duk/handler_google_sheets-duktape.$(OBJEXT) \
+	handler_google_sheets-javascript-context.$(OBJEXT) \
 	handler_google_sheets-google-sheets.$(OBJEXT) \
 	handler_google_sheets-sslhelper.$(OBJEXT) \
 	handler_google_sheets-pkt2.pb.$(OBJEXT) \
@@ -176,6 +178,8 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-utilfile.$(OBJEXT) \
 	handlerline-utilstring.$(OBJEXT) \
 	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
+	duk/handlerline-duktape.$(OBJEXT) \
+	handlerline-javascript-context.$(OBJEXT) \
 	handlerline-pkt2.pb.$(OBJEXT) \
 	handlerline-pkt2optionscache.$(OBJEXT) \
 	handlerline-pkt2packetvariable.$(OBJEXT) \
@@ -199,7 +203,8 @@ am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
 	handlerlmdb-pkt2optionscache.$(OBJEXT) \
 	handlerlmdb-messagedecomposer.$(OBJEXT) \
 	handlerlmdb-fieldnamevalueindexstrings.$(OBJEXT) \
-	$(am__objects_1)
+	duk/handlerlmdb-duktape.$(OBJEXT) \
+	handlerlmdb-javascript-context.$(OBJEXT) $(am__objects_1)
 handlerlmdb_OBJECTS = $(am_handlerlmdb_OBJECTS)
 handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
@@ -215,7 +220,9 @@ am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-protobuf-declarations.$(OBJEXT) \
 	handlerpq-utilpriority.$(OBJEXT) handlerpq-utilfile.$(OBJEXT) \
 	handlerpq-utilstring.$(OBJEXT) handlerpq-utilinet.$(OBJEXT) \
-	handlerpq-NanoMessage.$(OBJEXT) $(am__objects_1)
+	handlerpq-NanoMessage.$(OBJEXT) \
+	duk/handlerpq-duktape.$(OBJEXT) \
+	handlerpq-javascript-context.$(OBJEXT) $(am__objects_1)
 handlerpq_OBJECTS = $(am_handlerpq_OBJECTS)
 handlerpq_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_message2gateway_OBJECTS =  \
@@ -235,7 +242,8 @@ am_message2gateway_OBJECTS =  \
 	duk/message2gateway-duktape.$(OBJEXT) \
 	message2gateway-pkt2packetvariable.$(OBJEXT) \
 	message2gateway-pkt2optionscache.$(OBJEXT) \
-	message2gateway-messagecomposer.$(OBJEXT) $(am__objects_1)
+	message2gateway-messagecomposer.$(OBJEXT) \
+	message2gateway-javascript-context.$(OBJEXT) $(am__objects_1)
 message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
@@ -254,7 +262,8 @@ am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-error-printer.$(OBJEXT) \
 	pkt2gateway-utilfile.$(OBJEXT) pkt2gateway-pbjson.$(OBJEXT) \
 	pkt2gateway-messagecomposer.$(OBJEXT) \
-	duk/pkt2gateway-duktape.$(OBJEXT) $(am__objects_1)
+	duk/pkt2gateway-duktape.$(OBJEXT) \
+	pkt2gateway-javascript-context.$(OBJEXT) $(am__objects_1)
 pkt2gateway_OBJECTS = $(am_pkt2gateway_OBJECTS)
 pkt2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
@@ -275,7 +284,8 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-pkt2optionscache.$(OBJEXT) \
 	pkt2receiver-utilprotobuf.$(OBJEXT) \
 	pkt2receiver-protobuf-declarations.$(OBJEXT) \
-	pkt2receiver-pkt2.pb.$(OBJEXT) $(am__objects_1)
+	pkt2receiver-pkt2.pb.$(OBJEXT) \
+	pkt2receiver-javascript-context.$(OBJEXT) $(am__objects_1)
 pkt2receiver_OBJECTS = $(am_pkt2receiver_OBJECTS)
 pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
@@ -301,7 +311,8 @@ am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-pkt2packetvariable.$(OBJEXT) \
 	tcpemitter-pkt2optionscache.$(OBJEXT) \
 	tcpemitter-pkt2.pb.$(OBJEXT) tcpemitter-utilfile.$(OBJEXT) \
-	$(am__objects_1)
+	duk/tcpemitter-duktape.$(OBJEXT) \
+	tcpemitter-javascript-context.$(OBJEXT) $(am__objects_1)
 tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
 tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcpemitter_example1_OBJECTS =  \
@@ -863,7 +874,7 @@ rapidjson/error/en.h             rapidjson/error/error.h \
 rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
 rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
-duk/duk_config.h  duk/duktape.h  \
+duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h
 
 common_src = 
@@ -877,7 +888,7 @@ tcpemitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	tcpemitterline.cpp daemonize.cpp pbjson.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	pkt2.pb.cpp utilfile.cpp \
+	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
@@ -904,6 +915,7 @@ pkt2receiver_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
 	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
 	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
+	javascript-context.cpp \
 	$(common_src)
 
 pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
@@ -918,7 +930,7 @@ pkt2gateway_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	messagecomposer.cpp \
-	duk/duktape.c \
+	duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
@@ -931,7 +943,7 @@ handlerpq_SOURCES = \
 	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
@@ -957,7 +969,7 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -969,7 +981,7 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
@@ -983,7 +995,7 @@ handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp jsoncpp.cpp \
+	pbjson.cpp jsoncpp.cpp duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
@@ -1010,6 +1022,7 @@ message2gateway_SOURCES = \
 	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
 	utilprotobuf.cpp packet2message.cpp \
 	pbjson.cpp pkt2.pb.cpp duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
+	javascript-context.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
@@ -1180,28 +1193,36 @@ example/example1message1-example1.pb.$(OBJEXT):  \
 example1message1$(EXEEXT): $(example1message1_OBJECTS) $(example1message1_DEPENDENCIES) $(EXTRA_example1message1_DEPENDENCIES) 
 	@rm -f example1message1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(example1message1_OBJECTS) $(example1message1_LDADD) $(LIBS)
-
-handler-google-sheets$(EXEEXT): $(handler_google_sheets_OBJECTS) $(handler_google_sheets_DEPENDENCIES) $(EXTRA_handler_google_sheets_DEPENDENCIES) 
-	@rm -f handler-google-sheets$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(handler_google_sheets_OBJECTS) $(handler_google_sheets_LDADD) $(LIBS)
-
-handlerline$(EXEEXT): $(handlerline_OBJECTS) $(handlerline_DEPENDENCIES) $(EXTRA_handlerline_DEPENDENCIES) 
-	@rm -f handlerline$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(handlerline_OBJECTS) $(handlerline_LDADD) $(LIBS)
-
-handlerlmdb$(EXEEXT): $(handlerlmdb_OBJECTS) $(handlerlmdb_DEPENDENCIES) $(EXTRA_handlerlmdb_DEPENDENCIES) 
-	@rm -f handlerlmdb$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(handlerlmdb_OBJECTS) $(handlerlmdb_LDADD) $(LIBS)
-
-handlerpq$(EXEEXT): $(handlerpq_OBJECTS) $(handlerpq_DEPENDENCIES) $(EXTRA_handlerpq_DEPENDENCIES) 
-	@rm -f handlerpq$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(handlerpq_OBJECTS) $(handlerpq_LDADD) $(LIBS)
 duk/$(am__dirstamp):
 	@$(MKDIR_P) duk
 	@: > duk/$(am__dirstamp)
 duk/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) duk/$(DEPDIR)
 	@: > duk/$(DEPDIR)/$(am__dirstamp)
+duk/handler_google_sheets-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
+
+handler-google-sheets$(EXEEXT): $(handler_google_sheets_OBJECTS) $(handler_google_sheets_DEPENDENCIES) $(EXTRA_handler_google_sheets_DEPENDENCIES) 
+	@rm -f handler-google-sheets$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(handler_google_sheets_OBJECTS) $(handler_google_sheets_LDADD) $(LIBS)
+duk/handlerline-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
+
+handlerline$(EXEEXT): $(handlerline_OBJECTS) $(handlerline_DEPENDENCIES) $(EXTRA_handlerline_DEPENDENCIES) 
+	@rm -f handlerline$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(handlerline_OBJECTS) $(handlerline_LDADD) $(LIBS)
+duk/handlerlmdb-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
+
+handlerlmdb$(EXEEXT): $(handlerlmdb_OBJECTS) $(handlerlmdb_DEPENDENCIES) $(EXTRA_handlerlmdb_DEPENDENCIES) 
+	@rm -f handlerlmdb$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(handlerlmdb_OBJECTS) $(handlerlmdb_LDADD) $(LIBS)
+duk/handlerpq-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
+
+handlerpq$(EXEEXT): $(handlerpq_OBJECTS) $(handlerpq_DEPENDENCIES) $(EXTRA_handlerpq_DEPENDENCIES) 
+	@rm -f handlerpq$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(handlerpq_OBJECTS) $(handlerpq_LDADD) $(LIBS)
 duk/message2gateway-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 	duk/$(DEPDIR)/$(am__dirstamp)
 
@@ -1224,6 +1245,8 @@ pkt2receiver$(EXEEXT): $(pkt2receiver_OBJECTS) $(pkt2receiver_DEPENDENCIES) $(EX
 protoc-gen-pkt2$(EXEEXT): $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_DEPENDENCIES) $(EXTRA_protoc_gen_pkt2_DEPENDENCIES) 
 	@rm -f protoc-gen-pkt2$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_LDADD) $(LIBS)
+duk/tcpemitter-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
 
 tcpemitter$(EXEEXT): $(tcpemitter_OBJECTS) $(tcpemitter_DEPENDENCIES) $(EXTRA_tcpemitter_DEPENDENCIES) 
 	@rm -f tcpemitter$(EXEEXT)
@@ -1267,6 +1290,7 @@ include ./$(DEPDIR)/handler_google_sheets-google-sheets-writer.Po
 include ./$(DEPDIR)/handler_google_sheets-google-sheets.Po
 include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Po
 include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets.Po
+include ./$(DEPDIR)/handler_google_sheets-javascript-context.Po
 include ./$(DEPDIR)/handler_google_sheets-jsoncpp.Po
 include ./$(DEPDIR)/handler_google_sheets-messagedecomposer.Po
 include ./$(DEPDIR)/handler_google_sheets-pbjson.Po
@@ -1284,6 +1308,7 @@ include ./$(DEPDIR)/handlerline-error-printer.Po
 include ./$(DEPDIR)/handlerline-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerline-handlerline-config.Po
 include ./$(DEPDIR)/handlerline-handlerline.Po
+include ./$(DEPDIR)/handlerline-javascript-context.Po
 include ./$(DEPDIR)/handlerline-linewriter.Po
 include ./$(DEPDIR)/handlerline-messagedecomposer.Po
 include ./$(DEPDIR)/handlerline-pbjson.Po
@@ -1300,6 +1325,7 @@ include ./$(DEPDIR)/handlerlmdb-error-printer.Po
 include ./$(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb-config.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb.Po
+include ./$(DEPDIR)/handlerlmdb-javascript-context.Po
 include ./$(DEPDIR)/handlerlmdb-lmdbwriter.Po
 include ./$(DEPDIR)/handlerlmdb-messagedecomposer.Po
 include ./$(DEPDIR)/handlerlmdb-pbjson.Po
@@ -1317,6 +1343,7 @@ include ./$(DEPDIR)/handlerpq-error-printer.Po
 include ./$(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerpq-handlerpq-config.Po
 include ./$(DEPDIR)/handlerpq-handlerpq.Po
+include ./$(DEPDIR)/handlerpq-javascript-context.Po
 include ./$(DEPDIR)/handlerpq-messagedecomposer.Po
 include ./$(DEPDIR)/handlerpq-pbjson.Po
 include ./$(DEPDIR)/handlerpq-pkt2.pb.Po
@@ -1331,6 +1358,7 @@ include ./$(DEPDIR)/handlerpq-utilprotobuf.Po
 include ./$(DEPDIR)/handlerpq-utilstring.Po
 include ./$(DEPDIR)/message2gateway-daemonize.Po
 include ./$(DEPDIR)/message2gateway-error-printer.Po
+include ./$(DEPDIR)/message2gateway-javascript-context.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-config.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-impl.Po
 include ./$(DEPDIR)/message2gateway-message2gateway.Po
@@ -1348,6 +1376,7 @@ include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
 include ./$(DEPDIR)/pkt2gateway-daemonize.Po
 include ./$(DEPDIR)/pkt2gateway-error-printer.Po
+include ./$(DEPDIR)/pkt2gateway-javascript-context.Po
 include ./$(DEPDIR)/pkt2gateway-messagecomposer.Po
 include ./$(DEPDIR)/pkt2gateway-packet2message.Po
 include ./$(DEPDIR)/pkt2gateway-pbjson.Po
@@ -1366,6 +1395,7 @@ include ./$(DEPDIR)/pkt2receiver-NanoMessage.Po
 include ./$(DEPDIR)/pkt2receiver-daemonize.Po
 include ./$(DEPDIR)/pkt2receiver-error-printer.Po
 include ./$(DEPDIR)/pkt2receiver-input-packet.Po
+include ./$(DEPDIR)/pkt2receiver-javascript-context.Po
 include ./$(DEPDIR)/pkt2receiver-messagecomposer.Po
 include ./$(DEPDIR)/pkt2receiver-packet2message.Po
 include ./$(DEPDIR)/pkt2receiver-pbjson.Po
@@ -1389,6 +1419,7 @@ include ./$(DEPDIR)/protoc_gen_pkt2-utilstring.Po
 include ./$(DEPDIR)/tcpemitter-NanoMessage.Po
 include ./$(DEPDIR)/tcpemitter-daemonize.Po
 include ./$(DEPDIR)/tcpemitter-error-printer.Po
+include ./$(DEPDIR)/tcpemitter-javascript-context.Po
 include ./$(DEPDIR)/tcpemitter-messagedecomposer.Po
 include ./$(DEPDIR)/tcpemitter-pbjson.Po
 include ./$(DEPDIR)/tcpemitter-pkt2.pb.Po
@@ -1422,9 +1453,14 @@ include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
 include ./$(DEPDIR)/tcptransmitter-utilpriority.Po
 include ./$(DEPDIR)/tcptransmitter-utilstring.Po
+include duk/$(DEPDIR)/handler_google_sheets-duktape.Po
+include duk/$(DEPDIR)/handlerline-duktape.Po
+include duk/$(DEPDIR)/handlerlmdb-duktape.Po
+include duk/$(DEPDIR)/handlerpq-duktape.Po
 include duk/$(DEPDIR)/message2gateway-duktape.Po
 include duk/$(DEPDIR)/pkt2gateway-duktape.Po
 include duk/$(DEPDIR)/pkt2receiver-duktape.Po
+include duk/$(DEPDIR)/tcpemitter-duktape.Po
 include example/$(DEPDIR)/example1message-example1.pb.Po
 include example/$(DEPDIR)/example1message1-example1.pb.Po
 
@@ -1451,6 +1487,62 @@ include example/$(DEPDIR)/example1message1-example1.pb.Po
 #	$(AM_V_CC)source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
+
+duk/handler_google_sheets-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handler_google_sheets-duktape.o -MD -MP -MF duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo -c -o duk/handler_google_sheets-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo duk/$(DEPDIR)/handler_google_sheets-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handler_google_sheets-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handler_google_sheets-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/handler_google_sheets-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handler_google_sheets-duktape.obj -MD -MP -MF duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo -c -o duk/handler_google_sheets-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo duk/$(DEPDIR)/handler_google_sheets-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handler_google_sheets-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handler_google_sheets-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+
+duk/handlerline-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerline-duktape.o -MD -MP -MF duk/$(DEPDIR)/handlerline-duktape.Tpo -c -o duk/handlerline-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handlerline-duktape.Tpo duk/$(DEPDIR)/handlerline-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handlerline-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handlerline-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/handlerline-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerline-duktape.obj -MD -MP -MF duk/$(DEPDIR)/handlerline-duktape.Tpo -c -o duk/handlerline-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handlerline-duktape.Tpo duk/$(DEPDIR)/handlerline-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handlerline-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handlerline-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+
+duk/handlerlmdb-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerlmdb-duktape.o -MD -MP -MF duk/$(DEPDIR)/handlerlmdb-duktape.Tpo -c -o duk/handlerlmdb-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handlerlmdb-duktape.Tpo duk/$(DEPDIR)/handlerlmdb-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handlerlmdb-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handlerlmdb-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/handlerlmdb-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerlmdb-duktape.obj -MD -MP -MF duk/$(DEPDIR)/handlerlmdb-duktape.Tpo -c -o duk/handlerlmdb-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handlerlmdb-duktape.Tpo duk/$(DEPDIR)/handlerlmdb-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handlerlmdb-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handlerlmdb-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+
+duk/handlerpq-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerpq-duktape.o -MD -MP -MF duk/$(DEPDIR)/handlerpq-duktape.Tpo -c -o duk/handlerpq-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handlerpq-duktape.Tpo duk/$(DEPDIR)/handlerpq-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handlerpq-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handlerpq-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/handlerpq-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerpq-duktape.obj -MD -MP -MF duk/$(DEPDIR)/handlerpq-duktape.Tpo -c -o duk/handlerpq-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handlerpq-duktape.Tpo duk/$(DEPDIR)/handlerpq-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/handlerpq-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handlerpq-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
 duk/message2gateway-duktape.o: duk/duktape.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/message2gateway-duktape.o -MD -MP -MF duk/$(DEPDIR)/message2gateway-duktape.Tpo -c -o duk/message2gateway-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
@@ -1493,6 +1585,20 @@ duk/pkt2receiver-duktape.obj: duk/duktape.c
 #	$(AM_V_CC)source='duk/duktape.c' object='duk/pkt2receiver-duktape.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/pkt2receiver-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+
+duk/tcpemitter-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/tcpemitter-duktape.o -MD -MP -MF duk/$(DEPDIR)/tcpemitter-duktape.Tpo -c -o duk/tcpemitter-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/tcpemitter-duktape.Tpo duk/$(DEPDIR)/tcpemitter-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/tcpemitter-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/tcpemitter-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/tcpemitter-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/tcpemitter-duktape.obj -MD -MP -MF duk/$(DEPDIR)/tcpemitter-duktape.Tpo -c -o duk/tcpemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/tcpemitter-duktape.Tpo duk/$(DEPDIR)/tcpemitter-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/tcpemitter-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/tcpemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
 tcpreceiver-snmpagentpkt2.o: snmpagentpkt2.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-snmpagentpkt2.o -MD -MP -MF $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo -c -o tcpreceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
@@ -1896,6 +2002,20 @@ handler_google_sheets-jsoncpp.obj: jsoncpp.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-jsoncpp.obj `if test -f 'jsoncpp.cpp'; then $(CYGPATH_W) 'jsoncpp.cpp'; else $(CYGPATH_W) '$(srcdir)/jsoncpp.cpp'; fi`
 
+handler_google_sheets-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-javascript-context.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-javascript-context.Tpo -c -o handler_google_sheets-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-javascript-context.Tpo $(DEPDIR)/handler_google_sheets-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handler_google_sheets-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+handler_google_sheets-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-javascript-context.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-javascript-context.Tpo -c -o handler_google_sheets-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-javascript-context.Tpo $(DEPDIR)/handler_google_sheets-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handler_google_sheets-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+
 handler_google_sheets-google-sheets.o: google-sheets.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets.Tpo -c -o handler_google_sheets-google-sheets.o `test -f 'google-sheets.cpp' || echo '$(srcdir)/'`google-sheets.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-google-sheets.Po
@@ -2147,6 +2267,20 @@ handlerline-pbjson.obj: pbjson.cpp
 #	$(AM_V_CXX)source='pbjson.cpp' object='handlerline-pbjson.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+handlerline-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-javascript-context.o -MD -MP -MF $(DEPDIR)/handlerline-javascript-context.Tpo -c -o handlerline-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-javascript-context.Tpo $(DEPDIR)/handlerline-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handlerline-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+handlerline-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-javascript-context.obj -MD -MP -MF $(DEPDIR)/handlerline-javascript-context.Tpo -c -o handlerline-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-javascript-context.Tpo $(DEPDIR)/handlerline-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handlerline-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
 
 handlerline-pkt2.pb.o: pkt2.pb.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pkt2.pb.o -MD -MP -MF $(DEPDIR)/handlerline-pkt2.pb.Tpo -c -o handlerline-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
@@ -2442,6 +2576,20 @@ handlerlmdb-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
 
+handlerlmdb-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-javascript-context.o -MD -MP -MF $(DEPDIR)/handlerlmdb-javascript-context.Tpo -c -o handlerlmdb-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-javascript-context.Tpo $(DEPDIR)/handlerlmdb-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handlerlmdb-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+handlerlmdb-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-javascript-context.obj -MD -MP -MF $(DEPDIR)/handlerlmdb-javascript-context.Tpo -c -o handlerlmdb-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-javascript-context.Tpo $(DEPDIR)/handlerlmdb-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handlerlmdb-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+
 handlerpq-handlerpq.o: handlerpq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-handlerpq.o -MD -MP -MF $(DEPDIR)/handlerpq-handlerpq.Tpo -c -o handlerpq-handlerpq.o `test -f 'handlerpq.cpp' || echo '$(srcdir)/'`handlerpq.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-handlerpq.Tpo $(DEPDIR)/handlerpq-handlerpq.Po
@@ -2694,6 +2842,20 @@ handlerpq-NanoMessage.obj: NanoMessage.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
+handlerpq-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-javascript-context.o -MD -MP -MF $(DEPDIR)/handlerpq-javascript-context.Tpo -c -o handlerpq-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-javascript-context.Tpo $(DEPDIR)/handlerpq-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handlerpq-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+handlerpq-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-javascript-context.obj -MD -MP -MF $(DEPDIR)/handlerpq-javascript-context.Tpo -c -o handlerpq-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-javascript-context.Tpo $(DEPDIR)/handlerpq-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='handlerpq-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+
 message2gateway-message2gateway.o: message2gateway.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-message2gateway.o -MD -MP -MF $(DEPDIR)/message2gateway-message2gateway.Tpo -c -o message2gateway-message2gateway.o `test -f 'message2gateway.cpp' || echo '$(srcdir)/'`message2gateway.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-message2gateway.Tpo $(DEPDIR)/message2gateway-message2gateway.Po
@@ -2917,6 +3079,20 @@ message2gateway-messagecomposer.obj: messagecomposer.cpp
 #	$(AM_V_CXX)source='messagecomposer.cpp' object='message2gateway-messagecomposer.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-messagecomposer.obj `if test -f 'messagecomposer.cpp'; then $(CYGPATH_W) 'messagecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagecomposer.cpp'; fi`
+
+message2gateway-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-javascript-context.o -MD -MP -MF $(DEPDIR)/message2gateway-javascript-context.Tpo -c -o message2gateway-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-javascript-context.Tpo $(DEPDIR)/message2gateway-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='message2gateway-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+message2gateway-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-javascript-context.obj -MD -MP -MF $(DEPDIR)/message2gateway-javascript-context.Tpo -c -o message2gateway-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-javascript-context.Tpo $(DEPDIR)/message2gateway-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='message2gateway-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
 
 pkt2gateway-pkt2gateway.o: pkt2gateway.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-pkt2gateway.o -MD -MP -MF $(DEPDIR)/pkt2gateway-pkt2gateway.Tpo -c -o pkt2gateway-pkt2gateway.o `test -f 'pkt2gateway.cpp' || echo '$(srcdir)/'`pkt2gateway.cpp
@@ -3155,6 +3331,20 @@ pkt2gateway-messagecomposer.obj: messagecomposer.cpp
 #	$(AM_V_CXX)source='messagecomposer.cpp' object='pkt2gateway-messagecomposer.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-messagecomposer.obj `if test -f 'messagecomposer.cpp'; then $(CYGPATH_W) 'messagecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagecomposer.cpp'; fi`
+
+pkt2gateway-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-javascript-context.o -MD -MP -MF $(DEPDIR)/pkt2gateway-javascript-context.Tpo -c -o pkt2gateway-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-javascript-context.Tpo $(DEPDIR)/pkt2gateway-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='pkt2gateway-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+pkt2gateway-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-javascript-context.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-javascript-context.Tpo -c -o pkt2gateway-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-javascript-context.Tpo $(DEPDIR)/pkt2gateway-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='pkt2gateway-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
 
 pkt2receiver-pkt2receiver.o: pkt2receiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-pkt2receiver.o -MD -MP -MF $(DEPDIR)/pkt2receiver-pkt2receiver.Tpo -c -o pkt2receiver-pkt2receiver.o `test -f 'pkt2receiver.cpp' || echo '$(srcdir)/'`pkt2receiver.cpp
@@ -3421,6 +3611,20 @@ pkt2receiver-pkt2.pb.obj: pkt2.pb.cpp
 #	$(AM_V_CXX)source='pkt2.pb.cpp' object='pkt2receiver-pkt2.pb.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
+pkt2receiver-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-javascript-context.o -MD -MP -MF $(DEPDIR)/pkt2receiver-javascript-context.Tpo -c -o pkt2receiver-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-javascript-context.Tpo $(DEPDIR)/pkt2receiver-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='pkt2receiver-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+pkt2receiver-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-javascript-context.obj -MD -MP -MF $(DEPDIR)/pkt2receiver-javascript-context.Tpo -c -o pkt2receiver-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-javascript-context.Tpo $(DEPDIR)/pkt2receiver-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='pkt2receiver-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
 
 protoc_gen_pkt2-protoc-gen-pkt2.o: protoc-gen-pkt2.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-protoc-gen-pkt2.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Tpo -c -o protoc_gen_pkt2-protoc-gen-pkt2.o `test -f 'protoc-gen-pkt2.cpp' || echo '$(srcdir)/'`protoc-gen-pkt2.cpp
@@ -3729,6 +3933,20 @@ tcpemitter-utilfile.obj: utilfile.cpp
 #	$(AM_V_CXX)source='utilfile.cpp' object='tcpemitter-utilfile.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+tcpemitter-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-javascript-context.o -MD -MP -MF $(DEPDIR)/tcpemitter-javascript-context.Tpo -c -o tcpemitter-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-javascript-context.Tpo $(DEPDIR)/tcpemitter-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='tcpemitter-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+tcpemitter-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-javascript-context.obj -MD -MP -MF $(DEPDIR)/tcpemitter-javascript-context.Tpo -c -o tcpemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-javascript-context.Tpo $(DEPDIR)/tcpemitter-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='tcpemitter-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
 
 tcpemitter_example1-tcpemitter-example1.o: tcpemitter-example1.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-tcpemitter-example1.o -MD -MP -MF $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo -c -o tcpemitter_example1-tcpemitter-example1.o `test -f 'tcpemitter-example1.cpp' || echo '$(srcdir)/'`tcpemitter-example1.cpp

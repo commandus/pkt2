@@ -164,7 +164,9 @@ int run_socket
 		return ERRCODE_NO_MEMORY;
 	}
 
-	Packet2Message packet2Message(config->proto_path, config->verbosity);
+    ProtobufDeclarations declarations(config->proto_path, config->verbosity);
+    Pkt2OptionsCache options_cache(&declarations);
+    Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
 
     while (!config->stop_request)
     {

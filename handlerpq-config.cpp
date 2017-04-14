@@ -70,6 +70,7 @@ int Config::parseCmd
 		struct arg_int *a_dbclientflags = arg_int0(NULL, "dbclientflags", "<number>", "database client flags. Default 0.");
 
 		struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "3- SQL, 4- SQL(2). Default 3");
+		struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
 		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
 
@@ -82,7 +83,7 @@ int Config::parseCmd
                 a_retries, a_retry_delay,
                 a_daemonize, a_max_fd, a_verbosity,
 				a_conninfo, a_user, a_database, a_password, a_host, a_dbport, a_optionsfile, a_dbsocket, a_dbcharset, a_dbclientflags,
-				a_mode, a_buffer_size,
+				a_mode, a_format_number, a_buffer_size,
                 a_help, a_end
         };
 
@@ -177,6 +178,11 @@ int Config::parseCmd
 			mode = *a_mode->ival;
 		else
 			mode = DEF_SQL_MODE;
+
+		if (a_format_number->count)
+			format_number = *a_format_number->ival;
+		else
+			format_number = 0;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return ERR_OK;

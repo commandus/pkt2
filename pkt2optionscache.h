@@ -51,7 +51,7 @@ public:
 	(
 		const std::string &message_type,
 		const std::string &field_type
-	);
+	) const;
 	/**
 	 * Copy key from the message
 	 * @param messageType message name

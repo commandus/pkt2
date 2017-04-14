@@ -45,7 +45,9 @@ int Config::parseCmd
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
         struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
-        struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "0- JSON, 1-CSV, 2- tab, 3- SQL, 4- SQL(2) 5- options. Default 0");
+        struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "0- JSON, 1- JSON raw, 2-CSV, 3- tab, 4- SQL, 5- SQL(2) 6- options. Default 0");
+        struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
+
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
         struct arg_end *a_end = arg_end(20);
@@ -55,7 +57,7 @@ int Config::parseCmd
                 a_message_url,
                 a_retries, a_retry_delay,
                 a_daemonize, a_max_fd, a_verbosity,
-				a_mode, a_buffer_size,
+				a_mode, a_format_number, a_buffer_size,
                 a_help, a_end 
         };
 
@@ -116,6 +118,11 @@ int Config::parseCmd
             mode = *a_mode->ival;
         else
             mode = DEF_MODE;
+
+		if (a_format_number->count)
+			format_number = *a_format_number->ival;
+		else
+			format_number = 0;
 
         if (a_buffer_size->count)
         	buffer_size = *a_buffer_size->ival;

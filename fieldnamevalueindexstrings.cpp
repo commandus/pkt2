@@ -183,3 +183,21 @@ std::string FieldNameValueIndexStrings::toStringTab() {
 	ss << std::endl;
 	return ss.str();
 }
+
+/**
+ * JSON
+ * @return String
+ */
+std::string FieldNameValueIndexStrings::toStringJSON() {
+	std::stringstream ss;
+	int sz = values.size();
+	ss << "\"" << table << "\":{";
+	for (int i = 0; i < sz; i++)
+	{
+		ss << "\""<< values[i].field << "\": \"" << values[i].value << "\"";
+		if (i < sz - 1)
+			ss << ",";
+	}
+	ss << "}" << std::endl;
+	return ss.str();
+}

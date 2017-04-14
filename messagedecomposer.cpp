@@ -9,13 +9,22 @@
 #include "messagedecomposer.h"
 #include "errorcodes.h"
 #include "bin2ascii.h"
+#include "javascript-context.h"
+#include "pkt2.pb.h"
 
 MessageDecomposer::MessageDecomposer()
 	: env(NULL), ondecompose(NULL), options_cache(NULL)
 {
+	context = getFormatJavascriptContext();
 }
 
-MessageDecomposer::~MessageDecomposer() {
+MessageDecomposer::~MessageDecomposer()
+{
+	if (context != NULL)
+	{
+		duk_pop(context);
+		duk_destroy_heap(context);
+	}
 }
 
 MessageDecomposer::MessageDecomposer
@@ -27,6 +36,9 @@ MessageDecomposer::MessageDecomposer
 )
 	: env(environment), ondecompose(callback), options_cache(options)
 {
+	// Create Javascript context with global object field.xxx
+	// duk_context *jsCtx = getFormatJavascriptContext();
+
 	decompose(message);
 }
 
@@ -212,9 +224,11 @@ int MessageDecomposer::decompose
   */
 std::string MessageDecomposer::toString
 (
+	const google::protobuf::Descriptor *message_descriptor,
 	const google::protobuf::FieldDescriptor *field,
 	const void* value,
-	int size
+	int size,
+	int format_number
 )
 {
 	std::stringstream ss;
@@ -256,18 +270,90 @@ std::string MessageDecomposer::toString
             break;
     }
 
-	return format(field, ss.str());
+	return format(message_descriptor, field, ss.str(), format_number);
 }
-
 
 /**
   * @brief format
   */
 std::string MessageDecomposer::format
 (
+	const google::protobuf::Descriptor *message_descriptor,
 	const google::protobuf::FieldDescriptor *field,
-	const std::string& value
+	const std::string& value,
+	int format_number
 )
 {
-	return field->name() + ": " + value;
+	bool found;
+
+	std::string n = message_descriptor->full_name();
+	const Pkt2PacketVariable &v = options_cache->getPacketVariable(n, &found);
+	if (!found)
+		return value;
+
+	const FieldNameVariable* f = v.getVariableByFieldNumber(field->number());
+	if (!f)
+		return value;
+
+
+	if (format_number < f->var.format_size())
+	{
+		// use format
+		std::string fmt = f->var.format(format_number);
+		return fmt + " " + value;
+	}
+
+	return value;
+
+	/*
+	const Pkt2PacketVariable &pv = (!force_message.empty()
+			? options_cache->getPacketVariable(force_message, &found)
+					: options_cache->find1(packet, &found));
+
+	if (!found)
+	{
+		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << force_message;
+		return NULL;
+	}
+
+	 */
 }
+
+/*
+google::protobuf::Message *Packet2Message::parse
+(
+    struct sockaddr *socket_address_src,
+    struct sockaddr *socket_address_dst,
+	const std::string &packet,
+	const std::string &force_message
+)
+{
+	PacketParseEnvironment env(&pv, jsCtx);
+	google::protobuf::Message *m = declarations->getMessage(pv.message_type);
+	if (m)
+	{
+		MessageComposer mc(&env, options_cache, m, oncomposefield, onnextmessage);
+
+		if (verbosity >= 2)
+		{
+			// packet input fields
+			for (int i = 0; i < pv.packet.fields_size(); i++)
+			{
+				pkt2::Field f = pv.packet.fields(i);
+				LOG(INFO) << f.name() << ": " << hexString(extractField(packet, f));
+			}
+			// packet output variables
+			for (int i = 0; i < pv.fieldname_variables.size(); i++)
+			{
+				FieldNameVariable v = pv.fieldname_variables[i];
+				LOG(INFO) << m->GetTypeName() << "." << v.field_name << " = " << extractVariable(jsCtx, v) << " " << v.var.measure_unit() << " (" << v.var.full_name() << ")";
+			}
+		}
+	}
+
+	duk_pop(jsCtx);
+	duk_destroy_heap(jsCtx);
+
+	return m;
+}
+*/

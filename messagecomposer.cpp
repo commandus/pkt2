@@ -56,7 +56,7 @@ MessageComposer::~MessageComposer() {
 MessageComposer::MessageComposer
 (
 		void *environment,
-		Pkt2OptionsCache *options,
+		const Pkt2OptionsCache *options,
 		google::protobuf::Message *message,
 		oncompose_field fieldCallback,
 		on_next_message callback_nextmessage
@@ -104,8 +104,8 @@ void MessageComposer::setCallbacks
 int MessageComposer::composeField
 (
 	const google::protobuf::Descriptor *message_descriptor,
-	google::protobuf::Message *message,
-	const google::protobuf::FieldDescriptor *field
+	const google::protobuf::FieldDescriptor *field,
+	google::protobuf::Message *message
 )
 {
     const google::protobuf::Reflection *ref = message->GetReflection();
@@ -229,7 +229,7 @@ bool MessageComposer::compose
     for (size_t i = 0; i != count; ++i)
     {
 		const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
-		while (composeField(message_descriptor, message, field))
+		while (composeField(message_descriptor, field, message))
 		{
 			if (!field)
 				return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;

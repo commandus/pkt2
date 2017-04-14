@@ -34,6 +34,8 @@ public:
     // proto
     std::string proto_path;	///< proto files directory path
     int mode;		        ///< default 0- JSON
+    int format_number;		///< which format to use
+
     int buffer_size;        ///< default 2048
 
     bool daemonize;

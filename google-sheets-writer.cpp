@@ -38,6 +38,8 @@
 
 using namespace google::protobuf;
 
+int format_number;
+
 /**
  * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueIndexStrings class(see first parameter).
  * @param env accumulates field names and values in the InsertSQLStrings object
@@ -60,7 +62,8 @@ void addFieldValueString
 	int index
 )
 {
-	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(), decomposer->toString(field, value, size), index);
+	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(),
+			decomposer->toString(message_descriptor, field, value, size, format_number), index);
 }
 
 /**
@@ -112,6 +115,8 @@ int run
 		Config *config
 )
 {
+	format_number = config->format_number;
+
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
 	// int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (nano_socket < 0)

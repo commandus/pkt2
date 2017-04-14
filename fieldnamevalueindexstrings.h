@@ -96,6 +96,13 @@ public:
 	 * @return String
 	 */
 	std::string toStringTab();
+
+	/**
+	 * JSON
+	 * @return String
+	 */
+	std::string toStringJSON();
+
 };
 
 #endif /* FIELDNAMEVALUEINDEXSTRINGS_H_ */

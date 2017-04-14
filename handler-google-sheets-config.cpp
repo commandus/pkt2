@@ -114,6 +114,7 @@ int Config::parseCmd
         struct arg_str *a_subject_email = arg_str1("e", "sub", "<email>", "subject email.");
         struct arg_str *a_spreadsheet = arg_str1("s", "spreadsheet", "<id>", "Google spreadsheet id");
         struct arg_str *a_sheet = arg_str1("t", "sheet", "<name>", "Sheet name");
+        struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
         struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
@@ -125,6 +126,7 @@ int Config::parseCmd
                 a_retries, a_retry_delay,
 				// OAuth, Google sheets
 				a_json, a_token_file, a_subject_email, a_spreadsheet, a_sheet,
+				a_format_number,
                 a_daemonize, a_max_fd, a_verbosity, a_mode, 
 				a_buffer_size, a_help, a_end 
         };
@@ -186,6 +188,11 @@ int Config::parseCmd
             mode = *a_mode->ival;
         else
             mode = DEF_MODE;
+
+        if (a_format_number->count)
+			format_number = *a_format_number->ival;
+		else
+			format_number = 0;
 
 		// OAuth, Google sheets
         if (a_spreadsheet->count)

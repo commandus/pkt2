@@ -63,7 +63,9 @@ int pkt2_receiever_nano(Config *config)
 		return ERRCODE_NN_BIND;
     }
 
-    Packet2Message packet2Message(config->proto_path, config->verbosity);
+    ProtobufDeclarations declarations(config->proto_path, config->verbosity);
+    Pkt2OptionsCache options_cache(&declarations);
+    Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
 
     while (!config->stop_request)
     {
@@ -86,10 +88,14 @@ int pkt2_receiever_nano(Config *config)
             }
 
             // packet -> message
-            google::protobuf::Message *m = packet2Message.parse(
+            PacketParseEnvironment packet_env(
             		(sockaddr *) packet.get_sockaddr_src(),
 					(sockaddr *) packet.get_sockaddr_dst(),
-					packet.data(), packet.length, config->force_message);
+					std::string((const char *) packet.data(), (size_t) packet.length),
+					&options_cache,
+					config->force_message
+			);
+            google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
             if (m == NULL)
             {
         		LOG(ERROR) << ERR_PARSE_PACKET << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;

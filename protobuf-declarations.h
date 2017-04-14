@@ -134,7 +134,7 @@ public:
 	google::protobuf::Message *getMessage
 	(
 		const std::string &message_name
-	);
+	) const;
 
 	google::protobuf::Message *decode
 	(

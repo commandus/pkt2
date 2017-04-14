@@ -602,37 +602,25 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::google::protobuf::uint32 priority() const;
   void set_priority(::google::protobuf::uint32 value);
 
-  // string format = 10;
+  // repeated string format = 10;
+  int format_size() const;
   void clear_format();
   static const int kFormatFieldNumber = 10;
-  const ::std::string& format() const;
-  void set_format(const ::std::string& value);
-  void set_format(const char* value);
-  void set_format(const char* value, size_t size);
-  ::std::string* mutable_format();
-  ::std::string* release_format();
-  void set_allocated_format(::std::string* format);
-  ::std::string* unsafe_arena_release_format();
-  void unsafe_arena_set_allocated_format(
-      ::std::string* format);
+  const ::std::string& format(int index) const;
+  ::std::string* mutable_format(int index);
+  void set_format(int index, const ::std::string& value);
+  void set_format(int index, const char* value);
+  void set_format(int index, const char* value, size_t size);
+  ::std::string* add_format();
+  void add_format(const ::std::string& value);
+  void add_format(const char* value);
+  void add_format(const char* value, size_t size);
+  const ::google::protobuf::RepeatedPtrField< ::std::string>& format() const;
+  ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_format();
 
-  // string tostring = 11;
-  void clear_tostring();
-  static const int kTostringFieldNumber = 11;
-  const ::std::string& tostring() const;
-  void set_tostring(const ::std::string& value);
-  void set_tostring(const char* value);
-  void set_tostring(const char* value, size_t size);
-  ::std::string* mutable_tostring();
-  ::std::string* release_tostring();
-  void set_allocated_tostring(::std::string* tostring);
-  ::std::string* unsafe_arena_release_tostring();
-  void unsafe_arena_set_allocated_tostring(
-      ::std::string* tostring);
-
-  // uint32 index = 12;
+  // uint32 index = 11;
   void clear_index();
-  static const int kIndexFieldNumber = 12;
+  static const int kIndexFieldNumber = 11;
   ::google::protobuf::uint32 index() const;
   void set_index(::google::protobuf::uint32 value);
 
@@ -644,14 +632,13 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   ::google::protobuf::RepeatedPtrField< ::std::string> values_;
+  ::google::protobuf::RepeatedPtrField< ::std::string> format_;
   ::google::protobuf::internal::ArenaStringPtr field_;
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
   ::google::protobuf::internal::ArenaStringPtr measure_unit_;
   ::google::protobuf::internal::ArenaStringPtr get_;
-  ::google::protobuf::internal::ArenaStringPtr format_;
-  ::google::protobuf::internal::ArenaStringPtr tostring_;
   int type_;
   ::google::protobuf::uint32 priority_;
   ::google::protobuf::uint32 index_;
@@ -1862,139 +1849,62 @@ inline void Variable::set_priority(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.priority)
 }
 
-// string format = 10;
+// repeated string format = 10;
+inline int Variable::format_size() const {
+  return format_.size();
+}
 inline void Variable::clear_format() {
-  format_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+  format_.Clear();
 }
-inline const ::std::string& Variable::format() const {
+inline const ::std::string& Variable::format(int index) const {
   // @@protoc_insertion_point(field_get:pkt2.Variable.format)
-  return format_.Get();
+  return format_.Get(index);
 }
-inline void Variable::set_format(const ::std::string& value) {
-  
-  format_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
+inline ::std::string* Variable::mutable_format(int index) {
+  // @@protoc_insertion_point(field_mutable:pkt2.Variable.format)
+  return format_.Mutable(index);
+}
+inline void Variable::set_format(int index, const ::std::string& value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.format)
+  format_.Mutable(index)->assign(value);
 }
-inline void Variable::set_format(const char* value) {
-  
-  format_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArenaNoVirtual());
+inline void Variable::set_format(int index, const char* value) {
+  format_.Mutable(index)->assign(value);
   // @@protoc_insertion_point(field_set_char:pkt2.Variable.format)
 }
-inline void Variable::set_format(const char* value,
-    size_t size) {
-  
-  format_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
+inline void Variable::set_format(int index, const char* value, size_t size) {
+  format_.Mutable(index)->assign(
+    reinterpret_cast<const char*>(value), size);
   // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.format)
 }
-inline ::std::string* Variable::mutable_format() {
-  
-  // @@protoc_insertion_point(field_mutable:pkt2.Variable.format)
-  return format_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+inline ::std::string* Variable::add_format() {
+  // @@protoc_insertion_point(field_add_mutable:pkt2.Variable.format)
+  return format_.Add();
 }
-inline ::std::string* Variable::release_format() {
-  // @@protoc_insertion_point(field_release:pkt2.Variable.format)
-  
-  return format_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+inline void Variable::add_format(const ::std::string& value) {
+  format_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add:pkt2.Variable.format)
 }
-inline ::std::string* Variable::unsafe_arena_release_format() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:pkt2.Variable.format)
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  
-  return format_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      GetArenaNoVirtual());
+inline void Variable::add_format(const char* value) {
+  format_.Add()->assign(value);
+  // @@protoc_insertion_point(field_add_char:pkt2.Variable.format)
 }
-inline void Variable::set_allocated_format(::std::string* format) {
-  if (format != NULL) {
-    
-  } else {
-    
-  }
-  format_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), format,
-      GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.format)
+inline void Variable::add_format(const char* value, size_t size) {
+  format_.Add()->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_add_pointer:pkt2.Variable.format)
 }
-inline void Variable::unsafe_arena_set_allocated_format(
-    ::std::string* format) {
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  if (format != NULL) {
-    
-  } else {
-    
-  }
-  format_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      format, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Variable.format)
+inline const ::google::protobuf::RepeatedPtrField< ::std::string>&
+Variable::format() const {
+  // @@protoc_insertion_point(field_list:pkt2.Variable.format)
+  return format_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::std::string>*
+Variable::mutable_format() {
+  // @@protoc_insertion_point(field_mutable_list:pkt2.Variable.format)
+  return &format_;
 }
 
-// string tostring = 11;
-inline void Variable::clear_tostring() {
-  tostring_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-inline const ::std::string& Variable::tostring() const {
-  // @@protoc_insertion_point(field_get:pkt2.Variable.tostring)
-  return tostring_.Get();
-}
-inline void Variable::set_tostring(const ::std::string& value) {
-  
-  tostring_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:pkt2.Variable.tostring)
-}
-inline void Variable::set_tostring(const char* value) {
-  
-  tostring_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:pkt2.Variable.tostring)
-}
-inline void Variable::set_tostring(const char* value,
-    size_t size) {
-  
-  tostring_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.tostring)
-}
-inline ::std::string* Variable::mutable_tostring() {
-  
-  // @@protoc_insertion_point(field_mutable:pkt2.Variable.tostring)
-  return tostring_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-inline ::std::string* Variable::release_tostring() {
-  // @@protoc_insertion_point(field_release:pkt2.Variable.tostring)
-  
-  return tostring_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-inline ::std::string* Variable::unsafe_arena_release_tostring() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:pkt2.Variable.tostring)
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  
-  return tostring_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      GetArenaNoVirtual());
-}
-inline void Variable::set_allocated_tostring(::std::string* tostring) {
-  if (tostring != NULL) {
-    
-  } else {
-    
-  }
-  tostring_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), tostring,
-      GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.tostring)
-}
-inline void Variable::unsafe_arena_set_allocated_tostring(
-    ::std::string* tostring) {
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  if (tostring != NULL) {
-    
-  } else {
-    
-  }
-  tostring_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      tostring, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Variable.tostring)
-}
-
-// uint32 index = 12;
+// uint32 index = 11;
 inline void Variable::clear_index() {
   index_ = 0u;
 }

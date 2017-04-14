@@ -9,7 +9,7 @@
 #define MESSAGEDECOMPOSER_H_
 
 #include <google/protobuf/message.h>
-
+#include "duk/duktape.h"
 #include "pkt2optionscache.h"
 
 /**
@@ -28,6 +28,7 @@ class MessageDecomposer {
 	);
 private:
 	void* env;
+	duk_context *context;
 	ondecompose_callback ondecompose;
 	Pkt2OptionsCache *options_cache;
 	int decomposeField
@@ -48,8 +49,10 @@ protected:
 	  */
 	std::string format
 	(
+		const google::protobuf::Descriptor *message_descriptor,
 		const google::protobuf::FieldDescriptor *field,
-		const std::string& value
+		const std::string& value,
+		int format_number
 	);
 public:
 	MessageDecomposer();
@@ -62,9 +65,11 @@ public:
 	  */
 	std::string toString
 	(
+		const google::protobuf::Descriptor *message_descriptor,
 		const google::protobuf::FieldDescriptor *field,
 		const void* value,
-		int size
+		int size,
+		int format_number
 	);
 };
 

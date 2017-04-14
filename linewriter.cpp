@@ -38,6 +38,8 @@
 
 using namespace google::protobuf;
 
+int format_number;
+
 /**
  * @brief Print packet to the stdout
  * @param messageTypeNAddress
@@ -60,7 +62,7 @@ int put_debug
  * @param message
  * @return 0 - success
  */
-int put_json
+int put_json_raw
 (
 		MessageTypeNAddress *messageTypeNAddress,
 		const google::protobuf::Message *message
@@ -94,7 +96,27 @@ void addFieldValueString
 	int index
 )
 {
-	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(), decomposer->toString(field, value, size), index);
+	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(),
+			decomposer->toString(message_descriptor, field, value, size, format_number), index);
+}
+
+/**
+ * @brief Print packet to the stdout as CSV
+ * @param messageTypeNAddress
+ * @param message
+ * @return
+ */
+int put_json
+(
+		Pkt2OptionsCache *options,
+		MessageTypeNAddress *messageTypeNAddress,
+		const google::protobuf::Message *message
+)
+{
+	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
+	MessageDecomposer md(&vals, options, message, addFieldValueString);
+	std::cout << vals.toStringJSON();
+	return ERR_OK;
 }
 
 /**
@@ -236,6 +258,8 @@ int run
 		Config *config
 )
 {
+	format_number = config->format_number;
+
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
 	// int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (nano_socket < 0)
@@ -286,7 +310,10 @@ int run
 			switch (config->mode)
 			{
 			case MODE_JSON:
-				put_json(&messageTypeNAddress, m);
+				put_json(&options, &messageTypeNAddress, m);
+				break;
+			case MODE_JSON_RAW:
+				put_json_raw(&messageTypeNAddress, m);
 				break;
 			case MODE_CSV:
 				put_csv(&options, &messageTypeNAddress, m);

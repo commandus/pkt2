@@ -50,6 +50,8 @@ public:
     std::string secret;
     std::string sheet;
 
+    int format_number;				///< which format to use
+
     bool daemonize;
     int max_fd;						///< 0- use default max file descriptor count per process
     bool stop_request;

@@ -134,7 +134,7 @@ const google::protobuf::Descriptor* ProtobufDeclarations::getMessageDescriptor
 Message *ProtobufDeclarations::getMessage
 (
 	const std::string &message_name
-)
+) const
 {
 	// Look up the type.
 	const Descriptor* type = importer->pool()->FindMessageTypeByName(message_name);

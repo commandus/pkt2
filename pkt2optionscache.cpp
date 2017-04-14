@@ -119,13 +119,15 @@ const Pkt2PacketVariable &Pkt2OptionsCache::find1
 int Pkt2OptionsCache::getIndex(
 		const std::string &message_type,
 		const std::string &field_type
-)
+) const
 {
-	Pkt2PacketVariable pv(pkt2packet_variable[message_type]);
+	std::map<std::string, Pkt2PacketVariable>::const_iterator it = pkt2packet_variable.find(message_type);
+	if (it == pkt2packet_variable.end())
+		return 0;
 
-	for (int i = 1; i < pv.keyIndexes.size(); i++)
+	for (int i = 1; i < it->second.keyIndexes.size(); i++)
 	{
-		if (field_type == pv.fieldname_variables[pv.keyIndexes[i]].field_name)
+		if (field_type == it->second.fieldname_variables[it->second.keyIndexes[i]].field_name)
 			return i;
 	}
 	return 0;

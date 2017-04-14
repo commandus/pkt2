@@ -38,12 +38,12 @@ private:
 	void* env;
 	oncompose_field onComposeField;
 	on_next_message onNextRepeatMessage;
-	Pkt2OptionsCache *optionCache;
+	const Pkt2OptionsCache *optionCache;
 	int composeField
 	(
 		const google::protobuf::Descriptor *message_descriptor,
-		google::protobuf::Message *message,
-		const google::protobuf::FieldDescriptor *field
+		const google::protobuf::FieldDescriptor *field,
+		google::protobuf::Message *message
 	);
 protected:
 	/// compose
@@ -58,7 +58,7 @@ public:
 	MessageComposer
 	(
 			void *env,
-			Pkt2OptionsCache *options,
+			const Pkt2OptionsCache *options,
 			google::protobuf::Message *message,
 			oncompose_field callback_field,
 			on_next_message callback_nextmessage
