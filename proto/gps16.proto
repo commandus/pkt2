@@ -123,7 +123,7 @@ message GPS_Coordinates
         measure_unit: "°"
         get: "(latitude_ns == 'S' ? -1. : 1.) * (latitude_g + ((latitude_m + ((latitude_s > 9999 ? 9999 : latitude_s) * 0.0001)) / 60.))"
         priority: 0
-        format: "%10.6f"
+        format: ["value.toFixed(6)"]
     }];
     
     double longitude = 2 [(pkt2.variable) = {
@@ -133,7 +133,7 @@ message GPS_Coordinates
         measure_unit: "°"
         get: "(longitude_ns == 'W' ? -1. : 1.) * (longitude_g + ((longitude_m + ((longitude_s > 9999 ? 9999 : longitude_s) * 0.0001)) / 60.))"
         priority: 0
-        format: "%10.6f"
+        format: ["value.toFixed(6)"]
     }];
 
     uint32 hdop = 3 [(pkt2.variable) = {

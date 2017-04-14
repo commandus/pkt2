@@ -74,7 +74,7 @@ rapidjson/error/en.h             rapidjson/error/error.h \
 rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
 rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
-duk/duk_config.h  duk/duktape.h  \
+duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h
 
 common_src =
@@ -89,7 +89,7 @@ tcpemitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	tcpemitterline.cpp daemonize.cpp pbjson.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	pkt2.pb.cpp utilfile.cpp \
+	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
@@ -116,6 +116,7 @@ pkt2receiver_SOURCES= \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
 	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
 	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
+	javascript-context.cpp \
 	$(common_src)
 
 pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
@@ -130,7 +131,7 @@ pkt2gateway_SOURCES= \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	messagecomposer.cpp \
-	duk/duktape.c \
+	duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
@@ -143,7 +144,7 @@ handlerpq_SOURCES= \
 	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
@@ -169,7 +170,7 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
@@ -180,7 +181,7 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
@@ -194,7 +195,7 @@ handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp jsoncpp.cpp \
+	pbjson.cpp jsoncpp.cpp duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
@@ -221,6 +222,7 @@ message2gateway_SOURCES = \
 	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
 	utilprotobuf.cpp packet2message.cpp \
 	pbjson.cpp pkt2.pb.cpp duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
+	javascript-context.cpp \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
