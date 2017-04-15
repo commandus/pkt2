@@ -29,6 +29,25 @@ class MessageDecomposer {
 private:
 	void* env;
 	duk_context *context;
+	/**
+	 * Add "message" javascript object to the context
+	 * @param message
+	 */
+	void addJavascriptMessage
+	(
+		const google::protobuf::Message *message,
+		const google::protobuf::Message *root_message
+	);
+	/**
+	 * Add "message.<field>" javascript object to the context
+	 * @param message
+	 */
+	void addJavascriptField
+	(
+		const google::protobuf::Message *message,
+		const google::protobuf::Message *root_message,
+		const google::protobuf::FieldDescriptor *field
+	);
 	ondecompose_callback ondecompose;
 	Pkt2OptionsCache *options_cache;
 	int decomposeField

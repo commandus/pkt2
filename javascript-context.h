@@ -9,7 +9,7 @@
 #define JAVASCRIPT_CONTEXT_H_
 
 #include "duk/duktape.h"
-
+#include "pkt2.pb.h"
 #include "pkt2packetvariable.h"
 
 /**

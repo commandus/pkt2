@@ -8,6 +8,7 @@
 #include <arpa/inet.h>
 #include "javascript-context.h"
 #include "utilprotobuf.h"
+#include "pkt2.pb.h"
 
 /**
  * Create Javascript context with global object field.xxx
@@ -61,6 +62,7 @@ duk_context *getFormatJavascriptContext()
 	duk_push_global_object(ctx);
 	duk_push_uint(ctx, t);
 	duk_put_prop_string(ctx, -2, "time");
+
 	return ctx;
 }
 

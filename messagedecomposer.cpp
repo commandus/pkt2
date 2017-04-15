@@ -10,21 +10,19 @@
 #include "errorcodes.h"
 #include "bin2ascii.h"
 #include "javascript-context.h"
+#include "google/protobuf/reflection.h"
 #include "pkt2.pb.h"
+#include "pkt2packetvariable.h"
+
+using namespace google::protobuf;
 
 MessageDecomposer::MessageDecomposer()
-	: env(NULL), ondecompose(NULL), options_cache(NULL)
+	: env(NULL), ondecompose(NULL), options_cache(NULL), context(NULL)
 {
-	context = getFormatJavascriptContext();
 }
 
 MessageDecomposer::~MessageDecomposer()
 {
-	if (context != NULL)
-	{
-		duk_pop(context);
-		duk_destroy_heap(context);
-	}
 }
 
 MessageDecomposer::MessageDecomposer
@@ -36,9 +34,6 @@ MessageDecomposer::MessageDecomposer
 )
 	: env(environment), ondecompose(callback), options_cache(options)
 {
-	// Create Javascript context with global object field.xxx
-	// duk_context *jsCtx = getFormatJavascriptContext();
-
 	decompose(message);
 }
 
@@ -90,7 +85,7 @@ int MessageDecomposer::decomposeField
         array_size = ref->FieldSize(*message, field);
 
     int index = 0;
-    google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
+    FieldDescriptor::CppType t = field->cpp_type();
 
     if (options_cache)
     {
@@ -186,6 +181,145 @@ int MessageDecomposer::decomposeField
 	return ERR_OK;	
 }
 
+#define CASE_CPP_TYPE(CTX, MSG, FLD, REF, CPP_TYP, DUK_TYP, PRT_TYP) \
+	case FieldDescriptor::CPP_TYP: \
+		if (FLD->is_repeated()) \
+		{ \
+			int arr_idx = duk_push_array(context); \
+			for (size_t i = 0; i != REF->FieldSize(*MSG, FLD); ++i) \
+			{ \
+				duk_push_ ## DUK_TYP(CTX, REF->GetRepeated ## PRT_TYP(*MSG, FLD, i)); \
+				duk_put_prop_index(CTX, arr_idx, i); \
+			} \
+		} \
+		else \
+		{ \
+			duk_push_ ## DUK_TYP(CTX, REF->Get ## PRT_TYP(*MSG, FLD)); \
+		} \
+		duk_put_prop_string(context, -2, FLD->name().c_str()); \
+		break; \
+
+/**
+ * Add "message" javascript object to the context
+ * @param message
+ */
+void MessageDecomposer::addJavascriptMessage
+(
+	const google::protobuf::Message *message,
+	const google::protobuf::Message *root_message
+)
+{
+	const Descriptor *d = message->GetDescriptor();
+	if (!d)
+		return;
+	duk_push_global_object(context);
+	size_t count = d->field_count();
+	for (size_t i = 0; i != count; ++i)
+	{
+		const FieldDescriptor *field = d->field(i);
+		if (!field)
+			return;
+		const Reflection *ref = message->GetReflection();
+		if (!ref)
+			return;
+		if (field->is_optional() && !ref->HasField(*message, field))
+		{
+			//do nothing
+		}
+		else
+		{
+			addJavascriptField(message, root_message, field);
+		}
+	}
+	std::string name;
+	if (message == root_message)
+		name = "values";
+	else
+		name = d->name();
+	duk_put_prop_string(context, -2, name.c_str());
+	return;
+}
+
+/**
+ * Add "message.<field>" javascript object to the context
+ * @param message
+ */
+void MessageDecomposer::addJavascriptField
+(
+	const google::protobuf::Message *message,
+	const google::protobuf::Message *root_message,
+	const google::protobuf::FieldDescriptor *field
+)
+{
+	const google::protobuf::Reflection *ref = message->GetReflection();
+	duk_push_global_object(context);
+	switch (field->cpp_type())
+	{
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_DOUBLE, number, Double)
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_FLOAT, number, Float)
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_INT64, int, Int64)
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_UINT64, uint, UInt64)
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_INT32, int, Int32)
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_UINT32, uint, UInt32)
+		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_BOOL, boolean, Bool)
+		case FieldDescriptor::CPPTYPE_STRING:
+			{
+				bool is_binary = field->type() == FieldDescriptor::TYPE_BYTES;
+				if (field->is_repeated())
+				{
+					int arr_idx = duk_push_array(context);
+					for (size_t i = 0; i != ref->FieldSize(*message, field); ++i)
+					{
+						std::string value = ref->GetRepeatedString(*message, field, i);
+						if (is_binary)
+							value = b64_encode(value);
+						duk_push_string(context, ref->GetRepeatedString(*message, field, i).c_str());
+						duk_put_prop_index(context, arr_idx, i);
+					}
+				}
+				else
+				{
+					std::string value = ref->GetString(*message, field);
+					if (is_binary)
+						value = b64_encode(value);
+					duk_push_string(context, ref->GetString(*message, field).c_str());
+				}
+			}
+			break;
+		case FieldDescriptor::CPPTYPE_ENUM:
+			if (field->is_repeated())
+			{
+				int arr_idx = duk_push_array(context);
+				for (size_t i = 0; ref->FieldSize(*message, field); ++i)
+				{
+					duk_push_int(context, ref->GetRepeatedEnum(*message, field, i)->number());
+					duk_put_prop_index(context, arr_idx, i);
+				}
+			}
+			else
+				duk_push_int(context, ref->GetEnum(*message, field)->number());
+			break;
+		case FieldDescriptor::CPPTYPE_MESSAGE:
+			if (field->is_repeated())
+			{
+				for (size_t i = 0; i != ref->FieldSize(*message, field); ++i)
+				{
+					const Message *value = &(ref->GetRepeatedMessage(*message, field, i));
+			    	addJavascriptMessage(value, root_message);
+				}
+			}
+			else
+			{
+				const Message *value = &(ref->GetMessage(*message, field));
+		    	addJavascriptMessage(value, root_message);
+			}
+			break;
+		default:
+			break;
+	}
+	duk_put_prop_string(context, -2, field->name().c_str());
+}
+
 int MessageDecomposer::decompose
 (
 	const google::protobuf::Message *message
@@ -193,22 +327,26 @@ int MessageDecomposer::decompose
 {
 	if (!ondecompose)
 		return ERRCODE_NO_CALLBACK;
+
     const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
     if (!message_descriptor)
         return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
-    /*
-    const google::protobuf::Reflection *ref = message->GetReflection();
-    if (!ref)
-       return ERRCODE_DECOMPOSE_NO_REFECTION;
-       */
-    size_t count = message_descriptor->field_count();
-    for (size_t i = 0; i != count; ++i)
+
+	context = getFormatJavascriptContext();
+	// value
+	addJavascriptMessage(message, message);
+
+    for (size_t i = 0; i != message_descriptor->field_count(); ++i)
     {
         const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
         if (!field)
             return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
        	decomposeField(message_descriptor, message, field);
     }
+
+	duk_pop(context);
+	duk_destroy_heap(context);
+
     return ERR_OK;
 }
 
@@ -300,6 +438,7 @@ std::string MessageDecomposer::format
 	{
 		// use format
 		std::string fmt = f->var.format(format_number);
+		duk_eval_string(context, fmt.c_str());
 		return fmt + " " + value;
 	}
 
