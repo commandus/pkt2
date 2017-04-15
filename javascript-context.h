@@ -30,6 +30,7 @@ duk_context *getJavascriptContext
 
 duk_context *getFormatJavascriptContext
 (
+		void *ctx
 );
 
 void putSocketAddress
@@ -45,5 +46,7 @@ void pushField
 		const std::string &packet,
 		const pkt2::Field &field
 );
+
+void duk_fatal_handler(void *udata, const char *msg);
 
 #endif /* JAVASCRIPT_CONTEXT_H_ */

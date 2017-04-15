@@ -10,6 +10,13 @@
 #include "utilprotobuf.h"
 #include "pkt2.pb.h"
 
+void duk_fatal_handler(void *udata, const char *msg)
+{
+	fprintf(stderr, "Javascript error: %s\n", (msg ? msg : ""));
+	fflush(stderr);
+	abort();
+}
+
 /**
  * Create Javascript context with global object field.xxx
  * @param pv
@@ -26,7 +33,7 @@ duk_context *getJavascriptContext
 	const std::string &packet
 )
 {
-	duk_context *ctx = duk_create_heap_default();
+	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
 
 	// current time
 	time_t t =  time(NULL);
@@ -53,9 +60,12 @@ duk_context *getJavascriptContext
 	return ctx;
 }
 
-duk_context *getFormatJavascriptContext()
+duk_context *getFormatJavascriptContext
+(
+		void *env
+)
 {
-	duk_context *ctx = duk_create_heap_default();
+	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, env, duk_fatal_handler);
 
 	// current time
 	time_t t =  time(NULL);

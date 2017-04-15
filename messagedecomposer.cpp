@@ -212,7 +212,8 @@ void MessageDecomposer::addJavascriptMessage
 	const Descriptor *d = message->GetDescriptor();
 	if (!d)
 		return;
-	duk_push_global_object(context);
+	duk_push_object(context);
+
 	size_t count = d->field_count();
 	for (size_t i = 0; i != count; ++i)
 	{
@@ -231,12 +232,6 @@ void MessageDecomposer::addJavascriptMessage
 			addJavascriptField(message, root_message, field);
 		}
 	}
-	std::string name;
-	if (message == root_message)
-		name = "values";
-	else
-		name = d->name();
-	duk_put_prop_string(context, -2, name.c_str());
 	return;
 }
 
@@ -252,7 +247,6 @@ void MessageDecomposer::addJavascriptField
 )
 {
 	const google::protobuf::Reflection *ref = message->GetReflection();
-	duk_push_global_object(context);
 	switch (field->cpp_type())
 	{
 		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_DOUBLE, number, Double)
@@ -284,6 +278,7 @@ void MessageDecomposer::addJavascriptField
 						value = b64_encode(value);
 					duk_push_string(context, ref->GetString(*message, field).c_str());
 				}
+				duk_put_prop_string(context, -2, field->name().c_str());
 			}
 			break;
 		case FieldDescriptor::CPPTYPE_ENUM:
@@ -298,26 +293,31 @@ void MessageDecomposer::addJavascriptField
 			}
 			else
 				duk_push_int(context, ref->GetEnum(*message, field)->number());
+			duk_put_prop_string(context, -2, field->name().c_str());
 			break;
 		case FieldDescriptor::CPPTYPE_MESSAGE:
 			if (field->is_repeated())
 			{
+				int arr_idx = duk_push_array(context);
 				for (size_t i = 0; i != ref->FieldSize(*message, field); ++i)
 				{
 					const Message *value = &(ref->GetRepeatedMessage(*message, field, i));
+					duk_push_object(context);
 			    	addJavascriptMessage(value, root_message);
+					duk_put_prop_index(context, arr_idx, i);
 				}
 			}
 			else
 			{
 				const Message *value = &(ref->GetMessage(*message, field));
+				duk_push_object(context);
 		    	addJavascriptMessage(value, root_message);
 			}
+			duk_put_prop_string(context, -2, field->name().c_str());
 			break;
 		default:
 			break;
 	}
-	duk_put_prop_string(context, -2, field->name().c_str());
 }
 
 int MessageDecomposer::decompose
@@ -332,9 +332,11 @@ int MessageDecomposer::decompose
     if (!message_descriptor)
         return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
 
-	context = getFormatJavascriptContext();
+	context = getFormatJavascriptContext((void *) message);
 	// value
+	duk_push_global_object(context);
 	addJavascriptMessage(message, message);
+	duk_put_global_string(context, "value");
 
     for (size_t i = 0; i != message_descriptor->field_count(); ++i)
     {
@@ -438,61 +440,14 @@ std::string MessageDecomposer::format
 	{
 		// use format
 		std::string fmt = f->var.format(format_number);
-		duk_eval_string(context, fmt.c_str());
-		return fmt + " " + value;
+		// duk_eval_string(context, fmt.c_str());
+		duk_eval_string(context, "time + 2");
+		std::string fv = std::string(duk_safe_to_string(context, -1));
+
+		duk_eval_string(context, "value.degrees_c.toFixed(2)");
+		fv = std::string(duk_safe_to_string(context, -1));
+		return fmt + " " + fv;
 	}
 
 	return value;
-
-	/*
-	const Pkt2PacketVariable &pv = (!force_message.empty()
-			? options_cache->getPacketVariable(force_message, &found)
-					: options_cache->find1(packet, &found));
-
-	if (!found)
-	{
-		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << force_message;
-		return NULL;
-	}
-
-	 */
 }
-
-/*
-google::protobuf::Message *Packet2Message::parse
-(
-    struct sockaddr *socket_address_src,
-    struct sockaddr *socket_address_dst,
-	const std::string &packet,
-	const std::string &force_message
-)
-{
-	PacketParseEnvironment env(&pv, jsCtx);
-	google::protobuf::Message *m = declarations->getMessage(pv.message_type);
-	if (m)
-	{
-		MessageComposer mc(&env, options_cache, m, oncomposefield, onnextmessage);
-
-		if (verbosity >= 2)
-		{
-			// packet input fields
-			for (int i = 0; i < pv.packet.fields_size(); i++)
-			{
-				pkt2::Field f = pv.packet.fields(i);
-				LOG(INFO) << f.name() << ": " << hexString(extractField(packet, f));
-			}
-			// packet output variables
-			for (int i = 0; i < pv.fieldname_variables.size(); i++)
-			{
-				FieldNameVariable v = pv.fieldname_variables[i];
-				LOG(INFO) << m->GetTypeName() << "." << v.field_name << " = " << extractVariable(jsCtx, v) << " " << v.var.measure_unit() << " (" << v.var.full_name() << ")";
-			}
-		}
-	}
-
-	duk_pop(jsCtx);
-	duk_destroy_heap(jsCtx);
-
-	return m;
-}
-*/
