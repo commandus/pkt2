@@ -439,14 +439,8 @@ std::string MessageDecomposer::format
 	if (format_number < f->var.format_size())
 	{
 		// use format
-		std::string fmt = f->var.format(format_number);
-		// duk_eval_string(context, fmt.c_str());
-		duk_eval_string(context, "time + 2");
-		std::string fv = std::string(duk_safe_to_string(context, -1));
-
-		duk_eval_string(context, "value.degrees_c.toFixed(2)");
-		fv = std::string(duk_safe_to_string(context, -1));
-		return fmt + " " + fv;
+		duk_eval_string(context, f->var.format(format_number).c_str());
+		return std::string(duk_safe_to_string(context, -1));
 	}
 
 	return value;

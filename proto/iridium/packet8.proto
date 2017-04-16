@@ -5,8 +5,8 @@ package iridium;
 option cc_enable_arenas = true;
 
 import "pkt2.proto";
-import "time5.proto";
-import "gps16.proto";
+import "iridium/time5.proto";
+import "iridium/gps16.proto";
 
 /*
 typedef ALIGN struct {

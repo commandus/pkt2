@@ -45,7 +45,7 @@ CLEANFILES = $(gengrpcs)
 bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	handlerpq handlerline handlerlmdb handler-google-sheets \
 	protoc-gen-pkt2 \
-	message2gateway example1message example1message1 tcpemitter-example1
+	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium 
 
 #
 # Headers
@@ -58,7 +58,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
-sslhelper.h \
+sslhelper.h iridium.h \
 cppcodec/base32_crockford.hpp cppcodec/base32_hex.hpp  cppcodec/base64_default_url_unpadded.hpp cppcodec/hex_lower.hpp \
 cppcodec/base32_default_crockford.hpp cppcodec/base32_rfc4648.hpp cppcodec/base64_rfc4648.hpp cppcodec/hex_upper.hpp \
 cppcodec/base32_default_hex.hpp cppcodec/base64_default_rfc4648.hpp cppcodec/base64_url.hpp cppcodec/hex_default_lower.hpp cppcodec/parse_error.hpp \
@@ -261,14 +261,24 @@ tcpemitter_example1_LDADD =
 tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
+# tcpemitter-iridium
+#
+tcpemitter_iridium_SOURCES = \
+	tcpemitter-iridium.cpp utilstring.cpp \
+	$(common_src)
+
+tcpemitter_iridium_LDADD = 
+tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
 # Configs, readme, CMake etc.
 #
 configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto              proto/google/protobuf/descriptor.proto            proto/gps16.proto \
-	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
+	proto/pkt2.proto proto/google/protobuf/descriptor.proto \
+	proto/iridium/gps16.proto proto/iridium/time5.proto proto/iridium/packet8.proto proto/example/example1.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto  \
 	mib/EAS-IKFIA-MIB \
 	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 

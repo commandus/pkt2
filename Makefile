@@ -96,7 +96,8 @@ bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	handler-google-sheets$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
 	message2gateway$(EXEEXT) example1message$(EXEEXT) \
-	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT)
+	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
+	tcpemitter-iridium$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -320,6 +321,11 @@ am_tcpemitter_example1_OBJECTS =  \
 	$(am__objects_1)
 tcpemitter_example1_OBJECTS = $(am_tcpemitter_example1_OBJECTS)
 tcpemitter_example1_DEPENDENCIES =
+am_tcpemitter_iridium_OBJECTS =  \
+	tcpemitter_iridium-tcpemitter-iridium.$(OBJEXT) \
+	tcpemitter_iridium-utilstring.$(OBJEXT) $(am__objects_1)
+tcpemitter_iridium_OBJECTS = $(am_tcpemitter_iridium_OBJECTS)
+tcpemitter_iridium_DEPENDENCIES =
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
@@ -403,15 +409,16 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -858,7 +865,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
-sslhelper.h \
+sslhelper.h iridium.h \
 cppcodec/base32_crockford.hpp cppcodec/base32_hex.hpp  cppcodec/base64_default_url_unpadded.hpp cppcodec/hex_lower.hpp \
 cppcodec/base32_default_crockford.hpp cppcodec/base32_rfc4648.hpp cppcodec/base64_rfc4648.hpp cppcodec/hex_upper.hpp \
 cppcodec/base32_default_hex.hpp cppcodec/base64_default_rfc4648.hpp cppcodec/base64_url.hpp cppcodec/hex_default_lower.hpp cppcodec/parse_error.hpp \
@@ -1061,14 +1068,24 @@ tcpemitter_example1_LDADD =
 tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
+# tcpemitter-iridium
+#
+tcpemitter_iridium_SOURCES = \
+	tcpemitter-iridium.cpp utilstring.cpp \
+	$(common_src)
+
+tcpemitter_iridium_LDADD = 
+tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
 # Configs, readme, CMake etc.
 #
 configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
-	proto/pkt2.proto              proto/google/protobuf/descriptor.proto            proto/gps16.proto \
-	proto/time5.proto             proto/example/example1.proto      proto/iridium/packet8.proto \
+	proto/pkt2.proto proto/google/protobuf/descriptor.proto \
+	proto/iridium/gps16.proto proto/iridium/time5.proto proto/iridium/packet8.proto proto/example/example1.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto  \
 	mib/EAS-IKFIA-MIB \
 	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
@@ -1256,6 +1273,10 @@ tcpemitter-example1$(EXEEXT): $(tcpemitter_example1_OBJECTS) $(tcpemitter_exampl
 	@rm -f tcpemitter-example1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpemitter_example1_OBJECTS) $(tcpemitter_example1_LDADD) $(LIBS)
 
+tcpemitter-iridium$(EXEEXT): $(tcpemitter_iridium_OBJECTS) $(tcpemitter_iridium_DEPENDENCIES) $(EXTRA_tcpemitter_iridium_DEPENDENCIES) 
+	@rm -f tcpemitter-iridium$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(tcpemitter_iridium_OBJECTS) $(tcpemitter_iridium_LDADD) $(LIBS)
+
 tcpreceiver$(EXEEXT): $(tcpreceiver_OBJECTS) $(tcpreceiver_DEPENDENCIES) $(EXTRA_tcpreceiver_DEPENDENCIES) 
 	@rm -f tcpreceiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpreceiver_OBJECTS) $(tcpreceiver_LDADD) $(LIBS)
@@ -1435,6 +1456,8 @@ include ./$(DEPDIR)/tcpemitter-utilpriority.Po
 include ./$(DEPDIR)/tcpemitter-utilprotobuf.Po
 include ./$(DEPDIR)/tcpemitter-utilstring.Po
 include ./$(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
+include ./$(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Po
+include ./$(DEPDIR)/tcpemitter_iridium-utilstring.Po
 include ./$(DEPDIR)/tcpreceiver-NanoMessage.Po
 include ./$(DEPDIR)/tcpreceiver-daemonize.Po
 include ./$(DEPDIR)/tcpreceiver-get_rss.Po
@@ -3961,6 +3984,34 @@ tcpemitter_example1-tcpemitter-example1.obj: tcpemitter-example1.cpp
 #	$(AM_V_CXX)source='tcpemitter-example1.cpp' object='tcpemitter_example1-tcpemitter-example1.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_example1-tcpemitter-example1.obj `if test -f 'tcpemitter-example1.cpp'; then $(CYGPATH_W) 'tcpemitter-example1.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-example1.cpp'; fi`
+
+tcpemitter_iridium-tcpemitter-iridium.o: tcpemitter-iridium.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-tcpemitter-iridium.o -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Tpo -c -o tcpemitter_iridium-tcpemitter-iridium.o `test -f 'tcpemitter-iridium.cpp' || echo '$(srcdir)/'`tcpemitter-iridium.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Tpo $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Po
+#	$(AM_V_CXX)source='tcpemitter-iridium.cpp' object='tcpemitter_iridium-tcpemitter-iridium.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-tcpemitter-iridium.o `test -f 'tcpemitter-iridium.cpp' || echo '$(srcdir)/'`tcpemitter-iridium.cpp
+
+tcpemitter_iridium-tcpemitter-iridium.obj: tcpemitter-iridium.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-tcpemitter-iridium.obj -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Tpo -c -o tcpemitter_iridium-tcpemitter-iridium.obj `if test -f 'tcpemitter-iridium.cpp'; then $(CYGPATH_W) 'tcpemitter-iridium.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-iridium.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Tpo $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Po
+#	$(AM_V_CXX)source='tcpemitter-iridium.cpp' object='tcpemitter_iridium-tcpemitter-iridium.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-tcpemitter-iridium.obj `if test -f 'tcpemitter-iridium.cpp'; then $(CYGPATH_W) 'tcpemitter-iridium.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-iridium.cpp'; fi`
+
+tcpemitter_iridium-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-utilstring.o -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-utilstring.Tpo -c -o tcpemitter_iridium-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_iridium-utilstring.Tpo $(DEPDIR)/tcpemitter_iridium-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='tcpemitter_iridium-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+tcpemitter_iridium-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-utilstring.obj -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-utilstring.Tpo -c -o tcpemitter_iridium-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_iridium-utilstring.Tpo $(DEPDIR)/tcpemitter_iridium-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='tcpemitter_iridium-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
 
 tcpreceiver-tcpreceiver.o: tcpreceiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-tcpreceiver.o -MD -MP -MF $(DEPDIR)/tcpreceiver-tcpreceiver.Tpo -c -o tcpreceiver-tcpreceiver.o `test -f 'tcpreceiver.cpp' || echo '$(srcdir)/'`tcpreceiver.cpp
