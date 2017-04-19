@@ -9,7 +9,7 @@ import "iridium/time5.proto";
 import "iridium/gps16.proto";
 
 /*
-typedef ALIGN struct {
+typedef ALIGN struct {  30 bytes + 3 header
 	uint8_t packettype;		    //< 0) 1 байт 0х08 - координаты с NMEA приемников LAT, LON,
 	uint8_t gpsolddata:1;		//< 1)GPS old data, GPS not read
 	uint8_t gpsencoded:1;		//< GPS data encoded
@@ -97,8 +97,8 @@ message Packet8
             offset: 5
         },
         {
-            name: "gps_coords"
-            type: INPUT_BYTES
+            name: "gps_coordinates"
+            type: INPUT_MESSAGE
             size: 16
             offset: 6
         },
@@ -135,21 +135,20 @@ message Packet8
         },
         {
             name: "time5"
-            type: INPUT_BYTES
+            type: INPUT_MESSAGE
             size: 5
             offset: 28
         }
         ]
     };
-
 	// structure 16 bytes long (bytes 3..18) 
-    GPS_Coordinates coordinates = 1 [(pkt2.variable) = {
-        field: "gps_coords"
+    GPS_Coordinates gps_coordinates = 1 [(pkt2.variable) = {
+        get: "field.gps_coordinates"
     }];
 
 	// structure 5 bytes long (bytes 25..30) 
-    Time5 measure_time = 2 [(pkt2.variable) = {
-        field: "time5"
+    Time5 time5 = 2 [(pkt2.variable) = {
+        get: "field.time5"
         index: 1
     }];
 
@@ -157,143 +156,143 @@ message Packet8
     bool gpsolddata = 3 [(pkt2.variable) = {
         name: "gpsolddata"
         short_name: "GPS old data"
-        get: "gps_flags & (1 << 0)"
+        get: "field.packet8.gps_flags & (1 << 0)"
     }];
 
     bool gpsencoded = 4 [(pkt2.variable) = {
         name: "gpsencoded"
         short_name: "GPS data encoded"
-        get: "(gps_flags & (1 << 1))"
+        get: "(field.packet8.gps_flags & (1 << 1))"
     }];
 
     bool gpsfrommemory = 5 [(pkt2.variable) = {
         name: "gpsfrommemory"
         short_name: "data got from the memory"
-        get: "(gps_flags & (1 << 2))"
+        get: "(field.packet8.gps_flags & (1 << 2))"
     }];
     
     bool gpsnoformat = 6 [(pkt2.variable) = {
         name: "gpsfrommemory"
         short_name: "memory is not formatted"
-        get: "(gps_flags & (1 << 3))"
+        get: "(field.packet8.gps_flags & (1 << 3))"
     }];
     
     bool gpsnosats = 7 [(pkt2.variable) = {
         name: "gpsfrommemory"
         short_name: "No visible GPS salellites"
-        get: "(gps_flags & (1 << 4))"
+        get: "(field.packet8.gps_flags & (1 << 4))"
     }];
 
     bool gpsbadhdop = 8 [(pkt2.variable) = {
         name: "gpsbadhdop"
         short_name: "GPS HDOP = 99 or > 50"
-        get: "(gps_flags & (1 << 6))"
+        get: "(field.packet8.gps_flags & (1 << 6))"
     }];
 
     bool gpstime = 9 [(pkt2.variable) = {
         name: "gpstime"
         short_name: "GPS.valid"
-        get: "(gps_flags & (1 << 7))"
+        get: "(field.packet8.gps_flags & (1 << 7))"
     }];
 
     bool gpsnavdata = 10 [(pkt2.variable) = {
         name: "gpsnavdata"
         short_name: "time valid"
-        get: "(gps_flags & (1 << 8))"
+        get: "(field.packet8.gps_flags & (1 << 8))"
     }];
     
     bool satellite_visible_count = 11 [(pkt2.variable) = {
         name: "satellite_visible_count"
         short_name: "Видимых спутников"
-        get: "sats"
+        get: "field.packet8.sats"
     }];
     
 	float battery_voltage = 12 [(pkt2.variable) = {
         name: "battery_voltage"
         short_name: "бортовое напряжение"
-        get: "(battery & 0x3f) / 10."
+        get: "(field.packet8.battery & 0x3f) / 10."
     }];
     
 	bool battery_low = 13 [(pkt2.variable) = {
         name: "battery_low"
         short_name: "низкое бортовое напряжение"
-        get: "battery & 0x40"
+        get: "field.packet8.battery & 0x40"
     }];
 
 	bool battery_high = 14 [(pkt2.variable) = {
         name: "battery_high"
         short_name: "высокое бортовое напряжение"
-        get: "battery & 0x80"
+        get: "field.packet8.battery & 0x80"
     }];
 
 	int32 temperature_c = 15 [(pkt2.variable) = {
         name: "temperature_c"
         short_name: "бортовая температура"
-        get: "temperature"
+        get: "field.packet8.temperature"
         measure_unit: "C"
     }];
 	
 	int32 reserved_2 = 16 [(pkt2.variable) = {
         name: "reserved_2"
-        get: "r2"
+        get: "field.packet8.r2"
     }];
 
 	bool failurepower = 17 [(pkt2.variable) = {
         name: "failurepower"
         short_name: "device status power loss"
-        get: "failure_flags & (1 << 0)"
+        get: "field.packet8.failure_flags & (1 << 0)"
     }];
 	
 	bool failureeep = 18 [(pkt2.variable) = {
         name: "failureeep"
         short_name: "EEPROM failure"
-        get: "failure_flags & (1 << 1)"
+        get: "field.packet8.failure_flags & (1 << 1)"
     }];
 
 	bool failureclock = 19 [(pkt2.variable) = {
         name: "failureclock"
         short_name: "clock not responding"
-        get: "failure_flags & (1 << 2)"
+        get: "field.packet8.failure_flags & (1 << 2)"
     }];
 
 	bool failurecable = 20 [(pkt2.variable) = {
         name: "failurecable"
         short_name: "MAC not responding"
-        get: "failure_flags & (1 << 3)"
+        get: "field.packet8.failure_flags & (1 << 3)"
     }];
 
 	bool failureint0 = 21 [(pkt2.variable) = {
         name: "failureint0"
         short_name: "clock int failure"
-        get: "failure_flags & (1 << 4)"
+        get: "field.packet8.failure_flags & (1 << 4)"
     }];
 
 	bool software_failure = 22 [(pkt2.variable) = {
         name: "software_failure"
         short_name: "software failure"
-        get: "failure_flags & (1 << 5)"
+        get: "field.packet8.failure_flags & (1 << 5)"
     }];
 
 	bool failurewatchdog = 23 [(pkt2.variable) = {
         name: "failurewatchdog"
         short_name: "failure watchdog"
-        get: "failure_flags & (1 << 6)"
+        get: "field.packet8.failure_flags & (1 << 6)"
     }];
     
     bool failurenoise = 24 [(pkt2.variable) = {
         name: "failurenoise"
         short_name: "blocks in memory found"
-        get: "failure_flags & (1 << 7)"
+        get: "field.packet8.failure_flags & (1 << 7)"
     }];
     
     bool failureworking = 25 [(pkt2.variable) = {
         name: "failureworking"
         short_name: "failure working"
-        get: "failure_flags & (1 << 8)"
+        get: "field.packet8.failure_flags & (1 << 8)"
     }];
 
 	uint32 key = 26 [(pkt2.variable) = {
         name: "key"
-        get: "packet_key"
+        get: "field.packet8.packet_key"
     }];
 }

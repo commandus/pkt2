@@ -7,6 +7,7 @@ option cc_enable_arenas = true;
 import "pkt2.proto";
 import "iridium/ie_ioheader.proto";
 import "iridium/ie_location.proto";
+import "iridium/packet8.proto";
 
 /*
  typedef ALIGN struct {
@@ -55,10 +56,10 @@ message IE_Packet
             offset: 34
         },
         {
-            name: "eom"
-            type: INPUT_UINT
-            size: 1
-            offset: 80
+            name: "packet8"
+            type: INPUT_MESSAGE
+            size: 33
+            offset: 48
         }
         ]
     };
@@ -87,4 +88,11 @@ message IE_Packet
         short_name: "Iridium координаты"
         full_name: "Iridium координаты"
     }];
+
+    Packet8 packet8 = 5 [(pkt2.variable) = {
+		get: "field.packet8"
+        short_name: "Животные"
+        full_name: "Животные"
+    }];
+    
 }
