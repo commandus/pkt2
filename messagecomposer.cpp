@@ -1,8 +1,3 @@
-/*
- * MessageComposer.cpp
- *
- */
-
 #include <sstream>
 #include <stdlib.h>
 
@@ -46,7 +41,7 @@ static double parse_bool(const std::string &v)
 }
 
 MessageComposer::MessageComposer()
-	: env(NULL), onComposeField(NULL), optionCache(NULL)
+	: env(NULL), onComposeField(NULL), onMessageBegin(NULL), optionCache(NULL)
 {
 }
 
@@ -59,21 +54,26 @@ MessageComposer::MessageComposer
 		const Pkt2OptionsCache *options,
 		google::protobuf::Message *message,
 		oncompose_field fieldCallback,
-		on_next_message callback_nextmessage
+        on_message_begin callback_message_begin,
+        on_message_end callback_message_end
+
 )
-	: env(environment), onComposeField(fieldCallback), onNextRepeatMessage(callback_nextmessage), optionCache(options)
+	: env(environment), onComposeField(fieldCallback), 
+        onMessageBegin(callback_message_begin), onMessageEnd(callback_message_end), optionCache(options)
 {
-	compose(message, false, 0);
+	compose(NULL, message, false, 0);
 }
 
 void MessageComposer::setCallbacks
 (
 	oncompose_field oncomposefield,
-	on_next_message onnextmessage
+    on_message_begin onmessagebegin,
+    on_message_end onmessageend
 )
 {
 	this->onComposeField = oncomposefield;
-	this->onNextRepeatMessage = onnextmessage;
+	this->onMessageBegin = onmessagebegin;
+    this->onMessageEnd = onmessageend;
 }
 
 #define COMPOSE_TYPE(NATIVE_TYPE, PROTO_TYPE) \
@@ -95,19 +95,22 @@ void MessageComposer::setCallbacks
 }
 
 /**
- * call callback here
- * @param message_descriptor
- * @param message
- * @param field
- * @return
+ * @brief Compose field
+ * @param message message
+ * @param field field
+ * @return 0- success
  */
 int MessageComposer::composeField
 (
-	const google::protobuf::Descriptor *message_descriptor,
-	const google::protobuf::FieldDescriptor *field,
-	google::protobuf::Message *message
+    google::protobuf::Message *message,
+	const google::protobuf::FieldDescriptor *field
 )
 {
+    const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
+    if (!field)
+        return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
+    google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
+
     const google::protobuf::Reflection *ref = message->GetReflection();
     const bool repeated = field->is_repeated();
 
@@ -116,7 +119,6 @@ int MessageComposer::composeField
         array_size = ref->FieldSize(*message, field);
 
     int index = 0;
-    google::protobuf::FieldDescriptor::CppType t = field->cpp_type();
 
     if (optionCache)
     {
@@ -176,7 +178,7 @@ int MessageComposer::composeField
             {
                 int i = 0;
                 google::protobuf::Message *mf = ref->AddMessage(message, field);
-                while (compose(mf, true, i))
+                while (compose(field, mf, true, i))
 				{
                 	i++;
 				}
@@ -184,7 +186,7 @@ int MessageComposer::composeField
             else
             {
                 google::protobuf::Message *mf = ref->MutableMessage(message, field);
-                compose(mf, true, 0);
+                compose(field, mf, false, 0);
             }
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
@@ -213,29 +215,25 @@ int MessageComposer::composeField
 
 bool MessageComposer::compose
 (
+    const google::protobuf::FieldDescriptor *field,
 	google::protobuf::Message *message,
 	bool repeated,
 	int index
 )
 {
-	if (!onComposeField)
-		return ERRCODE_NO_CALLBACK;
+    onMessageBegin(env, field, message, repeated, index);
     const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
     if (!message_descriptor)
         return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
-
     size_t count = message_descriptor->field_count();
-
     for (size_t i = 0; i != count; ++i)
     {
-		const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
-		while (composeField(message_descriptor, field, message))
-		{
-			if (!field)
-				return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
-		}
+        const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
+        if (composeField(message, field))
+        {
+            return ERRCODE_DECOMPOSE_FATAL;
+        }
     }
-    if (!repeated)
-    	return false;
-    return onNextRepeatMessage(env, message, index + 1);
+    onMessageEnd(env, message, repeated, index);
+    return repeated;
 }

@@ -210,33 +210,33 @@ void protobuf_AddDesc_pkt2_2eproto_impl() {
       "\006 \001(\t\022\033\n\006fields\030\007 \003(\0132\013.pkt2.Field\022\013\n\003se"
       "t\030\010 \001(\t\022\014\n\004head\030\n \003(\t\"%\n\003Sql\022\036\n\007dialect\030"
       "\001 \001(\0162\r.pkt2.Dialect\",\n\006Output\022\n\n\002id\030\001 \001"
-      "(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2.Sql*\177\n\tInputType\022"
-      "\016\n\nINPUT_NONE\020\000\022\020\n\014INPUT_DOUBLE\020\001\022\r\n\tINP"
-      "UT_INT\020\002\022\016\n\nINPUT_UINT\020\003\022\017\n\013INPUT_BYTES\020"
-      "\004\022\016\n\nINPUT_CHAR\020\005\022\020\n\014INPUT_STRING\020\006*\361\002\n\n"
-      "OutputType\022\017\n\013OUTPUT_NONE\020\000\022\021\n\rOUTPUT_DO"
-      "UBLE\020\001\022\020\n\014OUTPUT_FLOAT\020\002\022\020\n\014OUTPUT_INT64"
-      "\020\003\022\021\n\rOUTPUT_UINT64\020\004\022\020\n\014OUTPUT_INT32\020\005\022"
-      "\022\n\016OUTPUT_FIXED64\020\006\022\022\n\016OUTPUT_FIXED32\020\007\022"
-      "\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOUTPUT_STRING\020\t\022\020\n\014O"
-      "UTPUT_GROUP\020\n\022\022\n\016OUTPUT_MESSAGE\020\013\022\020\n\014OUT"
-      "PUT_BYTES\020\014\022\021\n\rOUTPUT_UINT32\020\r\022\017\n\013OUTPUT"
-      "_ENUM\020\016\022\023\n\017OUTPUT_SFIXED32\020\017\022\023\n\017OUTPUT_S"
-      "FIXED64\020\020\022\021\n\rOUTPUT_SINT32\020\021\022\021\n\rOUTPUT_S"
-      "INT64\020\022*O\n\006Endian\022\024\n\020ENDIAN_NO_MATTER\020\000\022"
-      "\030\n\024ENDIAN_LITTLE_ENDIAN\020\001\022\025\n\021ENDIAN_BIG_"
-      "ENDIAN\020\002*5\n\005Proto\022\016\n\nPROTO_NONE\020\000\022\r\n\tPRO"
-      "TO_TCP\020\001\022\r\n\tPROTO_UDP\020\002*>\n\007Dialect\022\022\n\016SQ"
-      "L_POSTGRESQL\020\000\022\r\n\tSQL_MYSQL\020\001\022\020\n\014SQL_FIR"
-      "EBIRD\020\002:\?\n\006packet\022\037.google.protobuf.Mess"
-      "ageOptions\030\305\212\003 \001(\0132\014.pkt2.Packet:\?\n\006outp"
-      "ut\022\037.google.protobuf.MessageOptions\030\306\212\003 "
-      "\001(\0132\014.pkt2.Output:A\n\010variable\022\035.google.p"
-      "rotobuf.FieldOptions\030\307\212\003 \001(\0132\016.pkt2.Vari"
-      "ableB\003\370\001\001b\006proto3"
+      "(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2.Sql*\222\001\n\tInputType"
+      "\022\016\n\nINPUT_NONE\020\000\022\021\n\rINPUT_MESSAGE\020\001\022\020\n\014I"
+      "NPUT_DOUBLE\020\002\022\r\n\tINPUT_INT\020\003\022\016\n\nINPUT_UI"
+      "NT\020\004\022\017\n\013INPUT_BYTES\020\005\022\016\n\nINPUT_CHAR\020\006\022\020\n"
+      "\014INPUT_STRING\020\007*\361\002\n\nOutputType\022\017\n\013OUTPUT"
+      "_NONE\020\000\022\021\n\rOUTPUT_DOUBLE\020\001\022\020\n\014OUTPUT_FLO"
+      "AT\020\002\022\020\n\014OUTPUT_INT64\020\003\022\021\n\rOUTPUT_UINT64\020"
+      "\004\022\020\n\014OUTPUT_INT32\020\005\022\022\n\016OUTPUT_FIXED64\020\006\022"
+      "\022\n\016OUTPUT_FIXED32\020\007\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\r"
+      "OUTPUT_STRING\020\t\022\020\n\014OUTPUT_GROUP\020\n\022\022\n\016OUT"
+      "PUT_MESSAGE\020\013\022\020\n\014OUTPUT_BYTES\020\014\022\021\n\rOUTPU"
+      "T_UINT32\020\r\022\017\n\013OUTPUT_ENUM\020\016\022\023\n\017OUTPUT_SF"
+      "IXED32\020\017\022\023\n\017OUTPUT_SFIXED64\020\020\022\021\n\rOUTPUT_"
+      "SINT32\020\021\022\021\n\rOUTPUT_SINT64\020\022*O\n\006Endian\022\024\n"
+      "\020ENDIAN_NO_MATTER\020\000\022\030\n\024ENDIAN_LITTLE_END"
+      "IAN\020\001\022\025\n\021ENDIAN_BIG_ENDIAN\020\002*5\n\005Proto\022\016\n"
+      "\nPROTO_NONE\020\000\022\r\n\tPROTO_TCP\020\001\022\r\n\tPROTO_UD"
+      "P\020\002*>\n\007Dialect\022\022\n\016SQL_POSTGRESQL\020\000\022\r\n\tSQ"
+      "L_MYSQL\020\001\022\020\n\014SQL_FIREBIRD\020\002:\?\n\006packet\022\037."
+      "google.protobuf.MessageOptions\030\305\212\003 \001(\0132\014"
+      ".pkt2.Packet:\?\n\006output\022\037.google.protobuf"
+      ".MessageOptions\030\306\212\003 \001(\0132\014.pkt2.Output:A\n"
+      "\010variable\022\035.google.protobuf.FieldOptions"
+      "\030\307\212\003 \001(\0132\016.pkt2.VariableB\003\370\001\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1657);
+      descriptor, 1677);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "pkt2.proto", &protobuf_RegisterTypes);
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
@@ -267,6 +267,7 @@ bool InputType_IsValid(int value) {
     case 4:
     case 5:
     case 6:
+    case 7:
       return true;
     default:
       return false;

@@ -138,12 +138,13 @@ void protobuf_InitDefaults_pkt2_2eproto();
 
 enum InputType {
   INPUT_NONE = 0,
-  INPUT_DOUBLE = 1,
-  INPUT_INT = 2,
-  INPUT_UINT = 3,
-  INPUT_BYTES = 4,
-  INPUT_CHAR = 5,
-  INPUT_STRING = 6,
+  INPUT_MESSAGE = 1,
+  INPUT_DOUBLE = 2,
+  INPUT_INT = 3,
+  INPUT_UINT = 4,
+  INPUT_BYTES = 5,
+  INPUT_CHAR = 6,
+  INPUT_STRING = 7,
   InputType_INT_MIN_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32min,
   InputType_INT_MAX_SENTINEL_DO_NOT_USE_ = ::google::protobuf::kint32max
 };

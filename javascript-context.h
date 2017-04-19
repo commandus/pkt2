@@ -11,18 +11,20 @@
 #include "duk/duktape.h"
 #include "pkt2.pb.h"
 #include "pkt2packetvariable.h"
+#include "pkt2optionscache.h"
 
 /**
- * Create Javascript context with global object field.xxx for parsing
- * @param pv
- * @param socket_address_src
- * @param socket_address_dst
- * @param packet
- * @return
+ * @brief Create Javascript context with global object field.xxx for parsing
+ * @param pv root packet and variables
+ * @param socket_src source IP address
+ * @param socket_dst destination IP address
+ * @param packet data
+ * @return Javascipt context containing "value", "time" objects
  */
 duk_context *getJavascriptContext
 (
-	const Pkt2PacketVariable *pv,
+	Pkt2OptionsCache *optionscache,
+    const Pkt2PacketVariable *packet_root_variable,
 	struct sockaddr *socket_src,
 	struct sockaddr *socket_dst,
 	const std::string &packet
@@ -31,20 +33,6 @@ duk_context *getJavascriptContext
 duk_context *getFormatJavascriptContext
 (
 		void *ctx
-);
-
-void putSocketAddress
-(
-	duk_context * ctx,
-	const std::string &objectName,
-	struct sockaddr *socket_addr
-);
-
-void pushField
-(
-		duk_context *ctx,
-		const std::string &packet,
-		const pkt2::Field &field
 );
 
 void duk_fatal_handler(void *udata, const char *msg);

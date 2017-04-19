@@ -12,6 +12,8 @@
 
 #include <glog/logging.h>
 
+#include "pbjson.hpp"
+
 #include "pkt2receivernano.h"
 #include "input-packet.h"
 #include "errorcodes.h"
@@ -111,10 +113,14 @@ int pkt2_receiever_nano(Config *config)
 			{
 				if (config->verbosity >= 1)
 				{
-					LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
+					std::string s;
+					pbjson::pb2json(m, s);
+					LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr) << std::endl 
+						<< s;
 					if (config->verbosity >= 2)
 					{
-						std::cerr << MSG_SENT << sent << " " << hexString(outstr) << std::endl;
+						std::cerr << MSG_SENT << sent << " " << hexString(outstr) << std::endl
+						<< s << std::endl;
 					}
 				}
 			}

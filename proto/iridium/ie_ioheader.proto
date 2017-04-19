@@ -6,7 +6,7 @@ option cc_enable_arenas = true;
 import "pkt2.proto";
 
 /*
-// IE_IO 0x01, 28
+// IE_IO 0x01, 28 + 3(header)
 typedef ALIGN struct {
         uint32_t cdrref;        //< Iridium message identifier                                  4
         IMEI imei;              //< see IMEI                                                    15
@@ -31,13 +31,14 @@ message IE_IOHeader
             type: INPUT_UINT
             size: 1
             offset: 0
-            tag: 1			      ///< tag 8- animal. check this.
+            tag: 1			      ///< tag 1- I/O header
         },
         {
             name: "ie_size"
             type: INPUT_UINT
             size: 2
             offset: 1
+            endian: ENDIAN_BIG_ENDIAN
             tag: 28               ///< tag, 28 bytes long
         },
         {
@@ -45,6 +46,7 @@ message IE_IOHeader
             type: INPUT_UINT
             size: 4
             offset: 3
+            endian: ENDIAN_BIG_ENDIAN
         },
         {
             name: "imei"
@@ -54,7 +56,7 @@ message IE_IOHeader
         },
         {
             name: "status"
-            type: INPUT_BYTES
+            type: INPUT_UINT
             size: 1
             offset: 22
         },
@@ -63,18 +65,21 @@ message IE_IOHeader
             type: INPUT_UINT
             size: 2
             offset: 23
+            endian: ENDIAN_BIG_ENDIAN
         },
         {
             name: "mtmsn"         ///< recvno
             type: INPUT_INT
             size: 2
             offset: 25
+            endian: ENDIAN_BIG_ENDIAN
         },
         {
             name: "recvtime"
             type: INPUT_UINT
             size: 4
             offset: 27
+            endian: ENDIAN_BIG_ENDIAN
         }
         ]
     };
@@ -82,34 +87,33 @@ message IE_IOHeader
 	uint32 cdrref = 1 [(pkt2.variable) = {
 		name: "cdrref"
         field: "cdrref"
-        get: "cdrref"
+        get: "field.ioheader.cdrref"
     }];
 
 	string imei = 2 [(pkt2.variable) = {
 	    name: "imei"
         field: "imei"
-        get: "imei"
+        get: "field.ioheader.imei"
         index: 2
     }];
 
 	int32 status = 3 [(pkt2.variable) = {
         name: "status"
         short_name: "Статус"
-        get: "status"
+        get: "field.ioheader.status"
     }];
 	
 	int32 recvno = 4 [(pkt2.variable) = {
         name: "recvno"
-        get: "momsn"
+        get: "field.ioheader.momsn"
     }];
 
 	int32 sentno = 5 [(pkt2.variable) = {
-        name: "sentno"
-        get: "mtmsn"
+        get: "field.ioheader.mtmsn"
     }];
 
 	uint32 recvtime = 6 [(pkt2.variable) = {
-        name: "recvtime"
-        get: "recvtime"
+        get: "field.ioheader.recvtime"
+        format: ["var d = new Date(value.recvtime * 1000); ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2)"]
     }];
 }

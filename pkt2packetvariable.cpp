@@ -3,6 +3,8 @@
  *
  */
 #include <functional>
+#include <iostream>
+#include <iomanip>
 #include <glog/logging.h>
 
 #include "pkt2.pb.h"
@@ -64,7 +66,6 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		// keep field number to the vector index
 		fieldNumbers.insert(pair<int, int>(md->field(f)->number(), f));
 
-
 		// prepare index
 		int index = variable.index();
 		if (index)
@@ -81,15 +82,33 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		keyIndexes.push_back(indexVariable[i]);
 }
 
+/**
+ * @brief debugging information
+ * @return
+ */
+std::string Pkt2PacketVariable::toString()
+{
+	std::stringstream ss;
+	ss << "Packet: " << packet.id() << " size: " << packet_size << std::endl;
+	ss << "Variables: "  << std::endl;
+	for (std::vector<FieldNameVariable>::const_iterator it(fieldname_variables.begin());
+			it != fieldname_variables.end(); ++it)
+	{
+		ss << std::setw(16) << it->field_name << ": " << it->var.get() <<  ", format: " << it->var.get() << std::endl;
+	}
+
+	return ss.str();
+}
+
 Pkt2PacketVariable::~Pkt2PacketVariable() {
 }
 
 const FieldNameVariable* Pkt2PacketVariable::getVariableByFieldNumber
 (
-		int number
+	int field_number
 ) const
 {
-	auto f = fieldNumbers.find(number);
+	auto f = fieldNumbers.find(field_number);
 	if (f == fieldNumbers.end())
 		return NULL;
 	return &fieldname_variables[f->second];
@@ -97,6 +116,7 @@ const FieldNameVariable* Pkt2PacketVariable::getVariableByFieldNumber
 
 bool Pkt2PacketVariable::validTags(const std::string &data)
 {
+	// TODO if (data.size() < packet_size)
 	if (data.size() != packet_size)
 		return false;
 	for (int i = 0; i < packet.fields_size(); i++)

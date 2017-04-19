@@ -14,7 +14,7 @@
 #include "pkt2packetvariable.h"
 
 /**
- * Keep all parsed messages options as map of message name and Pkt2PacketVariable pairs
+ * @brief Keep all parsed messages options as map of message name and Pkt2PacketVariable pairs
  * @see Pkt2PacketVariable
  */
 class Pkt2OptionsCache {
@@ -26,15 +26,30 @@ public:
 	void addDeclarations(ProtobufDeclarations *protobuf_declarations);
 	
 	virtual ~Pkt2OptionsCache();
-	
+    
+	/**
+     * packet name.message type = Packet Variable
+     */
 	std::map<std::string, Pkt2PacketVariable> pkt2packet_variable;
 
+    /**
+    * @brief Find out PacketVariable by full message type name (Protobuf_packet_name.message_type)
+    * @param message Protobuf full type name (with packet name)
+    * @param found return value true- found
+    * @return found PacketVariable
+    */
 	const Pkt2PacketVariable &getPacketVariable
 	(
 			const std::string &message_type,
 			bool *found
-	);
+	) const;
 
+    /**
+    * @brief Find out first found PacketVariable by size and tag
+    * @param packet packet data
+    * @param found return value true- found
+    * @return found PacketVariable
+    */
 	const Pkt2PacketVariable &find1
 	(
 			const std::string &packet,
@@ -52,13 +67,14 @@ public:
 		const std::string &message_type,
 		const std::string &field_type
 	) const;
+	
 	/**
-	 * Copy key from the message
+	 * @brief Copy key from the message
 	 * @param messageType message name
 	 * @param buffer retval
 	 * @param max_size max buffer size
 	 * @param message get key values from
-	 * @return
+	 * @return key
 	 */
 	size_t getKey
 	(
@@ -69,15 +85,20 @@ public:
 	);
 
 	/**
-	 * Return message identifier (or message name hash if id is not assigned)
-	 * @param messageType
-	 * @return
+	 * @brief Return message identifier (or message name hash if id is not assigned)
+	 * @param messageType full messaget type name
+	 * @return unique message identifier
 	 */
 	uint64_t getMessageId
 	(
 		const std::string &messageType
 	);
 
+	/**
+	 * @brief Keep "parent" decalrations. 
+	 * Warning: referred object can be deleted!
+	 */
+	ProtobufDeclarations *protobuf_decrarations;
 };
 
 #endif /* PKT2OPTIONSCACHE_H_ */

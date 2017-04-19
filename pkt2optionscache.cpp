@@ -8,15 +8,22 @@
 #include "pkt2optionscache.h"
 #include "bin2ascii.h"
 
-Pkt2OptionsCache::Pkt2OptionsCache() {
-}
-
-Pkt2OptionsCache::Pkt2OptionsCache(ProtobufDeclarations *protobuf_declarations)
+Pkt2OptionsCache::Pkt2OptionsCache() 
+	: protobuf_decrarations(NULL)
 {
-	addDeclarations(protobuf_declarations);
 }
 
-Pkt2OptionsCache::~Pkt2OptionsCache() {
+Pkt2OptionsCache::Pkt2OptionsCache
+(
+	ProtobufDeclarations *protobufdeclarations
+)
+	: protobuf_decrarations(protobufdeclarations)
+{
+	addDeclarations(protobufdeclarations);
+}
+
+Pkt2OptionsCache::~Pkt2OptionsCache() 
+{
 }
 
 void Pkt2OptionsCache::addDeclarations
@@ -67,23 +74,29 @@ int Pkt2OptionsCache::size_of
 	}
 }
 
+/**
+ * @brief Find out PacketVariable by full message type name (Protobuf_packet_name.message_type)
+ * @param message Protobuf full type name (with packet name)
+ * @param found return value true- found
+ * @return found PacketVariable
+ */
 const Pkt2PacketVariable &Pkt2OptionsCache::getPacketVariable
 (
 	const std::string &message_type,
 	bool *found
-)
+) const
 {
-	std::map<std::string, Pkt2PacketVariable>::iterator m = pkt2packet_variable.find(message_type);
+	std::map<std::string, Pkt2PacketVariable>::const_iterator m = pkt2packet_variable.find(message_type);
 	if (found)
 		*found = (m != pkt2packet_variable.end());
-	return pkt2packet_variable[message_type];
+	return m->second;
 }
 
 /**
- * Find out first found by size and tag
- * @param packet
- * @param found
- * @return
+ * @brief Find out first found PacketVariable by size and tag
+ * @param packet packet data
+ * @param found return value true- found
+ * @return found PacketVariable
  */
 const Pkt2PacketVariable &Pkt2OptionsCache::find1
 (

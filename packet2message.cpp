@@ -40,7 +40,6 @@
 #include "messagecomposer.h"
 #include "platform.h"
 #include "errorcodes.h"
-#include "utilstring.h"
 #include "utilprotobuf.h"
 #include "javascript-context.h"
 
@@ -49,20 +48,41 @@ PacketParseEnvironment::PacketParseEnvironment
 	    struct sockaddr *socket_address_src,
 	    struct sockaddr *socket_address_dst,
 		const std::string &apacket,
-		Pkt2OptionsCache *options_cache,
+		Pkt2OptionsCache *optionscache,
 		const std::string &force_message
 )
-	: context(NULL), packet(apacket)
+	: packet(apacket), options_cache(optionscache), context(NULL)
 {
-	bool found;
-	pv = &(!force_message.empty()
-			? options_cache->getPacketVariable(force_message, &found)
-					: options_cache->find1(packet, &found));
-	if (!found)
+    bool found;
+    packet_root_variable = &(!force_message.empty()
+		? optionscache->getPacketVariable(force_message, &found)
+		: optionscache->find1(packet, &found));
+	if (found)
 	{
-		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << force_message;
-	}
-	context = getJavascriptContext(pv, socket_address_src, socket_address_dst, packet);
+        context = getJavascriptContext(optionscache, packet_root_variable, socket_address_src, socket_address_dst, packet);
+    }
+}
+
+std::string PacketParseEnvironment::getFullFieldName()
+{
+    std::stringstream ss;
+    const char* separator = "";
+    for (std::deque<std::string>::const_iterator it = fieldnames.begin(); it != fieldnames.end(); ++it)
+    {
+        ss << separator << *it;
+        separator = ".";
+    }
+    return ss.str();
+}
+
+void PacketParseEnvironment::pushFieldName(const std::string &field_name)
+{
+    fieldnames.push_back(field_name);
+}
+
+void PacketParseEnvironment::popFieldName()
+{
+    fieldnames.pop_back(); 
 }
 
 PacketParseEnvironment::~PacketParseEnvironment()
@@ -80,7 +100,7 @@ Packet2Message::Packet2Message
 	const Pkt2OptionsCache *optionscache,
 	int verb
 )
-	: declarations(protobufdeclarations), options_cache(optionscache), verbosity(verb)
+	: verbosity(verb), declarations(protobufdeclarations), options_cache(optionscache)
 {
 }
 
@@ -89,10 +109,10 @@ Packet2Message::~Packet2Message()
 }
 
 /**
- * Get variable from the packet as string
- * @param ctx
- * @param variable
- * @return
+ * @brief Get variable from the packet as string
+ * @param ctx Javascript context
+ * @param variable field name and variable
+ * @return value as string
  */
 std::string extractVariable
 (
@@ -105,15 +125,16 @@ std::string extractVariable
 }
 
 /**
- * MessageComposer callback
- * @param env
- * @param message_descriptor
- * @param field_type
- * @param field_number
- * @param repeated
- * @param index
- * @param retval
- * @return
+ * @brief MessageComposer callback
+ * @param env PacketParseEnvironment instance
+ * @param message_descriptor Protobuf message
+ * @param field_type C++ type 
+ * @param field_number protobuf field number
+ * @param repeated true- array
+ * @param index array index(valid if repeated is true)
+ * @param retval return value
+ * @return true- success
+ * @see PacketParseEnvironment
  */
 bool oncomposefield (
 	void* env,
@@ -126,27 +147,54 @@ bool oncomposefield (
 )
 {
 	PacketParseEnvironment *e = (PacketParseEnvironment *) env;
-	const FieldNameVariable *v = e->pv->getVariableByFieldNumber(field_number);
+    bool found;
+    const Pkt2PacketVariable &pv = e->options_cache->getPacketVariable(message_descriptor->full_name(), &found);
+    if (!found)
+    {
+        LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << " trying compose message " << message_descriptor->full_name() << " fron the packet data, message not found.";
+        return false;
+    }
+   
+	const FieldNameVariable *v = pv.getVariableByFieldNumber(field_number);
 	duk_eval_string(e->context, v->var.get().c_str());
 	retval = duk_safe_to_string(e->context, -1);
-	// LOG(INFO) << message_descriptor->full_name() << "." << v->field_name << "=" << retval;
 	return false;
 }
 
-bool onnextmessage
+bool onmessagebegin
 (
 	void* env,
+    const google::protobuf::FieldDescriptor *field,
 	google::protobuf::Message* message,
+    bool repeated,
 	int index
 )
 {
+    PacketParseEnvironment *e = (PacketParseEnvironment *) env;
+    if (field)
+        e->pushFieldName(field->name());
+    else
+        e->pushFieldName("");
 	return false;
 }
 
+bool onmessageend
+(
+	void* env,
+	google::protobuf::Message* message,
+    bool repeated,
+	int index
+)
+{
+    PacketParseEnvironment *e = (PacketParseEnvironment *) env;
+    e->popFieldName();
+    return false;
+}
+
 /**
- * Parse packet
- * @param PacketParseEnvironment *env
- * @return
+ * @brief Parse packet. Compose message from the packet
+ * @param env environment contains Javascript context etc to share with other parsers
+ * @return Protobuf message
  */
 google::protobuf::Message *Packet2Message::parsePacket
 (
@@ -154,25 +202,22 @@ google::protobuf::Message *Packet2Message::parsePacket
 )
 {
 	// Create Javascript context with global object field.xxx
-	google::protobuf::Message *m = declarations->getMessage(env->pv->message_type);
+	google::protobuf::Message *m = declarations->getMessage(env->packet_root_variable->message_type);
 	if (m)
 	{
-		MessageComposer mc(env, options_cache, m, oncomposefield, onnextmessage);
+		MessageComposer mc(env, options_cache, m, oncomposefield, onmessagebegin, onmessageend);
 
 		if (verbosity >= 2)
 		{
 			// packet input fields
-			for (int i = 0; i < env->pv->packet.fields_size(); i++)
+			for (int i = 0; i < env->packet_root_variable->packet.fields_size(); i++)
 			{
-				pkt2::Field f = env->pv->packet.fields(i);
-				LOG(INFO) << f.name() << ": " << hexString(extractField(env->packet, f));
+				pkt2::Field f = env->packet_root_variable->packet.fields(i);
 			}
 			// packet output variables
-			for (int i = 0; i < env->pv->fieldname_variables.size(); i++)
+			for (int i = 0; i < env->packet_root_variable->fieldname_variables.size(); i++)
 			{
-				FieldNameVariable v = env->pv->fieldname_variables[i];
-				LOG(INFO) << m->GetTypeName() << "." << v.field_name << " = "
-						<< extractVariable(env->context, v) << " " << v.var.measure_unit() << " (" << v.var.full_name() << ")";
+				FieldNameVariable v = env->packet_root_variable->fieldname_variables[i];
 			}
 		}
 	}

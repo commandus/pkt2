@@ -4907,10 +4907,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 .PRECIOUS: Makefile
 
 
-#	AM_CFLAGS = -g3 -O0
-#	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
-	AM_CFLAGS = -O2
-	AM_CXXFLAGS = -O2 -std=c++11
+	AM_CFLAGS = -g3 -O0
+	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
+#	AM_CFLAGS = -O2
+#	AM_CXXFLAGS = -O2 -std=c++11
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto

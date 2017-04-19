@@ -80,9 +80,9 @@ void fill_time5(
 	value->minute = timeinfo->tm_min;
 	value->second = timeinfo->tm_sec;
 }
-
 /**
  * 01004e01001c515396683330303233343036303233353334300000dd00005701eadf03000b003e09ef81af080000000902001e0800063e01891200004e812bef15000045286321ff00c05c522084041120
+ * 81 bytes
  * {"version":1,"size":78,"io":{"cddref":1364432488,"imei":"300234060235340","status":0,"sentno":221,"recvno":0,"recvtime":"2016-04-04T13:17:35","time":1459743455},
  * "location":{"lat":62.04238333,"lon":129.74680000,"cepradius":9},
  * "payload":{"type":"collar","packet":8,"gpstime":0,"gpsnavdata":0,"gpsolddata":0,"gpsencoded":0,"gpsfrommemory":0,"gpsnoformat":0,"gpsnosats":0,"gpsbadhdop":0,"satellites":6,"lat":62.02457500,"lon":129.72602500,"hdop":40,"pdop":99,"alarmlow":0,"alarmhigh":0,"battery":3.3,"temperature":-1,"r2":0,"failurepower":0,"failureeep":0,"failureclock":0,"failurecable":0,"failureint0":0,"failurewatchdog":0,"failurenoise":1,"failureworking":1,"key":21084,"time":"2016-04-04T04:17:32","utc":1459711052}}

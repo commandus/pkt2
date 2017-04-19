@@ -14,6 +14,11 @@
 #include "protobuf-declarations.h"
 #include "pkt2.pb.h"
 
+/**
+ * @brief Keep pkt2::Variable with name of the Protobuf field name intact.
+ * Variable is metadata describes Protobuf message (output)
+ *
+ */
 class FieldNameVariable {
 public:
 	FieldNameVariable
@@ -28,7 +33,12 @@ public:
 };
 
 /**
- * Keep message options: packet & variables and indexes
+ * @brief Keep message options:
+ * 	- pkt2::Packet - input metadata
+ * 	- pkt2::Variables - output metadata
+ * 	- helper indexes
+ *
+ * @see pkt2optionscache.cpp
  */
 class Pkt2PacketVariable {
 private:
@@ -46,14 +56,19 @@ public:
 	
 	int status;
 	std::string message_type;
+	/// Input metadata
 	pkt2::Packet packet;
+	/// Minimum packet size
 	size_t packet_size;
 	std::vector<FieldNameVariable> fieldname_variables;
 	/// keep variables vector index having index in order of 1, 2
 	/// first is identifier (or hash) of the message
 	std::vector<uint64_t> keyIndexes;
-	const FieldNameVariable* getVariableByFieldNumber(int number) const;
+	const FieldNameVariable* getVariableByFieldNumber(
+        int field_number) const;
 	bool validTags(const std::string &packet);
+	/// debugging information
+	std::string toString();
 };
 
 #endif /* PKT2PACKETVARIABLE_H_ */

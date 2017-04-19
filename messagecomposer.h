@@ -28,27 +28,39 @@ class MessageComposer {
 		std::string &retval
 	);
 
-	typedef bool (*on_next_message)(
+	typedef bool (*on_message_begin)(
+		void* env,
+        const google::protobuf::FieldDescriptor *field,
+		google::protobuf::Message* message,
+        bool repeated,
+		int index
+	);
+
+   	typedef bool (*on_message_end)(
 		void* env,
 		google::protobuf::Message* message,
+        bool repeated,
 		int index
 	);
 
 private:
 	void* env;
 	oncompose_field onComposeField;
-	on_next_message onNextRepeatMessage;
+    on_message_begin onMessageBegin;
+    on_message_end onMessageEnd;
+
 	const Pkt2OptionsCache *optionCache;
-	int composeField
+    
+    int composeField
 	(
-		const google::protobuf::Descriptor *message_descriptor,
-		const google::protobuf::FieldDescriptor *field,
-		google::protobuf::Message *message
+		google::protobuf::Message *message,
+		const google::protobuf::FieldDescriptor *field
 	);
 protected:
 	/// compose
 	bool compose
 	(
+        const google::protobuf::FieldDescriptor *field,
 		google::protobuf::Message *message,
 		bool repeated,
 		int index
@@ -61,15 +73,17 @@ public:
 			const Pkt2OptionsCache *options,
 			google::protobuf::Message *message,
 			oncompose_field callback_field,
-			on_next_message callback_nextmessage
+            on_message_begin callback_message_begin,
+            on_message_end callback_message_end
 	);
 	virtual ~MessageComposer();
 	void setCallbacks
 	(
-			oncompose_field oncomposefield,
-			on_next_message onnextmessage
+		oncompose_field oncomposefield,
+        on_message_begin onmessagebegin,
+        on_message_end onmessageend
 	);
-
+    
 };
 
 #endif /* MESSAGECOMPOSER_H_ */

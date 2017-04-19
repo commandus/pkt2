@@ -1,13 +1,10 @@
 /*
  * javascript-context.cpp
- *
- *  Created on: Apr 14, 2017
- *      Author: andrei
  */
-
 #include <arpa/inet.h>
 #include "javascript-context.h"
 #include "utilprotobuf.h"
+#include "utilstring.h"
 #include "pkt2.pb.h"
 
 void duk_fatal_handler(void *udata, const char *msg)
@@ -18,64 +15,65 @@ void duk_fatal_handler(void *udata, const char *msg)
 }
 
 /**
- * Create Javascript context with global object field.xxx
- * @param pv
- * @param socket_address_src
- * @param socket_address_dst
- * @param packet
- * @return
+ * @brief Add field value to the Javascript "field" global object
+ * @param ctx Jvascript context
+ * @param packet data
+ * @param field input data field
+ * @see getJavascriptContext()
  */
-duk_context *getJavascriptContext
+void pushField
 (
-	const Pkt2PacketVariable *pv,
-	struct sockaddr *socket_src,
-	struct sockaddr *socket_dst,
-	const std::string &packet
+	duk_context *ctx,
+	const std::string &packet,
+	const pkt2::Field &field
 )
 {
-	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
-
-	// current time
-	time_t t =  time(NULL);
-	duk_push_global_object(ctx);
-	duk_push_uint(ctx, t);
-	duk_put_prop_string(ctx, -2, "time");
-
-	// src.ip, src.port
-	putSocketAddress(ctx, "src", socket_src);
-	// dst
-	putSocketAddress(ctx, "dst", socket_dst);
-
-	// field
-	duk_push_global_object(ctx);
-	duk_push_object(ctx);
-
-	for (int i = 0; i < pv->packet.fields_size(); i++)
-	{
-		const pkt2::Field &f = pv->packet.fields(i);
-		pushField(ctx, packet, f);
-		duk_put_prop_string(ctx, -2, f.name().c_str());
+	switch (field.type()) {
+		case pkt2::INPUT_MESSAGE:
+			break;
+		case pkt2::INPUT_NONE:
+			duk_push_false(ctx);
+			duk_put_prop_string(ctx, -2, field.name().c_str());
+			break;
+		case pkt2::INPUT_CHAR:
+		case pkt2::INPUT_STRING:
+			duk_push_string(ctx, packet.substr(field.offset(), field.size()).c_str());
+			duk_put_prop_string(ctx, -2, field.name().c_str());
+			break;
+		case pkt2::INPUT_DOUBLE:
+			duk_push_number(ctx, extractFieldDouble(packet, field));
+			duk_put_prop_string(ctx, -2, field.name().c_str());
+			break;
+		case pkt2::INPUT_BYTES:
+		{
+			duk_idx_t arr_idx = duk_push_array(ctx);
+			int c = 0;
+			int sz = field.offset() + field.size();
+			for (int i = field.offset(); i < sz; i++)
+			{
+				duk_push_int(ctx, packet[i]);
+				duk_put_prop_index(ctx, arr_idx, c);
+				c++;
+			}
+			duk_put_prop_string(ctx, -2, field.name().c_str());
+			break;
+		}
+		default:
+			duk_push_uint(ctx, extractFieldUInt(packet, field));
+			duk_put_prop_string(ctx, -2, field.name().c_str());
+			break;
 	}
-	duk_put_global_string(ctx, "field");
-	return ctx;
 }
 
-duk_context *getFormatJavascriptContext
-(
-		void *env
-)
-{
-	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, env, duk_fatal_handler);
-
-	// current time
-	time_t t =  time(NULL);
-	duk_push_global_object(ctx);
-	duk_push_uint(ctx, t);
-	duk_put_prop_string(ctx, -2, "time");
-
-	return ctx;
-}
-
+/**
+ * @brief Put socket address object with properties:
+ * - ip		IP v.4 address, string
+ * - ip4	IP address, 32 bit integer
+ * - port	IP port number, 16 bit integer
+ * @param ctx Javascript context
+ * @param objectName name of Javascript object
+ * @param socket_addr IP v4 address
+ */
 void putSocketAddress
 (
 	duk_context * ctx,
@@ -122,39 +120,143 @@ void putSocketAddress
 	duk_put_global_string(ctx, objectName.c_str());
 }
 
-void pushField
+/**
+ * @brief Add field value to the Javascript "field" global object
+ * @param ctx Jvascript context
+ * @param packet data
+ * @param field input data field
+ * @see getJavascriptContext()
+ */
+void pushMessage
 (
-		duk_context *ctx,
-		const std::string &packet,
-		const pkt2::Field &field
+    duk_context *ctx,
+	Pkt2OptionsCache *options_cache,
+    const Pkt2PacketVariable *packet_variable,
+	const std::string &packet
 )
 {
-	switch (field.type()) {
-		case pkt2::INPUT_NONE:
-			duk_push_false(ctx);
-			break;
-		case pkt2::INPUT_CHAR:
-		case pkt2::INPUT_STRING:
-			duk_push_string(ctx, packet.substr(field.offset(), field.size()).c_str());
-			break;
-		case pkt2::INPUT_DOUBLE:
-			duk_push_number(ctx, extractFieldDouble(packet, field));
-			break;
-		case pkt2::INPUT_BYTES:
-		{
-			duk_idx_t arr_idx = duk_push_array(ctx);
-			int c = 0;
-			for (int i = field.offset(); i < field.size(); i++)
-			{
-				duk_push_int(ctx, packet[i]);
-				duk_put_prop_index(ctx, arr_idx, c);
-				c++;
-			}
-			break;
-		}
-		default:
-			duk_push_uint(ctx, extractFieldUInt(packet, field));
-			break;
-	}
+	duk_push_object(ctx);
 
+	// put non-message fields
+    for (int i = 0; i < packet_variable->packet.fields_size(); i++)
+    {
+        const pkt2::Field &f = packet_variable->packet.fields(i);
+        pushField(ctx, packet, f);
+    }
+
+    // iterate embedded messages and call pushMessage recursively
+	const google::protobuf::Descriptor* md = options_cache->protobuf_decrarations->getMessageDescriptor(packet_variable->message_type);
+	for (int f = 0; f < md->field_count(); f++)
+	{
+		const google::protobuf::FieldDescriptor* fd = md->field(f);
+		// we need field with embedded message only
+		if (fd->cpp_type() != google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE)
+			continue;
+		
+		// get packet for embedded message, find out in the options_cache
+		bool found;
+		// iridium.IE_Packet.ioheader
+		const Pkt2PacketVariable &packet_var = options_cache->getPacketVariable(fd->message_type()->full_name(), &found);
+		if (!found) 
+		{
+			// TODO report error
+			continue;
+		}
+		// get a "zone" inside a packet corresponding to the message in the entire data
+		const FieldNameVariable *fnv = packet_variable->getVariableByFieldNumber(fd->number());
+		if (!fnv) 
+		{
+			// TODO report error
+			continue;
+		}
+		// extract "zone" (field in the parent message) by name in the variable's "get" property.
+		// get can be: "field.name" (preferred) or "name" (optional)
+		std::string zone = fnv->var.get();
+		// if "get" contains "field." prefix, remove it
+		std::string::size_type pos = zone.find("field.");
+		if (pos != std::string::npos)
+		{
+			zone = zone.substr(pos + 6);
+		}
+
+		// Search field in the parent packet fields by the name
+		int z = -1;
+		for (int j = 0; j < packet_variable->packet.fields_size(); j++)
+		{
+			if (packet_variable->packet.fields(j).name() == zone)
+			{
+				z = j;
+				break;
+			}
+		}
+		if (z < 0)
+		{
+			// field not found.
+			// TODO report error
+			continue;
+		}
+			
+		// extract field from the parent packet
+		const std::string &field_packet = packet.substr(packet_variable->packet.fields(z).offset(), packet_variable->packet.fields(z).size());
+		pushMessage(ctx, options_cache, &packet_var, field_packet);
+		duk_put_prop_string(ctx, -2, fd->name().c_str());
+	}
+}
+
+/**
+ * @brief Create Javascript context with global object field.xxx
+ * @param pv "root" packet input fields and output variables
+ * @param socket_src IP v4 source address
+ * @param socket_dst IP v4 destination address
+ * @param packet data
+ * @return Javascript context
+ * @see pushField
+ */
+duk_context *getJavascriptContext
+(
+	Pkt2OptionsCache *options_cache,
+    const Pkt2PacketVariable *packet_root_variable,
+	struct sockaddr *socket_src,
+	struct sockaddr *socket_dst,
+	const std::string &packet
+)
+{
+	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
+
+	// current time
+	time_t t =  time(NULL);
+	duk_push_global_object(ctx);
+	duk_push_uint(ctx, t);
+	duk_put_prop_string(ctx, -2, "time");
+
+	// src.ip, src.port
+	putSocketAddress(ctx, "src", socket_src);
+	// dst
+	putSocketAddress(ctx, "dst", socket_dst);
+
+	// field
+	duk_push_global_object(ctx);
+	duk_push_object(ctx);
+
+    pushMessage(ctx, options_cache, packet_root_variable, packet);
+
+    duk_put_global_string(ctx, "field");
+	
+	return ctx;
+}
+
+duk_context *getFormatJavascriptContext
+(
+		void *env
+)
+{
+	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, env, duk_fatal_handler);
+
+	// current time
+	time_t t =  time(NULL);
+	duk_push_global_object(ctx);
+	duk_push_uint(ctx, t);
+	duk_put_prop_string(ctx, -2, "time");
+
+	return ctx;
 }

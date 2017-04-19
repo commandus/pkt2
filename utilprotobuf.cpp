@@ -368,10 +368,10 @@ google::protobuf::Message *readDelimitedMessage
 }
 
 /**
- * Get field value from the packet
- * @param packet
- * @param field
- * @return
+ * @brief Get field value from the packet
+ * @param packet data packet containing field
+ * @param field field 
+ * @return data as string
  */
 std::string extractField
 (
@@ -382,8 +382,11 @@ std::string extractField
 	int sz = packet.size();
 	if (sz < field.offset() + field.size())
 	{
-		LOG(ERROR) << ERR_PACKET_TOO_SMALL << field.name() << " " << field.offset() << " " << field.size() << " " << sz;
-		return "";
+		LOG(ERROR) << ERR_PACKET_TOO_SMALL << field.name() << " offset: " << field.offset() << ", size : " << field.size() 
+			<< ". Packet (size: " << sz << ") lacks " << (field.offset() + field.size() - sz) << " bytes";
+		std::string r = "";
+		r.resize(field.size());
+		return r;
 	}
 	std::string r = packet.substr(field.offset(), field.size());
 	if (ENDIAN_NEED_SWAP(field.endian()))
@@ -395,10 +398,10 @@ std::string extractField
 }
 
 /**
- * Get field value from the packet as 64 bit integer
- * @param packet
- * @param field
- * @return
+ * @brief Get field value from the packet as 64 bit integer
+ * @param packet data packet containing field
+ * @param field field 
+ * @return integer
  */
 uint64_t extractFieldUInt
 (
@@ -431,11 +434,14 @@ uint64_t extractFieldUInt
 }
 
 /**
- * Return minimum size of the packet
- * @param packet
- * @return
+ * @brief Return minimum size of the packet
+ * @param packet data packet containing field
+ * @return required (mimimum) packet size
  */
-size_t getPacketSize(const pkt2::Packet &packet)
+size_t getPacketSize
+(
+	const pkt2::Packet &packet
+)
 {
 	size_t r = 0;
 	for (int i = 0; i < packet.fields_size(); i++)
@@ -448,15 +454,15 @@ size_t getPacketSize(const pkt2::Packet &packet)
 };
 
 /**
- * Get field value from the packet as double
- * @param packet
- * @param field
- * @return
+ * @brief Get field value from the packet as double
+ * @param packet data packet containing field
+ * @param field field 
+ * @return float
  */
 double extractFieldDouble
 (
-		const std::string &packet,
-		const pkt2::Field &field
+	const std::string &packet,
+	const pkt2::Field &field
 )
 {
 	std::string r = extractField(packet, field);
