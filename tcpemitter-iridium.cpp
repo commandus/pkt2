@@ -174,7 +174,6 @@ void setSignalHandler(int signal)
         sigaction(signal, &action, NULL);
 }
 
-
 int get_addr_info
 (
 	const std::string &host,

@@ -1,10 +1,9 @@
 /*
  * messagedecomposer.cpp
  *
- *  Created on: Mar 10, 2017
- *      Author: andrei
  */
 
+#include <iostream>
 #include <sstream>
 #include "messagedecomposer.h"
 #include "errorcodes.h"
@@ -15,11 +14,6 @@
 #include "pkt2packetvariable.h"
 
 using namespace google::protobuf;
-
-MessageDecomposer::MessageDecomposer()
-	: env(NULL), ondecompose(NULL), options_cache(NULL), context(NULL)
-{
-}
 
 MessageDecomposer::~MessageDecomposer()
 {
@@ -35,14 +29,6 @@ MessageDecomposer::MessageDecomposer
 	: env(environment), ondecompose(callback), options_cache(options)
 {
 	decompose(message);
-}
-
-void MessageDecomposer::setCallback
-(
-		ondecompose_callback ondecompose
-)
-{
-	this->ondecompose = ondecompose;
 }
 
 #define DECOMPOSE_TYPE(NATIVE_TYPE, PROTO_TYPE) \
@@ -64,11 +50,11 @@ void MessageDecomposer::setCallback
 }
 
 /**
- * call callback here
- * @param message_descriptor
- * @param message
- * @param field
- * @return
+ * @brief decompose Protobuf message field using callback
+ * @param message_descriptor Protobuf message descruiptor
+ * @param message Protobuf message to decompose
+ * @param field field descriptor
+ * @return 0 success
  */
 int MessageDecomposer::decomposeField
 (
@@ -117,44 +103,30 @@ int MessageDecomposer::decomposeField
         	DECOMPOSE_TYPE(bool, Bool)
             break;
         case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
-        {
-            bool is_binary = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES;
-            if (repeated)
-            {
-                for (size_t i = 0; i != array_size; ++i)
-                {
-                    std::string value = ref->GetRepeatedString(*message, field, i);
-                    if (is_binary)
-                        value = b64_encode(value);
-                    ondecompose(this, env, message_descriptor, field, (void *) value.c_str(), value.length(), index);
-                }
-            }
-            else
-            {
-                std::string value = ref->GetString(*message, field);
-                if (is_binary)
-                {
-                    value = b64_encode(value);
-                }
-                ondecompose(this, env, message_descriptor, field, (void *) value.c_str(), value.length(), index);
-            }
-            break;
-        }
-        case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
-            if (repeated)
-            {
-                for (size_t i = 0; i != array_size; ++i)
-                {
-                    const google::protobuf::Message *value = &(ref->GetRepeatedMessage(*message, field, i));
-                    decompose(value);
-                }
-            }
-            else
-            {
-                const google::protobuf::Message *value = &(ref->GetMessage(*message, field));
-                decompose(value);
-            }
-            break;
+			{
+				bool is_binary = field->type() == google::protobuf::FieldDescriptor::TYPE_BYTES;
+				if (repeated)
+				{
+					for (size_t i = 0; i != array_size; ++i)
+					{
+						std::string value = ref->GetRepeatedString(*message, field, i);
+						if (is_binary)
+							value = b64_encode(value);
+						ondecompose(this, env, message_descriptor, field, (void *) value.c_str(), value.length(), index);
+					}
+				}
+				else
+				{
+					std::string value = ref->GetString(*message, field);
+					if (is_binary)
+					{
+						value = b64_encode(value);
+					}
+					ondecompose(this, env, message_descriptor, field, (void *) value.c_str(), value.length(), index);
+				}
+				
+			}
+			break;
         case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
         	{
         		int v;
@@ -175,6 +147,23 @@ int MessageDecomposer::decomposeField
 				}
         	}
             break;
+
+        case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
+            if (repeated)
+            {
+                for (size_t i = 0; i != array_size; ++i)
+                {
+                    const google::protobuf::Message *value = &(ref->GetRepeatedMessage(*message, field, i));
+                    decomposeMessage(value);
+                }
+            }
+            else
+            {
+                const google::protobuf::Message *value = &(ref->GetMessage(*message, field));
+                decomposeMessage(value);
+            }
+            break;
+
         default:
             break;
     }
@@ -185,7 +174,7 @@ int MessageDecomposer::decomposeField
 	case FieldDescriptor::CPP_TYP: \
 		if (FLD->is_repeated()) \
 		{ \
-			int arr_idx = duk_push_array(context); \
+			int arr_idx = duk_push_array(context.context); \
 			for (size_t i = 0; i != REF->FieldSize(*MSG, FLD); ++i) \
 			{ \
 				duk_push_ ## DUK_TYP(CTX, REF->GetRepeated ## PRT_TYP(*MSG, FLD, i)); \
@@ -196,23 +185,22 @@ int MessageDecomposer::decomposeField
 		{ \
 			duk_push_ ## DUK_TYP(CTX, REF->Get ## PRT_TYP(*MSG, FLD)); \
 		} \
-		duk_put_prop_string(context, -2, FLD->name().c_str()); \
+		duk_put_prop_string(context.context, -2, FLD->name().c_str()); \
 		break; \
 
 /**
- * Add "message" javascript object to the context
- * @param message
+ * @brief Add "message" javascript object to the context
+ * @param message Protobuf message to add
  */
 void MessageDecomposer::addJavascriptMessage
 (
-	const google::protobuf::Message *message,
-	const google::protobuf::Message *root_message
+	const google::protobuf::Message *message
 )
 {
 	const Descriptor *d = message->GetDescriptor();
 	if (!d)
 		return;
-	duk_push_object(context);
+	duk_push_object(context.context);
 
 	size_t count = d->field_count();
 	for (size_t i = 0; i != count; ++i)
@@ -224,51 +212,45 @@ void MessageDecomposer::addJavascriptMessage
 		if (!ref)
 			return;
 		if (field->is_optional() && !ref->HasField(*message, field))
-		{
-			//do nothing
-		}
-		else
-		{
-			addJavascriptField(message, root_message, field);
-		}
+			continue;
+		addJavascriptField(message, field);
 	}
 	return;
 }
 
 /**
- * Add "message.<field>" javascript object to the context
+ * @brief Add "message.field" javascript object to the context
  * @param message
  */
 void MessageDecomposer::addJavascriptField
 (
 	const google::protobuf::Message *message,
-	const google::protobuf::Message *root_message,
 	const google::protobuf::FieldDescriptor *field
 )
 {
 	const google::protobuf::Reflection *ref = message->GetReflection();
 	switch (field->cpp_type())
 	{
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_DOUBLE, number, Double)
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_FLOAT, number, Float)
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_INT64, int, Int64)
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_UINT64, uint, UInt64)
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_INT32, int, Int32)
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_UINT32, uint, UInt32)
-		CASE_CPP_TYPE(context, message, field, ref, CPPTYPE_BOOL, boolean, Bool)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_DOUBLE, number, Double)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_FLOAT, number, Float)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_INT64, int, Int64)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_UINT64, uint, UInt64)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_INT32, int, Int32)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_UINT32, uint, UInt32)
+		CASE_CPP_TYPE(context.context, message, field, ref, CPPTYPE_BOOL, boolean, Bool)
 		case FieldDescriptor::CPPTYPE_STRING:
 			{
 				bool is_binary = field->type() == FieldDescriptor::TYPE_BYTES;
 				if (field->is_repeated())
 				{
-					int arr_idx = duk_push_array(context);
+					int arr_idx = duk_push_array(context.context);
 					for (size_t i = 0; i != ref->FieldSize(*message, field); ++i)
 					{
 						std::string value = ref->GetRepeatedString(*message, field, i);
 						if (is_binary)
 							value = b64_encode(value);
-						duk_push_string(context, ref->GetRepeatedString(*message, field, i).c_str());
-						duk_put_prop_index(context, arr_idx, i);
+						duk_push_string(context.context, ref->GetRepeatedString(*message, field, i).c_str());
+						duk_put_prop_index(context.context, arr_idx, i);
 					}
 				}
 				else
@@ -276,48 +258,66 @@ void MessageDecomposer::addJavascriptField
 					std::string value = ref->GetString(*message, field);
 					if (is_binary)
 						value = b64_encode(value);
-					duk_push_string(context, ref->GetString(*message, field).c_str());
+					duk_push_string(context.context, ref->GetString(*message, field).c_str());
 				}
-				duk_put_prop_string(context, -2, field->name().c_str());
+				duk_put_prop_string(context.context, -2, field->name().c_str());
 			}
 			break;
 		case FieldDescriptor::CPPTYPE_ENUM:
 			if (field->is_repeated())
 			{
-				int arr_idx = duk_push_array(context);
+				int arr_idx = duk_push_array(context.context);
 				for (size_t i = 0; ref->FieldSize(*message, field); ++i)
 				{
-					duk_push_int(context, ref->GetRepeatedEnum(*message, field, i)->number());
-					duk_put_prop_index(context, arr_idx, i);
+					duk_push_int(context.context, ref->GetRepeatedEnum(*message, field, i)->number());
+					duk_put_prop_index(context.context, arr_idx, i);
 				}
 			}
 			else
-				duk_push_int(context, ref->GetEnum(*message, field)->number());
-			duk_put_prop_string(context, -2, field->name().c_str());
+				duk_push_int(context.context, ref->GetEnum(*message, field)->number());
+			duk_put_prop_string(context.context, -2, field->name().c_str());
 			break;
 		case FieldDescriptor::CPPTYPE_MESSAGE:
 			if (field->is_repeated())
 			{
-				int arr_idx = duk_push_array(context);
+				int arr_idx = duk_push_array(context.context);
 				for (size_t i = 0; i != ref->FieldSize(*message, field); ++i)
 				{
 					const Message *value = &(ref->GetRepeatedMessage(*message, field, i));
-					duk_push_object(context);
-			    	addJavascriptMessage(value, root_message);
-					duk_put_prop_index(context, arr_idx, i);
+			    	addJavascriptMessage(value);
+					duk_put_prop_index(context.context, arr_idx, i);
 				}
 			}
 			else
 			{
 				const Message *value = &(ref->GetMessage(*message, field));
-				duk_push_object(context);
-		    	addJavascriptMessage(value, root_message);
+		    	addJavascriptMessage(value);
 			}
-			duk_put_prop_string(context, -2, field->name().c_str());
+			duk_put_prop_string(context.context, -2, field->name().c_str());
 			break;
 		default:
 			break;
 	}
+}
+
+int MessageDecomposer::decomposeMessage
+(
+	const google::protobuf::Message *message
+)
+{
+    const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
+    if (!message_descriptor)
+        return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
+
+    for (size_t i = 0; i != message_descriptor->field_count(); ++i)
+    {
+        const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
+        if (!field)
+            return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
+       	decomposeField(message_descriptor, message, field);
+    }
+
+    return ERR_OK;
 }
 
 int MessageDecomposer::decompose
@@ -328,28 +328,13 @@ int MessageDecomposer::decompose
 	if (!ondecompose)
 		return ERRCODE_NO_CALLBACK;
 
-    const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
-    if (!message_descriptor)
-        return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
-
-	context = getFormatJavascriptContext((void *) message);
 	// value
-	duk_push_global_object(context);
-	addJavascriptMessage(message, message);
-	duk_put_global_string(context, "value");
+	duk_push_global_object(context.context);
+	addJavascriptMessage(message);
+	duk_put_global_string(context.context, "value");
+	decomposeMessage(message);
 
-    for (size_t i = 0; i != message_descriptor->field_count(); ++i)
-    {
-        const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
-        if (!field)
-            return ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR;
-       	decomposeField(message_descriptor, message, field);
-    }
-
-	duk_pop(context);
-	duk_destroy_heap(context);
-
-    return ERR_OK;
+	return ERR_OK;
 }
 
 #define TO_STRING(NATIVE_TYPE) \
@@ -395,17 +380,15 @@ std::string MessageDecomposer::toString
         case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
         	TO_STRING(bool)
             break;
+        case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+        	TO_STRING(int)
+            break;
         case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
         {
        		ss << std::string((char *) value, size);
             break;
         }
-        case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
-        	ss << "Message " << ERR_NOT_IMPLEMENTED;
-            break;
-        case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
-        	TO_STRING(int)
-            break;
+        // case google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE:
         default:
             break;
     }
@@ -414,7 +397,11 @@ std::string MessageDecomposer::toString
 }
 
 /**
-  * @brief format
+  * @brief format using format function (if provided)
+  * @param message_descriptor Protobuf message descriptor
+  * @param field Protobuf field descriptor
+  * @param value value to be formatted
+  * @param format_number format index
   */
 std::string MessageDecomposer::format
 (
@@ -435,12 +422,13 @@ std::string MessageDecomposer::format
 	if (!f)
 		return value;
 
-
 	if (format_number < f->var.format_size())
 	{
 		// use format
-		duk_eval_string(context, f->var.format(format_number).c_str());
-		return std::string(duk_safe_to_string(context, -1));
+		std::string expr = f->var.format(format_number);
+		context.expression = &expr;
+		duk_eval_string(context.context, expr.c_str());
+		return std::string(duk_safe_to_string(context.context, -1));
 	}
 
 	return value;

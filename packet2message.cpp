@@ -51,16 +51,22 @@ PacketParseEnvironment::PacketParseEnvironment
 		Pkt2OptionsCache *optionscache,
 		const std::string &force_message
 )
-	: packet(apacket), options_cache(optionscache), context(NULL)
+	: packet(apacket), options_cache(optionscache)
 {
     bool found;
     packet_root_variable = &(!force_message.empty()
 		? optionscache->getPacketVariable(force_message, &found)
 		: optionscache->find1(packet, &found));
 	if (found)
-	{
-        context = getJavascriptContext(optionscache, packet_root_variable, socket_address_src, socket_address_dst, packet);
-    }
+        context = new JavascriptContext(optionscache, packet_root_variable, socket_address_src, socket_address_dst, packet);
+    else
+		context = NULL;
+}
+
+PacketParseEnvironment::~PacketParseEnvironment()
+{
+	if (context)
+		delete context;
 }
 
 std::string PacketParseEnvironment::getFullFieldName()
@@ -85,15 +91,6 @@ void PacketParseEnvironment::popFieldName()
     fieldnames.pop_back(); 
 }
 
-PacketParseEnvironment::~PacketParseEnvironment()
-{
-	if (context != NULL)
-	{
-		duk_pop(context);
-		duk_destroy_heap(context);
-	}
-}
-
 Packet2Message::Packet2Message
 (
 	const ProtobufDeclarations *protobufdeclarations,
@@ -110,18 +107,20 @@ Packet2Message::~Packet2Message()
 
 /**
  * @brief Get variable from the packet as string
- * @param ctx Javascript context
+ * @param context Javascript context
  * @param variable field name and variable
  * @return value as string
  */
 std::string extractVariable
 (
-	duk_context *ctx,
+	JavascriptContext *context,
 	const FieldNameVariable &variable
 )
 {
-	duk_eval_string(ctx, variable.var.get().c_str());
-    return duk_safe_to_string(ctx, -1);
+	std::string expr = variable.var.get();
+	context->expression = &expr;
+	duk_eval_string(context->context, expr.c_str());
+    return duk_safe_to_string(context->context, -1);
 }
 
 /**
@@ -156,8 +155,12 @@ bool oncomposefield (
     }
    
 	const FieldNameVariable *v = pv.getVariableByFieldNumber(field_number);
-	duk_eval_string(e->context, v->var.get().c_str());
-	retval = duk_safe_to_string(e->context, -1);
+	
+	std::string expr = v->var.get();
+	e->context->expression = &expr;
+
+	duk_eval_string(e->context->context, expr.c_str());
+	retval = duk_safe_to_string(e->context->context, -1);
 	return false;
 }
 

@@ -41,9 +41,9 @@ using namespace google::protobuf;
 int format_number;
 
 /**
- * @brief Print packet to the stdout
- * @param messageTypeNAddress
- * @param message
+ * @brief Print message packet to the stdout
+ * @param messageTypeNAddress type name, address
+ * @param message message to print
  * @return 0 - success
  */
 int put_debug
@@ -57,9 +57,9 @@ int put_debug
 }
 
 /**
- * @brief Print packet to the stdout as JSON.
- * @param messageTypeNAddress
- * @param message
+ * @brief Print message to the stdout as JSON.
+ * @param messageTypeNAddress 
+ * @param message message to print
  * @return 0 - success
  */
 int put_json_raw
@@ -78,8 +78,7 @@ int put_json_raw
  * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueIndexStrings class(see first parameter).
  * @param env accumulates field names and values in the InsertSQLStrings object
  * @param message_descriptor message
- * @param field_type type of the data
- * @param field_name field name
+ * @param field field descriptor
  * @param value pointer to the data
  * @param size  size occupied by data
  *
@@ -96,15 +95,14 @@ void addFieldValueString
 	int index
 )
 {
+	// std::cerr << field->cpp_type() << " " << field->name() << ": " << decomposer->toString(message_descriptor, field, value, size, format_number) << std::endl;
 	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(),
 			decomposer->toString(message_descriptor, field, value, size, format_number), index);
 }
 
 /**
  * @brief Print packet to the stdout as CSV
- * @param messageTypeNAddress
- * @param message
- * @return
+ * @return 0
  */
 int put_json
 (
@@ -121,9 +119,9 @@ int put_json
 
 /**
  * @brief Print packet to the stdout as SQL
- * @param messageTypeNAddress
- * @param message
- * @return
+ * @param messageTypeNAddress message full type name, IP source and destination addresses
+ * @param message message Protobuf message
+ * @return 0- success
  */
 int put_sql
 (
@@ -143,8 +141,8 @@ int put_sql
 
 /**
  * @brief Print packet to the stdout as SQL (2)
- * @param messageTypeNAddress
- * @param message
+ * @param messageTypeNAddress type and address
+ * @param message message
  * @return
  */
 int put_sql2
@@ -165,8 +163,9 @@ int put_sql2
 
 /**
  * @brief Print packet to the stdout as CSV
- * @param messageTypeNAddress
- * @param message
+ * @param options Pkt2OptionsCache 
+ * @param messageTypeNAddress type and address
+ * @param message message
  * @return
  */
 int put_csv
@@ -184,8 +183,8 @@ int put_csv
 
 /**
  * @brief Print packet to the stdout as CSV
- * @param messageTypeNAddress
- * @param message
+ * @param messageTypeNAddress type and address
+ * @param message message
  * @return
  */
 int put_tab
@@ -203,8 +202,8 @@ int put_tab
 
 /**
  * @brief Print packet's message options to the stdout
+ * @param pd ProtobufDeclarations 
  * @param messageTypeNAddress
- * @param message
  * @return 0 - success
  */
 int put_pkt2_options
@@ -249,7 +248,7 @@ int put_pkt2_options
 
 /**
  * @brief Write line loop
- * @param config
+ * @param config program configuration
  * @return  0- success
  *          >0- error (see errorcodes.h)
  */
@@ -352,7 +351,7 @@ int run
 
 /**
  *  @brief Stop writer
- *  @param config
+ *  @param config program config
  *  @return 0- success
  *          >0- config is not initialized yet
  */

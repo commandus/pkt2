@@ -9,7 +9,7 @@
 #define MESSAGEDECOMPOSER_H_
 
 #include <google/protobuf/message.h>
-#include "duk/duktape.h"
+#include "javascript-context.h"
 #include "pkt2optionscache.h"
 
 /**
@@ -28,24 +28,24 @@ class MessageDecomposer {
 	);
 private:
 	void* env;
-	duk_context *context;
+	JavascriptContext context;
+
 	/**
-	 * Add "message" javascript object to the context
-	 * @param message
+	 * @brief Add "message" javascript object to the context
+	 * @param message message to decompose
 	 */
 	void addJavascriptMessage
 	(
-		const google::protobuf::Message *message,
-		const google::protobuf::Message *root_message
+		const google::protobuf::Message *message
 	);
 	/**
-	 * Add "message.<field>" javascript object to the context
-	 * @param message
+	 * Add "message.field" javascript object to the context
+	 * @param message message to decompose
+	 * @param field field descriptor
 	 */
 	void addJavascriptField
 	(
 		const google::protobuf::Message *message,
-		const google::protobuf::Message *root_message,
 		const google::protobuf::FieldDescriptor *field
 	);
 	ondecompose_callback ondecompose;
@@ -56,6 +56,12 @@ private:
 		const google::protobuf::Message *message, 
 		const google::protobuf::FieldDescriptor *field
 	);
+	
+	int decomposeMessage
+	(
+		const google::protobuf::Message *message
+	);
+
 protected:
 	/// Decompose with no index
 	int decompose
@@ -74,10 +80,8 @@ protected:
 		int format_number
 	);
 public:
-	MessageDecomposer();
 	MessageDecomposer(void *env, Pkt2OptionsCache *options, const google::protobuf::Message *message, ondecompose_callback callback);
 	virtual ~MessageDecomposer();
-	void setCallback(ondecompose_callback ondecompose);
 
 	/**
 	  * @brief return human readable value of message buffer as string

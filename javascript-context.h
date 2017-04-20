@@ -13,27 +13,28 @@
 #include "pkt2packetvariable.h"
 #include "pkt2optionscache.h"
 
-/**
- * @brief Create Javascript context with global object field.xxx for parsing
- * @param pv root packet and variables
- * @param socket_src source IP address
- * @param socket_dst destination IP address
- * @param packet data
- * @return Javascipt context containing "value", "time" objects
- */
-duk_context *getJavascriptContext
-(
-	Pkt2OptionsCache *optionscache,
-    const Pkt2PacketVariable *packet_root_variable,
-	struct sockaddr *socket_src,
-	struct sockaddr *socket_dst,
-	const std::string &packet
-);
+class JavascriptContext
+{
+public:
+	/**
+	 * For formatting
+	 */
+	JavascriptContext();
+	~JavascriptContext();
 
-duk_context *getFormatJavascriptContext
-(
-		void *ctx
-);
+	/**
+	 * For parsing packet
+	 */
+	JavascriptContext(
+		Pkt2OptionsCache *optionscache,
+		const Pkt2PacketVariable *packet_root_variable,
+		struct sockaddr *socket_src,
+		struct sockaddr *socket_dst,
+		const std::string &packet
+	);
+	std::string *expression;
+	duk_context *context;
+};
 
 void duk_fatal_handler(void *udata, const char *msg);
 

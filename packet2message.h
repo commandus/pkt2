@@ -9,7 +9,7 @@
 #include <deque>
 #include <google/protobuf/message.h>
 
-#include "duk/duktape.h"
+#include "javascript-context.h"
 
 #include "pkt2optionscache.h"
 #include "protobuf-declarations.h"
@@ -27,7 +27,7 @@ public:
 	const std::string &packet;
     const Pkt2OptionsCache *options_cache;
     const Pkt2PacketVariable *packet_root_variable;
-	duk_context *context;
+	JavascriptContext *context;
 	PacketParseEnvironment
 	(
 		struct sockaddr *socket_address_src,

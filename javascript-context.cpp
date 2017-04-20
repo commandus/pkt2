@@ -7,9 +7,99 @@
 #include "utilstring.h"
 #include "pkt2.pb.h"
 
-void duk_fatal_handler(void *udata, const char *msg)
+void putSocketAddress
+(
+	duk_context * ctx,
+	const std::string &objectName,
+	struct sockaddr *socket_addr
+);
+
+void pushMessage
+(
+    duk_context *ctx,
+	Pkt2OptionsCache *options_cache,
+    const Pkt2PacketVariable *packet_variable,
+	const std::string &packet
+);
+
+/**
+  * @brief For formatting
+  */
+JavascriptContext::JavascriptContext()
+	: expression(NULL)
 {
-	fprintf(stderr, "Javascript error: %s\n", (msg ? msg : ""));
+	context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler);
+	// current time
+	time_t t =  time(NULL);
+	duk_push_global_object(context);
+	duk_push_uint(context, t);
+	duk_put_prop_string(context, -2, "time");
+}
+
+JavascriptContext::~JavascriptContext()
+{
+	duk_pop(context);
+	duk_destroy_heap(context);
+}
+
+/**
+ * @brief Create Javascript context with global object field.xxx
+ * @param options_cache option cache
+ * @param packet_root_variable "root" packet input fields and output variables
+ * @param socket_src IP v4 source address
+ * @param socket_dst IP v4 destination address
+ * @param packet data
+ * @see pushField
+ */
+ JavascriptContext::JavascriptContext
+(
+	Pkt2OptionsCache *options_cache,
+	const Pkt2PacketVariable *packet_root_variable,
+	struct sockaddr *socket_src,
+	struct sockaddr *socket_dst,
+	const std::string &packet
+)
+{
+	context = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
+
+	// current time
+	time_t t =  time(NULL);
+	duk_push_global_object(context);
+	duk_push_uint(context, t);
+	duk_put_prop_string(context, -2, "time");
+
+	// src.ip, src.port
+	putSocketAddress(context, "src", socket_src);
+	// dst
+	putSocketAddress(context, "dst", socket_dst);
+
+	// field
+	duk_push_global_object(context);
+	duk_push_object(context);
+
+    pushMessage(context, options_cache, packet_root_variable, packet);
+
+    duk_put_global_string(context, "field");
+}
+
+/**
+ * @brief Javascript error handler
+ * @param env JavascriptContext object
+ * @param msg error message
+ * 
+ */
+void duk_fatal_handler(
+	void *env, 
+	const char *msg
+)
+{
+	if (env && ((JavascriptContext *) env)->expression)
+	{
+		
+		fprintf(stderr, "Javascript error: %s in \n%s\n", (msg ? msg : ""), ((JavascriptContext *) env)->expression->c_str());
+	}
+	else
+		fprintf(stderr, "Javascript error: %s\n", (msg ? msg : ""));
 	fflush(stderr);
 	abort();
 }
@@ -201,62 +291,4 @@ void pushMessage
 		pushMessage(ctx, options_cache, &packet_var, field_packet);
 		duk_put_prop_string(ctx, -2, fd->name().c_str());
 	}
-}
-
-/**
- * @brief Create Javascript context with global object field.xxx
- * @param pv "root" packet input fields and output variables
- * @param socket_src IP v4 source address
- * @param socket_dst IP v4 destination address
- * @param packet data
- * @return Javascript context
- * @see pushField
- */
-duk_context *getJavascriptContext
-(
-	Pkt2OptionsCache *options_cache,
-    const Pkt2PacketVariable *packet_root_variable,
-	struct sockaddr *socket_src,
-	struct sockaddr *socket_dst,
-	const std::string &packet
-)
-{
-	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
-
-	// current time
-	time_t t =  time(NULL);
-	duk_push_global_object(ctx);
-	duk_push_uint(ctx, t);
-	duk_put_prop_string(ctx, -2, "time");
-
-	// src.ip, src.port
-	putSocketAddress(ctx, "src", socket_src);
-	// dst
-	putSocketAddress(ctx, "dst", socket_dst);
-
-	// field
-	duk_push_global_object(ctx);
-	duk_push_object(ctx);
-
-    pushMessage(ctx, options_cache, packet_root_variable, packet);
-
-    duk_put_global_string(ctx, "field");
-	
-	return ctx;
-}
-
-duk_context *getFormatJavascriptContext
-(
-		void *env
-)
-{
-	duk_context *ctx = duk_create_heap(NULL, NULL, NULL, env, duk_fatal_handler);
-
-	// current time
-	time_t t =  time(NULL);
-	duk_push_global_object(ctx);
-	duk_push_uint(ctx, t);
-	duk_put_prop_string(ctx, -2, "time");
-
-	return ctx;
 }

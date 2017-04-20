@@ -279,7 +279,7 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
 	proto/pkt2.proto proto/google/protobuf/descriptor.proto \
 	proto/iridium/gps16.proto proto/iridium/time5.proto proto/iridium/packet8.proto proto/example/example1.proto \
-	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/ie_packet.proto  \
+	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/animals.proto  \
 	mib/EAS-IKFIA-MIB \
 	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
 	

@@ -117,23 +117,21 @@ message GPS_Coordinates
     
     // output
     double latitude = 1 [(pkt2.variable) = {
-        name: "latitude"
         short_name: "Широта"
         full_name: "Широта, градус"
         measure_unit: "°"
         get: "(field.packet8.gps_coordinates.latitude_ns == 'S' ? -1. : 1.) * (field.packet8.gps_coordinates.latitude_g + ((field.packet8.gps_coordinates.latitude_m + ((field.packet8.gps_coordinates.latitude_s > 9999 ? 9999 : field.packet8.gps_coordinates.latitude_s) * 0.0001)) / 60.))"
         priority: 0
-        format: ["value.toFixed(6)"]
+        format: ["value.packet8.gps_coordinates.latitude.toFixed(10)"]
     }];
     
     double longitude = 2 [(pkt2.variable) = {
-        name: "longitude"
         short_name: "Долгота"
         full_name: "Долгота, градус"
         measure_unit: "°"
         get: "(field.packet8.gps_coordinates.longitude_ns == 'W' ? -1. : 1.) * (field.packet8.gps_coordinates.longitude_g + ((field.packet8.gps_coordinates.longitude_m + ((field.packet8.gps_coordinates.longitude_s > 9999 ? 9999 : field.packet8.gps_coordinates.longitude_s) * 0.0001)) / 60.))"
         priority: 0
-        format: ["value.toFixed(6)"]
+        format: ["value.packet8.gps_coordinates.longitude.toFixed(10)"]
     }];
 
     uint32 hdop = 3 [(pkt2.variable) = {

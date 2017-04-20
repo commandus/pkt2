@@ -94,5 +94,4 @@ message IE_Packet
         short_name: "Животные"
         full_name: "Животные"
     }];
-    
 }
