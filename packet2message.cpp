@@ -24,7 +24,7 @@
 	duk_put_global_string(ctx, "field");
 
  */
-
+#include <iostream>
 #include <string.h>
 #include <algorithm>
 

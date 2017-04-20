@@ -249,7 +249,7 @@ void MessageDecomposer::addJavascriptField
 						std::string value = ref->GetRepeatedString(*message, field, i);
 						if (is_binary)
 							value = b64_encode(value);
-						duk_push_string(context.context, ref->GetRepeatedString(*message, field, i).c_str());
+						duk_push_string(context.context, value.c_str());
 						duk_put_prop_index(context.context, arr_idx, i);
 					}
 				}
@@ -258,7 +258,7 @@ void MessageDecomposer::addJavascriptField
 					std::string value = ref->GetString(*message, field);
 					if (is_binary)
 						value = b64_encode(value);
-					duk_push_string(context.context, ref->GetString(*message, field).c_str());
+					duk_push_string(context.context, value.c_str());
 				}
 				duk_put_prop_string(context.context, -2, field->name().c_str());
 			}

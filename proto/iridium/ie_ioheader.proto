@@ -50,7 +50,7 @@ message IE_IOHeader
         },
         {
             name: "imei"
-            type: INPUT_BYTES
+            type: INPUT_STRING
             size: 15
             offset: 7
         },
@@ -114,6 +114,6 @@ message IE_IOHeader
 
 	uint32 recvtime = 6 [(pkt2.variable) = {
         get: "field.ioheader.recvtime"
-        format: ["var d = new Date(value.recvtime * 1000); ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2)"]
+        format: ["var d = new Date(value.ioheader.recvtime * 1000); ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2)"]
     }];
 }

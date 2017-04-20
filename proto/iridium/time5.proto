@@ -66,7 +66,7 @@ message Time5
         measure_unit: "s"
         get: "new Date(field.packet8.time5.day_month_year & ((1 << 7) - 1) + 2000, (field.packet8.time5.day_month_year >> 7) & ((1 << 4) - 1) - 1, (field.packet8.time5.day_month_year >> (7 + 4)) & ((1 << 5) - 1), field.packet8.time5.hour, field.packet8.time5.minute, field.packet8.time5.second, 00).getTime() / 1000" 
         priority: 0
-        format: ["var d = new Date(value.time5 * 1000); ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2)"]
+        format: ["var d = new Date(value.packet8.time5.time5 * 1000); ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2)"]
     }];
 }
 
