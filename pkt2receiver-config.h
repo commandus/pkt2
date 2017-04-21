@@ -2,50 +2,63 @@
 #define CONFIG_H     1
 
 #include <string>
+#include <vector>
 #include <stdint.h>
 
 #define PROGRAM_NAME             "pkt2receiver"
 #define PROGRAM_DESCRIPTION      "PKT2 receiver"
 
 /**
- * Parse command line options
- * @param argc
- * @param argv
+ * @brief Parse command line options
+ * @param argc command count
+ * @param argv command lines
  * @see pktreceiver.cpp
  */
 class Config
 {
 private:
-    int lastError;
-    /**
-    * @brief Parse command line
-    * @return 0- success
-    *        1- show help and exit, or command syntax error
-    *        2- output file does not exists or can not open to write
-    **/
-    int parseCmd
-    (
-            int argc,
-            char* argv[]
-    );
+
+	int lastError;
+	/**
+	 * @brief Parse command line
+	 * 
+	 **/
+	int parseCmd
+	(
+		int argc,
+		char* argv[]
+	);
 public:
-    Config(int argc, char* argv[]);
-    int error();
 
-    uint32_t verbosity;
-    size_t buffer_size;
+	Config
+	(
+		int argc,
+		char* argv[]
+	);
 
-    std::string in_url;
-    std::string out_url;
-    std::string proto_path;			///< proto files directory path
-    std::string force_message;
+	/**
+	 * @return 
+	 * 	0- success
+	 * 	1- show help and exit, or command syntax error
+	 * 	2- output file does not exists or can not open to write
+	 */
+	int error();
 
-    int retries;            ///< default 0
-    int retry_delay;        ///< default 60 seconds
+	uint32_t verbosity;
+	size_t buffer_size;
 
-    bool daemonize;
-    int max_fd;				///< 0- use default max file descriptor count per process
-    bool stop_request;
+	std::string in_url;
+	std::string out_url;
+	std::string proto_path;			///< proto files directory path
+	std::string force_message;
+
+	std::vector <int> allowed_packet_sizes;
+	int retries;					///< default 0
+	int retry_delay;				///< default 60 seconds
+
+	bool daemonize;
+	int max_fd;						///< 0- use default max file descriptor count per process
+	bool stop_request;
 };
 
 

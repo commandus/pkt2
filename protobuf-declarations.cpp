@@ -120,10 +120,14 @@ size_t ProtobufDeclarations::getMessageCount()
  */
 const google::protobuf::Descriptor* ProtobufDeclarations::getMessageDescriptor
 (
-		const std::string &name
-)
+	const std::string &name
+) const
 {
-	return internalMessages[name];
+	std::map<std::string, const google::protobuf::Descriptor*>::const_iterator it(internalMessages.find(name));
+	if (it == internalMessages.end())
+		return NULL;
+	else
+		return it->second;
 }
 
 /**

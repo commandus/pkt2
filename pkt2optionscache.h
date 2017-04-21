@@ -57,6 +57,20 @@ public:
 	);
 
 	/**
+	  * @brief validate tags
+	  * @param message_type packet.message
+	  * @param var Pkt2PacketVariable 
+	  * @param packet packet data
+	  * @return true if all tags found
+	  */
+	bool validTags
+	(
+		const std::string &message_type,
+		const Pkt2PacketVariable &var,
+		const std::string &packet
+	);
+
+	/**
 	 * Check if field have index
 	 * @param message_type message name
 	 * @param field_type field name
@@ -98,7 +112,7 @@ public:
 	 * @brief Keep "parent" decalrations. 
 	 * Warning: referred object can be deleted!
 	 */
-	ProtobufDeclarations *protobuf_decrarations;
+	const ProtobufDeclarations *protobuf_decrarations;
 };
 
 #endif /* PKT2OPTIONSCACHE_H_ */

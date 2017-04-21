@@ -149,3 +149,15 @@ void InputPacket::setLength(int value)
 	length = value;
 	size = value + sizeof(struct PacketHeader) + (2 * sizeof(struct sockaddr_storage));
 }
+
+/**
+	* @brief return payload size
+	* @return payload size
+	*/
+int InputPacket::getPayloadSize
+(
+	int full_packet_size
+)
+{
+	return full_packet_size - sizeof(struct PacketHeader) - (2 * sizeof(struct sockaddr_storage));
+}

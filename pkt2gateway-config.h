@@ -15,36 +15,34 @@
 class Config
 {
 private:
-    int lastError;
-    /**
-    * @brief Parse command line
-    * @return 0- success
-    **/
-    int parseCmd
-    (
-            int argc,
-            char* argv[]
-    );
+	int lastError;
+	/**
+	* @brief Parse command line
+	* @return 0- success
+	**/
+	int parseCmd
+	(
+		int argc,
+		char* argv[]
+	);
 public:
-    Config(int argc, char* argv[]);
-    int error();
+	Config(int argc, char* argv[]);
+	int error();
 
-    int verbosity;
+	int verbosity;
+	int retries;					///< default 0
+	int retry_delay;				///< default 60 seconds
 
-    int retries;            		///< default 0
-    int retry_delay;        		///< default 60 seconds
+	std::string message_out_url;
+	std::string packet;
+	std::string file_name;
+	std::string mode;				///< "raw", "hex", <Packet.message>
+	std::string proto_path;			///< proto files directory path
+	std::string force_message;
 
-    std::string message_out_url;
-
-    std::string packet;
-    std::string file_name;
-    std::string mode;				///< "raw", "hex", <Packet.message>
-    std::string proto_path;			///< proto files directory path
-    std::string force_message;
-
-    bool daemonize;
-    bool stop_request;
-    size_t buffer_size;
+	bool daemonize;
+	bool stop_request;
+	size_t buffer_size;
 };
 
 

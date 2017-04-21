@@ -1,7 +1,6 @@
 /*
  * pkt2optionscache.cpp
  */
-
 #include <vector>
 #include <stdlib.h>
 #include <glog/logging.h>
@@ -107,11 +106,11 @@ const Pkt2PacketVariable &Pkt2OptionsCache::find1
 	std::string message_type;
 	if (found)
 		*found = false;
-	for (std::map<std::string, Pkt2PacketVariable>::iterator m(pkt2packet_variable.begin());
+	for (std::map<std::string, Pkt2PacketVariable>::const_iterator m(pkt2packet_variable.begin());
 			m != pkt2packet_variable.end(); ++m)
 	{
 
-		if (m->second.validTags(packet))
+		if (validTags(m->first, m->second, packet))
 		{
 			message_type = m->first;
 			if (found)
@@ -121,6 +120,69 @@ const Pkt2PacketVariable &Pkt2OptionsCache::find1
 		}
 	}
 	return pkt2packet_variable[message_type];
+}
+
+/**
+ * @brief validate tags
+ * @param message_type packet.message
+ * @param var Pkt2PacketVariable 
+ * @param packet packet data
+ * @return true if all tags found
+ */
+bool Pkt2OptionsCache::validTags
+(
+	const std::string &message_type,
+	const Pkt2PacketVariable &var,
+	const std::string &packet
+)
+{
+	if (!var.validTags(packet))
+		return false;
+	const google::protobuf::Descriptor *m = protobuf_decrarations->getMessageDescriptor(message_type);
+	if (!m)
+		return true;
+	for (int f = 0; f < m->field_count(); f++)
+	{
+		if (m->field(f)->cpp_type() != google::protobuf::FieldDescriptor::CPPTYPE_MESSAGE)
+			continue;
+		
+		// get a "zone" inside a packet corresponding to the message in the entire data
+		const FieldNameVariable *fnv = var.getVariableByFieldNumber(m->field(f)->number());
+		if (!fnv) 
+			continue;
+		// extract "zone" (field in the parent message) by name in the variable's "get" property.
+		// get can be: "field.name" (preferred) or "name" (optional)
+		std::string zone = fnv->var.get();
+		// if "get" contains "field." prefix, remove it
+		std::string::size_type pos = zone.find("field.");
+		if (pos != std::string::npos)
+			zone = zone.substr(pos + 6);
+
+		// Search field in the parent packet fields by the name
+		int z = -1;
+		for (int j = 0; j < var.packet.fields_size(); j++)
+		{
+			if (var.packet.fields(j).name() == zone)
+			{
+				z = j;
+				break;
+			}
+		}
+		if (z < 0)
+			continue;
+
+		// extract field from the parent packet
+		const std::string &subpacket = packet.substr(var.packet.fields(z).offset(), var.packet.fields(z).size());
+		std::map<std::string, Pkt2PacketVariable>::const_iterator it = pkt2packet_variable.find(m->field(f)->message_type()->full_name());
+		if (it == pkt2packet_variable.end())
+			continue;
+
+		if (!validTags(m->field(f)->full_name(), it->second, subpacket))
+			return false;
+		
+	}
+	return true;
+	
 }
 
 /**

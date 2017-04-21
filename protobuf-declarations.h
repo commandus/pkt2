@@ -38,7 +38,7 @@ private:
 	 * @brief Try add path from include paths at specified index to the file name and open
 	 * @param fn file name to concatenate
 	 * @param index path index
-	 * @return
+	 * @return file descriptor
 	 */
 	FILE *openProto
 	(
@@ -53,7 +53,7 @@ public:
 	ProtobufDeclarations();
 	/**
 	 * @brief Add virtual path "" and parse all files recursively
-	 * @param path
+	 * @param path import path
 	 */
 	ProtobufDeclarations
 	(
@@ -97,7 +97,7 @@ public:
 
 	/**
 	 * parse proto files
-	 * @param protoFiles
+	 * @param protoFiles file name list
 	 * @return count successfully parsed files
 	 */
 	size_t parseProtoFiles
@@ -190,7 +190,7 @@ public:
 	const google::protobuf::Descriptor* getMessageDescriptor
 	(
 			const std::string &name
-	);
+	) const;
 
 	/**
 	 * @brief get SQL CREATE TABLE statements for message

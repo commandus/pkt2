@@ -306,6 +306,15 @@ int run
 
 		if (m)
 		{
+			if (config->allowed_messages.size())
+			{
+				if (std::find(config->allowed_messages.begin(), config->allowed_messages.end(), m->GetTypeName()) == config->allowed_messages.end())
+				{
+					LOG(INFO) << MSG_PACKET_REJECTED << m->GetTypeName();
+					continue;
+				}
+			}
+
 			switch (config->mode)
 			{
 			case MODE_JSON:

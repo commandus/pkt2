@@ -108,7 +108,7 @@ void fill_random_packet(
 	p.io.status = 0;
 
 	p.h_loc.id = 3;
-	p.h_loc.size = 11;
+	p.h_loc.size = htons(11);
 
 	p.loc.direwi = 0;
 	p.loc.dirnsi = 0;
@@ -121,7 +121,7 @@ void fill_random_packet(
 	p.loc.cepradius = htonl(9);
 
 	p.h_payload.id = 2;
-	p.h_payload.size = 30;
+	p.h_payload.size = htons(30);
 
 	p.payload.packettype = 0x08;
 	p.payload.gpsolddata = 0;		//< 1)GPS old data, GPS not read

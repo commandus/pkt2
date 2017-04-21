@@ -3,7 +3,6 @@
  *
  */
 #include <functional>
-#include <iostream>
 #include <iomanip>
 #include <glog/logging.h>
 
@@ -12,6 +11,7 @@
 
 #include "errorcodes.h"
 #include "utilprotobuf.h"
+
 
 using namespace google::protobuf;
 
@@ -114,27 +114,36 @@ const FieldNameVariable* Pkt2PacketVariable::getVariableByFieldNumber
 	return &fieldname_variables[f->second];
 }
 
-bool Pkt2PacketVariable::validTags(const std::string &data)
+/**
+  * @brief Check is all tags found
+  * @param packet packet to parse
+  * @return true if tags found
+  **/
+bool Pkt2PacketVariable::validTags
+(
+	const std::string &data
+) const
 {
 	// TODO if (data.size() < packet_size)
 	if (data.size() != packet_size)
+	{
 		return false;
+	}
 	for (int i = 0; i < packet.fields_size(); i++)
 	{
 		uint64_t t = packet.fields(i).tag();
 		if (t)
 		{
+			// special case
 			if (t == 0xFFFFFFFFFFFFFFFF)
 				t = 0;
 			uint64_t f = extractFieldUInt(data, packet.fields(i));
-			LOG(INFO) << "tag " << packet.fields(i).name() << " request: " << t << ", value: " << f;
 			if (f != t)
 			{
-				LOG(INFO) << "Not found ";
+				LOG(ERROR) << "tag " << packet.fields(i).name() << " not found . Request: " << t << ", value: " << f;
 				return false;
 			}
 		}
 	}
-	LOG(INFO) << "Found ";
 	return true;
 }

@@ -52,6 +52,11 @@ public:
     int length;
     void setLength(int length);
     int error();
+	/**
+	 * @brief return payload size
+	 * @return payload size
+	 */
+	static int getPayloadSize(int full_packet_size);
 };
 
 #endif

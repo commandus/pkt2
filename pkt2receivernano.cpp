@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -61,7 +62,7 @@ int pkt2_receiever_nano(Config *config)
 	int eoid = nn_bind(nn_sock_out, config->out_url.c_str());
     if (eoid < 0)
     {
-        LOG(ERROR) << ERR_NN_BIND << config->out_url << " " << errno << ": " << nn_strerror(errno);;
+        LOG(ERROR) << ERR_NN_BIND << config->out_url << " " << errno << ": " << nn_strerror(errno);
 		return ERRCODE_NN_BIND;
     }
 
@@ -74,11 +75,21 @@ int pkt2_receiever_nano(Config *config)
         char *buf = NULL;
         int bytes = nn_recv(nn_sock_in, &buf, NN_MSG, 0);
 
-        if (bytes < 0)
+		int payload_size = InputPacket::getPayloadSize(bytes);
+        if (payload_size < 0)
         {
         	LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
             continue;
         }
+        if (config->allowed_packet_sizes.size())
+		{
+			if (std::find(config->allowed_packet_sizes.begin(), config->allowed_packet_sizes.end(), payload_size) == config->allowed_packet_sizes.end())
+			{
+				LOG(INFO) << MSG_PACKET_REJECTED << payload_size;
+				continue;
+			}
+			
+		}
         if (buf)
         {
             InputPacket packet(buf, bytes);

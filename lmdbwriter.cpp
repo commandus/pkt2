@@ -1,6 +1,7 @@
 /**
  *	Write Protobuf message to the LMDB database
  */
+#include <algorithm>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -163,7 +164,7 @@ return 0;
  */
 int run
 (
-		Config *config
+	Config *config
 )
 {
 	int nano_socket = nn_socket(AF_SP, NN_SUB);
@@ -228,7 +229,18 @@ int run
 		MessageTypeNAddress messageTypeNAddress;
 		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
 		if (m)
+		{
+			if (config->allowed_messages.size())
+			{
+				if (std::find(config->allowed_messages.begin(), config->allowed_messages.end(), m->GetTypeName()) == config->allowed_messages.end())
+				{
+					LOG(INFO) << MSG_PACKET_REJECTED << m->GetTypeName();
+					continue;
+				}
+			}
+
 			put_db(&env, &options, buffer, bytes, &messageTypeNAddress, m);
+		}
 		else
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
 

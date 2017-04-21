@@ -64,9 +64,20 @@ public:
 	/// keep variables vector index having index in order of 1, 2
 	/// first is identifier (or hash) of the message
 	std::vector<uint64_t> keyIndexes;
-	const FieldNameVariable* getVariableByFieldNumber(
-        int field_number) const;
-	bool validTags(const std::string &packet);
+	const FieldNameVariable* getVariableByFieldNumber
+	(
+        int field_number
+	) const;
+	
+	/**
+	 * @brief Check is all tags found in the packet
+	 * @param packet packet to parse
+	 * @return true if tags found
+	 **/
+	bool validTags
+	(
+		const std::string &packet
+	) const;
 	/// debugging information
 	std::string toString();
 };

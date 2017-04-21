@@ -46,6 +46,7 @@ message IE_Location
             type: INPUT_UINT
             size: 2
             offset: 1
+            endian: ENDIAN_BIG_ENDIAN
             tag: 11               ///< tag, 11 bytes long
         },
         {

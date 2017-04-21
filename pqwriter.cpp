@@ -106,7 +106,7 @@ int execSQL
  */
 int run
 (
-		Config *config
+	Config *config
 )
 {
 	format_number = config->format_number;
@@ -156,7 +156,6 @@ int run
 	stmts.reserve(100);
 	while (!config->stop_request)
     {
-
     	int bytes = nn_recv(nano_socket, buffer, config->buffer_size, 0);
     	if (bytes < 0)
     	{
@@ -167,6 +166,15 @@ int run
 		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
 		if (m)
 		{
+			if (config->allowed_messages.size())
+			{
+				if (std::find(config->allowed_messages.begin(), config->allowed_messages.end(), m->GetTypeName()) == config->allowed_messages.end())
+				{
+					LOG(INFO) << MSG_PACKET_REJECTED << m->GetTypeName();
+					continue;
+				}
+			}
+
 			FieldNameValueIndexStrings vals(&options, messageTypeNAddress.message_type);
 			MessageDecomposer md(&vals, &options, m, addFieldValueString);
 			stmts.clear();
@@ -201,7 +209,7 @@ int run
 
 /**
  *  @brief Stop writer
- *  @param config
+ *  @param config configuration
  *  @return 0- success
  *          >0- config is not initialized yet
  */

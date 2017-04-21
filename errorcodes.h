@@ -28,6 +28,7 @@
 #define MSG_RECEIVED							"Received bytes: "
 #define MSG_NN_BIND_SUCCESS						"nanomsg socket bind successfully to "
 #define MSG_NN_SENT_SUCCESS						"nanomsg socket sent data successfully to "
+#define MSG_PACKET_REJECTED						"packet rejected: "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							1
