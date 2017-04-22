@@ -454,11 +454,11 @@ int ProtobufDeclarations::getStatementSQLCreate
 		ss << field->name() << " ";
 
 		switch (field->cpp_type()) {
-			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_STRING:
+			case google::protobuf::FieldDescriptor::CPPTYPE_STRING:
 				ss << "VARCHAR(32)";
 				break;
-			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_DOUBLE:
-			case google::protobuf::FieldDescriptor::CppType::CPPTYPE_FLOAT:
+			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
 				ss << "FLOAT";
 				break;
 			default:

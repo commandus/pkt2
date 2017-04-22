@@ -53,7 +53,7 @@ public:
 	);
 	std::string range;				///< e.g. 'Sheet'!A1:A2
 	std::string major_dimension;	///< e.g. "ROWS"
-	std::vector<std::vector<std::string>> values;
+	std::vector<std::vector<std::string> > values;
 
 	std::string toString() const;
 	std::string toJSON() const;

@@ -21,6 +21,25 @@ Pkt2PacketVariable::Pkt2PacketVariable()
 
 }
 
+#if __cplusplus < 201103L
+int hashCode
+(
+	const std::string &text
+)
+{
+	int hash = 0;
+	int strlen = text.length();
+    if (strlen == 0)
+        return hash;
+	for (int i = 0; i < strlen; i++) 
+	{
+		char character = text.at(i);
+		hash = (31 * hash) + character;
+    }
+    return hash; 
+}
+#endif
+
 Pkt2PacketVariable::Pkt2PacketVariable
 (
 	const std::string &message_type,
@@ -47,8 +66,12 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		// set message identifier if not assigned in the proto file
 		if (!packet.id())
 		{
+#if __cplusplus >= 201103L
 			std::hash<std::string> h;
 			size_t id = h(packet.name());
+#else	
+			size_t id = hashCode(packet.name());
+#endif
 			packet.set_id(id);
 		}
 	}
@@ -108,7 +131,7 @@ const FieldNameVariable* Pkt2PacketVariable::getVariableByFieldNumber
 	int field_number
 ) const
 {
-	auto f = fieldNumbers.find(field_number);
+	std::map<int, int>::const_iterator f = fieldNumbers.find(field_number);
 	if (f == fieldNumbers.end())
 		return NULL;
 	return &fieldname_variables[f->second];

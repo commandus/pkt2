@@ -89,7 +89,7 @@ int tcp_emitter_line(Config *config)
     std::istream *strm;
     if (!config->file_name.empty())
     {
-    	strm = new std::ifstream(config->file_name);
+    	strm = new std::ifstream(config->file_name.c_str());
     }
     else
     {

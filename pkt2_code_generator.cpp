@@ -1,7 +1,9 @@
 #include "pkt2_code_generator.h"
 
-#include <iostream>
+#if __cplusplus >= 201103L
 #include <regex>
+#endif
+#include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
@@ -23,12 +25,16 @@ const std::string quote_mysql("`");
 bool findWord
 (
 		std::string &subject,
-		const std::string& search
+		const std::string &search
 )
 {
+#if __cplusplus >= 201103L		
 	std::regex e("\\b" + search + "\\b");
 	std::smatch m;
 	return std::regex_search(subject, m, e);
+#else
+	return subject.find(search) != std::string::npos;
+#endif	
 }
 
 void replaceWords
@@ -38,9 +44,16 @@ void replaceWords
 		const std::string& replace
 )
 {
+#if __cplusplus >= 201103L		
     // Regular expression to match words beginning with 'search'
 	std::regex e("(\\b(" + search + "))([^(),. ]*)");
 	subject = std::regex_replace(subject, e, replace);
+#else
+	for (size_t it(subject.find(search)); it != std::string::npos; it++)
+	{
+		subject.replace(it, it + search.size(), replace);
+	}
+#endif	
 }
 
 void replacePacketFieldNames
@@ -122,41 +135,50 @@ std::string getPacketInputTypeString(enum pkt2::InputType inputtype, int size) {
 	}
 }
 
-const std::map<std::string, std::string> types_mysql = {
-	{"primary", "int(20) NOT NULL PRIMARY KEY AUTO_INCREMENT"},
-	{"id", "int(20)"},
-	{"clause_set_charset", "SET CHARSET \'utf8\';"},
+std::map<std::string, std::string> mk_mysql()
+{
+	std::map<std::string, std::string> r;
+	r["primary"] = "int(20) NOT NULL PRIMARY KEY AUTO_INCREMENT";
+	r["id"] = "int(20)";
+	r["clause_set_charset"] = "SET CHARSET \'utf8\';";
 
-	{"int32", "int(11)"},
-	{"int64", "int(20)"},
-	{"uint32", "int(11)"},
-	{"uint64", "int(20)"},
-	{"double", "double"},
-	{"float", "float"},
-	{"bool", "tinyint(1)"},
-	{"enum", "enum"},
-	{"string", "text"},
-	{"message", ""}
-};
+	r["int32"] = "int(11)";
+	r["int64"] = "int(20)";
+	r["uint32"] = "int(11)";
+	r["uint64"] = "int(20)";
+	r["double"] = "double";
+	r["float"] = "float";
+	r["bool"] = "tinyint(1)";
+	r["enum"] = "enum";
+	r["string"] = "text";
+	r["message"] = "";
+	return r;
+}
+const std::map<std::string, std::string> types_mysql = mk_mysql();
 
 const std::string quote_postgresql("\"");
 
-const std::map<std::string, std::string> types_postgresql = {
-	{"primary", "SERIAL PRIMARY KEY"},
-	{"id", "int(20)"},
-	{"clause_set_charset", "SET NAMES \'UTF8\';"},
+std::map<std::string, std::string> mk_pq()
+{
+	std::map<std::string, std::string> r;
+	r["primary"] = "SERIAL PRIMARY KEY";
+	r["id"] = "int(20)";
+	r["clause_set_charset"] = "SET NAMES \'UTF8\';";
 
-	{"int32", "integer"},
-	{"int64", "bigint"},
-	{"uint32", "numeric(11)"},
-	{"uint64", "numeric(20)"},
-	{"double", "double precision"},
-	{"float", "real"},
-	{"bool", "boolean"},
-	{"enum", "enum"},
-	{"string", "text"},
-	{"message", ""}
-};
+	r["int32"] = "integer";
+	r["int64"] = "bigint";
+	r["uint32"] = "numeric(11)";
+	r["uint64"] = "numeric(20)";
+	r["double"] = "double precision";
+	r["float"] = "real";
+	r["bool"] = "boolean";
+	r["enum"] = "enum";
+	r["string"] = "text";
+	r["message"] = "";
+	return r;
+}
+
+const std::map<std::string, std::string> types_postgresql = mk_pq();
 
 Pkt2CodeGenerator::Pkt2CodeGenerator(const std::string& name)
 {
@@ -245,17 +267,26 @@ std::string getSuffix(const google::protobuf::FieldDescriptor *fd)
 	return ss.str();
 }
 
+// Sort operator. c++98 no lambda support
+struct pair_second_less {
+	bool operator() (std::pair<int, int> const &a, std::pair<int, int> const &b)
+	{   
+		return a.second < b.second;
+	}   
+} pair_second_less;
+
 // sort by offset
 std::vector<int> sortPacketFieldsIndex(
 		const google::protobuf::RepeatedPtrField<pkt2::Field > &value)
 {
-	std::vector<std::pair<int, int>> idxOfs;
+	std::vector<std::pair<int, int> > idxOfs;
 	for (int i = 0; i < value.size(); i++)
 	{
 		idxOfs.push_back(std::pair<int, int>(i, value[i].offset()));
 	}
 
-	std::sort(idxOfs.begin(), idxOfs.end(), [] (std::pair<int, int> const& a, std::pair<int, int> const& b) { return a.second < b.second; });
+	// std::sort(idxOfs.begin(), idxOfs.end(), [] (std::pair<int, int> const& a, std::pair<int, int> const& b) { return a.second < b.second; });
+	std::sort(idxOfs.begin(), idxOfs.end(), pair_second_less);
 
 	std::vector<int> idx;
 	for (int i = 0; i < value.size(); i++)

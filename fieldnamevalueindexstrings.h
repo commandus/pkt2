@@ -23,8 +23,8 @@ class FieldNameValueString
 public:
 	int index;
 	google::protobuf::FieldDescriptor::CppType field_type;
-	const std::string field;
-	const std::string value;
+	std::string field;
+	std::string value;
 	FieldNameValueString(
 			int idx,
 			const google::protobuf::FieldDescriptor::CppType field_type,

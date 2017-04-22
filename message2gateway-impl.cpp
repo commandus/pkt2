@@ -64,7 +64,7 @@ int run_stream
 	if (config->from_stdin || config->file_name.empty())
 		strm = &std::cin;
 	else
-		strm = new std::ifstream(config->file_name, std::ifstream::in);
+		strm = new std::ifstream(config->file_name.c_str());
 
 	int nano_socket_out = nn_socket(AF_SP, NN_BUS);
 

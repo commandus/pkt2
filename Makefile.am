@@ -5,14 +5,15 @@ TESTS = tests/p1.sh tests/t1
 
 if DEBUG
 	AM_CFLAGS = -g3 -O0
-	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
+	AM_CXXFLAGS = -g3 -O0 -DDEBUG
 else
 	AM_CFLAGS = -O2
-	AM_CXXFLAGS = -O2 -std=c++11
+	AM_CXXFLAGS = -O2
 endif
 
 # ----------------- REMOVE IT!!!! ------------------
-AM_CXXFLAGS = -std=c++11 -O0 -DDEBUG -std=c++11
+# -std=c++11
+AM_CXXFLAGS =  -O0 -DDEBUG
 #COMMON_CPP_FLAGS = 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
@@ -43,9 +44,10 @@ CLEANFILES = $(gengrpcs)
 # Binaries
 #
 bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
-	handlerpq handlerline handlerlmdb handler-google-sheets \
+	handlerpq handlerline handlerlmdb \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium 
+#	handler-google-sheets
 
 #
 # Headers

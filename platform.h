@@ -15,5 +15,5 @@
    	google::SetLogDestination(google::INFO, PROGRAM_NAME);
 
 #define ENDIAN_NETWORK pkt2::Endian::ENDIAN_BIG_ENDIAN
-#define ENDIAN_HOST pkt2::Endian::ENDIAN_LITTLE_ENDIAN
-#define ENDIAN_NEED_SWAP(v) ((v != pkt2::Endian::ENDIAN_NO_MATTER) || (v != ENDIAN_HOST))
+#define ENDIAN_HOST pkt2::ENDIAN_LITTLE_ENDIAN
+#define ENDIAN_NEED_SWAP(v) ((v != pkt2::ENDIAN_NO_MATTER) || (v != ENDIAN_HOST))

@@ -522,7 +522,7 @@ std::string ValueRange::toString() const
 {
 	std::stringstream ss;
 	ss << range << " " << major_dimension << std::endl;
-	for (std::vector<std::vector<std::string>>::const_iterator itr(values.begin()); itr != values.end(); ++itr)
+	for (std::vector<std::vector<std::string> >::const_iterator itr(values.begin()); itr != values.end(); ++itr)
     {
     	std::vector<std::string> row = *itr;
     	for (std::vector<std::string>::const_iterator itc(itr->begin()); itc != itr->end(); ++itc)
@@ -543,7 +543,7 @@ std::string ValueRange::toJSON() const
 	root["range"] = range;
 	root["majorDimension"] = major_dimension;
 	Json::Value rows = Json::Value(Json::arrayValue);
-	for (std::vector<std::vector<std::string>>::const_iterator itr(values.begin()); itr != values.end(); ++itr)
+	for (std::vector<std::vector<std::string> >::const_iterator itr(values.begin()); itr != values.end(); ++itr)
     {
     	Json::Value cols = Json::Value(Json::arrayValue);
     	std::vector<std::string> row = *itr;

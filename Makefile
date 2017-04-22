@@ -94,10 +94,9 @@ bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
 	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) \
 	tcptransmitter$(EXEEXT) handlerpq$(EXEEXT) \
 	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
-	handler-google-sheets$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
-	message2gateway$(EXEEXT) example1message$(EXEEXT) \
-	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
-	tcpemitter-iridium$(EXEEXT)
+	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
+	example1message$(EXEEXT) example1message1$(EXEEXT) \
+	tcpemitter-example1$(EXEEXT) tcpemitter-iridium$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -144,31 +143,6 @@ am_example1message1_OBJECTS =  \
 	example1message1-utilsnmp.$(OBJEXT) $(am__objects_1)
 example1message1_OBJECTS = $(am_example1message1_OBJECTS)
 example1message1_DEPENDENCIES = $(am__DEPENDENCIES_1)
-am_handler_google_sheets_OBJECTS =  \
-	handler_google_sheets-handler-google-sheets.$(OBJEXT) \
-	handler_google_sheets-google-sheets-writer.$(OBJEXT) \
-	handler_google_sheets-handler-google-sheets-config.$(OBJEXT) \
-	handler_google_sheets-daemonize.$(OBJEXT) \
-	handler_google_sheets-protobuf-declarations.$(OBJEXT) \
-	handler_google_sheets-utilprotobuf.$(OBJEXT) \
-	handler_google_sheets-error-printer.$(OBJEXT) \
-	handler_google_sheets-utilfile.$(OBJEXT) \
-	handler_google_sheets-utilstring.$(OBJEXT) \
-	handler_google_sheets-utilinet.$(OBJEXT) \
-	handler_google_sheets-pbjson.$(OBJEXT) \
-	handler_google_sheets-jsoncpp.$(OBJEXT) \
-	duk/handler_google_sheets-duktape.$(OBJEXT) \
-	handler_google_sheets-javascript-context.$(OBJEXT) \
-	handler_google_sheets-google-sheets.$(OBJEXT) \
-	handler_google_sheets-sslhelper.$(OBJEXT) \
-	handler_google_sheets-pkt2.pb.$(OBJEXT) \
-	handler_google_sheets-pkt2optionscache.$(OBJEXT) \
-	handler_google_sheets-pkt2packetvariable.$(OBJEXT) \
-	handler_google_sheets-messagedecomposer.$(OBJEXT) \
-	handler_google_sheets-fieldnamevalueindexstrings.$(OBJEXT) \
-	$(am__objects_1)
-handler_google_sheets_OBJECTS = $(am_handler_google_sheets_OBJECTS)
-handler_google_sheets_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-linewriter.$(OBJEXT) \
 	handlerline-handlerline-config.$(OBJEXT) \
@@ -404,21 +378,20 @@ am__v_CXXLD_ = $(am__v_CXXLD_$(AM_DEFAULT_VERBOSITY))
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
-	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
-	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
-	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
-	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
-DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
-	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
-	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
-	$(message2gateway_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(handlerline_SOURCES) $(handlerlmdb_SOURCES) \
+	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
 	$(tcptransmitter_SOURCES)
+DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
+	$(handlerline_SOURCES) $(handlerlmdb_SOURCES) \
+	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -838,7 +811,8 @@ ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
 
 # ----------------- REMOVE IT!!!! ------------------
-AM_CXXFLAGS = -std=c++11 -O0 -DDEBUG -std=c++11
+# -std=c++11
+AM_CXXFLAGS = -O0 -DDEBUG
 #COMMON_CPP_FLAGS = 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
@@ -853,6 +827,7 @@ gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 nodist_tcpreceiver_SOURCES = $(genfiles)
 BUILT_SOURCES = $(gengrpcs)
 CLEANFILES = $(gengrpcs)
+#	handler-google-sheets
 
 #
 # Headers
@@ -1216,12 +1191,6 @@ duk/$(am__dirstamp):
 duk/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) duk/$(DEPDIR)
 	@: > duk/$(DEPDIR)/$(am__dirstamp)
-duk/handler_google_sheets-duktape.$(OBJEXT): duk/$(am__dirstamp) \
-	duk/$(DEPDIR)/$(am__dirstamp)
-
-handler-google-sheets$(EXEEXT): $(handler_google_sheets_OBJECTS) $(handler_google_sheets_DEPENDENCIES) $(EXTRA_handler_google_sheets_DEPENDENCIES) 
-	@rm -f handler-google-sheets$(EXEEXT)
-	$(AM_V_CXXLD)$(CXXLINK) $(handler_google_sheets_OBJECTS) $(handler_google_sheets_LDADD) $(LIBS)
 duk/handlerline-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 	duk/$(DEPDIR)/$(am__dirstamp)
 
@@ -1304,26 +1273,6 @@ include ./$(DEPDIR)/example1message-utilstring.Po
 include ./$(DEPDIR)/example1message1-example1message1.Po
 include ./$(DEPDIR)/example1message1-pkt2.pb.Po
 include ./$(DEPDIR)/example1message1-utilsnmp.Po
-include ./$(DEPDIR)/handler_google_sheets-daemonize.Po
-include ./$(DEPDIR)/handler_google_sheets-error-printer.Po
-include ./$(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Po
-include ./$(DEPDIR)/handler_google_sheets-google-sheets-writer.Po
-include ./$(DEPDIR)/handler_google_sheets-google-sheets.Po
-include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Po
-include ./$(DEPDIR)/handler_google_sheets-handler-google-sheets.Po
-include ./$(DEPDIR)/handler_google_sheets-javascript-context.Po
-include ./$(DEPDIR)/handler_google_sheets-jsoncpp.Po
-include ./$(DEPDIR)/handler_google_sheets-messagedecomposer.Po
-include ./$(DEPDIR)/handler_google_sheets-pbjson.Po
-include ./$(DEPDIR)/handler_google_sheets-pkt2.pb.Po
-include ./$(DEPDIR)/handler_google_sheets-pkt2optionscache.Po
-include ./$(DEPDIR)/handler_google_sheets-pkt2packetvariable.Po
-include ./$(DEPDIR)/handler_google_sheets-protobuf-declarations.Po
-include ./$(DEPDIR)/handler_google_sheets-sslhelper.Po
-include ./$(DEPDIR)/handler_google_sheets-utilfile.Po
-include ./$(DEPDIR)/handler_google_sheets-utilinet.Po
-include ./$(DEPDIR)/handler_google_sheets-utilprotobuf.Po
-include ./$(DEPDIR)/handler_google_sheets-utilstring.Po
 include ./$(DEPDIR)/handlerline-daemonize.Po
 include ./$(DEPDIR)/handlerline-error-printer.Po
 include ./$(DEPDIR)/handlerline-fieldnamevalueindexstrings.Po
@@ -1476,7 +1425,6 @@ include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
 include ./$(DEPDIR)/tcptransmitter-utilpriority.Po
 include ./$(DEPDIR)/tcptransmitter-utilstring.Po
-include duk/$(DEPDIR)/handler_google_sheets-duktape.Po
 include duk/$(DEPDIR)/handlerline-duktape.Po
 include duk/$(DEPDIR)/handlerlmdb-duktape.Po
 include duk/$(DEPDIR)/handlerpq-duktape.Po
@@ -1510,20 +1458,6 @@ include example/$(DEPDIR)/example1message1-example1.pb.Po
 #	$(AM_V_CC)source='$<' object='$@' libtool=yes \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(LTCOMPILE) -c -o $@ $<
-
-duk/handler_google_sheets-duktape.o: duk/duktape.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handler_google_sheets-duktape.o -MD -MP -MF duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo -c -o duk/handler_google_sheets-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
-	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo duk/$(DEPDIR)/handler_google_sheets-duktape.Po
-#	$(AM_V_CC)source='duk/duktape.c' object='duk/handler_google_sheets-duktape.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handler_google_sheets-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
-
-duk/handler_google_sheets-duktape.obj: duk/duktape.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handler_google_sheets-duktape.obj -MD -MP -MF duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo -c -o duk/handler_google_sheets-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
-	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo duk/$(DEPDIR)/handler_google_sheets-duktape.Po
-#	$(AM_V_CC)source='duk/duktape.c' object='duk/handler_google_sheets-duktape.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/handler_google_sheets-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
 duk/handlerline-duktape.o: duk/duktape.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handlerline-duktape.o -MD -MP -MF duk/$(DEPDIR)/handlerline-duktape.Tpo -c -o duk/handlerline-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
@@ -1856,286 +1790,6 @@ example1message1-utilsnmp.obj: utilsnmp.cpp
 #	$(AM_V_CXX)source='utilsnmp.cpp' object='example1message1-utilsnmp.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-utilsnmp.obj `if test -f 'utilsnmp.cpp'; then $(CYGPATH_W) 'utilsnmp.cpp'; else $(CYGPATH_W) '$(srcdir)/utilsnmp.cpp'; fi`
-
-handler_google_sheets-handler-google-sheets.o: handler-google-sheets.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-handler-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-handler-google-sheets.Tpo -c -o handler_google_sheets-handler-google-sheets.o `test -f 'handler-google-sheets.cpp' || echo '$(srcdir)/'`handler-google-sheets.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-handler-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-handler-google-sheets.Po
-#	$(AM_V_CXX)source='handler-google-sheets.cpp' object='handler_google_sheets-handler-google-sheets.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-handler-google-sheets.o `test -f 'handler-google-sheets.cpp' || echo '$(srcdir)/'`handler-google-sheets.cpp
-
-handler_google_sheets-handler-google-sheets.obj: handler-google-sheets.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-handler-google-sheets.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-handler-google-sheets.Tpo -c -o handler_google_sheets-handler-google-sheets.obj `if test -f 'handler-google-sheets.cpp'; then $(CYGPATH_W) 'handler-google-sheets.cpp'; else $(CYGPATH_W) '$(srcdir)/handler-google-sheets.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-handler-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-handler-google-sheets.Po
-#	$(AM_V_CXX)source='handler-google-sheets.cpp' object='handler_google_sheets-handler-google-sheets.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-handler-google-sheets.obj `if test -f 'handler-google-sheets.cpp'; then $(CYGPATH_W) 'handler-google-sheets.cpp'; else $(CYGPATH_W) '$(srcdir)/handler-google-sheets.cpp'; fi`
-
-handler_google_sheets-google-sheets-writer.o: google-sheets-writer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets-writer.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets-writer.Tpo -c -o handler_google_sheets-google-sheets-writer.o `test -f 'google-sheets-writer.cpp' || echo '$(srcdir)/'`google-sheets-writer.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets-writer.Tpo $(DEPDIR)/handler_google_sheets-google-sheets-writer.Po
-#	$(AM_V_CXX)source='google-sheets-writer.cpp' object='handler_google_sheets-google-sheets-writer.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-google-sheets-writer.o `test -f 'google-sheets-writer.cpp' || echo '$(srcdir)/'`google-sheets-writer.cpp
-
-handler_google_sheets-google-sheets-writer.obj: google-sheets-writer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets-writer.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets-writer.Tpo -c -o handler_google_sheets-google-sheets-writer.obj `if test -f 'google-sheets-writer.cpp'; then $(CYGPATH_W) 'google-sheets-writer.cpp'; else $(CYGPATH_W) '$(srcdir)/google-sheets-writer.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets-writer.Tpo $(DEPDIR)/handler_google_sheets-google-sheets-writer.Po
-#	$(AM_V_CXX)source='google-sheets-writer.cpp' object='handler_google_sheets-google-sheets-writer.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-google-sheets-writer.obj `if test -f 'google-sheets-writer.cpp'; then $(CYGPATH_W) 'google-sheets-writer.cpp'; else $(CYGPATH_W) '$(srcdir)/google-sheets-writer.cpp'; fi`
-
-handler_google_sheets-handler-google-sheets-config.o: handler-google-sheets-config.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-handler-google-sheets-config.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Tpo -c -o handler_google_sheets-handler-google-sheets-config.o `test -f 'handler-google-sheets-config.cpp' || echo '$(srcdir)/'`handler-google-sheets-config.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Tpo $(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Po
-#	$(AM_V_CXX)source='handler-google-sheets-config.cpp' object='handler_google_sheets-handler-google-sheets-config.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-handler-google-sheets-config.o `test -f 'handler-google-sheets-config.cpp' || echo '$(srcdir)/'`handler-google-sheets-config.cpp
-
-handler_google_sheets-handler-google-sheets-config.obj: handler-google-sheets-config.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-handler-google-sheets-config.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Tpo -c -o handler_google_sheets-handler-google-sheets-config.obj `if test -f 'handler-google-sheets-config.cpp'; then $(CYGPATH_W) 'handler-google-sheets-config.cpp'; else $(CYGPATH_W) '$(srcdir)/handler-google-sheets-config.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Tpo $(DEPDIR)/handler_google_sheets-handler-google-sheets-config.Po
-#	$(AM_V_CXX)source='handler-google-sheets-config.cpp' object='handler_google_sheets-handler-google-sheets-config.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-handler-google-sheets-config.obj `if test -f 'handler-google-sheets-config.cpp'; then $(CYGPATH_W) 'handler-google-sheets-config.cpp'; else $(CYGPATH_W) '$(srcdir)/handler-google-sheets-config.cpp'; fi`
-
-handler_google_sheets-daemonize.o: daemonize.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-daemonize.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-daemonize.Tpo -c -o handler_google_sheets-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-daemonize.Tpo $(DEPDIR)/handler_google_sheets-daemonize.Po
-#	$(AM_V_CXX)source='daemonize.cpp' object='handler_google_sheets-daemonize.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
-
-handler_google_sheets-daemonize.obj: daemonize.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-daemonize.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-daemonize.Tpo -c -o handler_google_sheets-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-daemonize.Tpo $(DEPDIR)/handler_google_sheets-daemonize.Po
-#	$(AM_V_CXX)source='daemonize.cpp' object='handler_google_sheets-daemonize.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-
-handler_google_sheets-protobuf-declarations.o: protobuf-declarations.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-protobuf-declarations.Tpo -c -o handler_google_sheets-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-protobuf-declarations.Tpo $(DEPDIR)/handler_google_sheets-protobuf-declarations.Po
-#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='handler_google_sheets-protobuf-declarations.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
-
-handler_google_sheets-protobuf-declarations.obj: protobuf-declarations.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-protobuf-declarations.Tpo -c -o handler_google_sheets-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-protobuf-declarations.Tpo $(DEPDIR)/handler_google_sheets-protobuf-declarations.Po
-#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='handler_google_sheets-protobuf-declarations.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
-
-handler_google_sheets-utilprotobuf.o: utilprotobuf.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilprotobuf.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilprotobuf.Tpo -c -o handler_google_sheets-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilprotobuf.Tpo $(DEPDIR)/handler_google_sheets-utilprotobuf.Po
-#	$(AM_V_CXX)source='utilprotobuf.cpp' object='handler_google_sheets-utilprotobuf.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
-
-handler_google_sheets-utilprotobuf.obj: utilprotobuf.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilprotobuf.Tpo -c -o handler_google_sheets-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilprotobuf.Tpo $(DEPDIR)/handler_google_sheets-utilprotobuf.Po
-#	$(AM_V_CXX)source='utilprotobuf.cpp' object='handler_google_sheets-utilprotobuf.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
-
-handler_google_sheets-error-printer.o: error-printer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-error-printer.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-error-printer.Tpo -c -o handler_google_sheets-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-error-printer.Tpo $(DEPDIR)/handler_google_sheets-error-printer.Po
-#	$(AM_V_CXX)source='error-printer.cpp' object='handler_google_sheets-error-printer.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
-
-handler_google_sheets-error-printer.obj: error-printer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-error-printer.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-error-printer.Tpo -c -o handler_google_sheets-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-error-printer.Tpo $(DEPDIR)/handler_google_sheets-error-printer.Po
-#	$(AM_V_CXX)source='error-printer.cpp' object='handler_google_sheets-error-printer.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
-
-handler_google_sheets-utilfile.o: utilfile.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilfile.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilfile.Tpo -c -o handler_google_sheets-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilfile.Tpo $(DEPDIR)/handler_google_sheets-utilfile.Po
-#	$(AM_V_CXX)source='utilfile.cpp' object='handler_google_sheets-utilfile.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
-
-handler_google_sheets-utilfile.obj: utilfile.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilfile.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilfile.Tpo -c -o handler_google_sheets-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilfile.Tpo $(DEPDIR)/handler_google_sheets-utilfile.Po
-#	$(AM_V_CXX)source='utilfile.cpp' object='handler_google_sheets-utilfile.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
-
-handler_google_sheets-utilstring.o: utilstring.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilstring.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilstring.Tpo -c -o handler_google_sheets-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilstring.Tpo $(DEPDIR)/handler_google_sheets-utilstring.Po
-#	$(AM_V_CXX)source='utilstring.cpp' object='handler_google_sheets-utilstring.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
-
-handler_google_sheets-utilstring.obj: utilstring.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilstring.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilstring.Tpo -c -o handler_google_sheets-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilstring.Tpo $(DEPDIR)/handler_google_sheets-utilstring.Po
-#	$(AM_V_CXX)source='utilstring.cpp' object='handler_google_sheets-utilstring.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
-
-handler_google_sheets-utilinet.o: utilinet.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilinet.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilinet.Tpo -c -o handler_google_sheets-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilinet.Tpo $(DEPDIR)/handler_google_sheets-utilinet.Po
-#	$(AM_V_CXX)source='utilinet.cpp' object='handler_google_sheets-utilinet.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
-
-handler_google_sheets-utilinet.obj: utilinet.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-utilinet.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-utilinet.Tpo -c -o handler_google_sheets-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-utilinet.Tpo $(DEPDIR)/handler_google_sheets-utilinet.Po
-#	$(AM_V_CXX)source='utilinet.cpp' object='handler_google_sheets-utilinet.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
-
-handler_google_sheets-pbjson.o: pbjson.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pbjson.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-pbjson.Tpo -c -o handler_google_sheets-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pbjson.Tpo $(DEPDIR)/handler_google_sheets-pbjson.Po
-#	$(AM_V_CXX)source='pbjson.cpp' object='handler_google_sheets-pbjson.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-
-handler_google_sheets-pbjson.obj: pbjson.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pbjson.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-pbjson.Tpo -c -o handler_google_sheets-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pbjson.Tpo $(DEPDIR)/handler_google_sheets-pbjson.Po
-#	$(AM_V_CXX)source='pbjson.cpp' object='handler_google_sheets-pbjson.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-
-handler_google_sheets-jsoncpp.o: jsoncpp.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-jsoncpp.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo -c -o handler_google_sheets-jsoncpp.o `test -f 'jsoncpp.cpp' || echo '$(srcdir)/'`jsoncpp.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo $(DEPDIR)/handler_google_sheets-jsoncpp.Po
-#	$(AM_V_CXX)source='jsoncpp.cpp' object='handler_google_sheets-jsoncpp.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-jsoncpp.o `test -f 'jsoncpp.cpp' || echo '$(srcdir)/'`jsoncpp.cpp
-
-handler_google_sheets-jsoncpp.obj: jsoncpp.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-jsoncpp.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo -c -o handler_google_sheets-jsoncpp.obj `if test -f 'jsoncpp.cpp'; then $(CYGPATH_W) 'jsoncpp.cpp'; else $(CYGPATH_W) '$(srcdir)/jsoncpp.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo $(DEPDIR)/handler_google_sheets-jsoncpp.Po
-#	$(AM_V_CXX)source='jsoncpp.cpp' object='handler_google_sheets-jsoncpp.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-jsoncpp.obj `if test -f 'jsoncpp.cpp'; then $(CYGPATH_W) 'jsoncpp.cpp'; else $(CYGPATH_W) '$(srcdir)/jsoncpp.cpp'; fi`
-
-handler_google_sheets-javascript-context.o: javascript-context.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-javascript-context.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-javascript-context.Tpo -c -o handler_google_sheets-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-javascript-context.Tpo $(DEPDIR)/handler_google_sheets-javascript-context.Po
-#	$(AM_V_CXX)source='javascript-context.cpp' object='handler_google_sheets-javascript-context.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
-
-handler_google_sheets-javascript-context.obj: javascript-context.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-javascript-context.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-javascript-context.Tpo -c -o handler_google_sheets-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-javascript-context.Tpo $(DEPDIR)/handler_google_sheets-javascript-context.Po
-#	$(AM_V_CXX)source='javascript-context.cpp' object='handler_google_sheets-javascript-context.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
-
-handler_google_sheets-google-sheets.o: google-sheets.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets.Tpo -c -o handler_google_sheets-google-sheets.o `test -f 'google-sheets.cpp' || echo '$(srcdir)/'`google-sheets.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-google-sheets.Po
-#	$(AM_V_CXX)source='google-sheets.cpp' object='handler_google_sheets-google-sheets.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-google-sheets.o `test -f 'google-sheets.cpp' || echo '$(srcdir)/'`google-sheets.cpp
-
-handler_google_sheets-google-sheets.obj: google-sheets.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-google-sheets.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-google-sheets.Tpo -c -o handler_google_sheets-google-sheets.obj `if test -f 'google-sheets.cpp'; then $(CYGPATH_W) 'google-sheets.cpp'; else $(CYGPATH_W) '$(srcdir)/google-sheets.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-google-sheets.Tpo $(DEPDIR)/handler_google_sheets-google-sheets.Po
-#	$(AM_V_CXX)source='google-sheets.cpp' object='handler_google_sheets-google-sheets.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-google-sheets.obj `if test -f 'google-sheets.cpp'; then $(CYGPATH_W) 'google-sheets.cpp'; else $(CYGPATH_W) '$(srcdir)/google-sheets.cpp'; fi`
-
-handler_google_sheets-sslhelper.o: sslhelper.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-sslhelper.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-sslhelper.Tpo -c -o handler_google_sheets-sslhelper.o `test -f 'sslhelper.cpp' || echo '$(srcdir)/'`sslhelper.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-sslhelper.Tpo $(DEPDIR)/handler_google_sheets-sslhelper.Po
-#	$(AM_V_CXX)source='sslhelper.cpp' object='handler_google_sheets-sslhelper.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-sslhelper.o `test -f 'sslhelper.cpp' || echo '$(srcdir)/'`sslhelper.cpp
-
-handler_google_sheets-sslhelper.obj: sslhelper.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-sslhelper.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-sslhelper.Tpo -c -o handler_google_sheets-sslhelper.obj `if test -f 'sslhelper.cpp'; then $(CYGPATH_W) 'sslhelper.cpp'; else $(CYGPATH_W) '$(srcdir)/sslhelper.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-sslhelper.Tpo $(DEPDIR)/handler_google_sheets-sslhelper.Po
-#	$(AM_V_CXX)source='sslhelper.cpp' object='handler_google_sheets-sslhelper.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-sslhelper.obj `if test -f 'sslhelper.cpp'; then $(CYGPATH_W) 'sslhelper.cpp'; else $(CYGPATH_W) '$(srcdir)/sslhelper.cpp'; fi`
-
-handler_google_sheets-pkt2.pb.o: pkt2.pb.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pkt2.pb.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-pkt2.pb.Tpo -c -o handler_google_sheets-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pkt2.pb.Tpo $(DEPDIR)/handler_google_sheets-pkt2.pb.Po
-#	$(AM_V_CXX)source='pkt2.pb.cpp' object='handler_google_sheets-pkt2.pb.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-
-handler_google_sheets-pkt2.pb.obj: pkt2.pb.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-pkt2.pb.Tpo -c -o handler_google_sheets-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pkt2.pb.Tpo $(DEPDIR)/handler_google_sheets-pkt2.pb.Po
-#	$(AM_V_CXX)source='pkt2.pb.cpp' object='handler_google_sheets-pkt2.pb.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-
-handler_google_sheets-pkt2optionscache.o: pkt2optionscache.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-pkt2optionscache.Tpo -c -o handler_google_sheets-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pkt2optionscache.Tpo $(DEPDIR)/handler_google_sheets-pkt2optionscache.Po
-#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handler_google_sheets-pkt2optionscache.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
-
-handler_google_sheets-pkt2optionscache.obj: pkt2optionscache.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-pkt2optionscache.Tpo -c -o handler_google_sheets-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pkt2optionscache.Tpo $(DEPDIR)/handler_google_sheets-pkt2optionscache.Po
-#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='handler_google_sheets-pkt2optionscache.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
-
-handler_google_sheets-pkt2packetvariable.o: pkt2packetvariable.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-pkt2packetvariable.Tpo -c -o handler_google_sheets-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pkt2packetvariable.Tpo $(DEPDIR)/handler_google_sheets-pkt2packetvariable.Po
-#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handler_google_sheets-pkt2packetvariable.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
-
-handler_google_sheets-pkt2packetvariable.obj: pkt2packetvariable.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pkt2packetvariable.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-pkt2packetvariable.Tpo -c -o handler_google_sheets-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pkt2packetvariable.Tpo $(DEPDIR)/handler_google_sheets-pkt2packetvariable.Po
-#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='handler_google_sheets-pkt2packetvariable.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
-
-handler_google_sheets-messagedecomposer.o: messagedecomposer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-messagedecomposer.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-messagedecomposer.Tpo -c -o handler_google_sheets-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-messagedecomposer.Tpo $(DEPDIR)/handler_google_sheets-messagedecomposer.Po
-#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handler_google_sheets-messagedecomposer.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
-
-handler_google_sheets-messagedecomposer.obj: messagedecomposer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-messagedecomposer.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-messagedecomposer.Tpo -c -o handler_google_sheets-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-messagedecomposer.Tpo $(DEPDIR)/handler_google_sheets-messagedecomposer.Po
-#	$(AM_V_CXX)source='messagedecomposer.cpp' object='handler_google_sheets-messagedecomposer.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
-
-handler_google_sheets-fieldnamevalueindexstrings.o: fieldnamevalueindexstrings.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-fieldnamevalueindexstrings.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Tpo -c -o handler_google_sheets-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Po
-#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handler_google_sheets-fieldnamevalueindexstrings.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-fieldnamevalueindexstrings.o `test -f 'fieldnamevalueindexstrings.cpp' || echo '$(srcdir)/'`fieldnamevalueindexstrings.cpp
-
-handler_google_sheets-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-fieldnamevalueindexstrings.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Tpo -c -o handler_google_sheets-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Tpo $(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Po
-#	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handler_google_sheets-fieldnamevalueindexstrings.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
 
 handlerline-handlerline.o: handlerline.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-handlerline.o -MD -MP -MF $(DEPDIR)/handlerline-handlerline.Tpo -c -o handlerline-handlerline.o `test -f 'handlerline.cpp' || echo '$(srcdir)/'`handlerline.cpp
@@ -4908,9 +4562,9 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 
 
 	AM_CFLAGS = -g3 -O0
-	AM_CXXFLAGS = -g3 -O0 -DDEBUG -std=c++11
+	AM_CXXFLAGS = -g3 -O0 -DDEBUG
 #	AM_CFLAGS = -O2
-#	AM_CXXFLAGS = -O2 -std=c++11
+#	AM_CXXFLAGS = -O2
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
