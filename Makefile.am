@@ -17,7 +17,7 @@ AM_CXXFLAGS =  -O0 -DDEBUG
 #COMMON_CPP_FLAGS = 
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
-SNMPLIBS = -lnetsnmpagent -lnetsnmp -lpthread
+SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
 
 gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 $(gengrpcs): Makefile
@@ -149,7 +149,7 @@ handlerpq_SOURCES= \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lodb-pgsql -lodb -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
+handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #

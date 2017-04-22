@@ -50,9 +50,15 @@ InputPacket::InputPacket
 (
 	const std::string &data
 )
-	: InputPacket((void *) &data[0], (size_t) data.size())
+	: message(NULL)
 {
-
+    buffer = (void *) &data[0];
+    size = data.size();
+    allocated = false;
+    length = size - sizeof(struct PacketHeader) - (2 * sizeof(struct sockaddr_storage));
+    max_data_size = length;
+    parse();
+	
 }
 
 InputPacket::~InputPacket() 

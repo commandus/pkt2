@@ -300,8 +300,12 @@ NanoSub::NanoSub(const char *address, void *topic, size_t topic_size)
 }
 
 NanoSub::NanoSub(const char *address, const std::string &topic)
-	: NanoSub(address, (void *) topic.c_str(), topic.length())
+	: NanoPubSub(NN_SUB)
 {
+	mTopic = topic;
+    mReadOffset = topic.size();
+    if (setsockoption(NN_SUB, NN_SUB_SUBSCRIBE, topic.c_str(), topic.size()) >= 0)
+		connect(address);
 }
 
 std::string & NanoSub::topic()

@@ -13,8 +13,16 @@ class ErrorPrinter :
 	public google::protobuf::io::ErrorCollector
 {
 public:
-	void AddError(int line, int column, const std::string& message) override;
-	void AddWarning(int line, int column, const std::string& message) override;
+	void AddError(int line, int column, const std::string& message) 
+#if __cplusplus >= 201103L
+	override
+#endif
+	;
+	void AddWarning(int line, int column, const std::string& message)
+#if __cplusplus >= 201103L
+	override
+#endif
+	;
 };
 
 /**

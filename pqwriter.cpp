@@ -135,8 +135,8 @@ int run
 
 	std::vector<std::string> clauses;
 	pd.getStatementSQLCreate(&clauses, 0);
-	for (std::string &clause : clauses)
-		LOG(INFO) << clause;
+	for (std::vector<std::string>::const_iterator it(clauses.begin()); it != clauses.end(); ++it)
+		LOG(INFO) << *it;
 
 	if (!pd.getMessageCount())
 	{
