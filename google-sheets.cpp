@@ -14,20 +14,72 @@
 #include <openssl/pem.h>
 
 #include <json/json.h>
-// base64url
-#include "cppcodec/base64_url.hpp"
 
 #include "utilstring.h"
 
 #define GOOGLE_TOKEN_URL		"https://www.googleapis.com/oauth2/v4/token"
 #define API_SHEET				"https://sheets.googleapis.com/v4/spreadsheets/"
 
-enum class CSVState 
+enum CSVState 
 {
 	UnquotedField,
 	QuotedField,
 	QuotedQuote
 };
+
+const static unsigned char* b64 = (unsigned char *) "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+
+std::string base64url_encode
+(
+	const unsigned char* data, 
+	size_t data_len
+)
+{
+	std::stringstream r;
+	size_t rc = 0;
+	size_t modulusLen = data_len % 3;
+	size_t pad = ((modulusLen & 1) << 1) + ((modulusLen & 2) >> 1);
+	size_t result_len = 4 * (data_len + pad) / 3;
+	if (pad == 2) 
+		result_len -= 2;
+	else 
+		if (pad == 1) 
+			result_len -= 1;
+
+	std::string result(result_len, '\0');
+	size_t byteNo;
+	for (byteNo = 0; byteNo + 3 <= data_len; byteNo += 3) 
+	{
+		unsigned char BYTE0 = data[byteNo];
+		unsigned char BYTE1 = data[byteNo + 1];
+		unsigned char BYTE2 = data[byteNo + 2];
+		result[rc++] = b64[BYTE0 >> 2];
+		result[rc++] = b64[((0x3 & BYTE0) << 4) + (BYTE1 >> 4)];
+		result[rc++] = b64[((0x0f & BYTE1) << 2) + (BYTE2 >> 6)];
+		result[rc++] = b64[0x3f & BYTE2];
+	}
+
+	if (pad == 2) 
+	{
+		result[rc++] = b64[data[byteNo] >> 2];
+		result[rc++] = b64[(0x3 & data[byteNo]) << 4];
+	} 
+	else if (pad == 1) 
+	{
+		result[rc++] = b64[data[byteNo] >> 2];
+		result[rc++] = b64[((0x3 & data[byteNo]) << 4) + (data[byteNo + 1] >> 4)];
+		result[rc++] = b64[(0x0f & data[byteNo + 1]) << 2];
+	}
+	return result;
+}
+
+std::string base64_url_encode
+(
+	const std::string &value
+)
+{
+	return base64url_encode((unsigned  char *) &value[0], value.size());
+}
 
 /**
   * @brief parse SCV record
@@ -37,48 +89,50 @@ static std::vector<std::string> readCSVRow
 	const std::string &row
 )
 {
-    CSVState state = CSVState::UnquotedField;
-    std::vector<std::string> fields {""};
+    CSVState state = UnquotedField;
+    std::vector<std::string> fields;
+	fields.push_back("");
     size_t i = 0; // index of the current field
-    for (char c : row) 
+    for (int i = 0; i < row.length(); i++) 
     {
+		char c = row.at(i);
 		switch (state) {
-		case CSVState::UnquotedField:
+		case UnquotedField:
 			switch (c) {
 			case ',': // end of field
 				fields.push_back(""); i++;
 				break;
 			case '"': 
-				state = CSVState::QuotedField;
+				state = QuotedField;
 				break;
 			default:  
 				fields[i].push_back(c);
 				break;
 			}
 			break;
-		case CSVState::QuotedField:
+		case QuotedField:
 			switch (c) {
 			case '"': 
-				state = CSVState::QuotedQuote;
+				state = QuotedQuote;
 				break;
 			default:
 				fields[i].push_back(c);
 				break;
 			}
 			break;
-		case CSVState::QuotedQuote:
+		case QuotedQuote:
 			switch (c) {
 			case ',': // , after closing quote
 				fields.push_back("");
 				i++;
-				state = CSVState::UnquotedField;
+				state = UnquotedField;
 				break;
 			case '"': // "" -> "
 				fields[i].push_back('"');
-				state = CSVState::QuotedField;
+				state = QuotedField;
 				break;
 			default:  // end of quote
-				state = CSVState::UnquotedField;
+				state = UnquotedField;
 				break;
 			}
 			break;
@@ -94,7 +148,7 @@ static std::vector<std::string> readCSVRow
 static void readCSV
 (
 	std::istream &in,
-	std::vector<std::vector<std::string>> &retval 
+	std::vector<std::vector<std::string> > &retval 
 )
 {
 	std::string row;
@@ -352,11 +406,11 @@ static int getJWT
     // header base64url
     // for header
     std::string header = jfw.write(jwt_header);
-    std::string base64url_header = cppcodec::base64_url::encode(header);
+    std::string base64url_header = base64_url_encode(header);
 
 	// claim set
 	std::string claim_set= jfw.write(jwt_claim_set);
-    std::string base64url_claim_set = cppcodec::base64_url::encode(claim_set);
+    std::string base64url_claim_set = base64_url_encode(claim_set);
 
 	retval = base64url_header + "." + base64url_claim_set;
 
@@ -368,7 +422,7 @@ static int getJWT
     	retval = jwt_signature;
     	return c;
     }
-    retval += "." + cppcodec::base64_url::encode(jwt_signature);
+    retval += "." + base64_url_encode(jwt_signature);
     return 0;
  }
 
@@ -478,12 +532,13 @@ int ValueRange::parseJSON(const std::string &json)
 	}
 	range = v["range"].asString();
 	major_dimension = v["majorDimension"].asString();
-	for (const Json::Value& row : v["values"])
+	
+	for (Json::Value::const_iterator row_it(v["values"].begin()); row_it != v["values"].end(); ++row_it)
     {
     	std::vector<std::string> r;
-    	for (const Json::Value& cell : row)
+		for (Json::Value::const_iterator it_cell(row_it->begin()); it_cell != row_it->end(); ++it_cell)
     	{
-    		std::string s = cell.asString();
+    		std::string s = it_cell->asString();
         	r.push_back(s);
         }
         values.push_back(r);
