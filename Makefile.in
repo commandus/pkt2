@@ -154,8 +154,8 @@ am_handler_google_sheets_OBJECTS =  \
 	handler_google_sheets-utilfile.$(OBJEXT) \
 	handler_google_sheets-utilstring.$(OBJEXT) \
 	handler_google_sheets-utilinet.$(OBJEXT) \
-	handler_google_sheets-pbjson.$(OBJEXT) \
 	handler_google_sheets-jsoncpp.$(OBJEXT) \
+	handler_google_sheets-pbjson.$(OBJEXT) \
 	duk/handler_google_sheets-duktape.$(OBJEXT) \
 	handler_google_sheets-javascript-context.$(OBJEXT) \
 	handler_google_sheets-google-sheets.$(OBJEXT) \
@@ -868,7 +868,7 @@ tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariab
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
 sslhelper.h iridium.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
-json/json.h  json/json-forwards.h google-sheets.h \
+google-sheets.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
 rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybuffer.h    rapidjson/pointer.h         rapidjson/reader.h        rapidjson/stringbuffer.h \
@@ -998,7 +998,7 @@ handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp jsoncpp.cpp duk/duktape.c javascript-context.cpp \
+	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
@@ -1993,20 +1993,6 @@ handler_google_sheets-utilinet.obj: utilinet.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
-handler_google_sheets-pbjson.o: pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pbjson.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-pbjson.Tpo -c -o handler_google_sheets-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pbjson.Tpo $(DEPDIR)/handler_google_sheets-pbjson.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handler_google_sheets-pbjson.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-
-handler_google_sheets-pbjson.obj: pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pbjson.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-pbjson.Tpo -c -o handler_google_sheets-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pbjson.Tpo $(DEPDIR)/handler_google_sheets-pbjson.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handler_google_sheets-pbjson.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-
 handler_google_sheets-jsoncpp.o: jsoncpp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-jsoncpp.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo -c -o handler_google_sheets-jsoncpp.o `test -f 'jsoncpp.cpp' || echo '$(srcdir)/'`jsoncpp.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo $(DEPDIR)/handler_google_sheets-jsoncpp.Po
@@ -2020,6 +2006,20 @@ handler_google_sheets-jsoncpp.obj: jsoncpp.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='jsoncpp.cpp' object='handler_google_sheets-jsoncpp.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-jsoncpp.obj `if test -f 'jsoncpp.cpp'; then $(CYGPATH_W) 'jsoncpp.cpp'; else $(CYGPATH_W) '$(srcdir)/jsoncpp.cpp'; fi`
+
+handler_google_sheets-pbjson.o: pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pbjson.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-pbjson.Tpo -c -o handler_google_sheets-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pbjson.Tpo $(DEPDIR)/handler_google_sheets-pbjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handler_google_sheets-pbjson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+handler_google_sheets-pbjson.obj: pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-pbjson.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-pbjson.Tpo -c -o handler_google_sheets-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-pbjson.Tpo $(DEPDIR)/handler_google_sheets-pbjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handler_google_sheets-pbjson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
 handler_google_sheets-javascript-context.o: javascript-context.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-javascript-context.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-javascript-context.Tpo -c -o handler_google_sheets-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp

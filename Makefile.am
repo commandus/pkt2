@@ -62,7 +62,7 @@ tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariab
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
 sslhelper.h iridium.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
-json/json.h  json/json-forwards.h google-sheets.h \
+google-sheets.h \
 rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
 rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
 rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybuffer.h    rapidjson/pointer.h         rapidjson/reader.h        rapidjson/stringbuffer.h \
@@ -192,7 +192,7 @@ handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp \
-	pbjson.cpp jsoncpp.cpp duk/duktape.c javascript-context.cpp \
+	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
