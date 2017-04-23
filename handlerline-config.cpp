@@ -46,7 +46,7 @@ int Config::parseCmd
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
-	struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "0- JSON, 1- JSON raw, 2-CSV, 3- tab, 4- SQL, 5- SQL(2) 6- options. Default 0");
+	struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "0- JSON, 1-CSV, 2- tab, 3- SQL, 4- SQL(2). Default 0");
 	struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");

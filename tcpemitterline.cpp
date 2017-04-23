@@ -1,5 +1,5 @@
 /**
- * Read message tyes and data as json line per line.
+ * Read message types and data as json line per line.
  * Line format is:
  *   Packet.MessageType:{"json-object-in-one-line"}
  */

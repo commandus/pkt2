@@ -43,8 +43,8 @@ CLEANFILES = $(gengrpcs)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpemitter tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
-	handlerpq handlerline handlerlmdb \
+bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
+	tcpemitter handlerpq handlerline handlerlmdb \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium 
 #	handler-google-sheets
@@ -90,8 +90,8 @@ tcpemitter_SOURCES = \
 	tcpemitter.cpp  tcpemitter-config.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	tcpemitterline.cpp daemonize.cpp pbjson.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp \
+	tcpemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp pbjson.cpp \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
@@ -183,8 +183,9 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pbjson.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)

@@ -27,9 +27,6 @@
 #include "errorcodes.h"
 #include "utilprotobuf.h"
 
-#include "json/json.h"
-#include "pbjson.hpp"
-
 #include "pkt2optionscache.h"
 
 #include "messagedecomposer.h"
@@ -54,24 +51,6 @@ int put_debug
 {
 	std::cout << message->DebugString() << std::endl;
 	return 0;
-}
-
-/**
- * @brief Print message to the stdout as JSON.
- * @param messageTypeNAddress 
- * @param message message to print
- * @return 0 - success
- */
-int put_json_raw
-(
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
-)
-{
-	std::string out;
-	pbjson::pb2json(message, out);
-	std::cout << out << std::endl;
-	return ERR_OK;
 }
 
 /**
@@ -134,8 +113,8 @@ int put_sql
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
 	vals.toStringInsert(&stmts);
-	for (std::string s : stmts)
-		std::cout << s;
+	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
+		std::cout << *it;
 	return ERR_OK;
 }
 
@@ -156,8 +135,8 @@ int put_sql2
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
 	vals.toStringInsert2(&stmts);
-	for (std::string s : stmts)
-		std::cout << s;
+	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
+		std::cout << *it;
 	return ERR_OK;
 }
 
@@ -199,52 +178,6 @@ int put_tab
 	std::cout << vals.toStringTab();
 	return ERR_OK;
 }
-
-/**
- * @brief Print packet's message options to the stdout
- * @param pd ProtobufDeclarations 
- * @param messageTypeNAddress
- * @return 0 - success
- */
-int put_pkt2_options
-(
-		ProtobufDeclarations *pd,
-		MessageTypeNAddress *messageTypeNAddress
-)
-{
-	// Each message
-	const google::protobuf::Descriptor* md = pd->getMessageDescriptor(messageTypeNAddress->message_type);
-	if (!md)
-	{
-		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << messageTypeNAddress->message_type;
-		return ERRCODE_MESSAGE_TYPE_NOT_FOUND;
-	}
-
-	const google::protobuf::MessageOptions options = md->options();
-	if (options.HasExtension(pkt2::packet))
-	{
-		std::string out;
-		pkt2::Packet packet =  options.GetExtension(pkt2::packet);
-		pbjson::pb2json(&packet, out);
-		std::cout << "{\"packet\":" << out << "," << std::endl;
-	}
-
-	std::cout << "\"variables\":[";
-	for (int f = 0; f < md->field_count(); f++)
-	{
-		const google::protobuf::FieldOptions foptions = md->field(f)->options();
-		std::string out;
-		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
-		pbjson::pb2json(&variable, out);
-		std::cout << out;
-		if (f < md->field_count() - 1)
-			std::cout << ",";
-	}
-	std::cout << "]}" << std::endl;
-
-	return ERR_OK;
-}
-
 
 /**
  * @brief Write line loop
@@ -320,9 +253,6 @@ int run
 			case MODE_JSON:
 				put_json(&options, &messageTypeNAddress, m);
 				break;
-			case MODE_JSON_RAW:
-				put_json_raw(&messageTypeNAddress, m);
-				break;
 			case MODE_CSV:
 				put_csv(&options, &messageTypeNAddress, m);
 				break;
@@ -334,9 +264,6 @@ int run
 				break;
 			case MODE_SQL2:
 				put_sql2(&options, &messageTypeNAddress, m);
-				break;
-			case MODE_OPTIONS:
-				put_pkt2_options(&pd, &messageTypeNAddress);
 				break;
 			default:
 				put_debug(&messageTypeNAddress, m);

@@ -675,15 +675,15 @@ http://askubuntu.com/questions/80013/how-to-pin-eclipse-to-the-unity-launcher
 
 ### Зависимости
 
--rwxr-xr-x 1 andrei andrei   122184 Apr 21 17:15 libargtable2.so.0
--rw-r--r-- 1 andrei andrei   180792 Apr 21 17:16 libgflags.so.2.2
--rwxr-xr-x 1 andrei andrei  1063128 Apr 21 17:13 libglog.so.0
--rwxr-xr-x 1 andrei andrei   322224 Apr 21 17:20 liblmdb.so
--rw-r--r-- 1 andrei andrei   388696 Apr 21 17:14 libnanomsg.so.5.0.0
--rw-r--r-- 1 andrei andrei   424136 Apr 21 17:25 libnetsnmpagent.so.30
--rw-r--r-- 1 andrei andrei   685016 Apr 21 17:27 libnetsnmp.so.30
--rw-r--r-- 1 andrei andrei  1944024 Apr 21 17:28 libperl.so.5.22
--rwxr-xr-x 1 andrei andrei 24331152 Apr 21 17:08 libprotobuf.so.11
--rwxr-xr-x 1 andrei andrei 31766464 Apr 21 17:22 libprotoc.so.11
--rwxr-xr-x 1 andrei andrei   386752 Apr 21 17:18 libunwind.so.8
+-rwxr-xr-x 1 andrei andrei    97332 Apr 23 19:40 libargtable2.so.0
+-rwxr-xr-x 1 andrei andrei   740633 Apr 23 19:41 libglog.so.0
+-rwxr-xr-x 1 andrei andrei   266483 Apr 23 19:42 liblmdb.so
+-rwxr-xr-x 1 andrei andrei   389454 Apr 23 19:43 libnanomsg.so.5.0.0
+-rwxr-xr-x 1 andrei andrei   306544 Apr 23 19:44 libnetsnmpagent.so.20
+-rwxr-xr-x 1 andrei andrei   153544 Apr 23 19:53 libnetsnmphelpers.so.20
+-rwxr-xr-x 1 andrei andrei  1687840 Apr 23 19:55 libnetsnmpmibs.so.20
+-rwxr-xr-x 1 andrei andrei   676416 Apr 23 19:45 libnetsnmp.so.20
+-rwxr-xr-x 1 andrei andrei  1485896 Apr 23 19:46 libperl.so
+-rwxr-xr-x 1 andrei andrei 22389022 Apr 23 19:37 libprotobuf.so.11
+-rwxr-xr-x 1 andrei andrei   394799 Apr 23 19:48 libunwind.so.8
 

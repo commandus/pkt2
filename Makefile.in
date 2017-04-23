@@ -90,13 +90,13 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = tcpemitter$(EXEEXT) tcpreceiver$(EXEEXT) \
-	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) \
-	tcptransmitter$(EXEEXT) handlerpq$(EXEEXT) \
-	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
-	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
-	example1message$(EXEEXT) example1message1$(EXEEXT) \
-	tcpemitter-example1$(EXEEXT) tcpemitter-iridium$(EXEEXT)
+bin_PROGRAMS = tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
+	pkt2gateway$(EXEEXT) tcptransmitter$(EXEEXT) \
+	tcpemitter$(EXEEXT) handlerpq$(EXEEXT) handlerline$(EXEEXT) \
+	handlerlmdb$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
+	message2gateway$(EXEEXT) example1message$(EXEEXT) \
+	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
+	tcpemitter-iridium$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -152,7 +152,7 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-error-printer.$(OBJEXT) \
 	handlerline-utilfile.$(OBJEXT) \
 	handlerline-utilstring.$(OBJEXT) \
-	handlerline-utilinet.$(OBJEXT) handlerline-pbjson.$(OBJEXT) \
+	handlerline-utilinet.$(OBJEXT) \
 	duk/handlerline-duktape.$(OBJEXT) \
 	handlerline-javascript-context.$(OBJEXT) \
 	handlerline-pkt2.pb.$(OBJEXT) \
@@ -160,7 +160,7 @@ am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-pkt2packetvariable.$(OBJEXT) \
 	handlerline-messagedecomposer.$(OBJEXT) \
 	handlerline-fieldnamevalueindexstrings.$(OBJEXT) \
-	$(am__objects_1)
+	handlerline-pbjson.$(OBJEXT) $(am__objects_1)
 handlerline_OBJECTS = $(am_handlerline_OBJECTS)
 handlerline_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
@@ -282,12 +282,13 @@ am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-error-printer.$(OBJEXT) \
 	tcpemitter-protobuf-declarations.$(OBJEXT) \
 	tcpemitter-tcpemitterline.$(OBJEXT) \
-	tcpemitter-daemonize.$(OBJEXT) tcpemitter-pbjson.$(OBJEXT) \
+	tcpemitter-daemonize.$(OBJEXT) \
 	tcpemitter-pkt2packetvariable.$(OBJEXT) \
 	tcpemitter-pkt2optionscache.$(OBJEXT) \
 	tcpemitter-pkt2.pb.$(OBJEXT) tcpemitter-utilfile.$(OBJEXT) \
 	duk/tcpemitter-duktape.$(OBJEXT) \
-	tcpemitter-javascript-context.$(OBJEXT) $(am__objects_1)
+	tcpemitter-javascript-context.$(OBJEXT) \
+	tcpemitter-pbjson.$(OBJEXT) $(am__objects_1)
 tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
 tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcpemitter_example1_OBJECTS =  \
@@ -869,8 +870,8 @@ tcpemitter_SOURCES = \
 	tcpemitter.cpp  tcpemitter-config.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	tcpemitterline.cpp daemonize.cpp pbjson.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp \
+	tcpemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp pbjson.cpp \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
@@ -963,8 +964,9 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pbjson.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
@@ -1931,20 +1933,6 @@ handlerline-utilinet.obj: utilinet.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
-handlerline-pbjson.o: pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pbjson.o -MD -MP -MF $(DEPDIR)/handlerline-pbjson.Tpo -c -o handlerline-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pbjson.Tpo $(DEPDIR)/handlerline-pbjson.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handlerline-pbjson.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-
-handlerline-pbjson.obj: pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pbjson.obj -MD -MP -MF $(DEPDIR)/handlerline-pbjson.Tpo -c -o handlerline-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pbjson.Tpo $(DEPDIR)/handlerline-pbjson.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handlerline-pbjson.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-
 handlerline-javascript-context.o: javascript-context.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-javascript-context.o -MD -MP -MF $(DEPDIR)/handlerline-javascript-context.Tpo -c -o handlerline-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-javascript-context.Tpo $(DEPDIR)/handlerline-javascript-context.Po
@@ -2028,6 +2016,20 @@ handlerline-fieldnamevalueindexstrings.obj: fieldnamevalueindexstrings.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='fieldnamevalueindexstrings.cpp' object='handlerline-fieldnamevalueindexstrings.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-fieldnamevalueindexstrings.obj `if test -f 'fieldnamevalueindexstrings.cpp'; then $(CYGPATH_W) 'fieldnamevalueindexstrings.cpp'; else $(CYGPATH_W) '$(srcdir)/fieldnamevalueindexstrings.cpp'; fi`
+
+handlerline-pbjson.o: pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pbjson.o -MD -MP -MF $(DEPDIR)/handlerline-pbjson.Tpo -c -o handlerline-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pbjson.Tpo $(DEPDIR)/handlerline-pbjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handlerline-pbjson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+handlerline-pbjson.obj: pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-pbjson.obj -MD -MP -MF $(DEPDIR)/handlerline-pbjson.Tpo -c -o handlerline-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-pbjson.Tpo $(DEPDIR)/handlerline-pbjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='handlerline-pbjson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
 handlerlmdb-handlerlmdb.o: handlerlmdb.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-handlerlmdb.o -MD -MP -MF $(DEPDIR)/handlerlmdb-handlerlmdb.Tpo -c -o handlerlmdb-handlerlmdb.o `test -f 'handlerlmdb.cpp' || echo '$(srcdir)/'`handlerlmdb.cpp
@@ -3541,20 +3543,6 @@ tcpemitter-daemonize.obj: daemonize.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
 
-tcpemitter-pbjson.o: pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pbjson.o -MD -MP -MF $(DEPDIR)/tcpemitter-pbjson.Tpo -c -o tcpemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pbjson.Tpo $(DEPDIR)/tcpemitter-pbjson.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='tcpemitter-pbjson.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-
-tcpemitter-pbjson.obj: pbjson.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pbjson.obj -MD -MP -MF $(DEPDIR)/tcpemitter-pbjson.Tpo -c -o tcpemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pbjson.Tpo $(DEPDIR)/tcpemitter-pbjson.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='tcpemitter-pbjson.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-
 tcpemitter-pkt2packetvariable.o: pkt2packetvariable.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2packetvariable.Tpo -c -o tcpemitter-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2packetvariable.Tpo $(DEPDIR)/tcpemitter-pkt2packetvariable.Po
@@ -3624,6 +3612,20 @@ tcpemitter-javascript-context.obj: javascript-context.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='javascript-context.cpp' object='tcpemitter-javascript-context.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+
+tcpemitter-pbjson.o: pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pbjson.o -MD -MP -MF $(DEPDIR)/tcpemitter-pbjson.Tpo -c -o tcpemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pbjson.Tpo $(DEPDIR)/tcpemitter-pbjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='tcpemitter-pbjson.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+tcpemitter-pbjson.obj: pbjson.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pbjson.obj -MD -MP -MF $(DEPDIR)/tcpemitter-pbjson.Tpo -c -o tcpemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pbjson.Tpo $(DEPDIR)/tcpemitter-pbjson.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='tcpemitter-pbjson.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
 tcpemitter_example1-tcpemitter-example1.o: tcpemitter-example1.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-tcpemitter-example1.o -MD -MP -MF $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo -c -o tcpemitter_example1-tcpemitter-example1.o `test -f 'tcpemitter-example1.cpp' || echo '$(srcdir)/'`tcpemitter-example1.cpp

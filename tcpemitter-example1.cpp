@@ -4,6 +4,8 @@
 #include <signal.h>
 #include <string.h>
 
+#include <errno.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>

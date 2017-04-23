@@ -4,9 +4,9 @@
  *  Created on: Jan 23, 2017
  *      Author: andrei
  */
-
+#if __cplusplus >= 201103L
 #include <thread>
-
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -56,10 +56,14 @@ int snmpInit
 	init_snmp(progname);
 	if (!agentOn)                 // If we're going to be a snmp master agent, initial the ports
 	  init_master_agent();        // open the port to listen on (defaults to udp:161)
-
+#if __cplusplus >= 201103L
 	*stopRequest = false;
 	std::thread t(snmpLoop, stopRequest);
 	t.detach();
+#else
+	// TODO call in the main loop
+	// agent_check_and_process(1); // 0 == don't block
+#endif	
 }
 
 void snmpDone
