@@ -45,10 +45,11 @@ public:
 	int retry_delay;		///< default 60 seconds
 
 	bool daemonize;
-	int  max_fd;			///< 0- use default max file descriptor count
-							//per process
-	bool stop_request;
+	int max_fd;			///< 0- use default max file descriptor count per process
+	int stop_request;		///< 0- process, 1- stop request, 2- reload request
 	std::string message_url;///< ipc:///tmp/packet.pkt2
+	
+	int socket_accept;
 };
 
 #endif // ifndef CONFIG_H

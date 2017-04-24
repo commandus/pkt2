@@ -1,6 +1,5 @@
 #include <string>
 #include <iostream>
-#include <utilstring.h>
 #include <signal.h>
 #include <string.h>
 
@@ -15,6 +14,8 @@
 #include <argtable2.h>
 
 #include "errorcodes.h"
+#include "utilstring.h"
+#include "helper_socket.h"
 
 #define PROGRAM_NAME		"tcpemitter-example1"
 #define PROGRAM_DESCRIPTION "Send packets see proto/example/example1.proto"
@@ -37,10 +38,10 @@ void signalHandler(int signal)
 
 void setSignalHandler(int signal)
 {
-        struct sigaction action;
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = &signalHandler;
-        sigaction(signal, &action, NULL);
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_handler = &signalHandler;
+	sigaction(signal, &action, NULL);
 }
 
 #ifdef _MSC_VER
@@ -52,89 +53,25 @@ void setSignalHandler(int signal)
 #endif
 
 typedef ALIGN struct EXAMPLE1PACKET {
-        uint8_t device;
-        uint32_t unixtime;
-        int16_t temperature;
-        uint8_t tag;			///< always 0xff
+	uint8_t device;
+	uint32_t unixtime;
+	int16_t temperature;
+	uint8_t tag;			///< always 0xff
 } PACKED EXAMPLE1PACKET;
-
-int get_addr_info
-(
-	const std::string &host,
-	int port,
-    struct addrinfo **res
-)
-{
-	// Before using hint you have to make sure that the data structure is empty
-    struct addrinfo hints;
-    memset(&hints, 0, sizeof(hints));
-	// Set the attribute for hint
-	hints.ai_family = AF_UNSPEC;        // We don't care V4 AF_INET or 6 AF_INET6
-	hints.ai_socktype = SOCK_STREAM;    // TCP Socket SOCK_DGRAM
-	hints.ai_flags = AI_PASSIVE;
-
-	// Fill the res data structure and make sure that the results make sense.
-	int status = getaddrinfo(host.c_str(), toString(port).c_str(), &hints, res);
-	if (status != 0)
-	{
-        std::cerr << ERR_GET_ADDRINFO << gai_strerror(status);
-        return ERRCODE_GET_ADDRINFO;
-	}
-    return ERR_OK;
-}
-
-int open_socket
-(
-	int &sock,
-	const std::string &host,
-	int port
-)
-{
-    sock = socket(AF_INET, SOCK_STREAM, 0);
-    if (sock < 0)
-    {
-    	std::cerr << ERR_SOCKET_CREATE << strerror(errno) << std::endl;
-    	return ERRCODE_SOCKET_CREATE;
-    }
-
-	int optval = 1;
-	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
-
-    struct addrinfo *res;
-    if (get_addr_info(host, port, &res))
-    {
-		std::cerr << ERR_GET_ADDRINFO;
-		return ERRCODE_GET_ADDRINFO;
-    }
-
-    if (connect(sock, (struct sockaddr *) res->ai_addr, res->ai_addrlen) < 0)
-    {
-    	std::cerr << ERR_SOCKET_CONNECT << host << ":" << port << ". " << strerror(errno) << std::endl;
-    	freeaddrinfo(res);
-    	shutdown(sock, SHUT_RDWR);
-    	close(sock);
-    	return ERRCODE_SOCKET_CONNECT;
-    }
-
-	// Free the res linked list after we are done with it
-	freeaddrinfo(res);
-
-    return ERR_OK;
-}
 
 int main(int argc, char **argv)
 {
-    // Signal handler
-    setSignalHandler(SIGINT);
+	// Signal handler
+	setSignalHandler(SIGINT);
 
-    struct arg_str *a_intface = arg_str0("i", "intface", "<host>", "Host name or address. Default 0.0.0.0");
-    struct arg_int *a_port = arg_int0("p", "port", "<port number>", "Destination port. Default 50052.");
-    struct arg_int *a_delay = arg_int0("d", "delay", "<seconds>", "Delay after send packet. Default 1 (0- no delay).");
-    struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
-    struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
-    struct arg_end *a_end = arg_end(20);
+	struct arg_str *a_intface = arg_str0("i", "intface", "<host>", "Host name or address. Default 0.0.0.0");
+	struct arg_int *a_port = arg_int0("p", "port", "<port number>", "Destination port. Default 50052.");
+	struct arg_int *a_delay = arg_int0("d", "delay", "<seconds>", "Delay after send packet. Default 1 (0- no delay).");
+	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
+	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
+	struct arg_end *a_end = arg_end(20);
 
-    void* argtable[] = {a_intface, a_port, a_delay, a_verbosity, a_help, a_end};
+	void* argtable[] = {a_intface, a_port, a_delay, a_verbosity, a_help, a_end};
 	// verify the argtable[] entries were allocated successfully
 	if (arg_nullcheck(argtable) != 0)
 	{

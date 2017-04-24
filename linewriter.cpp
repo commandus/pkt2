@@ -301,7 +301,11 @@ int stop
     	LOG(ERROR) << ERR_STOP;
         return ERRCODE_STOP;
     }
-    config->stop_request = true;
+    config->stop_request = 1;
     // wake up
+	while (config->stop_request != 2)
+	{
+		sleep(1);
+	}
     return ERR_OK;
 }

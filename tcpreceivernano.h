@@ -5,3 +5,4 @@
 
 int tcp_receiever_nano(Config *config);
 int stop(Config *config);
+int reload(Config *config);

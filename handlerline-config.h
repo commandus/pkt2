@@ -42,7 +42,7 @@ public:
 
 	bool daemonize;
 	int max_fd;				///< 0- use default max file descriptor count per process
-	bool stop_request;
+	int stop_request;
 	int verbosity;          ///< default 0
 };
 

@@ -14,6 +14,7 @@
 #include "tcpreceivernano.h"
 #include "errorcodes.h"
 #include "input-packet.h"
+#include "helper_socket.h"
 
 int get_addr_info
 (
@@ -39,10 +40,10 @@ int get_addr_info
     return ERR_OK;
 }
 
-int listen_port(
-    Config *config,
-    struct addrinfo *res
-    )
+int listen_port
+(
+	struct addrinfo *res
+)
 {
 	// Create Socket and check if error occured afterwards
 	int listner = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
@@ -84,6 +85,9 @@ int listen_port(
   */
 int tcp_receiever_nano(Config *config)
 {
+START:	
+	LOG(ERROR) << MSG_START;
+	config->stop_request = 0;
     struct addrinfo *addr_dst;
     if (get_addr_info(config, &addr_dst))
     {
@@ -94,12 +98,12 @@ int tcp_receiever_nano(Config *config)
     InputPacket packet('T', config->buffer_size);
     packet.set_socket_addr_dst(addr_dst);
 
-	int socket = listen_port(config, addr_dst);
+	config->socket_accept = listen_port(addr_dst);
 
 	// Free the res linked list after we are done with it	
 	freeaddrinfo(addr_dst);
 
-	if (socket == -1)
+	if (config->socket_accept == -1)
 	{
 		LOG(ERROR) << ERR_SOCKET_LISTEN;
 		return ERRCODE_SOCKET_LISTEN;
@@ -112,7 +116,7 @@ int tcp_receiever_nano(Config *config)
 	if (r < 0)
 	{
         LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->message_url << " " << errno << ": " << nn_strerror(errno);
-        close(socket);
+        close(config->socket_accept);
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
@@ -120,13 +124,13 @@ int tcp_receiever_nano(Config *config)
     if (eid < 0)
     {
         LOG(ERROR) << ERR_NN_BIND << config->message_url << " " << errno << ": " << nn_strerror(errno);
-        close(socket);	
+        close(config->socket_accept);	
 		return ERRCODE_NN_BIND;
     }
 
     if (packet.error() != 0)
     {
-        close(socket);	
+        close(config->socket_accept);	
         LOG(ERROR) << ERR_GET_ADDRINFO << config->message_url;
 		return ERRCODE_NN_CONNECT;
     }
@@ -143,7 +147,7 @@ int tcp_receiever_nano(Config *config)
 		socklen_t addr_size = sizeof(struct sockaddr_in);
 
 		// Accept a new connection and return back the socket descriptor
-		int new_conn_fd = accept(socket, (struct sockaddr *) src, &addr_size);
+		int new_conn_fd = accept(config->socket_accept, (struct sockaddr *) src, &addr_size);
 		if (new_conn_fd < 0)
 		{
             LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno);
@@ -208,18 +212,23 @@ int tcp_receiever_nano(Config *config)
             }
         }
 	}
-   	close(socket);	
+	if (config->socket_accept)
+		close(config->socket_accept);	
     r = nn_shutdown(nano_socket, eid);
+	
+	LOG(ERROR) << MSG_STOP;
     if (r < 0)
     {
     	LOG(ERROR) << ERR_NN_SHUTDOWN << " " << errno << ": " << nn_strerror(errno);
     	return ERRCODE_NN_SHUTDOWN;
     }
+    if (config->stop_request == 2)
+		goto START;
     return ERR_OK;
 }
 
 /**
- * @param config
+ * @param config configuration
  * @return 0- success
   *        1- config is not initialized yet
  */
@@ -227,8 +236,20 @@ int stop(Config *config)
 {
     if (!config)
         return ERRCODE_NO_CONFIG;
-    config->stop_request = true;
-    // wake up
+	config->stop_request = 1;
+	close(config->socket_accept);
+	config->socket_accept = 0;
     return ERR_OK;
 
+}
+
+int reload(Config *config)
+{
+    if (!config)
+        return ERRCODE_NO_CONFIG;
+	LOG(ERROR) << MSG_RELOAD_BEGIN;
+	config->stop_request = 2;
+	close(config->socket_accept);
+	config->socket_accept = 0;
+    return ERR_OK;
 }
