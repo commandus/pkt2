@@ -1,3 +1,6 @@
+#if __cplusplus < 201103L
+#define override
+#endif
 /// Json-cpp amalgated header (http://jsoncpp.sourceforge.net/).
 /// It is intended to be used with #include "json/json.h"
 

@@ -1,11 +1,12 @@
 ACLOCAL_AMFLAGS = -I m4
 
 nobase_dist_include_HEADERS =
- 
+
 bin_PROGRAMS = t1
 
 commonlibs = -L/usr/local/lib/ -lnanomsg
-commoncppflags = -std=c++11
+# -std=c++11
+commoncppflags = 
 #
 # tcpemitter
 #
