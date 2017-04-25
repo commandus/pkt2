@@ -190,16 +190,18 @@ int run
 		Config *config
 )
 {
+	START:
+	config->stop_request = 0;
 	format_number = config->format_number;
 
-	int nano_socket = nn_socket(AF_SP, NN_BUS);
-	// int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-	if (nano_socket < 0)
+	config->accept_socket = nn_socket(AF_SP, NN_BUS);
+	// int r = nn_setsockopt(config->accept_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (config->accept_socket < 0)
 	{
 		LOG(ERROR) << ERR_NN_SOCKET << config->message_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_SOCKET;
 	}
-	int eid = nn_connect(nano_socket, config->message_url.c_str());
+	int eid = nn_connect(config->accept_socket, config->message_url.c_str());
 	if (eid < 0)
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << " " << strerror(errno);
@@ -224,7 +226,7 @@ int run
 	while (!config->stop_request)
     {
 
-    	int bytes = nn_recv(nano_socket, buffer, config->buffer_size, 0);
+    	int bytes = nn_recv(config->accept_socket, buffer, config->buffer_size, 0);
     	if (bytes < 0)
     	{
     		LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
@@ -275,13 +277,16 @@ int run
 
     free(buffer);
 
-	int r = nn_shutdown(nano_socket, eid);
+	int r = nn_shutdown(config->accept_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url << " " << errno << " " << strerror(errno);
 		r = ERRCODE_NN_SHUTDOWN;
 
 	}
+	if (config->stop_request == 2)
+		goto START;
+
 	return r;
 }
 
@@ -293,19 +298,24 @@ int run
  */
 int stop
 (
-		Config *config
+	Config *config
 )
 {
-    if (!config)
-    {
-    	LOG(ERROR) << ERR_STOP;
-        return ERRCODE_STOP;
-    }
-    config->stop_request = 1;
-    // wake up
-	while (config->stop_request != 2)
-	{
-		sleep(1);
-	}
-    return ERR_OK;
+	if (!config)
+		return ERRCODE_NO_CONFIG;
+	config->stop_request = 1;
+	close(config->accept_socket);
+	config->accept_socket = 0;
+	return ERR_OK;
+}
+
+int reload(Config *config)
+{
+	if (!config)
+		return ERRCODE_NO_CONFIG;
+	LOG(ERROR) << MSG_RELOAD_BEGIN;
+	config->stop_request = 2;
+	close(config->accept_socket);
+	config->accept_socket = 0;
+	return ERR_OK;
 }

@@ -27,3 +27,5 @@ int stop
 (
 		Config *config
 );
+
+int reload(Config *config);

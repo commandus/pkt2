@@ -7,7 +7,7 @@
 
 #define DEF_DB_PATH              	"db"
 #define DEF_MODE                 	0
-#define DEF_BUFFER_SIZE				2048
+#define DEF_BUFFER_SIZE				4096
 #define DEF_FLAGS              		0
 #define DEF_QUEUE                	"ipc:///tmp/message.pkt2"
 #define DEF_PROTO_PATH				"proto"
@@ -43,7 +43,9 @@ Config::Config
     char* argv[]
 )
 {
-	stop_request = false;
+	stop_request = 0;
+	accept_socket = 0;
+	
 	lastError = parseCmd(argc, argv);
 
 	if (lastError != 0)
@@ -118,7 +120,7 @@ int Config::parseCmd
 	struct arg_str *a_sheet = arg_str1("t", "sheet", "<name>", "Sheet name");
 	struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
-	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 2048");
+	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096");
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);
 

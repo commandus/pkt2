@@ -46,28 +46,28 @@ void run()
 
 void signalHandler(int signal)
 {
-        switch(signal)
-        {
-        case SIGINT:
-                std::cerr << MSG_INTERRUPTED;
-                stopNWait();
-                done();
-                break;
-        case SIGHUP:
-                std::cerr << MSG_RELOAD_CONFIG_REQUEST;
-                reload(config);
-                break;
-        default:
-                std::cerr << MSG_SIGNAL << signal;
-        }
+	switch(signal)
+	{
+	case SIGINT:
+		std::cerr << MSG_INTERRUPTED;
+		stopNWait();
+		done();
+		break;
+	case SIGHUP:
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST;
+		reload(config);
+		break;
+	default:
+		std::cerr << MSG_SIGNAL << signal;
+	}
 }
 
 void setSignalHandler(int signal)
 {
-        struct sigaction action;
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = &signalHandler;
-        sigaction(signal, &action, NULL);
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_handler = &signalHandler;
+	sigaction(signal, &action, NULL);
 }
 
 int main

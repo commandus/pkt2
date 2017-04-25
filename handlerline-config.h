@@ -44,6 +44,8 @@ public:
 	int max_fd;				///< 0- use default max file descriptor count per process
 	int stop_request;
 	int verbosity;          ///< default 0
+	
+	int accept_socket;
 };
 
 

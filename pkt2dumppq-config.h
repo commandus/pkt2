@@ -6,8 +6,8 @@
 #include <stdint.h>
 #include <libpq-fe.h>
 
-#define PROGRAM_NAME             "handlerpq"
-#define PROGRAM_DESCRIPTION      "PostgreSQLreceiver"
+#define PROGRAM_NAME             "pkt2dumppq"
+#define PROGRAM_DESCRIPTION      "PostgreSQL packet dumper"
 
 /**
   * @brief  
@@ -30,6 +30,7 @@ private:
 	);
 public:
 	Config(int argc, char* argv[]);
+	bool create_table;
 	int error();
 
 	int retries;             ///< default 1
@@ -37,10 +38,6 @@ public:
 
 	uint32_t verbosity;
 
-	// Protobuf
-	std::string proto_path;
-	std::vector <std::string> allowed_messages;
-	
 	// PostgreSQL
 	std::string dbconn;
 	std::string dboptionsfile;
@@ -54,13 +51,11 @@ public:
 	int dbclientflags;
 
 	int buffer_size;
-	int mode;				///< default 4- SQL(2)
-	int format_number;		///< which format to use
 	bool daemonize;
 	int max_fd;				///< 0- use default max file descriptor count per process
 
 	int stop_request;
-	std::string message_url;
+	std::string packet_url;
 	int accept_socket;
 };
 

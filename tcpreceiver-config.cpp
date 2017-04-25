@@ -4,7 +4,7 @@
 #define DEF_PORT                 50052
 #define DEF_ADDRESS              "0.0.0.0"
 #define DEF_QUEUE                "ipc:///tmp/packet.pkt2"
-#define DEF_BUFFER_SIZE          256
+#define DEF_BUFFER_SIZE          4096
 
 Config::Config
 (
@@ -38,7 +38,7 @@ int Config::parseCmd
 	struct arg_int *a_port = arg_int0("l", "listen", "<port>", "TCP port to listen. Default 50052");
 
 	struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
-	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 256 bytes");
+	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");

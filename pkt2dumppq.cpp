@@ -1,9 +1,9 @@
 /**
- *   Read protobuf messages from nanomsg socket ipc:///tmp/output.pkt2 (-q)
- *   Print to Google Sheets
+ *   Read protobuf messages from nanomsg socket ipc:///tmp/packet.pkt2 (-q)
+ *   Print to stdout
  *
  *   Usage (default values):
- *   	handlerline -q ipc:///tmp/packet.pkt2 -m 0
+ *   	pkt2dumppq -q ipc:///tmp/packet.pkt2 
  *
  *   Options
  *   	-m 0- JSON
@@ -16,32 +16,29 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <iostream>
-#include <fstream>
 
 #include <glog/logging.h>
+#include <libpq-fe.h>
 
 #include "platform.h"
 #include "daemonize.h"
-#include "handler-google-sheets-config.h"
-#include "google-sheets-writer.h"
-
-#include "utilstring.h"
+#include "pkt2dumppq-config.h"
+#include "pqdumper.h"
 
 #include "errorcodes.h"
-#include "google-sheets.h"
 
 Config *config;
 
 void stopNWait()
 {
-	LOG(INFO) << MSG_STOP;
+    LOG(INFO) << MSG_STOP;
 	if (config)
 		stop(config);
 }
 
 void done()
 {
-	LOG(INFO) << MSG_DONE;
+    LOG(INFO) << MSG_DONE;
 }
 
 int reslt;
@@ -78,7 +75,7 @@ void signalHandler(int signal)
 		reload(config);
 		break;
 	default:
-		std::cerr << MSG_SIGNAL << signal;
+			std::cerr << MSG_SIGNAL << signal;
 	}
 }
 
@@ -95,7 +92,7 @@ void setSignalHandler(int signal)
  */
 int main
 (
-    int argc, 
+    int argc,
     char *argv[]
 )
 {
@@ -104,67 +101,27 @@ int main
 	setSignalHandler(SIGHUP);
     reslt = 0;
 
-	// In windows, this will init the winsock stuff
-	curl_global_init(CURL_GLOBAL_ALL);
-
 	config = new Config(argc, argv);
 	if (!config)
 		exit(3);
+
     if (config->error() != 0)
 	{
-		LOG(ERROR) << ERR_COMMAND;
+		std::cerr << ERR_COMMAND;
 		exit(config->error());
 	}
 
     INIT_LOGGING(PROGRAM_NAME)
 
-	if (config->verbosity >= 2)
+	// check database connection
+	PGconn *conn = dbconnect(config);
+	if (PQstatus(conn) != CONNECTION_OK)
 	{
-		LOG(INFO) << "speadsheet: " << config->sheet;
-		LOG(INFO) << "subject email: " << config->subject_email;
+		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
+		exit(ERRCODE_DATABASE_NO_CONNECTION);
 	}
+	PQfinish(conn);
 
-// #define TEST
-#ifdef TEST	
-    ValueRange cells;
-	if (!config->google_sheets->get("Sheet1!A1:A2", cells))
-	{
-		LOG(ERROR) << ERR_GS_RANGE;
-		exit(ERRCODE_GS_RANGE);
-	}
-	else
-		LOG(ERROR) << cells.toString();
-	/*
-	std::ifstream myfile("1.csv");
-	if (myfile.is_open())
-	{
-		ValueRange newcells("Class!K11:N15", myfile);
-		if (!config->google_sheets->put(newcells))
-		{
-			LOG(ERROR) << ERR_GS_RANGE;
-			exit(ERRCODE_GS_RANGE);
-		}
-		myfile.close();
-	}
-	*/
-	
-	std::ifstream myfile2("1.csv");
-	if (myfile2.is_open())
-	{
-		ValueRange newcells("Class!A1:D1", myfile2);
-		if (!config->google_sheets->append(newcells))
-		{
-			LOG(ERROR) << ERR_GS_RANGE;
-			exit(ERRCODE_GS_RANGE);
-		}
-		
-		myfile2.close();
-	}
-#endif
-
-	if (config->verbosity >= 2)
-		LOG(INFO) << "Token bearer: " << config->token;
-    
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
@@ -181,3 +138,4 @@ int main
 
 	return reslt;
 }
+

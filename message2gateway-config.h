@@ -40,8 +40,10 @@ public:
     int retry_delay;         ///<
 
     bool daemonize;
-    bool stop_request;
+    int stop_request;
     size_t buffer_size;
+	int accept_socket;
+
 };
 
 

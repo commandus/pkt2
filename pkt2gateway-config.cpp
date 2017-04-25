@@ -2,9 +2,9 @@
 #include <argtable2.h>
 
 #define DEF_PROTO_PATH				"proto"
-#define DEF_MODE					"raw"
-#define DEF_QUEUE_OUT               "ipc:///tmp/message.pkt2"
-#define DEF_BUFFER_SIZE				2048
+#define DEF_MODE                                "raw"
+#define DEF_QUEUE_OUT                           "ipc:///tmp/message.pkt2"
+#define DEF_BUFFER_SIZE                         4096
 
 Config::Config
 (

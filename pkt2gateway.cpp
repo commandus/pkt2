@@ -29,13 +29,18 @@
 
 bool cont;
 
+Config *config;
+
 void signalHandler(int signal)
 {
 	switch(signal)
 	{
 	case SIGINT:
 		cont = false;
-		std::cerr << "Interrupted" << std::endl;
+		std::cerr << MSG_INTERRUPTED;
+		break;
+	case SIGHUP:
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST << " nothing to do";
 		break;
 	default:
 		break;
@@ -86,11 +91,11 @@ std::string readPacket
 
 int main(int argc, char **argv)
 {
+	config = new Config(argc, argv);
     // Signal handler
     setSignalHandler(SIGINT);
+	setSignalHandler(SIGHUP);
 
-
-    Config *config = new Config(argc, argv);
 	if (!config)
 		exit(ERRCODE_PARSE_COMMAND);
     if (config->error() != 0)

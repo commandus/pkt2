@@ -160,7 +160,10 @@ void signalHandler(int signal)
 	{
 	case SIGINT:
 		cont = false;
-		std::cerr << "Interrupted" << std::endl;
+		std::cerr << MSG_INTERRUPTED;
+		break;
+	case SIGHUP:
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST << " nothing to do";
 		break;
 	default:
 		break;

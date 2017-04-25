@@ -134,8 +134,10 @@ int run_socket
 		Config *config
 )
 {
-	int nano_socket_in = nn_socket(AF_SP, NN_BUS);
-	int einid = nn_connect(nano_socket_in, config->message_in_url.c_str());
+	START:
+	config->stop_request = 0;
+	config->accept_socket = nn_socket(AF_SP, NN_BUS);
+	int einid = nn_connect(config->accept_socket, config->message_in_url.c_str());
 	if (einid < 0)
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->message_in_url << " " << errno << " " << strerror(errno);;
@@ -170,7 +172,7 @@ int run_socket
 
     while (!config->stop_request)
     {
-    	int bytes = nn_recv(nano_socket_in, buffer, config->buffer_size, 0);
+    	int bytes = nn_recv(config->accept_socket, buffer, config->buffer_size, 0);
     	if (bytes < 0)
     	{
     		LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
@@ -193,12 +195,15 @@ int run_socket
 
 	free(buffer);
 
-    int r = nn_shutdown(nano_socket_out, eoutid) | nn_shutdown(nano_socket_in, einid);
+    int r = nn_shutdown(nano_socket_out, eoutid) | nn_shutdown(config->accept_socket, einid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_in_url << " " << errno << " " << strerror(errno);
 		r = ERRCODE_NN_SHUTDOWN;
 	}
+	if (config->stop_request == 2)
+		goto START;
+
 	return r;
 }
 
@@ -227,9 +232,22 @@ int stop
 )
 {
     if (!config)
-        return ERRCODE_STOP;
-    config->stop_request = true;
+        return ERRCODE_NO_CONFIG;
+    config->stop_request = 1;
+	close(config->accept_socket);
+	config->accept_socket = 0;
     return ERR_OK;
     // wake up
 
+}
+
+int reload(Config *config)
+{
+	if (!config)
+		return ERRCODE_NO_CONFIG;
+	LOG(ERROR) << MSG_RELOAD_BEGIN;
+	config->stop_request = 2;
+	close(config->accept_socket);
+	config->accept_socket = 0;
+	return ERR_OK;
 }

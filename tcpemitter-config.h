@@ -40,10 +40,10 @@ public:
     std::string proto_path;	///< proto files directory path
 
     std::string intface;    ///< default 0.0.0.0
-    int port;          ///< default 50052
+    int port;				///< default 50052
 
     bool daemonize;
-    bool stop_request;
+    int stop_request;		///< 0- process, 1- stop request, 2- reload request
 };
 
 

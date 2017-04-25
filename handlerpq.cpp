@@ -66,10 +66,14 @@ void signalHandler(int signal)
 	switch(signal)
 	{
 	case SIGINT:
-			std::cerr << MSG_INTERRUPTED;
-			stopNWait();
-			done();
-			break;
+		std::cerr << MSG_INTERRUPTED;
+		stopNWait();
+		done();
+		break;
+	case SIGHUP:
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST;
+		reload(config);
+		break;
 	default:
 			std::cerr << MSG_SIGNAL << signal;
 	}
@@ -94,6 +98,7 @@ int main
 {
     // Signal handler
     setSignalHandler(SIGINT);
+	setSignalHandler(SIGHUP);
     reslt = 0;
 
 	config = new Config(argc, argv);

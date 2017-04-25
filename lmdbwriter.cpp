@@ -167,15 +167,17 @@ int run
 	Config *config
 )
 {
-	int nano_socket = nn_socket(AF_SP, NN_SUB);
-	int r = nn_setsockopt(nano_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	START:
+	config->stop_request = 0;
+	config->accept_socket = nn_socket(AF_SP, NN_SUB);
+	int r = nn_setsockopt(config->accept_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (r < 0)
 	{
 		LOG(ERROR) << ERR_NN_SUBSCRIBE << config->message_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_SUBSCRIBE;
 	}
 
-	int eid = nn_connect(nano_socket, config->message_url.c_str());
+	int eid = nn_connect(config->accept_socket, config->message_url.c_str());
 
 	if (eid < 0)
 	{
@@ -214,12 +216,11 @@ int run
 
     while (!config->stop_request)
     {
-
     	int bytes;
     	if (config->buffer_size > 0)
-    		bytes = nn_recv(nano_socket, buffer, config->buffer_size, 0);
+    		bytes = nn_recv(config->accept_socket, buffer, config->buffer_size, 0);
     	else
-    		bytes = nn_recv(nano_socket, &buffer, NN_MSG, 0);
+    		bytes = nn_recv(config->accept_socket, &buffer, NN_MSG, 0);
 
     	if (bytes < 0)
     	{
@@ -256,7 +257,7 @@ int run
 		r = ERRCODE_LMDB_CLOSE;
 	}
 
-	r = nn_shutdown(nano_socket, eid);
+	r = nn_shutdown(config->accept_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url;
@@ -278,11 +279,20 @@ int stop
 )
 {
     if (!config)
-    {
-    	LOG(ERROR) << ERR_STOP;
-        return ERRCODE_STOP;
-    }
-    config->stop_request = true;
-    // wake up
+        return ERRCODE_NO_CONFIG;
+    config->stop_request = 1;
+	close(config->accept_socket);
+	config->accept_socket = 0;
     return ERR_OK;
+}
+
+int reload(Config *config)
+{
+	if (!config)
+		return ERRCODE_NO_CONFIG;
+	LOG(ERROR) << MSG_RELOAD_BEGIN;
+	config->stop_request = 2;
+	close(config->accept_socket);
+	config->accept_socket = 0;
+	return ERR_OK;
 }

@@ -58,6 +58,8 @@ size_t parseLine
  */
 int tcp_emitter_line(Config *config)
 {
+START:
+	config->stop_request = 0;
     int sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0)
     {
@@ -126,11 +128,15 @@ int tcp_emitter_line(Config *config)
     }
 
    	close(sock);
+	
+	if (config->stop_request == 2)
+		goto START;
     return ERR_OK;
 }
 
 /**
- * @param config
+ * @brief stop
+ * @param config Configuration
  * @return 0- success
   *        1- config is not initialized yet
  */
@@ -138,8 +144,15 @@ int stop(Config *config)
 {
     if (!config)
         return ERRCODE_NO_CONFIG;
-    config->stop_request = true;
-    // wake up
+	config->stop_request = 1;
     return ERR_OK;
+}
 
+int reload(Config *config)
+{
+	if (!config)
+		return ERRCODE_NO_CONFIG;
+	LOG(ERROR) << MSG_RELOAD_BEGIN;
+	config->stop_request = 2;
+	return ERR_OK;
 }

@@ -58,7 +58,9 @@ public:
 
 	bool daemonize;
 	int max_fd;						///< 0- use default max file descriptor count per process
-	bool stop_request;
+	int stop_request;				///< 0- process, 1- stop request, 2- reload request
+	
+	int socket_accept;
 };
 
 

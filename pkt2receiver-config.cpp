@@ -17,7 +17,8 @@ Config::Config
 	char* argv[]
 )
 {
-	stop_request = false;
+	stop_request = 0;
+	socket_accept = 0;
 	lastError = parseCmd(argc, argv);
 }
 

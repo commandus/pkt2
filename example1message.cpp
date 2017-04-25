@@ -8,6 +8,7 @@
 #include <google/protobuf/text_format.h>
 #include "utilprotobuf.h"
 #include "example/example1.pb.h"
+#include "errorcodes.h"
 
 #define MAX_COUNT	1000000
 
@@ -18,11 +19,14 @@ void signalHandler(int signal)
 	switch(signal)
 	{
 	case SIGINT:
+		std::cerr << MSG_INTERRUPTED;
 		cont = false;
-		std::cerr << "Interrupted" << std::endl;
+		break;
+	case SIGHUP:
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST << " nothing to do";
 		break;
 	default:
-		break;
+		std::cerr << MSG_SIGNAL << signal;
 	}
 }
 
@@ -38,7 +42,7 @@ int main(int args, char **argv)
 {
     // Signal handler
     setSignalHandler(SIGINT);
-
+	setSignalHandler(SIGHUP);
 	example1::TemperaturePkt m;
 	std::ostream *ostrm = &std::cout;
 

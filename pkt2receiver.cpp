@@ -17,8 +17,7 @@ Config *config;
 void stopNWait()
 {
     LOG(INFO) << MSG_STOP;
-	if (config)
-		stop(config);
+	stop(config);
 }
 
 void done()
@@ -48,16 +47,20 @@ void run()
 
 void signalHandler(int signal)
 {
-        switch(signal)
-        {
-        case SIGINT:
-        		std::cerr << MSG_INTERRUPTED;
-                stopNWait();
-                done();
-                break;
-        default:
-        		std::cerr << MSG_SIGNAL << signal;
-        }
+	switch(signal)
+	{
+	case SIGINT:
+		std::cerr << MSG_INTERRUPTED;
+		stopNWait();
+		done();
+		break;
+	case SIGHUP:
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST;
+		reload(config);
+		break;
+	default:
+		std::cerr << MSG_SIGNAL << signal;
+	}
 }
 
 void setSignalHandler(int signal)
@@ -76,6 +79,7 @@ int main
 {
     // Signal handler
     setSignalHandler(SIGINT);
+	setSignalHandler(SIGHUP);
     reslt = 0;
 
 	config = new Config(argc, argv);

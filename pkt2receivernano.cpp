@@ -34,16 +34,20 @@ using namespace google::protobuf::io;
   */
 int pkt2_receiever_nano(Config *config)
 {
+	START:
+	config->stop_request = 0;
+
 	// IN socket
-    int nn_sock_in = nn_socket(AF_SP, NN_BUS); // was NN_SUB
-    // int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-	if (nn_sock_in < 0)
+	// config->socket_accept
+    config->socket_accept = nn_socket(AF_SP, NN_BUS); // was NN_SUB
+    // int r = nn_setsockopt(config->socket_accept, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (config->socket_accept < 0)
 	{
 			LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << " " << strerror(errno);
 			return ERRCODE_NN_SOCKET;
 	}
 
-	int eid = nn_connect(nn_sock_in, config->in_url.c_str());
+	int eid = nn_connect(config->socket_accept, config->in_url.c_str());
     if (eid < 0)
     {
         LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << ": " << nn_strerror(errno);;
@@ -52,7 +56,7 @@ int pkt2_receiever_nano(Config *config)
 
 	// OUT socket
     int nn_sock_out = nn_socket(AF_SP, NN_BUS); // was NN_SUB
-    // int r = nn_setsockopt(nn_sock_in, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+    // int r = nn_setsockopt(config->socket_accept, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (nn_sock_out < 0)
 	{
 			LOG(ERROR) << ERR_NN_SOCKET << config->out_url << " " << errno << " " << strerror(errno);
@@ -73,12 +77,12 @@ int pkt2_receiever_nano(Config *config)
     while (!config->stop_request)
     {
         char *buf = NULL;
-        int bytes = nn_recv(nn_sock_in, &buf, NN_MSG, 0);
+        int bytes = nn_recv(config->socket_accept, &buf, NN_MSG, 0);
 
 		int payload_size = InputPacket::getPayloadSize(bytes);
         if (payload_size < 0)
         {
-        	LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
+        	LOG(ERROR) << ERR_NN_RECV << " too small " << payload_size;
             continue;
         }
         if (config->allowed_packet_sizes.size())
@@ -146,7 +150,10 @@ int pkt2_receiever_nano(Config *config)
 	}
 
     int r = nn_shutdown(nn_sock_out, eoid);
-    r = r | nn_shutdown(nn_sock_in, eid);
+    r = r | nn_shutdown(config->socket_accept, eid);
+
+	if (config->stop_request == 2)
+		goto START;
 
     if (r)
     {
@@ -165,8 +172,20 @@ int stop(Config *config)
 {
     if (!config)
         return ERRCODE_STOP;
-    config->stop_request = true;
+	config->stop_request = 1;
+	close(config->socket_accept);
+	config->socket_accept = 0;
     return ERR_OK;
-    // wake up
 
+}
+
+int reload(Config *config)
+{
+	if (!config)
+		return ERRCODE_NO_CONFIG;
+	LOG(ERROR) << MSG_RELOAD_BEGIN;
+	config->stop_request = 2;
+	close(config->socket_accept);
+	config->socket_accept = 0;
+	return ERR_OK;
 }

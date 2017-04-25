@@ -47,7 +47,7 @@ bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	tcpemitter handlerpq handlerline handlerlmdb \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium \
-	handler-google-sheets
+	handler-google-sheets pkt2dumppq
 
 #
 # Headers
@@ -56,7 +56,8 @@ nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  packet2message.h \
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-declarations.h \
-tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h message2gateway-config.h \
+tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
+message2gateway-config.h helper_socket.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
@@ -71,7 +72,8 @@ rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/interna
 rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
 rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
 duk/duk_config.h  duk/duktape.h  javascript-context.h \
-handler-google-sheets-config.h google-sheets-writer.h
+handler-google-sheets-config.h google-sheets-writer.h \
+pqdumper.h pkt2dumppq-config.h
 
 common_src =
 
@@ -266,6 +268,20 @@ tcpemitter_iridium_SOURCES = \
 
 tcpemitter_iridium_LDADD = 
 tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+
+#
+# pkt2dumppq
+#
+pkt2dumppq_SOURCES = \
+	pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp daemonize.cpp input-packet.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
+	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
+	$(common_src)
+
+pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
+pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # Configs, readme, CMake etc.
