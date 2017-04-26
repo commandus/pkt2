@@ -92,12 +92,12 @@ build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
 bin_PROGRAMS = tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
 	pkt2gateway$(EXEEXT) tcptransmitter$(EXEEXT) \
-	tcpemitter$(EXEEXT) handlerpq$(EXEEXT) handlerline$(EXEEXT) \
-	handlerlmdb$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
-	message2gateway$(EXEEXT) example1message$(EXEEXT) \
-	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
-	tcpemitter-iridium$(EXEEXT) handler-google-sheets$(EXEEXT) \
-	pkt2dumppq$(EXEEXT)
+	tcpemitter$(EXEEXT) messageemitter$(EXEEXT) \
+	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
+	example1message$(EXEEXT) example1message1$(EXEEXT) \
+	tcpemitter-example1$(EXEEXT) tcpemitter-iridium$(EXEEXT) \
+	handlerpq$(EXEEXT) handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
+	handler-google-sheets$(EXEEXT) pkt2dumppq$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -247,6 +247,28 @@ am_message2gateway_OBJECTS =  \
 	message2gateway-javascript-context.$(OBJEXT) $(am__objects_1)
 message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_messageemitter_OBJECTS = messageemitter-messageemitter.$(OBJEXT) \
+	messageemitter-messageemitter-config.$(OBJEXT) \
+	messageemitter-utilpriority.$(OBJEXT) \
+	messageemitter-utilstring.$(OBJEXT) \
+	messageemitter-utilinet.$(OBJEXT) \
+	messageemitter-NanoMessage.$(OBJEXT) \
+	messageemitter-messagedecomposer.$(OBJEXT) \
+	messageemitter-utilprotobuf.$(OBJEXT) \
+	messageemitter-error-printer.$(OBJEXT) \
+	messageemitter-protobuf-declarations.$(OBJEXT) \
+	messageemitter-messageemitterline.$(OBJEXT) \
+	messageemitter-daemonize.$(OBJEXT) \
+	messageemitter-pkt2packetvariable.$(OBJEXT) \
+	messageemitter-pkt2optionscache.$(OBJEXT) \
+	messageemitter-pkt2.pb.$(OBJEXT) \
+	messageemitter-utilfile.$(OBJEXT) \
+	duk/messageemitter-duktape.$(OBJEXT) \
+	messageemitter-javascript-context.$(OBJEXT) \
+	messageemitter-pbjson.$(OBJEXT) $(am__objects_1)
+messageemitter_OBJECTS = $(am_messageemitter_OBJECTS)
+messageemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_pkt2dumppq_OBJECTS = pkt2dumppq-pkt2dumppq.$(OBJEXT) \
 	pkt2dumppq-pqdumper.$(OBJEXT) \
 	pkt2dumppq-pkt2dumppq-config.$(OBJEXT) \
@@ -320,21 +342,9 @@ protoc_gen_pkt2_OBJECTS = $(am_protoc_gen_pkt2_OBJECTS)
 protoc_gen_pkt2_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-tcpemitter-config.$(OBJEXT) \
-	tcpemitter-utilpriority.$(OBJEXT) \
-	tcpemitter-utilstring.$(OBJEXT) tcpemitter-utilinet.$(OBJEXT) \
-	tcpemitter-NanoMessage.$(OBJEXT) \
-	tcpemitter-messagedecomposer.$(OBJEXT) \
-	tcpemitter-utilprotobuf.$(OBJEXT) \
-	tcpemitter-error-printer.$(OBJEXT) \
-	tcpemitter-protobuf-declarations.$(OBJEXT) \
 	tcpemitter-tcpemitterline.$(OBJEXT) \
-	tcpemitter-daemonize.$(OBJEXT) \
-	tcpemitter-pkt2packetvariable.$(OBJEXT) \
-	tcpemitter-pkt2optionscache.$(OBJEXT) \
-	tcpemitter-pkt2.pb.$(OBJEXT) tcpemitter-utilfile.$(OBJEXT) \
-	duk/tcpemitter-duktape.$(OBJEXT) \
-	tcpemitter-javascript-context.$(OBJEXT) \
-	tcpemitter-pbjson.$(OBJEXT) $(am__objects_1)
+	tcpemitter-utilstring.$(OBJEXT) tcpemitter-daemonize.$(OBJEXT) \
+	$(am__objects_1)
 tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
 tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcpemitter_example1_OBJECTS =  \
@@ -427,20 +437,21 @@ am__v_CXXLD_1 =
 SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
-	$(message2gateway_SOURCES) $(pkt2dumppq_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
-	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
+	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
-	$(message2gateway_SOURCES) $(pkt2dumppq_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
+	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -888,6 +899,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 message2gateway-config.h helper_socket.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
+messageemitter-config.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
 sslhelper.h iridium.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
@@ -910,15 +922,26 @@ commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 # tcpemitter
 #
 tcpemitter_SOURCES = \
-	tcpemitter.cpp  tcpemitter-config.cpp  \
+	tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp \
+	utilstring.cpp daemonize.cpp \
+	$(common_src)
+
+tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
+tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# messageemitter
+#
+messageemitter_SOURCES = \
+	messageemitter.cpp messageemitter-config.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	tcpemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	messageemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
 	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp pbjson.cpp \
 	$(common_src)
 
-tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
-tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+messageemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
+messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # tcpreceiver
@@ -1279,6 +1302,12 @@ duk/message2gateway-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 message2gateway$(EXEEXT): $(message2gateway_OBJECTS) $(message2gateway_DEPENDENCIES) $(EXTRA_message2gateway_DEPENDENCIES) 
 	@rm -f message2gateway$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(message2gateway_OBJECTS) $(message2gateway_LDADD) $(LIBS)
+duk/messageemitter-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
+
+messageemitter$(EXEEXT): $(messageemitter_OBJECTS) $(messageemitter_DEPENDENCIES) $(EXTRA_messageemitter_DEPENDENCIES) 
+	@rm -f messageemitter$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(messageemitter_OBJECTS) $(messageemitter_LDADD) $(LIBS)
 duk/pkt2dumppq-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 	duk/$(DEPDIR)/$(am__dirstamp)
 
@@ -1301,8 +1330,6 @@ pkt2receiver$(EXEEXT): $(pkt2receiver_OBJECTS) $(pkt2receiver_DEPENDENCIES) $(EX
 protoc-gen-pkt2$(EXEEXT): $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_DEPENDENCIES) $(EXTRA_protoc_gen_pkt2_DEPENDENCIES) 
 	@rm -f protoc-gen-pkt2$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_LDADD) $(LIBS)
-duk/tcpemitter-duktape.$(OBJEXT): duk/$(am__dirstamp) \
-	duk/$(DEPDIR)/$(am__dirstamp)
 
 tcpemitter$(EXEEXT): $(tcpemitter_OBJECTS) $(tcpemitter_DEPENDENCIES) $(EXTRA_tcpemitter_DEPENDENCIES) 
 	@rm -f tcpemitter$(EXEEXT)
@@ -1433,6 +1460,24 @@ include ./$(DEPDIR)/message2gateway-utilfile.Po
 include ./$(DEPDIR)/message2gateway-utilinet.Po
 include ./$(DEPDIR)/message2gateway-utilprotobuf.Po
 include ./$(DEPDIR)/message2gateway-utilstring.Po
+include ./$(DEPDIR)/messageemitter-NanoMessage.Po
+include ./$(DEPDIR)/messageemitter-daemonize.Po
+include ./$(DEPDIR)/messageemitter-error-printer.Po
+include ./$(DEPDIR)/messageemitter-javascript-context.Po
+include ./$(DEPDIR)/messageemitter-messagedecomposer.Po
+include ./$(DEPDIR)/messageemitter-messageemitter-config.Po
+include ./$(DEPDIR)/messageemitter-messageemitter.Po
+include ./$(DEPDIR)/messageemitter-messageemitterline.Po
+include ./$(DEPDIR)/messageemitter-pbjson.Po
+include ./$(DEPDIR)/messageemitter-pkt2.pb.Po
+include ./$(DEPDIR)/messageemitter-pkt2optionscache.Po
+include ./$(DEPDIR)/messageemitter-pkt2packetvariable.Po
+include ./$(DEPDIR)/messageemitter-protobuf-declarations.Po
+include ./$(DEPDIR)/messageemitter-utilfile.Po
+include ./$(DEPDIR)/messageemitter-utilinet.Po
+include ./$(DEPDIR)/messageemitter-utilpriority.Po
+include ./$(DEPDIR)/messageemitter-utilprotobuf.Po
+include ./$(DEPDIR)/messageemitter-utilstring.Po
 include ./$(DEPDIR)/pkt2dumppq-NanoMessage.Po
 include ./$(DEPDIR)/pkt2dumppq-daemonize.Po
 include ./$(DEPDIR)/pkt2dumppq-error-printer.Po
@@ -1496,23 +1541,10 @@ include ./$(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilinet.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilstring.Po
-include ./$(DEPDIR)/tcpemitter-NanoMessage.Po
 include ./$(DEPDIR)/tcpemitter-daemonize.Po
-include ./$(DEPDIR)/tcpemitter-error-printer.Po
-include ./$(DEPDIR)/tcpemitter-javascript-context.Po
-include ./$(DEPDIR)/tcpemitter-messagedecomposer.Po
-include ./$(DEPDIR)/tcpemitter-pbjson.Po
-include ./$(DEPDIR)/tcpemitter-pkt2.pb.Po
-include ./$(DEPDIR)/tcpemitter-pkt2optionscache.Po
-include ./$(DEPDIR)/tcpemitter-pkt2packetvariable.Po
-include ./$(DEPDIR)/tcpemitter-protobuf-declarations.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter-config.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitterline.Po
-include ./$(DEPDIR)/tcpemitter-utilfile.Po
-include ./$(DEPDIR)/tcpemitter-utilinet.Po
-include ./$(DEPDIR)/tcpemitter-utilpriority.Po
-include ./$(DEPDIR)/tcpemitter-utilprotobuf.Po
 include ./$(DEPDIR)/tcpemitter-utilstring.Po
 include ./$(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
 include ./$(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Po
@@ -1540,10 +1572,10 @@ include duk/$(DEPDIR)/handlerline-duktape.Po
 include duk/$(DEPDIR)/handlerlmdb-duktape.Po
 include duk/$(DEPDIR)/handlerpq-duktape.Po
 include duk/$(DEPDIR)/message2gateway-duktape.Po
+include duk/$(DEPDIR)/messageemitter-duktape.Po
 include duk/$(DEPDIR)/pkt2dumppq-duktape.Po
 include duk/$(DEPDIR)/pkt2gateway-duktape.Po
 include duk/$(DEPDIR)/pkt2receiver-duktape.Po
-include duk/$(DEPDIR)/tcpemitter-duktape.Po
 include example/$(DEPDIR)/example1message-example1.pb.Po
 include example/$(DEPDIR)/example1message1-example1.pb.Po
 
@@ -1641,6 +1673,20 @@ duk/message2gateway-duktape.obj: duk/duktape.c
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/message2gateway-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
+duk/messageemitter-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/messageemitter-duktape.o -MD -MP -MF duk/$(DEPDIR)/messageemitter-duktape.Tpo -c -o duk/messageemitter-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/messageemitter-duktape.Tpo duk/$(DEPDIR)/messageemitter-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/messageemitter-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/messageemitter-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/messageemitter-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/messageemitter-duktape.obj -MD -MP -MF duk/$(DEPDIR)/messageemitter-duktape.Tpo -c -o duk/messageemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/messageemitter-duktape.Tpo duk/$(DEPDIR)/messageemitter-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/messageemitter-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/messageemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+
 duk/pkt2dumppq-duktape.o: duk/duktape.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2dumppq-duktape.o -MD -MP -MF duk/$(DEPDIR)/pkt2dumppq-duktape.Tpo -c -o duk/pkt2dumppq-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
 	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/pkt2dumppq-duktape.Tpo duk/$(DEPDIR)/pkt2dumppq-duktape.Po
@@ -1682,20 +1728,6 @@ duk/pkt2receiver-duktape.obj: duk/duktape.c
 #	$(AM_V_CC)source='duk/duktape.c' object='duk/pkt2receiver-duktape.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/pkt2receiver-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
-
-duk/tcpemitter-duktape.o: duk/duktape.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/tcpemitter-duktape.o -MD -MP -MF duk/$(DEPDIR)/tcpemitter-duktape.Tpo -c -o duk/tcpemitter-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
-	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/tcpemitter-duktape.Tpo duk/$(DEPDIR)/tcpemitter-duktape.Po
-#	$(AM_V_CC)source='duk/duktape.c' object='duk/tcpemitter-duktape.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/tcpemitter-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
-
-duk/tcpemitter-duktape.obj: duk/duktape.c
-	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/tcpemitter-duktape.obj -MD -MP -MF duk/$(DEPDIR)/tcpemitter-duktape.Tpo -c -o duk/tcpemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
-	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/tcpemitter-duktape.Tpo duk/$(DEPDIR)/tcpemitter-duktape.Po
-#	$(AM_V_CC)source='duk/duktape.c' object='duk/tcpemitter-duktape.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
-#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/tcpemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
 tcpreceiver-snmpagentpkt2.o: snmpagentpkt2.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT tcpreceiver-snmpagentpkt2.o -MD -MP -MF $(DEPDIR)/tcpreceiver-snmpagentpkt2.Tpo -c -o tcpreceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
@@ -3191,6 +3223,258 @@ message2gateway-javascript-context.obj: javascript-context.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
 
+messageemitter-messageemitter.o: messageemitter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messageemitter.o -MD -MP -MF $(DEPDIR)/messageemitter-messageemitter.Tpo -c -o messageemitter-messageemitter.o `test -f 'messageemitter.cpp' || echo '$(srcdir)/'`messageemitter.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messageemitter.Tpo $(DEPDIR)/messageemitter-messageemitter.Po
+#	$(AM_V_CXX)source='messageemitter.cpp' object='messageemitter-messageemitter.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitter.o `test -f 'messageemitter.cpp' || echo '$(srcdir)/'`messageemitter.cpp
+
+messageemitter-messageemitter.obj: messageemitter.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messageemitter.obj -MD -MP -MF $(DEPDIR)/messageemitter-messageemitter.Tpo -c -o messageemitter-messageemitter.obj `if test -f 'messageemitter.cpp'; then $(CYGPATH_W) 'messageemitter.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitter.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messageemitter.Tpo $(DEPDIR)/messageemitter-messageemitter.Po
+#	$(AM_V_CXX)source='messageemitter.cpp' object='messageemitter-messageemitter.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitter.obj `if test -f 'messageemitter.cpp'; then $(CYGPATH_W) 'messageemitter.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitter.cpp'; fi`
+
+messageemitter-messageemitter-config.o: messageemitter-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messageemitter-config.o -MD -MP -MF $(DEPDIR)/messageemitter-messageemitter-config.Tpo -c -o messageemitter-messageemitter-config.o `test -f 'messageemitter-config.cpp' || echo '$(srcdir)/'`messageemitter-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messageemitter-config.Tpo $(DEPDIR)/messageemitter-messageemitter-config.Po
+#	$(AM_V_CXX)source='messageemitter-config.cpp' object='messageemitter-messageemitter-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitter-config.o `test -f 'messageemitter-config.cpp' || echo '$(srcdir)/'`messageemitter-config.cpp
+
+messageemitter-messageemitter-config.obj: messageemitter-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messageemitter-config.obj -MD -MP -MF $(DEPDIR)/messageemitter-messageemitter-config.Tpo -c -o messageemitter-messageemitter-config.obj `if test -f 'messageemitter-config.cpp'; then $(CYGPATH_W) 'messageemitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitter-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messageemitter-config.Tpo $(DEPDIR)/messageemitter-messageemitter-config.Po
+#	$(AM_V_CXX)source='messageemitter-config.cpp' object='messageemitter-messageemitter-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitter-config.obj `if test -f 'messageemitter-config.cpp'; then $(CYGPATH_W) 'messageemitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitter-config.cpp'; fi`
+
+messageemitter-utilpriority.o: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilpriority.o -MD -MP -MF $(DEPDIR)/messageemitter-utilpriority.Tpo -c -o messageemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilpriority.Tpo $(DEPDIR)/messageemitter-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='messageemitter-utilpriority.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+messageemitter-utilpriority.obj: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilpriority.obj -MD -MP -MF $(DEPDIR)/messageemitter-utilpriority.Tpo -c -o messageemitter-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilpriority.Tpo $(DEPDIR)/messageemitter-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='messageemitter-utilpriority.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+messageemitter-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilstring.o -MD -MP -MF $(DEPDIR)/messageemitter-utilstring.Tpo -c -o messageemitter-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilstring.Tpo $(DEPDIR)/messageemitter-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='messageemitter-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+messageemitter-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilstring.obj -MD -MP -MF $(DEPDIR)/messageemitter-utilstring.Tpo -c -o messageemitter-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilstring.Tpo $(DEPDIR)/messageemitter-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='messageemitter-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+messageemitter-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilinet.o -MD -MP -MF $(DEPDIR)/messageemitter-utilinet.Tpo -c -o messageemitter-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilinet.Tpo $(DEPDIR)/messageemitter-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='messageemitter-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+messageemitter-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilinet.obj -MD -MP -MF $(DEPDIR)/messageemitter-utilinet.Tpo -c -o messageemitter-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilinet.Tpo $(DEPDIR)/messageemitter-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='messageemitter-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+messageemitter-NanoMessage.o: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-NanoMessage.o -MD -MP -MF $(DEPDIR)/messageemitter-NanoMessage.Tpo -c -o messageemitter-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-NanoMessage.Tpo $(DEPDIR)/messageemitter-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='messageemitter-NanoMessage.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+
+messageemitter-NanoMessage.obj: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-NanoMessage.obj -MD -MP -MF $(DEPDIR)/messageemitter-NanoMessage.Tpo -c -o messageemitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-NanoMessage.Tpo $(DEPDIR)/messageemitter-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='messageemitter-NanoMessage.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+
+messageemitter-messagedecomposer.o: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messagedecomposer.o -MD -MP -MF $(DEPDIR)/messageemitter-messagedecomposer.Tpo -c -o messageemitter-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messagedecomposer.Tpo $(DEPDIR)/messageemitter-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='messageemitter-messagedecomposer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
+
+messageemitter-messagedecomposer.obj: messagedecomposer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messagedecomposer.obj -MD -MP -MF $(DEPDIR)/messageemitter-messagedecomposer.Tpo -c -o messageemitter-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messagedecomposer.Tpo $(DEPDIR)/messageemitter-messagedecomposer.Po
+#	$(AM_V_CXX)source='messagedecomposer.cpp' object='messageemitter-messagedecomposer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
+
+messageemitter-utilprotobuf.o: utilprotobuf.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilprotobuf.o -MD -MP -MF $(DEPDIR)/messageemitter-utilprotobuf.Tpo -c -o messageemitter-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilprotobuf.Tpo $(DEPDIR)/messageemitter-utilprotobuf.Po
+#	$(AM_V_CXX)source='utilprotobuf.cpp' object='messageemitter-utilprotobuf.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
+
+messageemitter-utilprotobuf.obj: utilprotobuf.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/messageemitter-utilprotobuf.Tpo -c -o messageemitter-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilprotobuf.Tpo $(DEPDIR)/messageemitter-utilprotobuf.Po
+#	$(AM_V_CXX)source='utilprotobuf.cpp' object='messageemitter-utilprotobuf.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
+
+messageemitter-error-printer.o: error-printer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-error-printer.o -MD -MP -MF $(DEPDIR)/messageemitter-error-printer.Tpo -c -o messageemitter-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-error-printer.Tpo $(DEPDIR)/messageemitter-error-printer.Po
+#	$(AM_V_CXX)source='error-printer.cpp' object='messageemitter-error-printer.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
+
+messageemitter-error-printer.obj: error-printer.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-error-printer.obj -MD -MP -MF $(DEPDIR)/messageemitter-error-printer.Tpo -c -o messageemitter-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-error-printer.Tpo $(DEPDIR)/messageemitter-error-printer.Po
+#	$(AM_V_CXX)source='error-printer.cpp' object='messageemitter-error-printer.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
+
+messageemitter-protobuf-declarations.o: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/messageemitter-protobuf-declarations.Tpo -c -o messageemitter-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-protobuf-declarations.Tpo $(DEPDIR)/messageemitter-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='messageemitter-protobuf-declarations.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
+
+messageemitter-protobuf-declarations.obj: protobuf-declarations.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/messageemitter-protobuf-declarations.Tpo -c -o messageemitter-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-protobuf-declarations.Tpo $(DEPDIR)/messageemitter-protobuf-declarations.Po
+#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='messageemitter-protobuf-declarations.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
+
+messageemitter-messageemitterline.o: messageemitterline.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messageemitterline.o -MD -MP -MF $(DEPDIR)/messageemitter-messageemitterline.Tpo -c -o messageemitter-messageemitterline.o `test -f 'messageemitterline.cpp' || echo '$(srcdir)/'`messageemitterline.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messageemitterline.Tpo $(DEPDIR)/messageemitter-messageemitterline.Po
+#	$(AM_V_CXX)source='messageemitterline.cpp' object='messageemitter-messageemitterline.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitterline.o `test -f 'messageemitterline.cpp' || echo '$(srcdir)/'`messageemitterline.cpp
+
+messageemitter-messageemitterline.obj: messageemitterline.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-messageemitterline.obj -MD -MP -MF $(DEPDIR)/messageemitter-messageemitterline.Tpo -c -o messageemitter-messageemitterline.obj `if test -f 'messageemitterline.cpp'; then $(CYGPATH_W) 'messageemitterline.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitterline.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-messageemitterline.Tpo $(DEPDIR)/messageemitter-messageemitterline.Po
+#	$(AM_V_CXX)source='messageemitterline.cpp' object='messageemitter-messageemitterline.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitterline.obj `if test -f 'messageemitterline.cpp'; then $(CYGPATH_W) 'messageemitterline.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitterline.cpp'; fi`
+
+messageemitter-daemonize.o: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-daemonize.o -MD -MP -MF $(DEPDIR)/messageemitter-daemonize.Tpo -c -o messageemitter-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-daemonize.Tpo $(DEPDIR)/messageemitter-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='messageemitter-daemonize.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+messageemitter-daemonize.obj: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-daemonize.obj -MD -MP -MF $(DEPDIR)/messageemitter-daemonize.Tpo -c -o messageemitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-daemonize.Tpo $(DEPDIR)/messageemitter-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='messageemitter-daemonize.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+messageemitter-pkt2packetvariable.o: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/messageemitter-pkt2packetvariable.Tpo -c -o messageemitter-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pkt2packetvariable.Tpo $(DEPDIR)/messageemitter-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='messageemitter-pkt2packetvariable.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
+
+messageemitter-pkt2packetvariable.obj: pkt2packetvariable.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pkt2packetvariable.obj -MD -MP -MF $(DEPDIR)/messageemitter-pkt2packetvariable.Tpo -c -o messageemitter-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pkt2packetvariable.Tpo $(DEPDIR)/messageemitter-pkt2packetvariable.Po
+#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='messageemitter-pkt2packetvariable.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
+
+messageemitter-pkt2optionscache.o: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/messageemitter-pkt2optionscache.Tpo -c -o messageemitter-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pkt2optionscache.Tpo $(DEPDIR)/messageemitter-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='messageemitter-pkt2optionscache.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
+
+messageemitter-pkt2optionscache.obj: pkt2optionscache.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/messageemitter-pkt2optionscache.Tpo -c -o messageemitter-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pkt2optionscache.Tpo $(DEPDIR)/messageemitter-pkt2optionscache.Po
+#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='messageemitter-pkt2optionscache.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
+
+messageemitter-pkt2.pb.o: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pkt2.pb.o -MD -MP -MF $(DEPDIR)/messageemitter-pkt2.pb.Tpo -c -o messageemitter-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pkt2.pb.Tpo $(DEPDIR)/messageemitter-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='messageemitter-pkt2.pb.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
+
+messageemitter-pkt2.pb.obj: pkt2.pb.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/messageemitter-pkt2.pb.Tpo -c -o messageemitter-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pkt2.pb.Tpo $(DEPDIR)/messageemitter-pkt2.pb.Po
+#	$(AM_V_CXX)source='pkt2.pb.cpp' object='messageemitter-pkt2.pb.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
+
+messageemitter-utilfile.o: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilfile.o -MD -MP -MF $(DEPDIR)/messageemitter-utilfile.Tpo -c -o messageemitter-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilfile.Tpo $(DEPDIR)/messageemitter-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='messageemitter-utilfile.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+messageemitter-utilfile.obj: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilfile.obj -MD -MP -MF $(DEPDIR)/messageemitter-utilfile.Tpo -c -o messageemitter-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-utilfile.Tpo $(DEPDIR)/messageemitter-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='messageemitter-utilfile.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+messageemitter-javascript-context.o: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-javascript-context.o -MD -MP -MF $(DEPDIR)/messageemitter-javascript-context.Tpo -c -o messageemitter-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-javascript-context.Tpo $(DEPDIR)/messageemitter-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='messageemitter-javascript-context.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
+
+messageemitter-javascript-context.obj: javascript-context.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-javascript-context.obj -MD -MP -MF $(DEPDIR)/messageemitter-javascript-context.Tpo -c -o messageemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-javascript-context.Tpo $(DEPDIR)/messageemitter-javascript-context.Po
+#	$(AM_V_CXX)source='javascript-context.cpp' object='messageemitter-javascript-context.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+
+messageemitter-pbjson.o: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pbjson.o -MD -MP -MF $(DEPDIR)/messageemitter-pbjson.Tpo -c -o messageemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pbjson.Tpo $(DEPDIR)/messageemitter-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='messageemitter-pbjson.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
+
+messageemitter-pbjson.obj: pbjson.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-pbjson.obj -MD -MP -MF $(DEPDIR)/messageemitter-pbjson.Tpo -c -o messageemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-pbjson.Tpo $(DEPDIR)/messageemitter-pbjson.Po
+#	$(AM_V_CXX)source='pbjson.cpp' object='messageemitter-pbjson.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
 pkt2dumppq-pkt2dumppq.o: pkt2dumppq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2dumppq-pkt2dumppq.o -MD -MP -MF $(DEPDIR)/pkt2dumppq-pkt2dumppq.Tpo -c -o pkt2dumppq-pkt2dumppq.o `test -f 'pkt2dumppq.cpp' || echo '$(srcdir)/'`pkt2dumppq.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2dumppq-pkt2dumppq.Tpo $(DEPDIR)/pkt2dumppq-pkt2dumppq.Po
@@ -4101,19 +4385,19 @@ tcpemitter-tcpemitter-config.obj: tcpemitter-config.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitter-config.obj `if test -f 'tcpemitter-config.cpp'; then $(CYGPATH_W) 'tcpemitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-config.cpp'; fi`
 
-tcpemitter-utilpriority.o: utilpriority.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilpriority.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilpriority.Tpo -c -o tcpemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilpriority.Tpo $(DEPDIR)/tcpemitter-utilpriority.Po
-#	$(AM_V_CXX)source='utilpriority.cpp' object='tcpemitter-utilpriority.o' libtool=no \
+tcpemitter-tcpemitterline.o: tcpemitterline.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitterline.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitterline.Tpo -c -o tcpemitter-tcpemitterline.o `test -f 'tcpemitterline.cpp' || echo '$(srcdir)/'`tcpemitterline.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitterline.Tpo $(DEPDIR)/tcpemitter-tcpemitterline.Po
+#	$(AM_V_CXX)source='tcpemitterline.cpp' object='tcpemitter-tcpemitterline.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitterline.o `test -f 'tcpemitterline.cpp' || echo '$(srcdir)/'`tcpemitterline.cpp
 
-tcpemitter-utilpriority.obj: utilpriority.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilpriority.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilpriority.Tpo -c -o tcpemitter-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilpriority.Tpo $(DEPDIR)/tcpemitter-utilpriority.Po
-#	$(AM_V_CXX)source='utilpriority.cpp' object='tcpemitter-utilpriority.obj' libtool=no \
+tcpemitter-tcpemitterline.obj: tcpemitterline.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitterline.obj -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitterline.Tpo -c -o tcpemitter-tcpemitterline.obj `if test -f 'tcpemitterline.cpp'; then $(CYGPATH_W) 'tcpemitterline.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitterline.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitterline.Tpo $(DEPDIR)/tcpemitter-tcpemitterline.Po
+#	$(AM_V_CXX)source='tcpemitterline.cpp' object='tcpemitter-tcpemitterline.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitterline.obj `if test -f 'tcpemitterline.cpp'; then $(CYGPATH_W) 'tcpemitterline.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitterline.cpp'; fi`
 
 tcpemitter-utilstring.o: utilstring.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilstring.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilstring.Tpo -c -o tcpemitter-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
@@ -4129,104 +4413,6 @@ tcpemitter-utilstring.obj: utilstring.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
 
-tcpemitter-utilinet.o: utilinet.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilinet.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilinet.Tpo -c -o tcpemitter-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilinet.Tpo $(DEPDIR)/tcpemitter-utilinet.Po
-#	$(AM_V_CXX)source='utilinet.cpp' object='tcpemitter-utilinet.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
-
-tcpemitter-utilinet.obj: utilinet.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilinet.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilinet.Tpo -c -o tcpemitter-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilinet.Tpo $(DEPDIR)/tcpemitter-utilinet.Po
-#	$(AM_V_CXX)source='utilinet.cpp' object='tcpemitter-utilinet.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
-
-tcpemitter-NanoMessage.o: NanoMessage.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-NanoMessage.o -MD -MP -MF $(DEPDIR)/tcpemitter-NanoMessage.Tpo -c -o tcpemitter-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-NanoMessage.Tpo $(DEPDIR)/tcpemitter-NanoMessage.Po
-#	$(AM_V_CXX)source='NanoMessage.cpp' object='tcpemitter-NanoMessage.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
-
-tcpemitter-NanoMessage.obj: NanoMessage.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-NanoMessage.obj -MD -MP -MF $(DEPDIR)/tcpemitter-NanoMessage.Tpo -c -o tcpemitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-NanoMessage.Tpo $(DEPDIR)/tcpemitter-NanoMessage.Po
-#	$(AM_V_CXX)source='NanoMessage.cpp' object='tcpemitter-NanoMessage.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
-
-tcpemitter-messagedecomposer.o: messagedecomposer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-messagedecomposer.o -MD -MP -MF $(DEPDIR)/tcpemitter-messagedecomposer.Tpo -c -o tcpemitter-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-messagedecomposer.Tpo $(DEPDIR)/tcpemitter-messagedecomposer.Po
-#	$(AM_V_CXX)source='messagedecomposer.cpp' object='tcpemitter-messagedecomposer.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-messagedecomposer.o `test -f 'messagedecomposer.cpp' || echo '$(srcdir)/'`messagedecomposer.cpp
-
-tcpemitter-messagedecomposer.obj: messagedecomposer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-messagedecomposer.obj -MD -MP -MF $(DEPDIR)/tcpemitter-messagedecomposer.Tpo -c -o tcpemitter-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-messagedecomposer.Tpo $(DEPDIR)/tcpemitter-messagedecomposer.Po
-#	$(AM_V_CXX)source='messagedecomposer.cpp' object='tcpemitter-messagedecomposer.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-messagedecomposer.obj `if test -f 'messagedecomposer.cpp'; then $(CYGPATH_W) 'messagedecomposer.cpp'; else $(CYGPATH_W) '$(srcdir)/messagedecomposer.cpp'; fi`
-
-tcpemitter-utilprotobuf.o: utilprotobuf.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilprotobuf.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilprotobuf.Tpo -c -o tcpemitter-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilprotobuf.Tpo $(DEPDIR)/tcpemitter-utilprotobuf.Po
-#	$(AM_V_CXX)source='utilprotobuf.cpp' object='tcpemitter-utilprotobuf.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilprotobuf.o `test -f 'utilprotobuf.cpp' || echo '$(srcdir)/'`utilprotobuf.cpp
-
-tcpemitter-utilprotobuf.obj: utilprotobuf.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilprotobuf.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilprotobuf.Tpo -c -o tcpemitter-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilprotobuf.Tpo $(DEPDIR)/tcpemitter-utilprotobuf.Po
-#	$(AM_V_CXX)source='utilprotobuf.cpp' object='tcpemitter-utilprotobuf.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilprotobuf.obj `if test -f 'utilprotobuf.cpp'; then $(CYGPATH_W) 'utilprotobuf.cpp'; else $(CYGPATH_W) '$(srcdir)/utilprotobuf.cpp'; fi`
-
-tcpemitter-error-printer.o: error-printer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-error-printer.o -MD -MP -MF $(DEPDIR)/tcpemitter-error-printer.Tpo -c -o tcpemitter-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-error-printer.Tpo $(DEPDIR)/tcpemitter-error-printer.Po
-#	$(AM_V_CXX)source='error-printer.cpp' object='tcpemitter-error-printer.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-error-printer.o `test -f 'error-printer.cpp' || echo '$(srcdir)/'`error-printer.cpp
-
-tcpemitter-error-printer.obj: error-printer.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-error-printer.obj -MD -MP -MF $(DEPDIR)/tcpemitter-error-printer.Tpo -c -o tcpemitter-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-error-printer.Tpo $(DEPDIR)/tcpemitter-error-printer.Po
-#	$(AM_V_CXX)source='error-printer.cpp' object='tcpemitter-error-printer.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-error-printer.obj `if test -f 'error-printer.cpp'; then $(CYGPATH_W) 'error-printer.cpp'; else $(CYGPATH_W) '$(srcdir)/error-printer.cpp'; fi`
-
-tcpemitter-protobuf-declarations.o: protobuf-declarations.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-protobuf-declarations.o -MD -MP -MF $(DEPDIR)/tcpemitter-protobuf-declarations.Tpo -c -o tcpemitter-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-protobuf-declarations.Tpo $(DEPDIR)/tcpemitter-protobuf-declarations.Po
-#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='tcpemitter-protobuf-declarations.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-protobuf-declarations.o `test -f 'protobuf-declarations.cpp' || echo '$(srcdir)/'`protobuf-declarations.cpp
-
-tcpemitter-protobuf-declarations.obj: protobuf-declarations.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-protobuf-declarations.obj -MD -MP -MF $(DEPDIR)/tcpemitter-protobuf-declarations.Tpo -c -o tcpemitter-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-protobuf-declarations.Tpo $(DEPDIR)/tcpemitter-protobuf-declarations.Po
-#	$(AM_V_CXX)source='protobuf-declarations.cpp' object='tcpemitter-protobuf-declarations.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-protobuf-declarations.obj `if test -f 'protobuf-declarations.cpp'; then $(CYGPATH_W) 'protobuf-declarations.cpp'; else $(CYGPATH_W) '$(srcdir)/protobuf-declarations.cpp'; fi`
-
-tcpemitter-tcpemitterline.o: tcpemitterline.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitterline.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitterline.Tpo -c -o tcpemitter-tcpemitterline.o `test -f 'tcpemitterline.cpp' || echo '$(srcdir)/'`tcpemitterline.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitterline.Tpo $(DEPDIR)/tcpemitter-tcpemitterline.Po
-#	$(AM_V_CXX)source='tcpemitterline.cpp' object='tcpemitter-tcpemitterline.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitterline.o `test -f 'tcpemitterline.cpp' || echo '$(srcdir)/'`tcpemitterline.cpp
-
-tcpemitter-tcpemitterline.obj: tcpemitterline.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitterline.obj -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitterline.Tpo -c -o tcpemitter-tcpemitterline.obj `if test -f 'tcpemitterline.cpp'; then $(CYGPATH_W) 'tcpemitterline.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitterline.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitterline.Tpo $(DEPDIR)/tcpemitter-tcpemitterline.Po
-#	$(AM_V_CXX)source='tcpemitterline.cpp' object='tcpemitter-tcpemitterline.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-tcpemitterline.obj `if test -f 'tcpemitterline.cpp'; then $(CYGPATH_W) 'tcpemitterline.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitterline.cpp'; fi`
-
 tcpemitter-daemonize.o: daemonize.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-daemonize.o -MD -MP -MF $(DEPDIR)/tcpemitter-daemonize.Tpo -c -o tcpemitter-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-daemonize.Tpo $(DEPDIR)/tcpemitter-daemonize.Po
@@ -4240,90 +4426,6 @@ tcpemitter-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='tcpemitter-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
-
-tcpemitter-pkt2packetvariable.o: pkt2packetvariable.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2packetvariable.o -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2packetvariable.Tpo -c -o tcpemitter-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2packetvariable.Tpo $(DEPDIR)/tcpemitter-pkt2packetvariable.Po
-#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='tcpemitter-pkt2packetvariable.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pkt2packetvariable.o `test -f 'pkt2packetvariable.cpp' || echo '$(srcdir)/'`pkt2packetvariable.cpp
-
-tcpemitter-pkt2packetvariable.obj: pkt2packetvariable.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2packetvariable.obj -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2packetvariable.Tpo -c -o tcpemitter-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2packetvariable.Tpo $(DEPDIR)/tcpemitter-pkt2packetvariable.Po
-#	$(AM_V_CXX)source='pkt2packetvariable.cpp' object='tcpemitter-pkt2packetvariable.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pkt2packetvariable.obj `if test -f 'pkt2packetvariable.cpp'; then $(CYGPATH_W) 'pkt2packetvariable.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2packetvariable.cpp'; fi`
-
-tcpemitter-pkt2optionscache.o: pkt2optionscache.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2optionscache.o -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2optionscache.Tpo -c -o tcpemitter-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2optionscache.Tpo $(DEPDIR)/tcpemitter-pkt2optionscache.Po
-#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='tcpemitter-pkt2optionscache.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pkt2optionscache.o `test -f 'pkt2optionscache.cpp' || echo '$(srcdir)/'`pkt2optionscache.cpp
-
-tcpemitter-pkt2optionscache.obj: pkt2optionscache.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2optionscache.obj -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2optionscache.Tpo -c -o tcpemitter-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2optionscache.Tpo $(DEPDIR)/tcpemitter-pkt2optionscache.Po
-#	$(AM_V_CXX)source='pkt2optionscache.cpp' object='tcpemitter-pkt2optionscache.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pkt2optionscache.obj `if test -f 'pkt2optionscache.cpp'; then $(CYGPATH_W) 'pkt2optionscache.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2optionscache.cpp'; fi`
-
-tcpemitter-pkt2.pb.o: pkt2.pb.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2.pb.o -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2.pb.Tpo -c -o tcpemitter-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2.pb.Tpo $(DEPDIR)/tcpemitter-pkt2.pb.Po
-#	$(AM_V_CXX)source='pkt2.pb.cpp' object='tcpemitter-pkt2.pb.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pkt2.pb.o `test -f 'pkt2.pb.cpp' || echo '$(srcdir)/'`pkt2.pb.cpp
-
-tcpemitter-pkt2.pb.obj: pkt2.pb.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pkt2.pb.obj -MD -MP -MF $(DEPDIR)/tcpemitter-pkt2.pb.Tpo -c -o tcpemitter-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pkt2.pb.Tpo $(DEPDIR)/tcpemitter-pkt2.pb.Po
-#	$(AM_V_CXX)source='pkt2.pb.cpp' object='tcpemitter-pkt2.pb.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
-
-tcpemitter-utilfile.o: utilfile.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilfile.o -MD -MP -MF $(DEPDIR)/tcpemitter-utilfile.Tpo -c -o tcpemitter-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilfile.Tpo $(DEPDIR)/tcpemitter-utilfile.Po
-#	$(AM_V_CXX)source='utilfile.cpp' object='tcpemitter-utilfile.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
-
-tcpemitter-utilfile.obj: utilfile.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-utilfile.obj -MD -MP -MF $(DEPDIR)/tcpemitter-utilfile.Tpo -c -o tcpemitter-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-utilfile.Tpo $(DEPDIR)/tcpemitter-utilfile.Po
-#	$(AM_V_CXX)source='utilfile.cpp' object='tcpemitter-utilfile.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
-
-tcpemitter-javascript-context.o: javascript-context.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-javascript-context.o -MD -MP -MF $(DEPDIR)/tcpemitter-javascript-context.Tpo -c -o tcpemitter-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-javascript-context.Tpo $(DEPDIR)/tcpemitter-javascript-context.Po
-#	$(AM_V_CXX)source='javascript-context.cpp' object='tcpemitter-javascript-context.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-javascript-context.o `test -f 'javascript-context.cpp' || echo '$(srcdir)/'`javascript-context.cpp
-
-tcpemitter-javascript-context.obj: javascript-context.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-javascript-context.obj -MD -MP -MF $(DEPDIR)/tcpemitter-javascript-context.Tpo -c -o tcpemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-javascript-context.Tpo $(DEPDIR)/tcpemitter-javascript-context.Po
-#	$(AM_V_CXX)source='javascript-context.cpp' object='tcpemitter-javascript-context.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
-
-tcpemitter-pbjson.o: pbjson.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pbjson.o -MD -MP -MF $(DEPDIR)/tcpemitter-pbjson.Tpo -c -o tcpemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pbjson.Tpo $(DEPDIR)/tcpemitter-pbjson.Po
-#	$(AM_V_CXX)source='pbjson.cpp' object='tcpemitter-pbjson.o' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
-
-tcpemitter-pbjson.obj: pbjson.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-pbjson.obj -MD -MP -MF $(DEPDIR)/tcpemitter-pbjson.Tpo -c -o tcpemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
-	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-pbjson.Tpo $(DEPDIR)/tcpemitter-pbjson.Po
-#	$(AM_V_CXX)source='pbjson.cpp' object='tcpemitter-pbjson.obj' libtool=no \
-#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
 tcpemitter_example1-tcpemitter-example1.o: tcpemitter-example1.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-tcpemitter-example1.o -MD -MP -MF $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo -c -o tcpemitter_example1-tcpemitter-example1.o `test -f 'tcpemitter-example1.cpp' || echo '$(srcdir)/'`tcpemitter-example1.cpp

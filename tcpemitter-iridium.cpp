@@ -33,49 +33,61 @@ typedef ALIGN struct {
 	packet8_t payload;
 } IRIDIUM_PAYLOAD_8;
 
-IMEI imei = {
-		0x30 + 3,
-		0x30 + 0,
-		0x30 + 0,
-		0x30 + 2,
-		0x30 + 3,
-		0x30 + 4,
-		0x30 + 0,
-		0x30 + 6,
-		0x30 + 0,
-		0x30 + 2,
-		0x30 + 3,
-		0x30 + 5,
-		0x30 + 3,
-		0x30 + 4,
-		0x30 + 0};
-
-gps_coord_t gpscoord_yak = {
-		latitude_g: 62,
-		latitude_m: 2,
-		latitude_s: 0,
-		latitude_s1: 0,
-		latitude_ns: 'N',
-
-		longitude_g: 129,
-		longitude_m: 43,
-		longitude_s: 0,
-		longitude_s1: 0,
-		longitude_ew: 'E',
-		hdop: 9,
-		pdop: 10
-
+IMEI imei = 
+{
+	0x30 + 3,
+	0x30 + 0,
+	0x30 + 0,
+	0x30 + 2,
+	0x30 + 3,
+	0x30 + 4,
+	0x30 + 0,
+	0x30 + 6,
+	0x30 + 0,
+	0x30 + 2,
+	0x30 + 3,
+	0x30 + 5,
+	0x30 + 3,
+	0x30 + 4,
+	0x30 + 0
 };
 
-void fill_time5(
-		time5 *value, time_t t)
+gps_coord_t gpscoord_yak = 
 {
+	latitude_g: 62,
+	latitude_m: 2,
+	latitude_s: 0,
+	latitude_s1: 0,
+	latitude_ns: 'N',
+
+	longitude_g: 129,
+	longitude_m: 43,
+	longitude_s: 0,
+	longitude_s1: 0,
+	longitude_ew: 'E',
+	hdop: 9,
+	pdop: 10
+};
+
+void fill_time5
+(
+	time5 *value, 
+	time_t t
+)
+{
+	*(uint16_t *) value  = 0;
+	value->year = 0x7f;
+	*(uint16_t *) value = htons(*(uint16_t *) value);
+return;
+		
 	struct tm *timeinfo;
 	timeinfo = localtime(&t);
-
+	
 	value->day = timeinfo->tm_mday;
 	value->month = timeinfo->tm_mon + 1;
 	value->year = timeinfo->tm_year - 100;
+
+	*(uint16_t *) value = htons(*(uint16_t *) value);
 
 	value->hour = timeinfo->tm_hour;
 	value->minute = timeinfo->tm_min;
@@ -150,6 +162,7 @@ void fill_random_packet(
 	p.payload.failureworking = 0;	//< device was
 	p.payload.key = htons(256);	    // 23) 2 байт     volatile unsigned int packet_key;  младшие 16 бит
 	fill_time5(&p.payload.time, t);	// 25 5 байт
+	std::cerr << *(uint16_t *) &p.payload.time << std::endl;
 }
 
 bool cont;

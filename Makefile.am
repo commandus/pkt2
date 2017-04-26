@@ -43,11 +43,12 @@ CLEANFILES = $(gengrpcs)
 #
 # Binaries
 #
-bin_PROGRAMS=tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
-	tcpemitter handlerpq handlerline handlerlmdb \
+bin_PROGRAMS = tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
+	tcpemitter messageemitter \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium \
-	handler-google-sheets pkt2dumppq
+	handlerpq handlerline handlerlmdb handler-google-sheets \
+	pkt2dumppq
 
 #
 # Headers
@@ -60,6 +61,7 @@ tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config
 message2gateway-config.h helper_socket.h \
 handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
 tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
+messageemitter-config.h \
 linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
 sslhelper.h iridium.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
@@ -83,15 +85,26 @@ commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 # tcpemitter
 #
 tcpemitter_SOURCES = \
-	tcpemitter.cpp  tcpemitter-config.cpp  \
+	tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp \
+	utilstring.cpp daemonize.cpp \
+	$(common_src)
+
+tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
+tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# messageemitter
+#
+messageemitter_SOURCES = \
+	messageemitter.cpp messageemitter-config.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	tcpemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
+	messageemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
 	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp pbjson.cpp \
 	$(common_src)
 
-tcpemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
-tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+messageemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
+messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # tcpreceiver

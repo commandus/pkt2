@@ -138,6 +138,7 @@ message Packet8
             type: INPUT_MESSAGE
             size: 5
             offset: 28
+            endian: ENDIAN_BIG_ENDIAN
         }
         ]
     };
@@ -201,7 +202,7 @@ message Packet8
         get: "(field.packet8.gps_flags & (1 << 8))"
     }];
     
-    bool satellite_visible_count = 11 [(pkt2.variable) = {
+    uint32 satellite_visible_count = 11 [(pkt2.variable) = {
         name: "satellite_visible_count"
         short_name: "Видимых спутников"
         get: "field.packet8.sats"

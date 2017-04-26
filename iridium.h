@@ -43,15 +43,15 @@ typedef ALIGN struct {
  * Bit 7 0- East, 1- West
  */
 typedef ALIGN struct {
-        uint8_t direwi : 1;
-        uint8_t dirnsi : 1;
-        uint8_t dirformat : 2;
-        uint8_t dirreserved : 4;
-        uint8_t lat;            //< 1 Latitude
-        uint16_t lat1000;       //< 2 1/1000 latitude
-        uint8_t lon;            //< 4 Longitude
-        uint16_t lon1000;       //< 5 1/1000 longitude
-        uint32_t cepradius;     //< 7 CEP radius: 80% probability radius
+	uint8_t direwi : 1;
+	uint8_t dirnsi : 1;
+	uint8_t dirformat : 2;
+	uint8_t dirreserved : 4;
+	uint8_t lat;            //< 1 Latitude
+	uint16_t lat1000;       //< 2 1/1000 latitude
+	uint8_t lon;            //< 4 Longitude
+	uint16_t lon1000;       //< 5 1/1000 longitude
+	uint32_t cepradius;     //< 7 CEP radius: 80% probability radius
 } PACKED IELocation;
 
 typedef ALIGN struct
