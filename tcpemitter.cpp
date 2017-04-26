@@ -64,22 +64,22 @@ void signalHandler(int signal)
 
 void setSignalHandler(int signal)
 {
-        struct sigaction action;
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = &signalHandler;
-        sigaction(signal, &action, NULL);
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_handler = &signalHandler;
+	sigaction(signal, &action, NULL);
 }
 
 int main
 (
-    int argc, 
-    char *argv[]
+	int argc, 
+	char *argv[]
 )
 {
     // Signal handler
-    setSignalHandler(SIGINT);
+	setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
-    reslt = 0;
+	reslt = 0;
 
 	config = new Config(argc, argv);
 	if (!config)
@@ -87,13 +87,13 @@ int main
 		LOG(ERROR) << ERR_PARSE_COMMAND;
 		exit(ERRCODE_PARSE_COMMAND);
 	}
-    if (config->error() != 0)
+	if (config->error() != 0)
 	{
 		LOG(ERROR) << ERR_COMMAND;
 		exit(ERRCODE_COMMAND);
 	}
 
-    INIT_LOGGING(PROGRAM_NAME)
+	INIT_LOGGING(PROGRAM_NAME)
 
 	if (config->daemonize)
 	{

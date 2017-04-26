@@ -75,9 +75,14 @@ void fill_time5
 	time_t t
 )
 {
+	memset(value, 0xff, 5);
 	*(uint16_t *) value  = 0;
-	value->year = 0x7f;
+	value->year = 16;
 	*(uint16_t *) value = htons(*(uint16_t *) value);
+	value->hour = 0x24;
+	value->minute = 0x60;
+	value->second = 0x59;
+
 return;
 		
 	struct tm *timeinfo;
@@ -102,67 +107,67 @@ return;
  *
  */
 void fill_random_packet(
-		IRIDIUM_PAYLOAD_8 &p,
+		IRIDIUM_PAYLOAD_8 *p,
 		int idx
 )
 {
-	p.header.id = 1;
-	p.header.size = htons(78);
+	p->header.id = 1;
+	p->header.size = htons(78);
 
-	p.h_io.id = 1;
-	p.h_io.size = htons(28);
+	p->h_io.id = 1;
+	p->h_io.size = htons(28);
 
-	p.io.cdrref = htonl(1364432488);
-	memmove(&p.io.imei, &imei, 15);
-	p.io.recvno = htons(0);
-	p.io.sentno = htons(idx);
+	p->io.cdrref = htonl(1364432488);
+	memmove(&p->io.imei, &imei, 15);
+	p->io.recvno = htons(0);
+	p->io.sentno = htons(idx);
 	time_t t = time(NULL);
-	p.io.recvtime = htonl(t);
-	p.io.status = 0;
+	p->io.recvtime = htonl(t);
+	p->io.status = 0;
 
-	p.h_loc.id = 3;
-	p.h_loc.size = htons(11);
+	p->h_loc.id = 3;
+	p->h_loc.size = htons(11);
 
-	p.loc.direwi = 0;
-	p.loc.dirnsi = 0;
-	p.loc.dirformat = 0;
-	p.loc.dirreserved = 0;
-	p.loc.lat = 62;
-	p.loc.lat1000 = htons(4);
-	p.loc.lon = 129;
-	p.loc.lon1000 = htons(74);
-	p.loc.cepradius = htonl(9);
+	p->loc.direwi = 0;
+	p->loc.dirnsi = 0;
+	p->loc.dirformat = 0;
+	p->loc.dirreserved = 0;
+	p->loc.lat = 62;
+	p->loc.lat1000 = htons(4);
+	p->loc.lon = 129;
+	p->loc.lon1000 = htons(74);
+	p->loc.cepradius = htonl(9);
 
-	p.h_payload.id = 2;
-	p.h_payload.size = htons(30);
+	p->h_payload.id = 2;
+	p->h_payload.size = htons(30);
 
-	p.payload.packettype = 0x08;
-	p.payload.gpsolddata = 0;		//< 1)GPS old data, GPS not read
-	p.payload.gpsencoded = 0;		//< GPS data encoded
-	p.payload.gpsfrommemory = 0;	//< data got from the memory
-	p.payload.gpsnoformat = 0;		//< memory is not formatted
-	p.payload.gpsnosats = 0;		//< No visible GPS salellites
-	p.payload.gpsbadhdop = 0;		//< GPS HDOP = 99 or > 50
-	p.payload.gpstime = 0;		    //< 1 бит 1-0  GPS.valid=0x01 или 0;     GPS.time_valid=0b0000 0010 или 0;
-	p.payload.gpsnavdata = 0;		//< 1 бит 1-0  GPS.valid=0x01 или 0;     GPS.time_valid=0b0000 0010 или 0;
-	p.payload.sats = 5;
-	memmove(&p.payload.coord, &gpscoord_yak, sizeof(gps_coord_t));    //< 3) 16 байт (или 10 байт??? ) hex ?
-	p.payload.bat = 32;			    //< 19) байт бортовое напряжение fixed point (32=3.2 вольта) (от 2.0 до 4.0)
-	p.payload.alarmlow = 0;	        //< bit 6 < 2V, bit 7 > 4V
-	p.payload.alarmhigh = 0;		//< bit 6 < 2V, bit 7 > 4V
-	p.payload.temperature = 25;		//< 20) 1 байт температура
-	p.payload.r2 = 0;		        //< 21) 1 байт номер пакета?? - он же индекс в таблице кодировки
-	p.payload.failurepower = 0;		//< 22) device status power loss
-	p.payload.failureeep = 0;		//< EEPROM failure
-	p.payload.failureclock = 0;		//< clock not responding
-	p.payload.failurecable = 0;		//< MAC not responding
-	p.payload.failureint0 = 0;		//< clock int failure
-	p.payload.failurewatchdog = 0;	//< software failure
-	p.payload.failurenoise = 0;		//< blocks in memory found
-	p.payload.failureworking = 0;	//< device was
-	p.payload.key = htons(256);	    // 23) 2 байт     volatile unsigned int packet_key;  младшие 16 бит
-	fill_time5(&p.payload.time, t);	// 25 5 байт
-	std::cerr << *(uint16_t *) &p.payload.time << std::endl;
+	p->payload.packettype = 0x08;
+	p->payload.gpsolddata = 0;		//< 1)GPS old data, GPS not read
+	p->payload.gpsencoded = 0;		//< GPS data encoded
+	p->payload.gpsfrommemory = 0;	//< data got from the memory
+	p->payload.gpsnoformat = 0;		//< memory is not formatted
+	p->payload.gpsnosats = 0;		//< No visible GPS salellites
+	p->payload.gpsbadhdop = 0;		//< GPS HDOP = 99 or > 50
+	p->payload.gpstime = 0;			//< 1 бит 1-0  GPS.valid=0x01 или 0;     GPS.time_valid=0b0000 0010 или 0;
+	p->payload.gpsnavdata = 0;		//< 1 бит 1-0  GPS.valid=0x01 или 0;     GPS.time_valid=0b0000 0010 или 0;
+	p->payload.sats = 5;
+	memmove(&(p->payload.coord), &gpscoord_yak, sizeof(gps_coord_t));    //< 3) 16 байт (или 10 байт??? ) hex ?
+	p->payload.bat = 32;			//< 19) байт бортовое напряжение fixed point (32=3.2 вольта) (от 2.0 до 4.0)
+	p->payload.alarmlow = 0;		//< bit 6 < 2V, bit 7 > 4V
+	p->payload.alarmhigh = 0;		//< bit 6 < 2V, bit 7 > 4V
+	p->payload.temperature = 25;	//< 20) 1 байт температура
+	p->payload.r2 = 0;		        //< 21) 1 байт номер пакета?? - он же индекс в таблице кодировки
+	p->payload.failurepower = 0;	//< 22) device status power loss
+	p->payload.failureeep = 0;		//< EEPROM failure
+	p->payload.failureclock = 0;	//< clock not responding
+	p->payload.failurecable = 0;	//< MAC not responding
+	p->payload.failureint0 = 0;		//< clock int failure
+	p->payload.failurewatchdog = 0;	//< software failure
+	p->payload.failurenoise = 0;	//< blocks in memory found
+	p->payload.failureworking = 0;	//< device was
+	p->payload.key = htons(256);	// 23) 2 байт     volatile unsigned int packet_key;  младшие 16 бит
+	fill_time5(&(p->payload.time), t);	// 25 5 байт
+	std::cerr << *(uint16_t *) &(p->payload.time) << std::endl;
 }
 
 bool cont;
@@ -259,7 +264,7 @@ int main(int argc, char **argv)
 			count++;
 			continue;
 		}
-		fill_random_packet(pkt, count);
+		fill_random_packet(&pkt, count);
 		int n = write(sock, &pkt, sizeof(pkt));
 		if (n < 0)
 			std::cerr << ERR_SOCKET_SEND << intface << ":" << port << ". " << strerror(errno) << std::endl;

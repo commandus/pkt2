@@ -75,6 +75,7 @@ message Packet8
             type: INPUT_UINT
             size: 2
             offset: 1
+            endian: ENDIAN_BIG_ENDIAN
             tag: 30               ///< tag, 30 bytes long
         },
         {

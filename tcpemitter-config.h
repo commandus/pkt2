@@ -32,8 +32,10 @@ private:
 
 	int verbosity;
 
-	int retries;            ///< default 0
-	int retry_delay;        ///< default 60 seconds
+	int count;				///< default 1
+	int delay;				///< default 1 second
+	int retries;			///< default 0
+	int retry_delay;		///< default 60 seconds
 
 	std::string message_out_url;
 	std::string file_name;

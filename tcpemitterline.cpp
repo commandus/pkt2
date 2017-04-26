@@ -22,8 +22,8 @@
 #include "errorcodes.h"
 
 /**
- * send loop
- * @param config
+ * @brief send loop
+ * @param config Configuration
  * @return 0- OK
  */
 int tcp_emitter_line
@@ -33,12 +33,6 @@ int tcp_emitter_line
 {
 START:
 	config->stop_request = 0;
-	int sock = socket(AF_INET, SOCK_STREAM, 0);
-	if (sock < 0)
-	{
-		LOG(ERROR) << ERR_SOCKET_CREATE;
-		return ERRCODE_SOCKET_CREATE;
-	}
 
 	struct hostent *server = gethostbyname(config->intface.c_str());
 
@@ -53,12 +47,6 @@ START:
 	serv_addr.sin_family = AF_INET;
 	bcopy((char *)server->h_addr, (char *)&serv_addr.sin_addr.s_addr, server->h_length);
 	serv_addr.sin_port = htons(config->port);
-	if (connect(sock,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
-	{
-		LOG(ERROR) << ERR_SOCKET_CONNECT << config->intface;
-		close(sock);
-		return ERRCODE_SOCKET_CONNECT;
-	}
 
 	// open text file or read from stdin
 	std::istream *strm;
@@ -76,17 +64,35 @@ START:
 		line = hex2string(line);
 		if (line.size())
 		{
-			int n = write(sock, line.c_str(), line.size());
-			if (n < 0)
-				LOG(ERROR) << ERR_SOCKET_SEND << config->intface << " " << n;
+			for (int c = 0; c < config->count; c++)
+			{
+				int sock = socket(AF_INET, SOCK_STREAM, 0);
+				if (sock < 0)
+				{
+					LOG(ERROR) << ERR_SOCKET_CREATE;
+					return ERRCODE_SOCKET_CREATE;
+				}
+
+				if (connect(sock,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0)
+				{
+					LOG(ERROR) << ERR_SOCKET_CONNECT << config->intface;
+					close(sock);
+					return ERRCODE_SOCKET_CONNECT;
+				}
+				int n = write(sock, line.c_str(), line.size());
+				close(sock);
+
+				if (n < 0)
+					LOG(ERROR) << ERR_SOCKET_SEND << config->intface << " " << n;
+				if (config->stop_request)
+					break;
+				sleep(config->delay);
+			}
 		}
-		else
-			LOG(ERROR) << ERR_PARSE_LINE << line ;
 	}
 	if (!config->file_name.empty())
 		delete strm;
 
-	close(sock);
 	
 	if (config->stop_request == 2)
 		goto START;

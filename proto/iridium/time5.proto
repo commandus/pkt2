@@ -34,8 +34,8 @@ message Time5
 		{
 			name: "day_month_year"
 			type: INPUT_UINT
-			size: 2
 			endian: ENDIAN_BIG_ENDIAN
+			size: 2
 			offset: 0
 		},
 		{
@@ -64,7 +64,7 @@ message Time5
 		short_name: "Время"
 		full_name: "Время, Unix epoch"
 		measure_unit: "s"
-		get: "field.packet8.time5.day_month_year & 0x7f" 
+		get: "new Date(((field.packet8.time5.day_month_year >> 9) & 0x7f) + 2000, ((field.packet8.time5.day_month_year >> 5) & 0xf) - 1, (field.packet8.time5.day_month_year & 0x1f), field.packet8.time5.hour, field.packet8.time5.minute, field.packet8.time5.second, 00).getTime() / 1000" 
 		priority: 0
 		format: ["var d = new Date(value.packet8.time5.time5 * 1000); ('0' + d.getDate()).slice(-2) + '.' + ('0' + (d.getMonth() + 1)).slice(-2) + '.' + d.getFullYear() + ' ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2)"]
 	}];

@@ -389,10 +389,12 @@ std::string extractField
 		return r;
 	}
 	std::string r = packet.substr(field.offset(), field.size());
-	if (ENDIAN_NEED_SWAP(field.endian()))
+LOG(ERROR) << "Endian of " << field.name() << ": " << field.endian();	
+	if ((field.size() > 1) && ENDIAN_NEED_SWAP(field.endian()))
 	{
 		char *p = &r[0];
 		std::reverse(p, p + field.size());
+LOG(ERROR) << "SWAP " << field.name() << " offset: " << field.offset() << ", size : " << field.size();
 	}
 	return r;
 }
