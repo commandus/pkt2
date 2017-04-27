@@ -1,3 +1,6 @@
+#ifndef UTILSTRING_H_
+#define UTILSTRING_H_
+
 #include <string>
 #include <iostream>
 #include <sstream>
@@ -71,3 +74,5 @@ std::string hexString(void *buffer, size_t size);
 std::string hexString(const std::string &data);
 
 std::string hex2string(const std::string &hex);
+
+#endif

@@ -90,13 +90,14 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
-	pkt2gateway$(EXEEXT) tcptransmitter$(EXEEXT) \
-	tcpemitter$(EXEEXT) messageemitter$(EXEEXT) \
-	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
-	example1message$(EXEEXT) example1message1$(EXEEXT) \
-	tcpemitter-example1$(EXEEXT) tcpemitter-iridium$(EXEEXT) \
-	handlerpq$(EXEEXT) handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
+bin_PROGRAMS = mqtt-receiver$(EXEEXT) tcpreceiver$(EXEEXT) \
+	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) \
+	tcptransmitter$(EXEEXT) tcpemitter$(EXEEXT) \
+	messageemitter$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
+	message2gateway$(EXEEXT) example1message$(EXEEXT) \
+	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
+	tcpemitter-iridium$(EXEEXT) handlerpq$(EXEEXT) \
+	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	handler-google-sheets$(EXEEXT) pkt2dumppq$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -269,6 +270,20 @@ am_messageemitter_OBJECTS = messageemitter-messageemitter.$(OBJEXT) \
 messageemitter_OBJECTS = $(am_messageemitter_OBJECTS)
 messageemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_mqtt_receiver_OBJECTS = mqtt_receiver-mqtt-receiver.$(OBJEXT) \
+	mqtt_receiver-mqtt-receiver-config.$(OBJEXT) \
+	mqtt_receiver-mqtt-receivernano.$(OBJEXT) \
+	mqtt_receiver-input-packet.$(OBJEXT) \
+	mqtt_receiver-daemonize.$(OBJEXT) \
+	mqtt_receiver-snmpagentpkt2.$(OBJEXT) \
+	mqtt_receiver-get_rss.$(OBJEXT) \
+	mqtt_receiver-utilpriority.$(OBJEXT) \
+	mqtt_receiver-utilstring.$(OBJEXT) \
+	mqtt_receiver-utilinet.$(OBJEXT) \
+	mqtt_receiver-NanoMessage.$(OBJEXT) $(am__objects_1)
+mqtt_receiver_OBJECTS = $(am_mqtt_receiver_OBJECTS)
+mqtt_receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_pkt2dumppq_OBJECTS = pkt2dumppq-pkt2dumppq.$(OBJEXT) \
 	pkt2dumppq-pqdumper.$(OBJEXT) \
 	pkt2dumppq-pkt2dumppq-config.$(OBJEXT) \
@@ -438,20 +453,21 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
-	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
-	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(mqtt_receiver_SOURCES) $(pkt2dumppq_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
-	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(mqtt_receiver_SOURCES) $(pkt2dumppq_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -874,6 +890,7 @@ TESTS = tests/p1.sh tests/t1
 # -std=c++11
 AM_CXXFLAGS = -O0 -DDEBUG
 #COMMON_CPP_FLAGS = 
+# ----------------- REMOVE IT!!!! ------------------
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
@@ -889,7 +906,7 @@ BUILT_SOURCES = $(gengrpcs)
 CLEANFILES = $(gengrpcs)
 
 #
-# Headers
+#	Headers
 #
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  packet2message.h \
@@ -913,13 +930,14 @@ rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/interna
 rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
 duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
-pqdumper.h pkt2dumppq-config.h
+pqdumper.h pkt2dumppq-config.h \
+mqtt-receivernano.h mqtt-receiver-config.h
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 
 #
-# tcpemitter
+#	tcpemitter
 #
 tcpemitter_SOURCES = \
 	tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp \
@@ -930,7 +948,7 @@ tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
 tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# messageemitter
+#	messageemitter
 #
 messageemitter_SOURCES = \
 	messageemitter.cpp messageemitter-config.cpp  \
@@ -944,19 +962,31 @@ messageemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMP
 messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcpreceiver
+#	tcpreceiver
 #
 tcpreceiver_SOURCES = \
-	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp     snmpagentpkt2.c get_rss.c \
-	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
+	tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
+	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-#  pkt2receiver
+#	mqtt-receiver
+#
+mqtt_receiver_SOURCES = \
+	mqtt-receiver.cpp   mqtt-receiver-config.cpp mqtt-receivernano.cpp input-packet.cpp \
+	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+mqtt_receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lpaho-mqtt3c $(SNMPLIBS)
+mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+#	pkt2receiver
 #
 pkt2receiver_SOURCES = \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
@@ -971,7 +1001,7 @@ pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLI
 pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
-#  pkt2gateway
+#	pkt2gateway
 #
 pkt2gateway_SOURCES = \
 	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
@@ -1308,6 +1338,10 @@ duk/messageemitter-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 messageemitter$(EXEEXT): $(messageemitter_OBJECTS) $(messageemitter_DEPENDENCIES) $(EXTRA_messageemitter_DEPENDENCIES) 
 	@rm -f messageemitter$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(messageemitter_OBJECTS) $(messageemitter_LDADD) $(LIBS)
+
+mqtt-receiver$(EXEEXT): $(mqtt_receiver_OBJECTS) $(mqtt_receiver_DEPENDENCIES) $(EXTRA_mqtt_receiver_DEPENDENCIES) 
+	@rm -f mqtt-receiver$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(mqtt_receiver_OBJECTS) $(mqtt_receiver_LDADD) $(LIBS)
 duk/pkt2dumppq-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 	duk/$(DEPDIR)/$(am__dirstamp)
 
@@ -1478,6 +1512,17 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messageemitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messageemitter-utilprotobuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messageemitter-utilstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-NanoMessage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-get_rss.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-input-packet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-mqtt-receiver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-mqtt-receivernano.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-snmpagentpkt2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-utilinet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-utilpriority.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2dumppq-NanoMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2dumppq-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2dumppq-error-printer.Po@am__quote@
@@ -1686,6 +1731,34 @@ duk/messageemitter-duktape.obj: duk/duktape.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='duk/duktape.c' object='duk/messageemitter-duktape.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/messageemitter-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+
+mqtt_receiver-snmpagentpkt2.o: snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mqtt_receiver-snmpagentpkt2.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-snmpagentpkt2.Tpo -c -o mqtt_receiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-snmpagentpkt2.Tpo $(DEPDIR)/mqtt_receiver-snmpagentpkt2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='snmpagentpkt2.c' object='mqtt_receiver-snmpagentpkt2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mqtt_receiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
+
+mqtt_receiver-snmpagentpkt2.obj: snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mqtt_receiver-snmpagentpkt2.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-snmpagentpkt2.Tpo -c -o mqtt_receiver-snmpagentpkt2.obj `if test -f 'snmpagentpkt2.c'; then $(CYGPATH_W) 'snmpagentpkt2.c'; else $(CYGPATH_W) '$(srcdir)/snmpagentpkt2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-snmpagentpkt2.Tpo $(DEPDIR)/mqtt_receiver-snmpagentpkt2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='snmpagentpkt2.c' object='mqtt_receiver-snmpagentpkt2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mqtt_receiver-snmpagentpkt2.obj `if test -f 'snmpagentpkt2.c'; then $(CYGPATH_W) 'snmpagentpkt2.c'; else $(CYGPATH_W) '$(srcdir)/snmpagentpkt2.c'; fi`
+
+mqtt_receiver-get_rss.o: get_rss.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mqtt_receiver-get_rss.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-get_rss.Tpo -c -o mqtt_receiver-get_rss.o `test -f 'get_rss.c' || echo '$(srcdir)/'`get_rss.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-get_rss.Tpo $(DEPDIR)/mqtt_receiver-get_rss.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='get_rss.c' object='mqtt_receiver-get_rss.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mqtt_receiver-get_rss.o `test -f 'get_rss.c' || echo '$(srcdir)/'`get_rss.c
+
+mqtt_receiver-get_rss.obj: get_rss.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT mqtt_receiver-get_rss.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-get_rss.Tpo -c -o mqtt_receiver-get_rss.obj `if test -f 'get_rss.c'; then $(CYGPATH_W) 'get_rss.c'; else $(CYGPATH_W) '$(srcdir)/get_rss.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-get_rss.Tpo $(DEPDIR)/mqtt_receiver-get_rss.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='get_rss.c' object='mqtt_receiver-get_rss.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mqtt_receiver-get_rss.obj `if test -f 'get_rss.c'; then $(CYGPATH_W) 'get_rss.c'; else $(CYGPATH_W) '$(srcdir)/get_rss.c'; fi`
 
 duk/pkt2dumppq-duktape.o: duk/duktape.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2dumppq-duktape.o -MD -MP -MF duk/$(DEPDIR)/pkt2dumppq-duktape.Tpo -c -o duk/pkt2dumppq-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
@@ -3474,6 +3547,132 @@ messageemitter-pbjson.obj: pbjson.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='messageemitter-pbjson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+mqtt_receiver-mqtt-receiver.o: mqtt-receiver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receiver.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo -c -o mqtt_receiver-mqtt-receiver.o `test -f 'mqtt-receiver.cpp' || echo '$(srcdir)/'`mqtt-receiver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receiver.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-receiver.cpp' object='mqtt_receiver-mqtt-receiver.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-mqtt-receiver.o `test -f 'mqtt-receiver.cpp' || echo '$(srcdir)/'`mqtt-receiver.cpp
+
+mqtt_receiver-mqtt-receiver.obj: mqtt-receiver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receiver.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo -c -o mqtt_receiver-mqtt-receiver.obj `if test -f 'mqtt-receiver.cpp'; then $(CYGPATH_W) 'mqtt-receiver.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-receiver.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receiver.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-receiver.cpp' object='mqtt_receiver-mqtt-receiver.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-mqtt-receiver.obj `if test -f 'mqtt-receiver.cpp'; then $(CYGPATH_W) 'mqtt-receiver.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-receiver.cpp'; fi`
+
+mqtt_receiver-mqtt-receiver-config.o: mqtt-receiver-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receiver-config.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Tpo -c -o mqtt_receiver-mqtt-receiver-config.o `test -f 'mqtt-receiver-config.cpp' || echo '$(srcdir)/'`mqtt-receiver-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-receiver-config.cpp' object='mqtt_receiver-mqtt-receiver-config.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-mqtt-receiver-config.o `test -f 'mqtt-receiver-config.cpp' || echo '$(srcdir)/'`mqtt-receiver-config.cpp
+
+mqtt_receiver-mqtt-receiver-config.obj: mqtt-receiver-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receiver-config.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Tpo -c -o mqtt_receiver-mqtt-receiver-config.obj `if test -f 'mqtt-receiver-config.cpp'; then $(CYGPATH_W) 'mqtt-receiver-config.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-receiver-config.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-receiver-config.cpp' object='mqtt_receiver-mqtt-receiver-config.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-mqtt-receiver-config.obj `if test -f 'mqtt-receiver-config.cpp'; then $(CYGPATH_W) 'mqtt-receiver-config.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-receiver-config.cpp'; fi`
+
+mqtt_receiver-mqtt-receivernano.o: mqtt-receivernano.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receivernano.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receivernano.Tpo -c -o mqtt_receiver-mqtt-receivernano.o `test -f 'mqtt-receivernano.cpp' || echo '$(srcdir)/'`mqtt-receivernano.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receivernano.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receivernano.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-receivernano.cpp' object='mqtt_receiver-mqtt-receivernano.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-mqtt-receivernano.o `test -f 'mqtt-receivernano.cpp' || echo '$(srcdir)/'`mqtt-receivernano.cpp
+
+mqtt_receiver-mqtt-receivernano.obj: mqtt-receivernano.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receivernano.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receivernano.Tpo -c -o mqtt_receiver-mqtt-receivernano.obj `if test -f 'mqtt-receivernano.cpp'; then $(CYGPATH_W) 'mqtt-receivernano.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-receivernano.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receivernano.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receivernano.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-receivernano.cpp' object='mqtt_receiver-mqtt-receivernano.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-mqtt-receivernano.obj `if test -f 'mqtt-receivernano.cpp'; then $(CYGPATH_W) 'mqtt-receivernano.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-receivernano.cpp'; fi`
+
+mqtt_receiver-input-packet.o: input-packet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-input-packet.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-input-packet.Tpo -c -o mqtt_receiver-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-input-packet.Tpo $(DEPDIR)/mqtt_receiver-input-packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='input-packet.cpp' object='mqtt_receiver-input-packet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+
+mqtt_receiver-input-packet.obj: input-packet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-input-packet.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-input-packet.Tpo -c -o mqtt_receiver-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-input-packet.Tpo $(DEPDIR)/mqtt_receiver-input-packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='input-packet.cpp' object='mqtt_receiver-input-packet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+
+mqtt_receiver-daemonize.o: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-daemonize.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-daemonize.Tpo -c -o mqtt_receiver-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-daemonize.Tpo $(DEPDIR)/mqtt_receiver-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='mqtt_receiver-daemonize.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+mqtt_receiver-daemonize.obj: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-daemonize.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-daemonize.Tpo -c -o mqtt_receiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-daemonize.Tpo $(DEPDIR)/mqtt_receiver-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='mqtt_receiver-daemonize.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+mqtt_receiver-utilpriority.o: utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilpriority.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilpriority.Tpo -c -o mqtt_receiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-utilpriority.Tpo $(DEPDIR)/mqtt_receiver-utilpriority.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilpriority.cpp' object='mqtt_receiver-utilpriority.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+mqtt_receiver-utilpriority.obj: utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilpriority.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilpriority.Tpo -c -o mqtt_receiver-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-utilpriority.Tpo $(DEPDIR)/mqtt_receiver-utilpriority.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilpriority.cpp' object='mqtt_receiver-utilpriority.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+mqtt_receiver-utilstring.o: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilstring.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilstring.Tpo -c -o mqtt_receiver-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-utilstring.Tpo $(DEPDIR)/mqtt_receiver-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='mqtt_receiver-utilstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+mqtt_receiver-utilstring.obj: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilstring.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilstring.Tpo -c -o mqtt_receiver-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-utilstring.Tpo $(DEPDIR)/mqtt_receiver-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='mqtt_receiver-utilstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+mqtt_receiver-utilinet.o: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilinet.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilinet.Tpo -c -o mqtt_receiver-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-utilinet.Tpo $(DEPDIR)/mqtt_receiver-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='mqtt_receiver-utilinet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+mqtt_receiver-utilinet.obj: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilinet.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilinet.Tpo -c -o mqtt_receiver-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-utilinet.Tpo $(DEPDIR)/mqtt_receiver-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='mqtt_receiver-utilinet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+mqtt_receiver-NanoMessage.o: NanoMessage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-NanoMessage.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-NanoMessage.Tpo -c -o mqtt_receiver-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-NanoMessage.Tpo $(DEPDIR)/mqtt_receiver-NanoMessage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NanoMessage.cpp' object='mqtt_receiver-NanoMessage.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+
+mqtt_receiver-NanoMessage.obj: NanoMessage.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-NanoMessage.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-NanoMessage.Tpo -c -o mqtt_receiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-NanoMessage.Tpo $(DEPDIR)/mqtt_receiver-NanoMessage.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='NanoMessage.cpp' object='mqtt_receiver-NanoMessage.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
 pkt2dumppq-pkt2dumppq.o: pkt2dumppq.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2dumppq-pkt2dumppq.o -MD -MP -MF $(DEPDIR)/pkt2dumppq-pkt2dumppq.Tpo -c -o pkt2dumppq-pkt2dumppq.o `test -f 'pkt2dumppq.cpp' || echo '$(srcdir)/'`pkt2dumppq.cpp

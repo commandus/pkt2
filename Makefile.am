@@ -15,9 +15,11 @@ endif
 # -std=c++11
 AM_CXXFLAGS =  -O0 -DDEBUG
 #COMMON_CPP_FLAGS = 
+# ----------------- REMOVE IT!!!! ------------------
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
+
 
 gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 $(gengrpcs): Makefile
@@ -41,9 +43,9 @@ BUILT_SOURCES = $(gengrpcs)
 CLEANFILES = $(gengrpcs)
 
 #
-# Binaries
+#	Binaries
 #
-bin_PROGRAMS = tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
+bin_PROGRAMS = mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	tcpemitter messageemitter \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium \
@@ -51,7 +53,7 @@ bin_PROGRAMS = tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	pkt2dumppq
 
 #
-# Headers
+#	Headers
 #
 nobase_dist_include_HEADERS = \
 NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  packet2message.h \
@@ -75,14 +77,15 @@ rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/interna
 rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
 duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
-pqdumper.h pkt2dumppq-config.h
+pqdumper.h pkt2dumppq-config.h \
+mqtt-receivernano.h mqtt-receiver-config.h
 
 common_src =
 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 
 #
-# tcpemitter
+#	tcpemitter
 #
 tcpemitter_SOURCES = \
 	tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp \
@@ -93,7 +96,7 @@ tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
 tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# messageemitter
+#	messageemitter
 #
 messageemitter_SOURCES = \
 	messageemitter.cpp messageemitter-config.cpp  \
@@ -107,19 +110,31 @@ messageemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMP
 messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcpreceiver
+#	tcpreceiver
 #
 tcpreceiver_SOURCES = \
-	tcpreceiver.cpp   tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp     snmpagentpkt2.c get_rss.c \
-	utilpriority.cpp  utilstring.cpp         utilinet.cpp        NanoMessage.cpp \
+	tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
+	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-#  pkt2receiver
+#	mqtt-receiver
+#
+mqtt_receiver_SOURCES = \
+	mqtt-receiver.cpp   mqtt-receiver-config.cpp mqtt-receivernano.cpp input-packet.cpp \
+	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+mqtt_receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lpaho-mqtt3c $(SNMPLIBS)
+mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+#	pkt2receiver
 #
 pkt2receiver_SOURCES= \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
@@ -134,7 +149,7 @@ pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLI
 pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
-#  pkt2gateway
+#	pkt2gateway
 #
 pkt2gateway_SOURCES= \
 	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <string>
 #include "errorcodes.h"
+#include "utilstring.h"
 
 /**
  * @brief Return struct addrinfo

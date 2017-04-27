@@ -198,16 +198,9 @@ START:
 				LOG(INFO) << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size);
 				if (config->verbosity >= 2)
 				{
-
 					std::cerr << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size)
 					<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
 					<< std::endl;
-
-					InputPacket packettest(packet.get(), packet.size);
-					LOG(ERROR) << "TEST: " << std::string(1, packettest.header()->name) << " (addresses may be invalid) " <<
-							inet_ntoa(packettest.get_sockaddr_src()->sin_addr) << ":" << ntohs(packettest.get_sockaddr_src()->sin_port) << "->" <<
-							inet_ntoa(packettest.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packettest.get_sockaddr_dst()->sin_port);
-
 				}
 			}
 		}

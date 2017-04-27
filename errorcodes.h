@@ -32,6 +32,9 @@
 #define MSG_NN_BIND_SUCCESS						"nanomsg socket bind successfully to "
 #define MSG_NN_SENT_SUCCESS						"nanomsg socket sent data successfully to "
 #define MSG_PACKET_REJECTED						"packet rejected: "
+#define MSG_MQTT_DELIVERED						"MQTT message delivery confirmed, token value: "
+#define MSG_MQTT_ARRIVED						"MQTT arrived topic, message: "
+#define MSG_MQTT_SUBSCRIBE						"Subscribing to MQTT topic, client, QoS: "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							1
@@ -89,6 +92,9 @@
 #define ERRCODE_TOKEN_BEARER					51
 #define ERRCODE_GS_RANGE						52
 
+#define ERRCODE_MQTT_CONNECTION_LOST			53
+#define ERRCODE_MQTT_CONNECT_FAIL				54
+
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
 #define ERR_LMDB_TXN_BEGIN						"Can not begin LMDB transaction "
@@ -141,5 +147,8 @@
 #define ERR_PACKET_TOO_SMALL					"Packet size is too small, field "
 #define ERR_TOKEN_BEARER						"Token bearer error "
 #define ERR_GS_RANGE							"Google Sheet get range error "
+
+#define ERR_MQTT_CONNECTION_LOST				"MQTT connection lost, cause: "
+#define ERR_MQTT_CONNECT_FAIL					"Failed to connect to MQTT broker: "
 
 #endif /* ERRORCODES_H_ */
