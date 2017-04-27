@@ -15,12 +15,46 @@
 MQTT_Env::MQTT_Env
 (
 	Config *aconfig,
-	MQTTClient *aclient,
+	MQTTClient aclient,
 	int ananosocket
 ) 
 	: config(aconfig), client(aclient), nano_socket(ananosocket)
 {
 	
+}
+
+int do_connect
+(
+	Config *config,
+	MQTTClient &client
+)
+{
+	int r;
+	MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+	conn_opts.keepAliveInterval = config->keep_alive_interval;
+	// 0- dirty, please send me old messages
+	conn_opts.cleansession = 0;
+
+	if ((r = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
+	{
+		LOG(ERROR) << ERR_MQTT_CONNECT_FAIL << r;
+		return ERRCODE_MQTT_CONNECT_FAIL;
+	}
+
+	const char ** topics = (const char **) malloc(config->topics.size() * sizeof(char *));
+	int *qos = (int*) malloc(config->topics.size() * sizeof(int *));
+	
+	for (int i = 0; i < config->topics.size(); i++)
+	{
+		topics[i] = config->topics[i].c_str();
+		qos[i] = config->qos;
+	}
+
+	MQTTClient_subscribeMany(client, config->topics.size(), (char * const*) topics, qos);
+	// MQTTClient_subscribe(client, config->topics[0].c_str(), config->qos);
+	free(topics);
+	free(qos);
+	return ERR_OK;
 }
 
 void cb_delivered
@@ -91,6 +125,7 @@ void cb_connection_lost
 		return;
 	MQTT_Env *env = (MQTT_Env*) context;
 	LOG(ERROR) << ERR_MQTT_CONNECTION_LOST << cause;
+	env->config->stop_request = 2;
 }
 
 /**
@@ -132,36 +167,13 @@ START:
 	}
 
 	// MQTT init
-
 	MQTTClient client;
-	
-	MQTT_Env env(config, &client, nano_socket);
-
-	MQTTClient_connectOptions conn_opts = MQTTClient_connectOptions_initializer;
+	MQTT_Env env(config, client, nano_socket);
 	
 	MQTTClient_create(&client, config->getBrokerAddress().c_str(), config->client_id.c_str(), MQTTCLIENT_PERSISTENCE_NONE, NULL);
-	conn_opts.keepAliveInterval = config->keep_alive_interval;
-	conn_opts.cleansession = 0;
 	MQTTClient_setCallbacks(client, &env, cb_connection_lost, cb_message_arrived, cb_delivered);
-	if ((r = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
-	{
-		LOG(ERROR) << ERR_MQTT_CONNECT_FAIL << r;
-		return ERRCODE_MQTT_CONNECT_FAIL;
-	}
 	
-	const char ** topics = (const char **) malloc(config->topics.size() * sizeof(char *));
-	int *qos = (int*) malloc(config->topics.size() * sizeof(int *));
-	
-	for (int i = 0; i < config->topics.size(); i++)
-	{
-		topics[i] = config->topics[i].c_str();
-		qos[i] = config->qos;
-	}
-
-	MQTTClient_subscribeMany(client, config->topics.size(), (char * const*) topics, qos);
-	// MQTTClient_subscribe(client, config->topics[0].c_str(), config->qos);
-	free(topics);
-	free(qos);
+	do_connect(config, client);
 
 	while (!config->stop_request)
 	{

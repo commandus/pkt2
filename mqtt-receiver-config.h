@@ -47,9 +47,10 @@ public:
 	uint32_t qos;						///< default 1- At least once: The message is always delivered at least once.
 	uint32_t verbosity;
 
-	int retries;			///< default 0
-	int retry_delay;		///< default 60 seconds
-
+	int retries;						///< default 0
+	int retry_delay;					///< default 60 seconds
+	uint32_t reconnect_delay;			///< default 60s
+	
 	bool daemonize;
 	int max_fd;				///< 0- use default max file descriptor count per process
 	int stop_request;		///< 0- process, 1- stop request, 2- reload request

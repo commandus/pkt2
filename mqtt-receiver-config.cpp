@@ -13,6 +13,9 @@
 #define DEF_CLIENT_ID				"mqtt-receiver"
 #define DEF_KEEP_ALIVE_INTERVAL		20
 #define DEF_KEEP_ALIVE_INTERVAL_S	"20"
+#define DEF_RECONNECT_DELAY			5
+#define DEF_RECONNECT_DELAY_S		"5"
+
 Config::Config
 (
     int argc, 
@@ -53,6 +56,8 @@ int Config::parseCmd
 	struct arg_int *a_qos = arg_int0("q", "qos", "<0..2>", "0- at most once, 1- at least once, 2- exactly once. Default " DEF_QOS_S);
 	struct arg_str *a_client_id = arg_str0("c", "client", "<id>", "MQTT client identifier string. Default " DEF_CLIENT_ID);
 	struct arg_int *a_keep_alive_interval = arg_int0("k", "keepalive", "<seconds>", "Keep alive interval. Default " DEF_KEEP_ALIVE_INTERVAL_S);
+	struct arg_int *a_reconnect_delay = arg_int0("w", "reconnect", "<seconds>", "Reconnect interval. Default " DEF_RECONNECT_DELAY_S);
+	
 
 	struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
@@ -65,7 +70,7 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = { 
-		a_topic, a_broker_address, a_broker_port, a_qos, a_client_id, a_keep_alive_interval,
+		a_topic, a_broker_address, a_broker_port, a_qos, a_client_id, a_keep_alive_interval, a_reconnect_delay,
 		a_message_url, 
 		a_retries, a_retry_delay,
 		a_daemonize, a_max_fd, a_verbosity,
@@ -129,6 +134,11 @@ int Config::parseCmd
 		keep_alive_interval = *a_keep_alive_interval->ival;
 	else
 		keep_alive_interval = DEF_KEEP_ALIVE_INTERVAL;
+
+	if (a_reconnect_delay->count)
+		reconnect_delay = *a_reconnect_delay->ival;
+	else
+		reconnect_delay = DEF_RECONNECT_DELAY;
 	
 	if (a_message_url->count)
 		message_url = *a_message_url->sval;

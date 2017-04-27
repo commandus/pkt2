@@ -6,13 +6,13 @@
 class MQTT_Env {
 public:
 	Config *config;
-	MQTTClient *client;
+	MQTTClient client;
 	int nano_socket;
 	
 	MQTT_Env
 	(
 		Config *aconfig,
-		MQTTClient *aclient,
+		MQTTClient aclient,
 		int ananosocket
 	);
 };
