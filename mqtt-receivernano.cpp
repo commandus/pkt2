@@ -69,10 +69,9 @@ int cb_message_arrived
 			LOG(INFO) << MSG_NN_SENT_SUCCESS << env->config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size);
 			if (env->config->verbosity >= 2)
 			{
-
 				std::cerr << MSG_NN_SENT_SUCCESS << env->config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size)
-				<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
-				<< std::endl;
+					<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
+					<< std::endl;
 			}
 		}
 	}
@@ -142,7 +141,7 @@ START:
 	
 	MQTTClient_create(&client, config->getBrokerAddress().c_str(), config->client_id.c_str(), MQTTCLIENT_PERSISTENCE_NONE, NULL);
 	conn_opts.keepAliveInterval = config->keep_alive_interval;
-	conn_opts.cleansession = 1;
+	conn_opts.cleansession = 0;
 	MQTTClient_setCallbacks(client, &env, cb_connection_lost, cb_message_arrived, cb_delivered);
 	if ((r = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
 	{
@@ -159,8 +158,8 @@ START:
 		qos[i] = config->qos;
 	}
 
-	// MQTTClient_subscribeMany(client, config->topics.size(), (char * const*) topics, qos);
-	MQTTClient_subscribe(client, config->topics[0].c_str(), config->qos);
+	MQTTClient_subscribeMany(client, config->topics.size(), (char * const*) topics, qos);
+	// MQTTClient_subscribe(client, config->topics[0].c_str(), config->qos);
 	free(topics);
 	free(qos);
 

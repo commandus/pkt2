@@ -317,15 +317,14 @@ int main(int argc, char **argv)
 		exit(r);
 	}
 	
-	MQTTClient_message pubmsg = MQTTClient_message_initializer;
-	pubmsg.qos = qos;
-	pubmsg.retained = 0;
-	pubmsg.payloadlen = sizeof(pkt);
-	
 	while (cont)
 	{
 		fill_random_packet(&pkt, count);
 
+		MQTTClient_message pubmsg = MQTTClient_message_initializer;
+		pubmsg.qos = qos;
+		pubmsg.retained = 1;
+		pubmsg.payloadlen = sizeof(pkt);
 		pubmsg.payload = &pkt;
 
 		MQTTClient_deliveryToken token;
