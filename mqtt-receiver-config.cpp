@@ -21,7 +21,6 @@ Config::Config
 {
 	stop_request = 0;
 	lastError = parseCmd(argc, argv);
-	socket_accept = 0;
 }
 
 int Config::error() 
@@ -97,6 +96,7 @@ int Config::parseCmd
 		return 1;
 	}
 
+	// MQTT
 	if (a_broker_address->count)
 		broker_address = *a_broker_address->sval;
 	else

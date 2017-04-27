@@ -47,11 +47,13 @@ int cb_message_arrived
 		return 1;
 	MQTT_Env *env = (MQTT_Env*) context;
 	
-	LOG(INFO) << MSG_MQTT_ARRIVED <<  topicName << ", " << message->payloadlen;
+	LOG(INFO) << MSG_MQTT_ARRIVED << topicName << ", " << message->payloadlen;
 	
-	InputPacket packet(message->payload, message->payloadlen);
+	InputPacket packet('T', message->payloadlen);
+	packet.setLength(message->payloadlen);
+	memmove(packet.data(), message->payload, message->payloadlen);
 	
-		// send message to the nano queue
+	// send message to the nano queue
 	int bytes = nn_send(env->nano_socket, packet.get(), packet.size, 0);
 	if (bytes != packet.size)
 	{
@@ -115,7 +117,6 @@ START:
 	if (r < 0)
 	{
 		LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->message_url << " " << errno << ": " << nn_strerror(errno);
-		close(config->socket_accept);
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
@@ -123,7 +124,6 @@ START:
 	if (eid < 0)
 	{
 		LOG(ERROR) << ERR_NN_BIND << config->message_url << " " << errno << ": " << nn_strerror(errno);
-		close(config->socket_accept);	
 		return ERRCODE_NN_BIND;
 	}
 
@@ -159,17 +159,20 @@ START:
 		qos[i] = config->qos;
 	}
 
-	MQTTClient_subscribeMany(client, config->topics.size(), (char * const*) topics, qos);
+	// MQTTClient_subscribeMany(client, config->topics.size(), (char * const*) topics, qos);
+	MQTTClient_subscribe(client, config->topics[0].c_str(), config->qos);
 	free(topics);
 	free(qos);
 
 	while (!config->stop_request)
 	{
+		sleep(1);
 	}
-	if (config->socket_accept)
-		close(config->socket_accept);	
 	r = nn_shutdown(nano_socket, eid);
 	
+	MQTTClient_disconnect(client, 10000);
+	MQTTClient_destroy(&client);
+
 	LOG(ERROR) << MSG_STOP;
 	if (config->stop_request == 2)
 		goto START;
@@ -192,8 +195,6 @@ int stop(Config *config)
 	if (!config)
 		return ERRCODE_NO_CONFIG;
 	config->stop_request = 1;
-	close(config->socket_accept);
-	config->socket_accept = 0;
 	return ERR_OK;
 
 }
@@ -205,7 +206,5 @@ int reload(Config *config)
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
 
 	config->stop_request = 2;
-	close(config->socket_accept);
-	config->socket_accept = 0;
 	return ERR_OK;
 }

@@ -96,8 +96,8 @@ bin_PROGRAMS = mqtt-receiver$(EXEEXT) tcpreceiver$(EXEEXT) \
 	messageemitter$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
 	message2gateway$(EXEEXT) example1message$(EXEEXT) \
 	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
-	tcpemitter-iridium$(EXEEXT) handlerpq$(EXEEXT) \
-	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
+	tcpemitter-iridium$(EXEEXT) mqtt-emitter-iridium$(EXEEXT) \
+	handlerpq$(EXEEXT) handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	handler-google-sheets$(EXEEXT) pkt2dumppq$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -270,6 +270,11 @@ am_messageemitter_OBJECTS = messageemitter-messageemitter.$(OBJEXT) \
 messageemitter_OBJECTS = $(am_messageemitter_OBJECTS)
 messageemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_mqtt_emitter_iridium_OBJECTS =  \
+	mqtt_emitter_iridium-mqtt-emitter-iridium.$(OBJEXT) \
+	mqtt_emitter_iridium-utilstring.$(OBJEXT) $(am__objects_1)
+mqtt_emitter_iridium_OBJECTS = $(am_mqtt_emitter_iridium_OBJECTS)
+mqtt_emitter_iridium_DEPENDENCIES =
 am_mqtt_receiver_OBJECTS = mqtt_receiver-mqtt-receiver.$(OBJEXT) \
 	mqtt_receiver-mqtt-receiver-config.$(OBJEXT) \
 	mqtt_receiver-mqtt-receivernano.$(OBJEXT) \
@@ -453,21 +458,22 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
-	$(mqtt_receiver_SOURCES) $(pkt2dumppq_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
-	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
+	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
-	$(mqtt_receiver_SOURCES) $(pkt2dumppq_SOURCES) \
-	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
+	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -1016,7 +1022,7 @@ pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIB
 pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
-# handlerpq
+#	handlerpq
 #
 handlerpq_SOURCES = \
 	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
@@ -1029,7 +1035,7 @@ handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcptransmitter
+#	tcptransmitter
 #
 tcptransmitter_SOURCES = \
 	tcptransmitter.cpp  tcptransmitter-config.cpp  \
@@ -1041,7 +1047,7 @@ tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# handlerlmdb
+#	handlerlmdb
 #
 handlerlmdb_SOURCES = \
 	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
@@ -1055,7 +1061,7 @@ handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# handlerline
+#	handlerline
 #
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
@@ -1069,7 +1075,7 @@ handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# handler-google-sheets
+#	handler-google-sheets
 #
 handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
@@ -1084,7 +1090,7 @@ handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -ls
 handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# protoc-gen-pkt2
+#	protoc-gen-pkt2
 #
 protoc_gen_pkt2_SOURCES = \
 	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
@@ -1095,7 +1101,7 @@ protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
 protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# message2gateway
+#	message2gateway
 #
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
@@ -1109,7 +1115,7 @@ message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
 message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# example1message
+#	example1message
 #
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
@@ -1121,7 +1127,7 @@ example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
 example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# example1message1
+#	example1message1
 #
 example1message1_SOURCES = \
 	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp \
@@ -1131,7 +1137,7 @@ example1message1_LDADD = -lprotobuf $(SNMPLIBS)
 example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcpemitter-example1
+#	tcpemitter-example1
 #
 tcpemitter_example1_SOURCES = \
 	tcpemitter-example1.cpp \
@@ -1141,7 +1147,7 @@ tcpemitter_example1_LDADD =
 tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcpemitter-iridium
+#	tcpemitter-iridium
 #
 tcpemitter_iridium_SOURCES = \
 	tcpemitter-iridium.cpp utilstring.cpp \
@@ -1149,6 +1155,16 @@ tcpemitter_iridium_SOURCES = \
 
 tcpemitter_iridium_LDADD = 
 tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+#	mqtt-emitter-iridium
+#
+mqtt_emitter_iridium_SOURCES = \
+	mqtt-emitter-iridium.cpp utilstring.cpp \
+	$(common_src)
+
+mqtt_emitter_iridium_LDADD = -lpaho-mqtt3c 
+mqtt_emitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # pkt2dumppq
@@ -1339,6 +1355,10 @@ messageemitter$(EXEEXT): $(messageemitter_OBJECTS) $(messageemitter_DEPENDENCIES
 	@rm -f messageemitter$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(messageemitter_OBJECTS) $(messageemitter_LDADD) $(LIBS)
 
+mqtt-emitter-iridium$(EXEEXT): $(mqtt_emitter_iridium_OBJECTS) $(mqtt_emitter_iridium_DEPENDENCIES) $(EXTRA_mqtt_emitter_iridium_DEPENDENCIES) 
+	@rm -f mqtt-emitter-iridium$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(mqtt_emitter_iridium_OBJECTS) $(mqtt_emitter_iridium_LDADD) $(LIBS)
+
 mqtt-receiver$(EXEEXT): $(mqtt_receiver_OBJECTS) $(mqtt_receiver_DEPENDENCIES) $(EXTRA_mqtt_receiver_DEPENDENCIES) 
 	@rm -f mqtt-receiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(mqtt_receiver_OBJECTS) $(mqtt_receiver_LDADD) $(LIBS)
@@ -1512,6 +1532,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messageemitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messageemitter-utilprotobuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/messageemitter-utilstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_emitter_iridium-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-NanoMessage.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/mqtt_receiver-get_rss.Po@am__quote@
@@ -3547,6 +3569,34 @@ messageemitter-pbjson.obj: pbjson.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='pbjson.cpp' object='messageemitter-pbjson.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
+
+mqtt_emitter_iridium-mqtt-emitter-iridium.o: mqtt-emitter-iridium.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_emitter_iridium-mqtt-emitter-iridium.o -MD -MP -MF $(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Tpo -c -o mqtt_emitter_iridium-mqtt-emitter-iridium.o `test -f 'mqtt-emitter-iridium.cpp' || echo '$(srcdir)/'`mqtt-emitter-iridium.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Tpo $(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-emitter-iridium.cpp' object='mqtt_emitter_iridium-mqtt-emitter-iridium.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-mqtt-emitter-iridium.o `test -f 'mqtt-emitter-iridium.cpp' || echo '$(srcdir)/'`mqtt-emitter-iridium.cpp
+
+mqtt_emitter_iridium-mqtt-emitter-iridium.obj: mqtt-emitter-iridium.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_emitter_iridium-mqtt-emitter-iridium.obj -MD -MP -MF $(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Tpo -c -o mqtt_emitter_iridium-mqtt-emitter-iridium.obj `if test -f 'mqtt-emitter-iridium.cpp'; then $(CYGPATH_W) 'mqtt-emitter-iridium.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-emitter-iridium.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Tpo $(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='mqtt-emitter-iridium.cpp' object='mqtt_emitter_iridium-mqtt-emitter-iridium.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-mqtt-emitter-iridium.obj `if test -f 'mqtt-emitter-iridium.cpp'; then $(CYGPATH_W) 'mqtt-emitter-iridium.cpp'; else $(CYGPATH_W) '$(srcdir)/mqtt-emitter-iridium.cpp'; fi`
+
+mqtt_emitter_iridium-utilstring.o: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_emitter_iridium-utilstring.o -MD -MP -MF $(DEPDIR)/mqtt_emitter_iridium-utilstring.Tpo -c -o mqtt_emitter_iridium-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_emitter_iridium-utilstring.Tpo $(DEPDIR)/mqtt_emitter_iridium-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='mqtt_emitter_iridium-utilstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+mqtt_emitter_iridium-utilstring.obj: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_emitter_iridium-utilstring.obj -MD -MP -MF $(DEPDIR)/mqtt_emitter_iridium-utilstring.Tpo -c -o mqtt_emitter_iridium-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_emitter_iridium-utilstring.Tpo $(DEPDIR)/mqtt_emitter_iridium-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='mqtt_emitter_iridium-utilstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
 
 mqtt_receiver-mqtt-receiver.o: mqtt-receiver.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receiver.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo -c -o mqtt_receiver-mqtt-receiver.o `test -f 'mqtt-receiver.cpp' || echo '$(srcdir)/'`mqtt-receiver.cpp

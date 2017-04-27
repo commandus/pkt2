@@ -48,7 +48,8 @@ CLEANFILES = $(gengrpcs)
 bin_PROGRAMS = mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	tcpemitter messageemitter \
 	protoc-gen-pkt2 \
-	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium \
+	message2gateway example1message example1message1 \
+	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
 	handlerpq handlerline handlerlmdb handler-google-sheets \
 	pkt2dumppq
 
@@ -164,7 +165,7 @@ pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIB
 pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
-# handlerpq
+#	handlerpq
 #
 handlerpq_SOURCES= \
 	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
@@ -177,7 +178,7 @@ handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcptransmitter
+#	tcptransmitter
 #
 tcptransmitter_SOURCES = \
 	tcptransmitter.cpp  tcptransmitter-config.cpp  \
@@ -189,7 +190,7 @@ tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# handlerlmdb
+#	handlerlmdb
 #
 handlerlmdb_SOURCES = \
 	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
@@ -202,7 +203,7 @@ handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# handlerline
+#	handlerline
 #
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp \
@@ -216,7 +217,7 @@ handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# handler-google-sheets
+#	handler-google-sheets
 #
 handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
@@ -231,7 +232,7 @@ handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -ls
 handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# protoc-gen-pkt2
+#	protoc-gen-pkt2
 #
 protoc_gen_pkt2_SOURCES = \
 	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
@@ -242,7 +243,7 @@ protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
 protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# message2gateway
+#	message2gateway
 #
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
@@ -256,7 +257,7 @@ message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
 message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# example1message
+#	example1message
 #
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
@@ -268,7 +269,7 @@ example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
 example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# example1message1
+#	example1message1
 #
 example1message1_SOURCES = \
 	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp \
@@ -278,7 +279,7 @@ example1message1_LDADD = -lprotobuf $(SNMPLIBS)
 example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcpemitter-example1
+#	tcpemitter-example1
 #
 tcpemitter_example1_SOURCES = \
 	tcpemitter-example1.cpp \
@@ -288,7 +289,7 @@ tcpemitter_example1_LDADD =
 tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
-# tcpemitter-iridium
+#	tcpemitter-iridium
 #
 tcpemitter_iridium_SOURCES = \
 	tcpemitter-iridium.cpp utilstring.cpp \
@@ -297,6 +298,15 @@ tcpemitter_iridium_SOURCES = \
 tcpemitter_iridium_LDADD = 
 tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
+#
+#	mqtt-emitter-iridium
+#
+mqtt_emitter_iridium_SOURCES = \
+	mqtt-emitter-iridium.cpp utilstring.cpp \
+	$(common_src)
+
+mqtt_emitter_iridium_LDADD = -lpaho-mqtt3c 
+mqtt_emitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # pkt2dumppq
