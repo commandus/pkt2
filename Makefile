@@ -90,14 +90,15 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = x86_64-pc-linux-gnu
 host_triplet = x86_64-pc-linux-gnu
-bin_PROGRAMS = mqtt-receiver$(EXEEXT) tcpreceiver$(EXEEXT) \
-	pkt2receiver$(EXEEXT) pkt2gateway$(EXEEXT) \
-	tcptransmitter$(EXEEXT) tcpemitter$(EXEEXT) \
-	messageemitter$(EXEEXT) protoc-gen-pkt2$(EXEEXT) \
-	message2gateway$(EXEEXT) example1message$(EXEEXT) \
-	example1message1$(EXEEXT) tcpemitter-example1$(EXEEXT) \
-	tcpemitter-iridium$(EXEEXT) mqtt-emitter-iridium$(EXEEXT) \
-	handlerpq$(EXEEXT) handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
+bin_PROGRAMS = pkt2$(EXEEXT) mqtt-receiver$(EXEEXT) \
+	tcpreceiver$(EXEEXT) pkt2receiver$(EXEEXT) \
+	pkt2gateway$(EXEEXT) tcptransmitter$(EXEEXT) \
+	tcpemitter$(EXEEXT) messageemitter$(EXEEXT) \
+	protoc-gen-pkt2$(EXEEXT) message2gateway$(EXEEXT) \
+	example1message$(EXEEXT) example1message1$(EXEEXT) \
+	tcpemitter-example1$(EXEEXT) tcpemitter-iridium$(EXEEXT) \
+	mqtt-emitter-iridium$(EXEEXT) handlerpq$(EXEEXT) \
+	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	handler-google-sheets$(EXEEXT) pkt2dumppq$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
@@ -289,6 +290,12 @@ am_mqtt_receiver_OBJECTS = mqtt_receiver-mqtt-receiver.$(OBJEXT) \
 mqtt_receiver_OBJECTS = $(am_mqtt_receiver_OBJECTS)
 mqtt_receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_pkt2_OBJECTS = pkt2-pkt2.$(OBJEXT) pkt2-pkt2-config.$(OBJEXT) \
+	pkt2-pkt2-impl.$(OBJEXT) pkt2-utilstring.$(OBJEXT) \
+	pkt2-daemonize.$(OBJEXT) duk/pkt2-duktape.$(OBJEXT) \
+	$(am__objects_1)
+pkt2_OBJECTS = $(am_pkt2_OBJECTS)
+pkt2_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pkt2dumppq_OBJECTS = pkt2dumppq-pkt2dumppq.$(OBJEXT) \
 	pkt2dumppq-pqdumper.$(OBJEXT) \
 	pkt2dumppq-pkt2dumppq-config.$(OBJEXT) \
@@ -459,7 +466,7 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
 	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
-	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
 	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
@@ -469,7 +476,7 @@ DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
 	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
-	$(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
+	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
 	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
 	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
@@ -937,10 +944,22 @@ rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
 duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
-mqtt-receivernano.h mqtt-receiver-config.h
+mqtt-receivernano.h mqtt-receiver-config.h \
+pkt2-config.h pkt2-impl.h
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
+
+#
+#	pkt2
+#
+pkt2_SOURCES = \
+	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp \
+	utilstring.cpp daemonize.cpp duk/duktape.c \
+	$(common_src)
+
+pkt2_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
+pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	tcpemitter
@@ -1362,6 +1381,12 @@ mqtt-emitter-iridium$(EXEEXT): $(mqtt_emitter_iridium_OBJECTS) $(mqtt_emitter_ir
 mqtt-receiver$(EXEEXT): $(mqtt_receiver_OBJECTS) $(mqtt_receiver_DEPENDENCIES) $(EXTRA_mqtt_receiver_DEPENDENCIES) 
 	@rm -f mqtt-receiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(mqtt_receiver_OBJECTS) $(mqtt_receiver_LDADD) $(LIBS)
+duk/pkt2-duktape.$(OBJEXT): duk/$(am__dirstamp) \
+	duk/$(DEPDIR)/$(am__dirstamp)
+
+pkt2$(EXEEXT): $(pkt2_OBJECTS) $(pkt2_DEPENDENCIES) $(EXTRA_pkt2_DEPENDENCIES) 
+	@rm -f pkt2$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(pkt2_OBJECTS) $(pkt2_LDADD) $(LIBS)
 duk/pkt2dumppq-duktape.$(OBJEXT): duk/$(am__dirstamp) \
 	duk/$(DEPDIR)/$(am__dirstamp)
 
@@ -1545,6 +1570,11 @@ include ./$(DEPDIR)/mqtt_receiver-snmpagentpkt2.Po
 include ./$(DEPDIR)/mqtt_receiver-utilinet.Po
 include ./$(DEPDIR)/mqtt_receiver-utilpriority.Po
 include ./$(DEPDIR)/mqtt_receiver-utilstring.Po
+include ./$(DEPDIR)/pkt2-daemonize.Po
+include ./$(DEPDIR)/pkt2-pkt2-config.Po
+include ./$(DEPDIR)/pkt2-pkt2-impl.Po
+include ./$(DEPDIR)/pkt2-pkt2.Po
+include ./$(DEPDIR)/pkt2-utilstring.Po
 include ./$(DEPDIR)/pkt2dumppq-NanoMessage.Po
 include ./$(DEPDIR)/pkt2dumppq-daemonize.Po
 include ./$(DEPDIR)/pkt2dumppq-error-printer.Po
@@ -1640,6 +1670,7 @@ include duk/$(DEPDIR)/handlerlmdb-duktape.Po
 include duk/$(DEPDIR)/handlerpq-duktape.Po
 include duk/$(DEPDIR)/message2gateway-duktape.Po
 include duk/$(DEPDIR)/messageemitter-duktape.Po
+include duk/$(DEPDIR)/pkt2-duktape.Po
 include duk/$(DEPDIR)/pkt2dumppq-duktape.Po
 include duk/$(DEPDIR)/pkt2gateway-duktape.Po
 include duk/$(DEPDIR)/pkt2receiver-duktape.Po
@@ -1781,6 +1812,20 @@ mqtt_receiver-get_rss.obj: get_rss.c
 #	$(AM_V_CC)source='get_rss.c' object='mqtt_receiver-get_rss.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
 #	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o mqtt_receiver-get_rss.obj `if test -f 'get_rss.c'; then $(CYGPATH_W) 'get_rss.c'; else $(CYGPATH_W) '$(srcdir)/get_rss.c'; fi`
+
+duk/pkt2-duktape.o: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2-duktape.o -MD -MP -MF duk/$(DEPDIR)/pkt2-duktape.Tpo -c -o duk/pkt2-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/pkt2-duktape.Tpo duk/$(DEPDIR)/pkt2-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/pkt2-duktape.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/pkt2-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
+
+duk/pkt2-duktape.obj: duk/duktape.c
+	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2-duktape.obj -MD -MP -MF duk/$(DEPDIR)/pkt2-duktape.Tpo -c -o duk/pkt2-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
+	$(AM_V_at)$(am__mv) duk/$(DEPDIR)/pkt2-duktape.Tpo duk/$(DEPDIR)/pkt2-duktape.Po
+#	$(AM_V_CC)source='duk/duktape.c' object='duk/pkt2-duktape.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) \
+#	$(AM_V_CC_no)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o duk/pkt2-duktape.obj `if test -f 'duk/duktape.c'; then $(CYGPATH_W) 'duk/duktape.c'; else $(CYGPATH_W) '$(srcdir)/duk/duktape.c'; fi`
 
 duk/pkt2dumppq-duktape.o: duk/duktape.c
 	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/pkt2dumppq-duktape.o -MD -MP -MF duk/$(DEPDIR)/pkt2dumppq-duktape.Tpo -c -o duk/pkt2dumppq-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
@@ -3723,6 +3768,76 @@ mqtt_receiver-NanoMessage.obj: NanoMessage.cpp
 #	$(AM_V_CXX)source='NanoMessage.cpp' object='mqtt_receiver-NanoMessage.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+
+pkt2-pkt2.o: pkt2.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-pkt2.o -MD -MP -MF $(DEPDIR)/pkt2-pkt2.Tpo -c -o pkt2-pkt2.o `test -f 'pkt2.cpp' || echo '$(srcdir)/'`pkt2.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-pkt2.Tpo $(DEPDIR)/pkt2-pkt2.Po
+#	$(AM_V_CXX)source='pkt2.cpp' object='pkt2-pkt2.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2.o `test -f 'pkt2.cpp' || echo '$(srcdir)/'`pkt2.cpp
+
+pkt2-pkt2.obj: pkt2.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-pkt2.obj -MD -MP -MF $(DEPDIR)/pkt2-pkt2.Tpo -c -o pkt2-pkt2.obj `if test -f 'pkt2.cpp'; then $(CYGPATH_W) 'pkt2.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-pkt2.Tpo $(DEPDIR)/pkt2-pkt2.Po
+#	$(AM_V_CXX)source='pkt2.cpp' object='pkt2-pkt2.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2.obj `if test -f 'pkt2.cpp'; then $(CYGPATH_W) 'pkt2.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.cpp'; fi`
+
+pkt2-pkt2-config.o: pkt2-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-pkt2-config.o -MD -MP -MF $(DEPDIR)/pkt2-pkt2-config.Tpo -c -o pkt2-pkt2-config.o `test -f 'pkt2-config.cpp' || echo '$(srcdir)/'`pkt2-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-pkt2-config.Tpo $(DEPDIR)/pkt2-pkt2-config.Po
+#	$(AM_V_CXX)source='pkt2-config.cpp' object='pkt2-pkt2-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2-config.o `test -f 'pkt2-config.cpp' || echo '$(srcdir)/'`pkt2-config.cpp
+
+pkt2-pkt2-config.obj: pkt2-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-pkt2-config.obj -MD -MP -MF $(DEPDIR)/pkt2-pkt2-config.Tpo -c -o pkt2-pkt2-config.obj `if test -f 'pkt2-config.cpp'; then $(CYGPATH_W) 'pkt2-config.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-pkt2-config.Tpo $(DEPDIR)/pkt2-pkt2-config.Po
+#	$(AM_V_CXX)source='pkt2-config.cpp' object='pkt2-pkt2-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2-config.obj `if test -f 'pkt2-config.cpp'; then $(CYGPATH_W) 'pkt2-config.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2-config.cpp'; fi`
+
+pkt2-pkt2-impl.o: pkt2-impl.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-pkt2-impl.o -MD -MP -MF $(DEPDIR)/pkt2-pkt2-impl.Tpo -c -o pkt2-pkt2-impl.o `test -f 'pkt2-impl.cpp' || echo '$(srcdir)/'`pkt2-impl.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-pkt2-impl.Tpo $(DEPDIR)/pkt2-pkt2-impl.Po
+#	$(AM_V_CXX)source='pkt2-impl.cpp' object='pkt2-pkt2-impl.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2-impl.o `test -f 'pkt2-impl.cpp' || echo '$(srcdir)/'`pkt2-impl.cpp
+
+pkt2-pkt2-impl.obj: pkt2-impl.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-pkt2-impl.obj -MD -MP -MF $(DEPDIR)/pkt2-pkt2-impl.Tpo -c -o pkt2-pkt2-impl.obj `if test -f 'pkt2-impl.cpp'; then $(CYGPATH_W) 'pkt2-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2-impl.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-pkt2-impl.Tpo $(DEPDIR)/pkt2-pkt2-impl.Po
+#	$(AM_V_CXX)source='pkt2-impl.cpp' object='pkt2-pkt2-impl.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2-impl.obj `if test -f 'pkt2-impl.cpp'; then $(CYGPATH_W) 'pkt2-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2-impl.cpp'; fi`
+
+pkt2-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-utilstring.o -MD -MP -MF $(DEPDIR)/pkt2-utilstring.Tpo -c -o pkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-utilstring.Tpo $(DEPDIR)/pkt2-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='pkt2-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+pkt2-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-utilstring.obj -MD -MP -MF $(DEPDIR)/pkt2-utilstring.Tpo -c -o pkt2-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-utilstring.Tpo $(DEPDIR)/pkt2-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='pkt2-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+pkt2-daemonize.o: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-daemonize.o -MD -MP -MF $(DEPDIR)/pkt2-daemonize.Tpo -c -o pkt2-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-daemonize.Tpo $(DEPDIR)/pkt2-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='pkt2-daemonize.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+pkt2-daemonize.obj: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-daemonize.obj -MD -MP -MF $(DEPDIR)/pkt2-daemonize.Tpo -c -o pkt2-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-daemonize.Tpo $(DEPDIR)/pkt2-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='pkt2-daemonize.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
 
 pkt2dumppq-pkt2dumppq.o: pkt2dumppq.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2dumppq-pkt2dumppq.o -MD -MP -MF $(DEPDIR)/pkt2dumppq-pkt2dumppq.Tpo -c -o pkt2dumppq-pkt2dumppq.o `test -f 'pkt2dumppq.cpp' || echo '$(srcdir)/'`pkt2dumppq.cpp

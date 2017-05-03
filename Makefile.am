@@ -45,7 +45,7 @@ CLEANFILES = $(gengrpcs)
 #
 #	Binaries
 #
-bin_PROGRAMS = mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
+bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
 	tcpemitter messageemitter \
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 \
@@ -79,11 +79,23 @@ rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
 duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
-mqtt-receivernano.h mqtt-receiver-config.h
+mqtt-receivernano.h mqtt-receiver-config.h \
+pkt2-config.h pkt2-impl.h
 
 common_src =
 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
+
+#
+#	pkt2
+#
+pkt2_SOURCES = \
+	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp \
+	utilstring.cpp daemonize.cpp duk/duktape.c \
+	$(common_src)
+
+pkt2_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
+pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	tcpemitter
