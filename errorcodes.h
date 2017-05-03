@@ -94,6 +94,9 @@
 
 #define ERRCODE_MQTT_CONNECTION_LOST			53
 #define ERRCODE_MQTT_CONNECT_FAIL				54
+#define ERRCODE_FORK							55
+#define ERRCODE_EXEC							56
+#define ERRCODE_CONFIG							57
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -150,5 +153,8 @@
 
 #define ERR_MQTT_CONNECTION_LOST				"MQTT connection lost, cause: "
 #define ERR_MQTT_CONNECT_FAIL					"Failed to connect to MQTT broker: "
+#define ERR_FORK								"Can not fork "
+#define ERR_EXEC								"Can not execute "
+#define ERR_CONFIG								"Load config file error "
 
 #endif /* ERRORCODES_H_ */

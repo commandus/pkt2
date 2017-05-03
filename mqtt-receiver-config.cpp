@@ -57,9 +57,8 @@ int Config::parseCmd
 	struct arg_str *a_client_id = arg_str0("c", "client", "<id>", "MQTT client identifier string. Default " DEF_CLIENT_ID);
 	struct arg_int *a_keep_alive_interval = arg_int0("k", "keepalive", "<seconds>", "Keep alive interval. Default " DEF_KEEP_ALIVE_INTERVAL_S);
 	struct arg_int *a_reconnect_delay = arg_int0("w", "reconnect", "<seconds>", "Reconnect interval. Default " DEF_RECONNECT_DELAY_S);
-	
 
-	struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
+	struct arg_str *a_message_url = arg_str0("o", "output", "<bus url>", "Default ipc:///tmp/packet.pkt2");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");

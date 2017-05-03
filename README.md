@@ -339,7 +339,7 @@ pkt2receiver осуществляет поиск подходящего прот
 [tcpemitter-example1]
 [tcpemitter]
               tcpreceiver                       pkt2receiver               [pkt2gateway]     handlerpq             
-                                                                           [message2gateway] handler-google-sheets  
+              mqtt-receiver                                                [message2gateway] handler-google-sheets  
                                                                            [example1message] handlerline
                                                                                              handlerlmdb
 ```                                                                                             
@@ -359,7 +359,7 @@ handlerline				помещение сообщений в stdout lля после�
 
 handlerlmdb				помещение сообщений в базу данных LMDB
 
-handlerlmdb				помещение сообщений в базу данных PostgreSQL
+handlerpq				помещение сообщений в базу данных PostgreSQL
 
 
 
@@ -400,7 +400,7 @@ example1message1		отправляет в stdout одно сообщение б�
 ## Описание выходных данных
 
 
-### Згачения по умолчнанию
+### Значения по умолчанию
 
 tcpreceiver TCP по умолчанию порт 50052
 
