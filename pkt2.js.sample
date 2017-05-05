@@ -1,0 +1,178 @@
+/**
+  *	pkt2 configuration file.
+  * Sections:
+  * - listeners: 
+  * 	- tcpreceiver			слушает TCP порт, передает полученные пакеты в шину пакетов
+  * 	- mqtt-receiver			подписывается на указанные топики, передает полученные пакеты из брокера msqt в шину пакетов
+  * - pkt2receiver				чтение пакетов из шины пакетов, нахождение протокола, отправка сообщения в шину сообщений
+  * - handlers
+  * 	- handlerline			помещение сообщений в stdout lля последующей обработки скриптами
+  * 	- handlerlmdb			помещение сообщений в базу данных LMDB
+  * 	- handlerpq				помещение сообщений в базу данных PostgreSQL
+  * 	- handler-google-sheets	помещение сообщений в электронную таблицу Google Sheets
+  */
+
+/* 
+ * Global settings
+ */
+
+/**
+ * Proto file root directory . Default "proto"
+ */
+proto_path = "proto";
+
+/**
+ * Force max file (socket) descriptors per process. 0- use system default (1024)
+ */
+max_file_descriptors = 0;
+
+/**
+ * Set buffer size for packet. Default 4096 bytes.
+ */
+max_buffer_size = 4096;
+
+/**
+ * Set bus for incoming packets. Default "ipc:///tmp/packet.pkt2"
+ */
+bus_in = "ipc:///tmp/packet.pkt2";
+
+/**
+ * Set bus for outgoing messages. Default "ipc:///tmp/message.pkt2"
+ */
+bus_out = "ipc:///tmp/message.pkt2";
+
+//------------------------- Listeners -------------------------------
+
+/* 
+ * TCP listeners
+ * ip: IP v.4 address or host name. Default 0.0.0.0 (any interface)
+ * port: Port nunber. Default 50052
+ */
+tcp_listeners = 
+[
+	{
+		"port": 50052,
+		"ip": "0.0.0.0"
+	}
+];
+
+/**
+ * MQTT listeners
+ * client: client name
+ * broker: broker address, e.g tcp://127.0.0.1
+ * port: broker port. Default 1883
+ * topic: MQTT topic to subscribe. Default pkt2
+ * qos: QOS 0, 1, 2. Default 1
+ * keep-alive: keep-alive, seconds. Default 20.
+ */
+mqtt_listeners = 
+[
+	{
+		"client": "cli01",
+		"broker": "tcp://127.0.0.1",
+		"topic": "pkt2",
+		"port": 1883,
+		"qos": 1, 
+		"keep-alive": 20
+	}
+];
+
+//------------------------- pkt2receiver --------------------
+
+/**
+ * packet to message transformators
+ * sizes: array if allowed sizes(empty: any size)
+ * force-message: packet.message. Empty: any messages
+ */
+packet2message = 
+[
+	{
+		"sizes": 
+		[
+		],
+		"force-message": ""
+	}
+];
+
+//------------------------- Handlers -------------------------------
+/**
+ * Handler, write to file
+ * messages: filter by message names to write. Empty: any message
+ * mode: 0- JSON, 1-CSV, 2- tab, 3- SQL, 4- SQL(2)
+ * file: file to write
+ */
+write_file = 
+[
+	{
+		"messages":
+		[
+			"iridium.animals"
+		],
+		"mode": 0,
+		"file": "/dev/null"
+	}
+];
+
+/**
+ * Handler: write to write_lmdb
+ * messages: filter by message names 
+ * db path: LMDB database folder path(not a file name!)
+ */
+write_lmdb = 
+[
+	{
+		"messages":
+		[
+			"iridium.animals"
+		],
+		"dbpath": "/dev/null"
+	}
+];
+
+/**
+ * Handler: write to PostgreSQL database 
+ * user: database login
+ * password: database user password
+ * scheme: database scheme
+ * host: database host
+ * port: database port. Default 5432
+ * messages: filter by message names 
+ */
+write_pq = 
+[
+	{
+		"user": "pkt2",
+		"password": "pkt2",
+		"scheme": "pkt2",
+		"host": "localhost",
+		"port": 5432,
+		"messages":
+		[
+			"iridium.animals"
+		]
+	}
+];
+
+/**
+ * Handler: write to PostgreSQL database 
+ * json_service_file_name: json service file name. Default "cert/pkt2-sheets.json"
+ * bearer_file_name: bearer file name. Default ".token-bearer.txt"
+ * email: email. E.g. "alice@acme.com"
+ * spreadsheet: spreadsheet id. E.g. "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo"
+ * sheet: sheet name. E.g. "Temperature"
+ * messages: filter by message names 
+ */
+write_google_sheets = 
+[
+	{
+		"json_service_file_name": "cert/pkt2-sheets.json",
+		"bearer_file_name": ".token-bearer.txt",
+		"email": "andrei.i.ivanov@commandus.com",
+		"spreadsheet": "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo",
+		"sheet": "Temperature",
+		"messages":
+		[
+			"iridium.animals"
+		]
+	}
+];
