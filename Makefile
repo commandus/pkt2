@@ -1203,6 +1203,7 @@ pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
+	pkt2.js.sample pkt2.js \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
 	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
 	proto/pkt2.proto proto/google/protobuf/descriptor.proto \
