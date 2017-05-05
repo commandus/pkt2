@@ -220,3 +220,16 @@ std::string hex2string(const std::string &hex)
 	std::stringstream ss(hex);
     return readHex(ss);
 }
+
+std::string arg2String(
+	int argc, 
+	char *argv[]
+)
+{
+	std::stringstream ss;
+	for (int i = 0; i < argc; i ++)
+	{
+		ss << argv[i] << " ";
+	}
+	return ss.str();
+}

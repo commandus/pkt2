@@ -80,22 +80,23 @@ void signalHandler(int signal)
 
 void setSignalHandler(int signal)
 {
-        struct sigaction action;
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = &signalHandler;
-        sigaction(signal, &action, NULL);
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_handler = &signalHandler;
+	sigaction(signal, &action, NULL);
 }
 
 /**
+ * 
  */
 int main
 (
-    int argc, 
-    char *argv[]
+	int argc, 
+	char *argv[]
 )
 {
-    // Signal handler
-    setSignalHandler(SIGINT);
+	// Signal handler
+	setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
     reslt = 0;
 
@@ -113,13 +114,11 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, runner, stopNWait, done, config->max_fd);
+		Daemonize daemonize(PROGRAM_NAME, runner, stopNWait, done, 0);
 	}
 	else
 	{
 		LOG(INFO) << MSG_START;
-		if (config->max_fd > 0)
-			Daemonize::setFdLimit(config->max_fd);
 		runner();
 		done();
 	}

@@ -51,7 +51,7 @@ void signalHandler(int signal)
 	case SIGINT:
 		std::cerr << MSG_INTERRUPTED;
 		stopNWait();
-		done();
+		// done();
 		break;
 	case SIGHUP:
 		std::cerr << MSG_RELOAD_CONFIG_REQUEST;

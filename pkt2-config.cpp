@@ -1,9 +1,13 @@
 #include "pkt2-config.h"
+#include <unistd.h>
+#include <linux/limits.h>
+
 #include <argtable2.h>
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_QUEUE_OUT               "ipc:///tmp/message.pkt2"
 #define DEF_CFG						"pkt2.js"
+#define DEF_PATH					"."
 
 Config::Config
 (
@@ -28,11 +32,12 @@ int Config::error()
  **/
 int Config::parseCmd
 (
-        int argc,
-        char* argv[]
+	int argc,
+	char* argv[]
 )
 {
 	struct arg_file *a_input_file = arg_file0("c", "config", "<file name>", "Configuration file name. Default " DEF_CFG);
+	struct arg_file *a_path = arg_file0("p", "path", "<path>", "Working directory path. Default " DEF_PATH);
 	struct arg_lit *a_output = arg_lit0("o", "output", "Show status");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
@@ -41,7 +46,7 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = {
-		a_input_file, a_output, a_daemonize, a_verbosity, 
+		a_input_file, a_path, a_output, a_daemonize, a_verbosity, 
 		a_help, a_end
 	};
 
@@ -73,6 +78,14 @@ int Config::parseCmd
 		file_name = *a_input_file->filename;
 	else
 		file_name = DEF_CFG;	
+
+	if (a_path->count)
+		path = *a_path->filename;
+	else
+	{
+		char wd[PATH_MAX];
+		path = getcwd(wd, PATH_MAX);	
+	}
 
 	mode_output = a_output->count;
 

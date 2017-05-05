@@ -29,6 +29,7 @@ private:
 
 	int verbosity;
 
+	std::string path;
 	std::string file_name;
 	bool mode_output;
 	bool daemonize;

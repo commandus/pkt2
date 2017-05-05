@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <ostream>
 
 #define PROGRAM_NAME             "handlerline"
 #define PROGRAM_DESCRIPTION      "PKT2 stdout printer"
@@ -27,7 +28,7 @@ private:
 public:
 	Config(int argc, char* argv[]);
 	int error();
-
+	std::string file_name;
 	std::string message_url; ///< nano message URL
 	std::vector <std::string> allowed_messages;
 	int retries;             ///< default 1
@@ -41,12 +42,12 @@ public:
 	int buffer_size;        ///< default 2048
 
 	bool daemonize;
-	int max_fd;				///< 0- use default max file descriptor count per process
 	int stop_request;
 	int verbosity;          ///< default 0
 	
 	int accept_socket;
+	
+	std::ostream *stream;
 };
-
 
 #endif

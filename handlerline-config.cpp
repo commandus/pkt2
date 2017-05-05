@@ -15,6 +15,7 @@ Config::Config
     int argc, 
     char* argv[]
 )
+	: stream(NULL)
 {
 	stop_request = 0; ///< 0- process, 1- stop request, 2- reload request
 	lastError = parseCmd(argc, argv);
@@ -40,10 +41,10 @@ int Config::parseCmd
 {
 	struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/message.pkt2");
 	struct arg_str *a_allowed_messages = arg_strn("a", "allow", "<packet.message>", 0, 128, "Allowed message packet.name. Default any.");
+	struct arg_file *a_file_name = arg_file0("o", "output", "<file name>", "write to file. Otherwise stdout");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
-	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
@@ -55,9 +56,9 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = {
-		a_proto_path, a_message_url, a_allowed_messages,
+		a_proto_path, a_file_name, a_message_url, a_allowed_messages,
 		a_retries, a_retry_delay,
-		a_daemonize, a_max_fd, a_verbosity,
+		a_daemonize, a_verbosity,
 		a_mode, a_format_number, a_buffer_size,
 		a_help, a_end 
 	};
@@ -91,6 +92,12 @@ int Config::parseCmd
 	else
 		proto_path = DEF_PROTO_PATH;
 
+	
+	if (a_file_name->count)
+		file_name = *a_file_name->filename;
+	else
+		file_name = "";
+
 	if (a_message_url->count)
 		message_url = *a_message_url->sval;
 	else
@@ -114,11 +121,6 @@ int Config::parseCmd
 	verbosity = a_verbosity->count;
 
 	daemonize = a_daemonize->count > 0;
-
-	if (a_max_fd > 0)
-		max_fd = *a_max_fd->ival;
-	else
-		max_fd = 0;
 
 	if (a_mode->count)
 		mode = *a_mode->ival;

@@ -57,7 +57,6 @@ public:
 	int mode;				///< default 4- SQL(2)
 	int format_number;		///< which format to use
 	bool daemonize;
-	int max_fd;				///< 0- use default max file descriptor count per process
 
 	int stop_request;
 	std::string message_url;

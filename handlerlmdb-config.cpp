@@ -47,7 +47,7 @@ int Config::parseCmd
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
-	struct arg_str *a_db_path = arg_str0("p", "dbpath", "<path>", "Default db");
+	struct arg_str *a_db_path = arg_str0(NULL, "dbpath", "<path>", "Default db");
 	struct arg_int *a_flags = arg_int0("f", "flags", "<number>", "LMDB flags. Default 0");
 	struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "LMDB file open mode. Default 0664");
 

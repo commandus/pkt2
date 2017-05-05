@@ -106,7 +106,6 @@ int Config::parseCmd
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
-	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
 
 	struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "Reserved. Default 0");
@@ -131,7 +130,7 @@ int Config::parseCmd
 		// OAuth, Google sheets
 		a_json, a_token_file, a_subject_email, a_spreadsheet, a_sheet,
 		a_format_number,
-		a_daemonize, a_max_fd, a_verbosity, a_mode, 
+		a_daemonize, a_verbosity, a_mode, 
 		a_buffer_size, a_help, a_end 
 	};
 
@@ -187,11 +186,6 @@ int Config::parseCmd
 	verbosity = a_verbosity->count;
 
 	daemonize = a_daemonize->count > 0;
-
-	if (a_max_fd > 0)
-		max_fd = *a_max_fd->ival;
-	else
-		max_fd = 0;
 
 	if (a_mode->count)
 		mode = *a_mode->ival;

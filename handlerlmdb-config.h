@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#define PROGRAM_NAME             "write2lmdb"
+#define PROGRAM_NAME             "handlerlmdb"
 #define PROGRAM_DESCRIPTION      "PKT2 LMDB writer"
 
 /**

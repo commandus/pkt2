@@ -1,6 +1,7 @@
 /**
  *
  */
+#include <fstream>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -85,14 +86,15 @@ void addFieldValueString
  */
 int put_json
 (
-		Pkt2OptionsCache *options,
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	MessageTypeNAddress *messageTypeNAddress,
+	const google::protobuf::Message *message
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
-	std::cout << vals.toStringJSON();
+	*output << vals.toStringJSON();
 	return ERR_OK;
 }
 
@@ -104,9 +106,10 @@ int put_json
  */
 int put_sql
 (
-		Pkt2OptionsCache *options,
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	MessageTypeNAddress *messageTypeNAddress,
+	const google::protobuf::Message *message
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
@@ -114,7 +117,7 @@ int put_sql
 	std::vector<std::string> stmts;
 	vals.toStringInsert(&stmts);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
-		std::cout << *it;
+		*output << *it;
 	return ERR_OK;
 }
 
@@ -126,9 +129,10 @@ int put_sql
  */
 int put_sql2
 (
-		Pkt2OptionsCache *options,
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	MessageTypeNAddress *messageTypeNAddress,
+	const google::protobuf::Message *message
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
@@ -136,7 +140,7 @@ int put_sql2
 	std::vector<std::string> stmts;
 	vals.toStringInsert2(&stmts);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
-		std::cout << *it;
+		*output << *it;
 	return ERR_OK;
 }
 
@@ -149,14 +153,15 @@ int put_sql2
  */
 int put_csv
 (
-		Pkt2OptionsCache *options,
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	MessageTypeNAddress *messageTypeNAddress,
+	const google::protobuf::Message *message
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
-	std::cout << vals.toStringCSV();
+	*output << vals.toStringCSV();
 	return ERR_OK;
 }
 
@@ -168,14 +173,15 @@ int put_csv
  */
 int put_tab
 (
-		Pkt2OptionsCache *options,
-		MessageTypeNAddress *messageTypeNAddress,
-		const google::protobuf::Message *message
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	MessageTypeNAddress *messageTypeNAddress,
+	const google::protobuf::Message *message
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, options, message, addFieldValueString);
-	std::cout << vals.toStringTab();
+	*output << vals.toStringTab();
 	return ERR_OK;
 }
 
@@ -187,13 +193,18 @@ int put_tab
  */
 int run
 (
-		Config *config
+	Config *config
 )
 {
-	START:
+START:
 	config->stop_request = 0;
 	format_number = config->format_number;
-
+	
+	if (!config->file_name.empty())
+		config->stream = new std::ofstream(config->file_name.c_str(), std::ofstream::app);
+	else
+		config->stream = &std::cout;
+	
 	config->accept_socket = nn_socket(AF_SP, NN_BUS);
 	// int r = nn_setsockopt(config->accept_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (config->accept_socket < 0)
@@ -253,19 +264,19 @@ int run
 			switch (config->mode)
 			{
 			case MODE_JSON:
-				put_json(&options, &messageTypeNAddress, m);
+				put_json(config->stream, &options, &messageTypeNAddress, m);
 				break;
 			case MODE_CSV:
-				put_csv(&options, &messageTypeNAddress, m);
+				put_csv(config->stream, &options, &messageTypeNAddress, m);
 				break;
 			case MODE_TAB:
-				put_tab(&options, &messageTypeNAddress, m);
+				put_tab(config->stream, &options, &messageTypeNAddress, m);
 				break;
 			case MODE_SQL:
-				put_sql(&options, &messageTypeNAddress, m);
+				put_sql(config->stream, &options, &messageTypeNAddress, m);
 				break;
 			case MODE_SQL2:
-				put_sql2(&options, &messageTypeNAddress, m);
+				put_sql2(config->stream, &options, &messageTypeNAddress, m);
 				break;
 			default:
 				put_debug(&messageTypeNAddress, m);
@@ -276,14 +287,22 @@ int run
     }
 
     free(buffer);
+	if (!config->file_name.empty())
+	{
+		if (config->stream)
+		{
+			delete config->stream;
+			config->stream = NULL;
+		}
+	}
 
 	int r = nn_shutdown(config->accept_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url << " " << errno << " " << strerror(errno);
 		r = ERRCODE_NN_SHUTDOWN;
-
 	}
+	
 	if (config->stop_request == 2)
 		goto START;
 

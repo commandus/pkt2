@@ -52,7 +52,7 @@ int Config::parseCmd
 {
 	struct arg_str *a_topic = arg_strn("t", "topic", "<MQTT topic>", 0, 32, "MQTT topic name. Default " DEF_TOPIC);
 	struct arg_str *a_broker_address = arg_str0("a", "broker", "<host name/address>", "MQTT broker address. Default " DEF_ADDRESS);
-	struct arg_int *a_broker_port = arg_int0("p", "port", "<number>", "TCP port to listen. Default " DEF_PORT_S);
+	struct arg_int *a_broker_port = arg_int0("p", "port", "<number>", "MQTT broler TCP port. Default " DEF_PORT_S);
 	struct arg_int *a_qos = arg_int0("q", "qos", "<0..2>", "0- at most once, 1- at least once, 2- exactly once. Default " DEF_QOS_S);
 	struct arg_str *a_client_id = arg_str0("c", "client", "<id>", "MQTT client identifier string. Default " DEF_CLIENT_ID);
 	struct arg_int *a_keep_alive_interval = arg_int0("k", "keepalive", "<seconds>", "Keep alive interval. Default " DEF_KEEP_ALIVE_INTERVAL_S);

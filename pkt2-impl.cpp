@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <dirent.h>
 #include <signal.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -41,6 +42,7 @@ int start_program
 	pid_t *retval
 )
 {
+	std::cerr << "Start program " << " PID: " << getpid() << std::endl;
 	*retval = fork(); // create child process
 	switch (*retval)
 	{
@@ -52,32 +54,50 @@ int start_program
 			const std::string &fp(path + "/" + cmd);
 			const std::string &lib("LD_LIBRARY_PATH=" + path + "/lib");
 			// run the command in the child process
-			char *const env[] = { (char *) lib.c_str(), (char *) 0 };
-			char **argv  = (char **) malloc(args.size() * sizeof(char *));
+			char *const env[] = { (char *) lib.c_str(), (char *) 0 };	// strdup()?
+			char **argv = (char **) malloc((args.size() + 2) * sizeof(char *));
+			argv[0] = (char *) fp.c_str();								// strdup()?
 			for (int i = 0; i < args.size(); i++)
 			{
-				argv[i] = (char*) args[i].c_str();
+				argv[i + 1] = (char*) args[i].c_str();					// strdup()?
 			}
-			execve(fp.c_str(), argv, env);
+			argv[args.size() + 1] = (char *) 0;
+			
+			if (execve(fp.c_str(), argv, env) == -1)
+			{
+				std::cerr << fp << " error " << errno << ": " << strerror(errno) << std::endl;
+				kill(*retval, SIGKILL);
+				exit(errno);
+			}
 			// exec doesn't return unless there is a problem
 			free(argv);
 		}
 		return ERRCODE_EXEC; 
+	default:
+		{
+			// parent process
+			std::cerr << "Program " << " started" << std::endl;
+		}
 	}
 	return 0;
 }
 
 /**
- * @brief Check is process is is_running
+ * @brief Stop process
  * @param pid process identifier
- * @return true- process running
+ * @return 0- process stopped
  */
 int stop_process
 (
 	pid_t &pid
 )
 {
-	return kill(pid, SIGTERM);
+	if (pid)
+	{
+		return kill(pid, SIGINT);
+	}
+	else
+		return 0;
 }
 
 /**
@@ -90,8 +110,22 @@ bool is_process_running
 	pid_t &pid
 )
 {
-	int r = kill(pid, 0);
-	return (r == 0);
+std::cerr << "is_process_running " << pid << std::endl;
+	if (pid)
+	{
+		DIR *dir;
+		dir = opendir(("/proc/" + toString(pid)).c_str());
+		if (dir)
+		{
+			closedir(dir);
+std::cerr << "running! " << pid << std::endl;			
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return true;
 }
 
 class ProcessDescriptor
@@ -109,12 +143,12 @@ public:
 	)
 	: pid(0), path(a_path), cmd(a_cmd), args(a_args)
 	{
-		start();
+		// start();
 	}
 
 	~ProcessDescriptor()
 	{
-		stop();
+		// stop();
 	}
 
 	int start()
@@ -149,6 +183,21 @@ void duk_fatal_handler(
 	abort();
 }
 
+class CfgCommon
+{
+public:
+	std::string proto_path;
+	std::string bus_in;
+	std::string bus_out;
+	int max_file_descriptors;
+	int max_buffer_size;
+
+	CfgCommon() 
+		: proto_path("proto"), bus_in("ipc:///tmp/packet.pkt2"), bus_out("ipc:///tmp/message.pkt2"), max_file_descriptors(0), max_buffer_size(0) {};
+};
+
+#define PUSH_BACK_ARG_STR(r, a, s) 		r.push_back(a); r.push_back(s)
+#define PUSH_BACK_ARG_NUM(r, a, v) 		r.push_back(a); r.push_back(toString(v))
 /**
  *	tcp_listeners = 
 [
@@ -163,7 +212,23 @@ class CfgListenerTcp
 public:
 	std::string ip;
 	int port;
-	CfgListenerTcp() : ip("127.0.0.1"), port(50052) {};
+	CfgListenerTcp() : ip("0.0.0.0"), port(50052) {};
+	std::vector<std::string> args(CfgCommon *common) 
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "-i", ip);
+		PUSH_BACK_ARG_NUM(r, "-l", port);
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
+			PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			if (common->max_buffer_size)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
+		}
+		return r;
+	};
 };
 
 /**
@@ -183,10 +248,26 @@ class CfgListenerMqtt
 public:
 	std::string client;
 	std::string broker;
+	std::string topic;
 	int port;
 	int qos;
 	int keep_alive;
-	CfgListenerMqtt() : client(""), broker("tcp://localhost"), port(1883), qos(1), keep_alive(20) {};
+	CfgListenerMqtt() : client(""), broker("tcp://localhost"), topic(""), port(1883), qos(1), keep_alive(20) {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "-c", client);
+		PUSH_BACK_ARG_STR(r, "-a", broker);
+		PUSH_BACK_ARG_STR(r, "-t", topic);
+		PUSH_BACK_ARG_NUM(r, "-p", port);
+		PUSH_BACK_ARG_NUM(r, "-q", qos);
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
+			PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+		}
+		return r;
+	};
 };
 
 /**
@@ -208,6 +289,33 @@ public:
 	std::string force_message;
 	std::vector <int> sizes;
 	CfgPacket2Message() : force_message("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		if (!force_message.empty())
+		{
+			PUSH_BACK_ARG_STR(r, "--message", force_message);
+		}
+		for (std::vector<int>::const_iterator it(sizes.begin()); it != sizes.end(); ++it)
+		{
+			PUSH_BACK_ARG_NUM(r, "-a", *it);
+		}
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-i", common->bus_in);
+			PUSH_BACK_ARG_STR(r, "-o", common->bus_out);
+			if (!common->proto_path.empty())
+			{
+				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+			}
+			if (common->max_buffer_size)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
+			PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+		}
+		return r;
+	};
 };
 
 /**
@@ -230,6 +338,28 @@ public:
 	std::string file;
 	std::vector <std::string> messages;
 	CfgWriteFile() : mode(0), file("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "-o", file);
+		PUSH_BACK_ARG_NUM(r, "--format", mode);
+
+		for (std::vector<std::string>::const_iterator it(messages.begin()); it != messages.end(); ++it)
+		{
+			PUSH_BACK_ARG_STR(r, "-a", *it);
+		}
+		
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+			if (!common->proto_path.empty())
+			{
+				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+			}
+		}
+		return r;
+	};
 };
 
 /**
@@ -250,6 +380,27 @@ public:
 	std::string dbpath;
 	std::vector <std::string> messages;
 	CfgWriteLmdb() : dbpath("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "--dbpath", dbpath);
+
+		for (std::vector<std::string>::const_iterator it(messages.begin()); it != messages.end(); ++it)
+		{
+			PUSH_BACK_ARG_STR(r, "-a", *it);
+		}
+		
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			if (!common->proto_path.empty())
+			{
+				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+			}
+			PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+		}
+		return r;
+	};
 };
 
 /**
@@ -274,6 +425,34 @@ public:
 	int port;
 	std::vector <std::string> messages;
 	CfgWritePq() : user(""), password(""), scheme(""), host("localhost"), port(5432) {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "--user", user);
+		PUSH_BACK_ARG_STR(r, "--password", password);
+		PUSH_BACK_ARG_STR(r, "--database", scheme);
+		PUSH_BACK_ARG_STR(r, "--host", host);
+		if (port != 5432)
+		{
+			PUSH_BACK_ARG_NUM(r, "--port", port);
+		}
+
+		for (std::vector<std::string>::const_iterator it(messages.begin()); it != messages.end(); ++it)
+		{
+			PUSH_BACK_ARG_STR(r, "-a", *it);
+		}
+		
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			if (!common->proto_path.empty())
+			{
+				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+			}
+			PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+		}
+		return r;
+	};
 };
 
 /**
@@ -298,20 +477,40 @@ public:
 	std::string sheet;
 	std::vector <std::string> messages;
 	CfgWriteGoogleSheets() : json_service_file_name(""), bearer_file_name(".token-bearer.txt"), email(""), spreadsheet(""), sheet("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "-g", json_service_file_name);
+		PUSH_BACK_ARG_STR(r, "-b", bearer_file_name);
+		PUSH_BACK_ARG_STR(r, "-e", email);
+		PUSH_BACK_ARG_STR(r, "-s", spreadsheet);
+		PUSH_BACK_ARG_STR(r, "-t", sheet);
+
+		for (std::vector<std::string>::const_iterator it(messages.begin()); it != messages.end(); ++it)
+		{
+			PUSH_BACK_ARG_STR(r, "-a", *it);
+		}
+		
+		if (common)
+		{
+			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			if (!common->proto_path.empty())
+			{
+				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+			}
+			PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+		}
+		return r;
+	};
 };
 
 class ProcessDescriptors
 {
 private:
 	duk_context *context;
-	
+	std::string path;
 public:
-	std::string proto_path;
-	std::string bus_in;
-	std::string bus_out;
-	int max_file_descriptors;
-	int max_buffer_size;
-
+	CfgCommon cfgCommon;
 	std::vector<CfgListenerTcp> cfgListenerTcp;
 	std::vector<CfgListenerMqtt> cfgListenerMqtt;
 	std::vector<CfgPacket2Message> cfgPacket2Message;
@@ -327,33 +526,33 @@ public:
 		context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler);
 	}
 
-	void load_globals() 
+	void load_config() 
 	{
 		duk_push_global_object(context);
 		
 		duk_get_prop_string(context, -1, "proto_path");
 		if (duk_is_string(context, -1)) 
-			proto_path = duk_get_string(context, -1);
+			cfgCommon.proto_path = duk_get_string(context, -1);
 		duk_pop(context);
 
 		duk_get_prop_string(context, -1, "bus_in");
 		if (duk_is_string(context, -1)) 
-			bus_in = duk_get_string(context, -1);
+			cfgCommon.bus_in = duk_get_string(context, -1);
 		duk_pop(context); 
 
 		duk_get_prop_string(context, -1, "bus_out");
 		if (duk_is_string(context, -1)) 
-			bus_out = duk_get_string(context, -1);
+			cfgCommon.bus_out = duk_get_string(context, -1);
 		duk_pop(context);
 
 		duk_get_prop_string(context, -1, "max_file_descriptors");
 		if (duk_is_number(context, -1)) 
-			max_file_descriptors = duk_get_number(context, -1);
+			cfgCommon.max_file_descriptors = duk_get_number(context, -1);
 		duk_pop(context);
 
 		duk_get_prop_string(context, -1, "max_buffer_size");
 		if (duk_is_number(context, -1)) 
-			max_buffer_size = duk_get_number(context, -1);
+			cfgCommon.max_buffer_size = duk_get_number(context, -1);
 		duk_pop(context);
 
 		// read listener settings
@@ -625,7 +824,6 @@ public:
 			}
 		}
 		duk_pop(context); // duk_get_prop_string
-
 	}
 	
 	~ProcessDescriptors()
@@ -636,14 +834,67 @@ public:
 	
 	int load
 	(
-		const std::string &path,
+		const std::string &a_path,
 		const std::string &config_file_name
 	)
 	{
+		path = a_path;
+
 		std::string v = file2string(config_file_name);
 		duk_eval_string(context, v.c_str());
 		duk_pop(context);  // ignore result
-		load_globals();
+		
+		cfgListenerTcp.clear();
+		cfgListenerMqtt.clear();
+		cfgPacket2Message.clear();
+		cfgWriteFile.clear();
+		cfgWriteLmdb.clear();
+		cfgWritePq.clear();
+		cfgWriteGoogleSheets.clear();
+		
+		load_config();
+		return 0;
+	}
+	
+	int init()
+	{
+		descriptors.clear();
+		
+		for (std::vector<CfgListenerTcp>::iterator it(cfgListenerTcp.begin()); it != cfgListenerTcp.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "tcpreceiver", it->args(&cfgCommon)));
+		}
+		
+		for (std::vector<CfgListenerMqtt>::iterator it(cfgListenerMqtt.begin()); it != cfgListenerMqtt.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "mqtt-receiver", it->args(&cfgCommon)));
+		}
+		
+		for (std::vector<CfgPacket2Message>::iterator it(cfgPacket2Message.begin()); it != cfgPacket2Message.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "pk2receiver", it->args(&cfgCommon)));
+		}
+		
+		for (std::vector<CfgWriteFile>::iterator it(cfgWriteFile.begin()); it != cfgWriteFile.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "handlerline", it->args(&cfgCommon)));
+		}
+		
+		for (std::vector<CfgWriteLmdb>::iterator it(cfgWriteLmdb.begin()); it != cfgWriteLmdb.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "handlerlmdb", it->args(&cfgCommon)));
+		}
+		
+		for (std::vector<CfgWritePq>::iterator it(cfgWritePq.begin()); it != cfgWritePq.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "handlerlmpq", it->args(&cfgCommon)));
+		}
+
+		for (std::vector<CfgWriteGoogleSheets>::iterator it(cfgWriteGoogleSheets.begin()); it != cfgWriteGoogleSheets.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "handler-google-sheets", it->args(&cfgCommon)));
+		}
+		
 		return 0;
 	}
 	
@@ -661,7 +912,10 @@ public:
 		for (int i = 0; i < descriptors.size(); i++)
 		{
 			if (!descriptors[i].is_running())
-				descriptors[i].start();
+			{
+std::cerr << "Re-start"	<< std::endl;
+				// descriptors[i].start();
+			}
 		}
 		return 0;
 	}
@@ -688,12 +942,14 @@ int pkt2
 {
 	ProcessDescriptors processes;
 START:
-	if (processes.load(".", config->file_name) != ERR_OK)
+	if (processes.load(config->path, config->file_name) != ERR_OK)
 		return ERRCODE_CONFIG;
+	processes.init();
 	processes.start();
 	config->stop_request = 0;
 	while (!config->stop_request)
 	{
+std::cerr << "--" << std::endl;		
 		processes.check();
 		sleep(1);
 	}
