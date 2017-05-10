@@ -86,7 +86,7 @@ int listen_port
 int tcp_receiever_nano(Config *config)
 {
 START:	
-	LOG(ERROR) << MSG_START;
+	LOG(INFO) << MSG_START;
 	config->stop_request = 0;
 	struct addrinfo *addr_dst;
 	if (get_addr_info(config, &addr_dst))
@@ -99,6 +99,10 @@ START:
 	packet.set_socket_addr_dst(addr_dst);
 
 	config->socket_accept = listen_port(addr_dst);
+	if (config->socket_accept < 0)
+	{
+		return config->socket_accept;
+	}
 
 	// Free the res linked list after we are done with it	
 	freeaddrinfo(addr_dst);
@@ -120,13 +124,12 @@ START:
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
-	int eid = nn_bind(nano_socket, config->message_url.c_str());
-	if (eid < 0)
-	{
-		LOG(ERROR) << ERR_NN_BIND << config->message_url << " " << errno << ": " << nn_strerror(errno);
-		close(config->socket_accept);	
-		return ERRCODE_NN_BIND;
-	}
+	int eoid = nn_connect(nano_socket, config->message_url.c_str());
+    if (eoid < 0)
+    {
+        LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
+		return ERRCODE_NN_CONNECT;
+    }
 
 	if (packet.error() != 0)
 	{
@@ -207,7 +210,7 @@ START:
 	}
 	if (config->socket_accept)
 		close(config->socket_accept);	
-	r = nn_shutdown(nano_socket, eid);
+	r = nn_shutdown(nano_socket, eoid);
 	
 	LOG(ERROR) << MSG_STOP;
 	if (config->stop_request == 2)

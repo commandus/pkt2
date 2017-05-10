@@ -110,7 +110,6 @@ bool is_process_running
 	pid_t &pid
 )
 {
-std::cerr << "is_process_running " << pid << std::endl;
 	if (pid)
 	{
 		DIR *dir;
@@ -135,13 +134,15 @@ public:
 	std::string path;
 	std::string cmd;
 	std::vector<std::string> args;
+	int start_count;
+	time_t last_start;
 	
 	ProcessDescriptor(
 		const std::string &a_path,
 		const std::string &a_cmd,
 		std::vector<std::string> a_args
 	)
-	: pid(0), path(a_path), cmd(a_cmd), args(a_args)
+	: start_count(0), last_start(0), pid(0), path(a_path), cmd(a_cmd), args(a_args)
 	{
 		// start();
 	}
@@ -153,7 +154,13 @@ public:
 
 	int start()
 	{
-		return start_program(path, cmd, args, &pid);
+		int r = start_program(path, cmd, args, &pid);
+		if (r == 0)	
+		{
+			start_count++;
+			last_start = time(NULL);
+		}
+		return r;
 	}
 	
 	int stop()
@@ -216,15 +223,30 @@ public:
 	std::vector<std::string> args(CfgCommon *common) 
 	{
 		std::vector<std::string> r;
-		PUSH_BACK_ARG_STR(r, "-i", ip);
-		PUSH_BACK_ARG_NUM(r, "-l", port);
+		if (ip != "0.0.0.0")
+		{
+			PUSH_BACK_ARG_STR(r, "-i", ip);
+		}
+		if (port != 50052)
+		{
+			PUSH_BACK_ARG_NUM(r, "-l", port);
+		}
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
-			PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			if (common->bus_in != "ipc:///tmp/packet.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
+			}
+			if (common->max_file_descriptors)
+			{
+				PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			}
 			if (common->max_buffer_size)
 			{
-				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+				if (common->max_buffer_size != 4096)
+				{
+					PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+				}
 			}
 		}
 		return r;
@@ -263,8 +285,14 @@ public:
 		PUSH_BACK_ARG_NUM(r, "-q", qos);
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
-			PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			if (common->bus_in != "ipc:///tmp/packet.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
+			}
+			if (common->max_file_descriptors)
+			{
+				PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			}
 		}
 		return r;
 	};
@@ -302,17 +330,35 @@ public:
 		}
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-i", common->bus_in);
-			PUSH_BACK_ARG_STR(r, "-o", common->bus_out);
+			if (common->bus_in != "ipc:///tmp/packet.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-i", common->bus_in);
+			}
+
+			if (common->bus_out != "ipc:///tmp/message.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-o", common->bus_out);
+			}
+
 			if (!common->proto_path.empty())
 			{
-				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				if (common->proto_path != "proto")
+				{
+					PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				}
 			}
 			if (common->max_buffer_size)
 			{
-				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+				if (common->max_buffer_size != 4096)
+				{
+					PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+				}
 			}
-			PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			if (common->max_file_descriptors)
+			{
+				PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			}
+
 		}
 		return r;
 	};
@@ -351,11 +397,16 @@ public:
 		
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
-			PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
-			if (!common->proto_path.empty())
+			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
-				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			}
+// 			if (!common->proto_path.empty())
+			{
+				if (common->proto_path != "proto")
+				{
+					PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				}
 			}
 		}
 		return r;
@@ -392,12 +443,22 @@ public:
 		
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			if (common->bus_out != "ipc:///tmp/message.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			}
+
 			if (!common->proto_path.empty())
 			{
-				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				if (common->proto_path != "proto")
+				{
+					PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				}
 			}
-			PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			if (common->max_buffer_size != 4096)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
 		}
 		return r;
 	};
@@ -444,12 +505,23 @@ public:
 		
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			if (common->bus_out != "ipc:///tmp/message.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			}
+
 			if (!common->proto_path.empty())
 			{
-				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				if (common->proto_path != "proto")
+				{
+					PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				}
 			}
-			PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			if (common->max_buffer_size != 4096)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
+
 		}
 		return r;
 	};
@@ -481,7 +553,7 @@ public:
 	{
 		std::vector<std::string> r;
 		PUSH_BACK_ARG_STR(r, "-g", json_service_file_name);
-		PUSH_BACK_ARG_STR(r, "-b", bearer_file_name);
+		PUSH_BACK_ARG_STR(r, "-B", bearer_file_name);
 		PUSH_BACK_ARG_STR(r, "-e", email);
 		PUSH_BACK_ARG_STR(r, "-s", spreadsheet);
 		PUSH_BACK_ARG_STR(r, "-t", sheet);
@@ -493,12 +565,22 @@ public:
 		
 		if (common)
 		{
-			PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			if (common->bus_out != "ipc:///tmp/message.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			}
+
 			if (!common->proto_path.empty())
 			{
-				PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				if (common->proto_path != "proto")
+				{
+					PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				}
 			}
-			PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			if (common->max_buffer_size != 4096)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
 		}
 		return r;
 	};
@@ -591,6 +673,9 @@ public:
 				{
 					if (duk_get_prop_string(context, -1, "client"))
 						cfg.client = duk_get_string(context, -1);
+					duk_pop(context);
+					if (duk_get_prop_string(context, -1, "topic"))
+						cfg.topic= duk_get_string(context, -1);
 					duk_pop(context);
 					if (duk_get_prop_string(context, -1, "broker"))
 						cfg.broker = duk_get_string(context, -1);
@@ -872,7 +957,7 @@ public:
 		
 		for (std::vector<CfgPacket2Message>::iterator it(cfgPacket2Message.begin()); it != cfgPacket2Message.end(); ++it)
 		{
-			descriptors.push_back(ProcessDescriptor(path, "pk2receiver", it->args(&cfgCommon)));
+			descriptors.push_back(ProcessDescriptor(path, "pkt2receiver", it->args(&cfgCommon)));
 		}
 		
 		for (std::vector<CfgWriteFile>::iterator it(cfgWriteFile.begin()); it != cfgWriteFile.end(); ++it)
@@ -887,7 +972,7 @@ public:
 		
 		for (std::vector<CfgWritePq>::iterator it(cfgWritePq.begin()); it != cfgWritePq.end(); ++it)
 		{
-			descriptors.push_back(ProcessDescriptor(path, "handlerlmpq", it->args(&cfgCommon)));
+			descriptors.push_back(ProcessDescriptor(path, "handlerpq", it->args(&cfgCommon)));
 		}
 
 		for (std::vector<CfgWriteGoogleSheets>::iterator it(cfgWriteGoogleSheets.begin()); it != cfgWriteGoogleSheets.end(); ++it)

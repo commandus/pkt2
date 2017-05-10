@@ -113,7 +113,7 @@ int Config::parseCmd
 	// Google service auth
 	// JSON contains all others
 	struct arg_file *a_json = arg_file0("g", "google", "<file>", "JSON service file name. Default " DEF_GOOGLE_JSON);
-	struct arg_file *a_token_file = arg_file0("b", "bearer", "<file>", "save token bearer. Default " DEF_TOKEN_FILE);
+	struct arg_file *a_token_file = arg_file0("B", "bearer", "<file>", "save token bearer. Default " DEF_TOKEN_FILE);
 	struct arg_str *a_subject_email = arg_str1("e", "sub", "<email>", "subject email.");
 	struct arg_str *a_spreadsheet = arg_str1("s", "spreadsheet", "<id>", "Google spreadsheet id");
 	struct arg_str *a_sheet = arg_str1("t", "sheet", "<name>", "Sheet name");

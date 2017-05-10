@@ -47,11 +47,11 @@ int pkt2_receiever_nano(Config *config)
 			return ERRCODE_NN_SOCKET;
 	}
 
-	int eid = nn_connect(config->socket_accept, config->in_url.c_str());
+	int eid = nn_bind(config->socket_accept, config->in_url.c_str());
     if (eid < 0)
     {
-        LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << ": " << nn_strerror(errno);;
-		return ERRCODE_NN_SOCKET;
+        LOG(ERROR) << ERR_NN_BIND << config->in_url << " " << errno << ": " << nn_strerror(errno);;
+		return ERRCODE_NN_BIND;
     }
 
 	// OUT socket

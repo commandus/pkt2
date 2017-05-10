@@ -38,66 +38,66 @@
 #define MSG_MQTT_SUBSCRIBE						"Subscribing to MQTT topic, client, QoS: "
 
 #define ERR_OK									0
-#define ERRCODE_COMMAND							1
-#define ERRCODE_PARSE_COMMAND					2
+#define ERRCODE_COMMAND							-1
+#define ERRCODE_PARSE_COMMAND					-2
 
-#define ERRCODE_LMDB_TXN_BEGIN					10
-#define ERRCODE_LMDB_TXN_COMMIT					11
-#define ERRCODE_LMDB_OPEN						12
-#define ERRCODE_LMDB_CLOSE						13
-#define ERRCODE_LMDB_PUT						14
-#define ERRCODE_LMDB_GET						15
+#define ERRCODE_LMDB_TXN_BEGIN					-10
+#define ERRCODE_LMDB_TXN_COMMIT					-11
+#define ERRCODE_LMDB_OPEN						-12
+#define ERRCODE_LMDB_CLOSE						-13
+#define ERRCODE_LMDB_PUT						-14
+#define ERRCODE_LMDB_GET						-15
 
-#define ERRCODE_NN_SOCKET						16
-#define ERRCODE_NN_CONNECT	 					17
-#define ERRCODE_NN_BIND		 					18
-#define ERRCODE_NN_SUBSCRIBE					19
-#define ERRCODE_NN_SHUTDOWN 					20
-#define ERRCODE_NN_RECV							21
-#define ERRCODE_NN_SEND							22
-#define ERRCODE_NN_SET_SOCKET_OPTION			23
-#define ERRCODE_NN_FREE_MSG						24
+#define ERRCODE_NN_SOCKET						-16
+#define ERRCODE_NN_CONNECT	 					-17
+#define ERRCODE_NN_BIND		 					-18
+#define ERRCODE_NN_SUBSCRIBE					-19
+#define ERRCODE_NN_SHUTDOWN 					-20
+#define ERRCODE_NN_RECV							-21
+#define ERRCODE_NN_SEND							-22
+#define ERRCODE_NN_SET_SOCKET_OPTION			-23
+#define ERRCODE_NN_FREE_MSG						-24
 
-#define ERRCODE_PACKET_PARSE					25
-#define ERRCODE_STOP							26
-#define ERRCODE_NO_CONFIG						27
+#define ERRCODE_PACKET_PARSE					-25
+#define ERRCODE_STOP							-26
+#define ERRCODE_NO_CONFIG						-27
 
-#define ERRCODE_LOAD_PROTO 						28
-#define ERRCODE_NO_MEMORY						29
-#define ERRCODE_DECODE_MESSAGE					30
+#define ERRCODE_LOAD_PROTO 						-28
+#define ERRCODE_NO_MEMORY						-29
+#define ERRCODE_DECODE_MESSAGE					-30
 
-#define ERRCODE_SOCKET_SEND						31
+#define ERRCODE_SOCKET_SEND						-31
 
-#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			32
+#define ERRCODE_MESSAGE_TYPE_NOT_FOUND			-32
 
-#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	33
-#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	34
-#define ERRCODE_DECOMPOSE_FATAL					35
-#define ERRCODE_DECOMPOSE_NO_REFECTION			36
-#define ERRCODE_NO_CALLBACK						37
-#define ERRCODE_NOT_IMPLEMENTED					38
-#define ERRCODE_DATABASE_NO_CONNECTION			39
-#define ERRCODE_DATABASE_STATEMENT_FAIL         40
-#define ERRCODE_GET_ADDRINFO                    41
-#define ERRCODE_SOCKET_CREATE					42
-#define ERRCODE_SOCKET_SET_OPTIONS				43
-#define ERRCODE_SOCKET_BIND						44
-#define ERRCODE_SOCKET_CONNECT                  45
-#define ERRCODE_SOCKET_LISTEN					46
-#define ERRCODE_SOCKET_READ						47
-#define ERRCODE_SOCKET_WRITE					48
+#define ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR	-33
+#define ERRCODE_DECOMPOSE_NO_FIELD_DESCRIPTOR	-34
+#define ERRCODE_DECOMPOSE_FATAL					-35
+#define ERRCODE_DECOMPOSE_NO_REFECTION			-36
+#define ERRCODE_NO_CALLBACK						-37
+#define ERRCODE_NOT_IMPLEMENTED					-38
+#define ERRCODE_DATABASE_NO_CONNECTION			-39
+#define ERRCODE_DATABASE_STATEMENT_FAIL         -40
+#define ERRCODE_GET_ADDRINFO                    -41
+#define ERRCODE_SOCKET_CREATE					-42
+#define ERRCODE_SOCKET_SET_OPTIONS				-43
+#define ERRCODE_SOCKET_BIND						-44
+#define ERRCODE_SOCKET_CONNECT                  -45
+#define ERRCODE_SOCKET_LISTEN					-46
+#define ERRCODE_SOCKET_READ						-47
+#define ERRCODE_SOCKET_WRITE					-48
 
-#define ERRCODE_NN_ACCEPT						48
-#define ERRCODE_PARSE_PACKET					49
-#define ERRCODE_PACKET_TOO_SMALL				50
-#define ERRCODE_TOKEN_BEARER					51
-#define ERRCODE_GS_RANGE						52
+#define ERRCODE_NN_ACCEPT						-49
+#define ERRCODE_PARSE_PACKET					-50
+#define ERRCODE_PACKET_TOO_SMALL				-51
+#define ERRCODE_TOKEN_BEARER					-52
+#define ERRCODE_GS_RANGE						-53
 
-#define ERRCODE_MQTT_CONNECTION_LOST			53
-#define ERRCODE_MQTT_CONNECT_FAIL				54
-#define ERRCODE_FORK							55
-#define ERRCODE_EXEC							56
-#define ERRCODE_CONFIG							57
+#define ERRCODE_MQTT_CONNECTION_LOST			-54
+#define ERRCODE_MQTT_CONNECT_FAIL				-55
+#define ERRCODE_FORK							-56
+#define ERRCODE_EXEC							-57
+#define ERRCODE_CONFIG							-58
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."

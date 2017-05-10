@@ -124,7 +124,23 @@ void cb_connection_lost
 	if (!context)
 		return;
 	MQTT_Env *env = (MQTT_Env*) context;
-	LOG(ERROR) << ERR_MQTT_CONNECTION_LOST << cause;
+
+	std::stringstream ss;
+	for (int i = 0; i < env->config->topics.size(); i++)
+	{
+		ss << env->config->topics[i] << std::endl;
+	}
+
+	std::string scause;
+	if (cause)
+		scause = cause;
+	else
+		scause = "unknown";
+	
+	LOG(ERROR) << ERR_MQTT_CONNECTION_LOST << scause << ". Config: " 
+		<< env->config->getBrokerAddress() 
+		<< " client: " << env->config->client_id
+		<< " topics: " << ss.str();
 	env->config->stop_request = 2;
 }
 
@@ -141,7 +157,7 @@ int mqtt_receiever_nano
 )
 {
 START:	
-	LOG(ERROR) << MSG_START;
+	LOG(INFO) << MSG_START;
 	config->stop_request = 0;
 
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
@@ -154,12 +170,12 @@ START:
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
-	int eid = nn_bind(nano_socket, config->message_url.c_str());
-	if (eid < 0)
-	{
-		LOG(ERROR) << ERR_NN_BIND << config->message_url << " " << errno << ": " << nn_strerror(errno);
-		return ERRCODE_NN_BIND;
-	}
+	int eoid = nn_connect(nano_socket, config->message_url.c_str());
+    if (eoid < 0)
+    {
+        LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
+		return ERRCODE_NN_CONNECT;
+    }
 
 	if (config->verbosity >= 2)
 	{
@@ -179,12 +195,12 @@ START:
 	{
 		sleep(1);
 	}
-	r = nn_shutdown(nano_socket, eid);
+	r = nn_shutdown(nano_socket, eoid);
 	
 	MQTTClient_disconnect(client, 10000);
 	MQTTClient_destroy(&client);
 
-	LOG(ERROR) << MSG_STOP;
+	LOG(INFO) << MSG_STOP;
 	if (config->stop_request == 2)
 		goto START;
 
@@ -207,7 +223,6 @@ int stop(Config *config)
 		return ERRCODE_NO_CONFIG;
 	config->stop_request = 1;
 	return ERR_OK;
-
 }
 
 int reload(Config *config)
