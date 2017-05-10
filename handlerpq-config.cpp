@@ -20,6 +20,7 @@
 
 #define DEF_BUFFER_SIZE				4096
 #define DEF_SQL_MODE				4
+#define DEF_SQL_MODE_S				"4"
 
 Config::Config
 (
@@ -71,7 +72,7 @@ int Config::parseCmd
 		struct arg_str *a_dbcharset = arg_str0(NULL, "dbcharset", "<charset>", "database client charset. Default utf8.");
 		struct arg_int *a_dbclientflags = arg_int0(NULL, "dbclientflags", "<number>", "database client flags. Default 0.");
 
-		struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "3- SQL, 4- SQL(2). Default 3");
+		struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "3- SQL(native), 4- SQL(dict). Default " DEF_SQL_MODE_S);
 		struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
 		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096");

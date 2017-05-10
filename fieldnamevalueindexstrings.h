@@ -25,11 +25,15 @@ public:
 	google::protobuf::FieldDescriptor::CppType field_type;
 	std::string field;
 	std::string value;
-	FieldNameValueString(
-			int idx,
-			const google::protobuf::FieldDescriptor::CppType field_type,
-			const std::string &fld,
-			const std::string &val);
+	bool sql_string;
+	FieldNameValueString
+	(
+		int idx,
+		const google::protobuf::FieldDescriptor::CppType field_type,
+		bool sql_string,
+		const std::string &fld,
+		const std::string &val
+	);
 };
 
 /**
@@ -53,16 +57,15 @@ public:
 
 	FieldNameValueIndexStrings
 	(
-			Pkt2OptionsCache *pkt2_options,
-			const std::string &message_name,
-			const std::string &astring_quote,
-			const std::string &aquote
+		Pkt2OptionsCache *pkt2_options,
+		const std::string &message_name,
+		const std::string &astring_quote,
+		const std::string &aquote
 	);
 
 	void add
 	(
-		google::protobuf::FieldDescriptor::CppType field_type,
-		const std::string &field,
+		const google::protobuf::FieldDescriptor *field,
 		const std::string &value,
 		int index
 	);

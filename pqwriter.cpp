@@ -59,8 +59,8 @@ void addFieldValueString
 	int index
 )
 {
-	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(),
-			decomposer->toString(message_descriptor, field, value, size, format_number), index);
+	pkt2::Variable variable = field->options().GetExtension(pkt2::variable);
+	((FieldNameValueIndexStrings *) env)->add(field,decomposer->toString(message_descriptor, field, value, size, format_number), index);
 }
 
 #define CHECK_STMT(error_message) \

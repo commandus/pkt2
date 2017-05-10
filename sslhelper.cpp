@@ -24,10 +24,6 @@
 #define SERIAL 1
 #define DAYS	10 * 365
 
-#define CERT_ENTRY_COUNT	4
-const char* CERT_ENTRY_NAMES [] {"C", "ST", "O", "OU"};
-const char* CERT_ENTRY_VALUES [] {"RU", "Sakha", "ikfia.ysn.ru", "RD"};
-
 /**
  * Read PrivateKey from the PEM string. After using free key and PEM
  * Usage:
@@ -199,79 +195,6 @@ bool add_ext(X509 *cert, int nid, char *value)
 }
 
 #define CERT_ERR    { X509_free(x509); EVP_PKEY_free(pk); return false; }
-
-bool mkcert(
-		int64_t id,
-		X509_NAME *issuerName,
-		EVP_PKEY *issuerPKey,
-		std::string *retpkey,
-		std::string *retcert
-		)
-{
-	X509 *x509;
-	EVP_PKEY *pk;
-	X509_NAME *name = NULL;
-
-	if ((pk = EVP_PKEY_new()) == NULL)
-		return false;
-
-	if ((x509 = X509_new()) == NULL)
-	{
-	    EVP_PKEY_free(pk);
-		return false;
-	}
-
-	RSA *rsa = RSA_generate_key(BITS, RSA_F4, NULL, NULL);
-	if (!EVP_PKEY_assign_RSA(pk, rsa))
-	{
-		CERT_ERR
-	}
-
-	X509_set_version(x509, 2);
-	ASN1_INTEGER_set(X509_get_serialNumber(x509), SERIAL);
-	X509_gmtime_adj(X509_get_notBefore(x509), 0);
-	X509_gmtime_adj(X509_get_notAfter(x509), (long) 60 * 60 * 24 * DAYS);
-	X509_set_pubkey(x509, pk);
-
-	name = X509_get_subject_name(x509);
-
-	for (int i = 0; i < CERT_ENTRY_COUNT; i++)
-		X509_NAME_add_entry_by_txt(name, CERT_ENTRY_NAMES[i], MBSTRING_ASC, (const unsigned char *) CERT_ENTRY_VALUES[i], -1, -1, 0);
-
-	unsigned char sid[20];
-	sprintf((char *) sid, "%ld", id);
-	X509_NAME_add_entry_by_txt(name, "CN", MBSTRING_ASC, sid, -1, -1, 0);
-
-	X509_set_issuer_name(x509, issuerName);
-
-    add_ext(x509, NID_netscape_comment, (char *) sid);
-
-	if (!X509_sign(x509, issuerPKey, EVP_sha1()))
-		CERT_ERR
-
-    // write key
-	BIO *bio = BIO_new(BIO_s_mem());
-	if (bio == NULL)
-		CERT_ERR
-	PEM_write_bio_PrivateKey(bio, pk, NULL, NULL, 0, NULL, NULL);
-	char *b;
-	long len = BIO_get_mem_data(bio, &b);
-	*retpkey = std::string(b, len);
-	BIO_free(bio);
-
-	// write cert
-	bio = BIO_new(BIO_s_mem());
-	if (bio == NULL)
-		CERT_ERR
-	PEM_write_bio_X509_AUX(bio, x509);
-	len = BIO_get_mem_data(bio, &b);
-	*retcert = std::string(b, len);
-
-    X509_free(x509);
-    EVP_PKEY_free(pk);
-
-	return true;
-}
 
 /**
  * Encodes a binary safe base 64 string in one line

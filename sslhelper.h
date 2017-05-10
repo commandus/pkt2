@@ -58,14 +58,6 @@ X509_NAME *getCertificateCN(
  */
 uint64_t getCertificateCNAsInt(const std::string &pem);
 
-bool mkcert(
-	int64_t id,
-	X509_NAME *issuerName,
-	EVP_PKEY *issuerPKey,
-	std::string *retpkey,
-	std::string *retcert
-);
-
 // BUGBUG Seems like memory leaking
 /**
  * https://gist.github.com/barrysteyn/7308212

@@ -49,7 +49,6 @@ private:
 		const google::protobuf::FieldDescriptor *field
 	);
 	ondecompose_callback ondecompose;
-	Pkt2OptionsCache *options_cache;
 	int decomposeField
 	(
 		const google::protobuf::Descriptor *message_descriptor,
@@ -80,6 +79,8 @@ protected:
 		int format_number
 	);
 public:
+	Pkt2OptionsCache *options_cache;
+
 	MessageDecomposer(void *env, Pkt2OptionsCache *options, const google::protobuf::Message *message, ondecompose_callback callback);
 	virtual ~MessageDecomposer();
 

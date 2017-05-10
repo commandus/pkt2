@@ -67,6 +67,7 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, priority_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, format_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, index_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, sql_string_),
     ~0u,  // no _has_bits_
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Address, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -105,10 +106,10 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(Field)},
   { 10, -1, sizeof(Variable)},
-  { 25, -1, sizeof(Address)},
-  { 32, -1, sizeof(Packet)},
-  { 45, -1, sizeof(Sql)},
-  { 50, -1, sizeof(Output)},
+  { 26, -1, sizeof(Address)},
+  { 33, -1, sizeof(Packet)},
+  { 46, -1, sizeof(Sql)},
+  { 51, -1, sizeof(Output)},
 };
 
 static const ::google::protobuf::internal::DefaultInstanceData file_default_instances[] = {
@@ -196,47 +197,48 @@ void protobuf_AddDesc_pkt2_2eproto_impl() {
       "riptor.proto\"}\n\005Field\022\014\n\004name\030\001 \001(\t\022\035\n\004t"
       "ype\030\002 \001(\0162\017.pkt2.InputType\022\034\n\006endian\030\003 \001"
       "(\0162\014.pkt2.Endian\022\016\n\006offset\030\004 \001(\r\022\014\n\004size"
-      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\004\"\322\001\n\010Variable\022\r\n\005fiel"
+      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\004\"\346\001\n\010Variable\022\r\n\005fiel"
       "d\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\036\n\004type\030\003 \001(\0162\020.pk"
       "t2.OutputType\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tful"
       "l_name\030\005 \001(\t\022\024\n\014measure_unit\030\006 \001(\t\022\013\n\003ge"
       "t\030\007 \001(\t\022\016\n\006values\030\010 \003(\t\022\020\n\010priority\030\t \001("
-      "\r\022\016\n\006format\030\n \003(\t\022\r\n\005index\030\013 \001(\r\"D\n\007Addr"
-      "ess\022\032\n\005proto\030\001 \001(\0162\013.pkt2.Proto\022\017\n\007addre"
-      "ss\030\002 \001(\t\022\014\n\004port\030\003 \001(\r\"\304\001\n\006Packet\022\035\n\006sou"
-      "rce\030\001 \003(\0132\r.pkt2.Address\022\"\n\013destination\030"
-      "\002 \003(\0132\r.pkt2.Address\022\014\n\004name\030\003 \001(\t\022\n\n\002id"
-      "\030\004 \001(\004\022\022\n\nshort_name\030\005 \001(\t\022\021\n\tfull_name\030"
-      "\006 \001(\t\022\033\n\006fields\030\007 \003(\0132\013.pkt2.Field\022\013\n\003se"
-      "t\030\010 \001(\t\022\014\n\004head\030\n \003(\t\"%\n\003Sql\022\036\n\007dialect\030"
-      "\001 \001(\0162\r.pkt2.Dialect\",\n\006Output\022\n\n\002id\030\001 \001"
-      "(\r\022\026\n\003sql\030\002 \001(\0132\t.pkt2.Sql*\222\001\n\tInputType"
-      "\022\016\n\nINPUT_NONE\020\000\022\021\n\rINPUT_MESSAGE\020\001\022\020\n\014I"
-      "NPUT_DOUBLE\020\002\022\r\n\tINPUT_INT\020\003\022\016\n\nINPUT_UI"
-      "NT\020\004\022\017\n\013INPUT_BYTES\020\005\022\016\n\nINPUT_CHAR\020\006\022\020\n"
-      "\014INPUT_STRING\020\007*\361\002\n\nOutputType\022\017\n\013OUTPUT"
-      "_NONE\020\000\022\021\n\rOUTPUT_DOUBLE\020\001\022\020\n\014OUTPUT_FLO"
-      "AT\020\002\022\020\n\014OUTPUT_INT64\020\003\022\021\n\rOUTPUT_UINT64\020"
-      "\004\022\020\n\014OUTPUT_INT32\020\005\022\022\n\016OUTPUT_FIXED64\020\006\022"
-      "\022\n\016OUTPUT_FIXED32\020\007\022\017\n\013OUTPUT_BOOL\020\010\022\021\n\r"
-      "OUTPUT_STRING\020\t\022\020\n\014OUTPUT_GROUP\020\n\022\022\n\016OUT"
-      "PUT_MESSAGE\020\013\022\020\n\014OUTPUT_BYTES\020\014\022\021\n\rOUTPU"
-      "T_UINT32\020\r\022\017\n\013OUTPUT_ENUM\020\016\022\023\n\017OUTPUT_SF"
-      "IXED32\020\017\022\023\n\017OUTPUT_SFIXED64\020\020\022\021\n\rOUTPUT_"
-      "SINT32\020\021\022\021\n\rOUTPUT_SINT64\020\022*O\n\006Endian\022\024\n"
-      "\020ENDIAN_NO_MATTER\020\000\022\030\n\024ENDIAN_LITTLE_END"
-      "IAN\020\001\022\025\n\021ENDIAN_BIG_ENDIAN\020\002*5\n\005Proto\022\016\n"
-      "\nPROTO_NONE\020\000\022\r\n\tPROTO_TCP\020\001\022\r\n\tPROTO_UD"
-      "P\020\002*>\n\007Dialect\022\022\n\016SQL_POSTGRESQL\020\000\022\r\n\tSQ"
-      "L_MYSQL\020\001\022\020\n\014SQL_FIREBIRD\020\002:\?\n\006packet\022\037."
-      "google.protobuf.MessageOptions\030\305\212\003 \001(\0132\014"
-      ".pkt2.Packet:\?\n\006output\022\037.google.protobuf"
-      ".MessageOptions\030\306\212\003 \001(\0132\014.pkt2.Output:A\n"
-      "\010variable\022\035.google.protobuf.FieldOptions"
-      "\030\307\212\003 \001(\0132\016.pkt2.VariableB\003\370\001\001b\006proto3"
+      "\r\022\016\n\006format\030\n \003(\t\022\r\n\005index\030\013 \001(\r\022\022\n\nsql_"
+      "string\030\014 \001(\010\"D\n\007Address\022\032\n\005proto\030\001 \001(\0162\013"
+      ".pkt2.Proto\022\017\n\007address\030\002 \001(\t\022\014\n\004port\030\003 \001"
+      "(\r\"\304\001\n\006Packet\022\035\n\006source\030\001 \003(\0132\r.pkt2.Add"
+      "ress\022\"\n\013destination\030\002 \003(\0132\r.pkt2.Address"
+      "\022\014\n\004name\030\003 \001(\t\022\n\n\002id\030\004 \001(\004\022\022\n\nshort_name"
+      "\030\005 \001(\t\022\021\n\tfull_name\030\006 \001(\t\022\033\n\006fields\030\007 \003("
+      "\0132\013.pkt2.Field\022\013\n\003set\030\010 \001(\t\022\014\n\004head\030\n \003("
+      "\t\"%\n\003Sql\022\036\n\007dialect\030\001 \001(\0162\r.pkt2.Dialect"
+      "\",\n\006Output\022\n\n\002id\030\001 \001(\r\022\026\n\003sql\030\002 \001(\0132\t.pk"
+      "t2.Sql*\222\001\n\tInputType\022\016\n\nINPUT_NONE\020\000\022\021\n\r"
+      "INPUT_MESSAGE\020\001\022\020\n\014INPUT_DOUBLE\020\002\022\r\n\tINP"
+      "UT_INT\020\003\022\016\n\nINPUT_UINT\020\004\022\017\n\013INPUT_BYTES\020"
+      "\005\022\016\n\nINPUT_CHAR\020\006\022\020\n\014INPUT_STRING\020\007*\361\002\n\n"
+      "OutputType\022\017\n\013OUTPUT_NONE\020\000\022\021\n\rOUTPUT_DO"
+      "UBLE\020\001\022\020\n\014OUTPUT_FLOAT\020\002\022\020\n\014OUTPUT_INT64"
+      "\020\003\022\021\n\rOUTPUT_UINT64\020\004\022\020\n\014OUTPUT_INT32\020\005\022"
+      "\022\n\016OUTPUT_FIXED64\020\006\022\022\n\016OUTPUT_FIXED32\020\007\022"
+      "\017\n\013OUTPUT_BOOL\020\010\022\021\n\rOUTPUT_STRING\020\t\022\020\n\014O"
+      "UTPUT_GROUP\020\n\022\022\n\016OUTPUT_MESSAGE\020\013\022\020\n\014OUT"
+      "PUT_BYTES\020\014\022\021\n\rOUTPUT_UINT32\020\r\022\017\n\013OUTPUT"
+      "_ENUM\020\016\022\023\n\017OUTPUT_SFIXED32\020\017\022\023\n\017OUTPUT_S"
+      "FIXED64\020\020\022\021\n\rOUTPUT_SINT32\020\021\022\021\n\rOUTPUT_S"
+      "INT64\020\022*O\n\006Endian\022\024\n\020ENDIAN_NO_MATTER\020\000\022"
+      "\030\n\024ENDIAN_LITTLE_ENDIAN\020\001\022\025\n\021ENDIAN_BIG_"
+      "ENDIAN\020\002*5\n\005Proto\022\016\n\nPROTO_NONE\020\000\022\r\n\tPRO"
+      "TO_TCP\020\001\022\r\n\tPROTO_UDP\020\002*>\n\007Dialect\022\022\n\016SQ"
+      "L_POSTGRESQL\020\000\022\r\n\tSQL_MYSQL\020\001\022\020\n\014SQL_FIR"
+      "EBIRD\020\002:\?\n\006packet\022\037.google.protobuf.Mess"
+      "ageOptions\030\305\212\003 \001(\0132\014.pkt2.Packet:\?\n\006outp"
+      "ut\022\037.google.protobuf.MessageOptions\030\306\212\003 "
+      "\001(\0132\014.pkt2.Output:A\n\010variable\022\035.google.p"
+      "rotobuf.FieldOptions\030\307\212\003 \001(\0132\016.pkt2.Vari"
+      "ableB\003\370\001\001b\006proto3"
   };
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-      descriptor, 1677);
+      descriptor, 1697);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "pkt2.proto", &protobuf_RegisterTypes);
   ::google::protobuf::protobuf_AddDesc_google_2fprotobuf_2fdescriptor_2eproto();
@@ -948,6 +950,7 @@ const int Variable::kValuesFieldNumber;
 const int Variable::kPriorityFieldNumber;
 const int Variable::kFormatFieldNumber;
 const int Variable::kIndexFieldNumber;
+const int Variable::kSqlStringFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
 Variable::Variable()
@@ -1008,8 +1011,8 @@ Variable::Variable(const Variable& from)
       GetArenaNoVirtual());
   }
   ::memcpy(&type_, &from.type_,
-    reinterpret_cast<char*>(&index_) -
-    reinterpret_cast<char*>(&type_) + sizeof(index_));
+    reinterpret_cast<char*>(&sql_string_) -
+    reinterpret_cast<char*>(&type_) + sizeof(sql_string_));
   // @@protoc_insertion_point(copy_constructor:pkt2.Variable)
 }
 
@@ -1020,8 +1023,8 @@ void Variable::SharedCtor() {
   full_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   measure_unit_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   get_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(&type_, 0, reinterpret_cast<char*>(&index_) -
-    reinterpret_cast<char*>(&type_) + sizeof(index_));
+  ::memset(&type_, 0, reinterpret_cast<char*>(&sql_string_) -
+    reinterpret_cast<char*>(&type_) + sizeof(sql_string_));
   _cached_size_ = 0;
 }
 
@@ -1079,8 +1082,8 @@ void Variable::Clear() {
   full_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   measure_unit_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   get_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-  ::memset(&type_, 0, reinterpret_cast<char*>(&index_) -
-    reinterpret_cast<char*>(&type_) + sizeof(index_));
+  ::memset(&type_, 0, reinterpret_cast<char*>(&sql_string_) -
+    reinterpret_cast<char*>(&type_) + sizeof(sql_string_));
 }
 
 bool Variable::MergePartialFromCodedStream(
@@ -1255,6 +1258,19 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
+      // bool sql_string = 12;
+      case 12: {
+        if (tag == 96u) {
+
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &sql_string_)));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
       default: {
       handle_unusual:
         if (tag == 0 ||
@@ -1375,6 +1391,11 @@ void Variable::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteUInt32(11, this->index(), output);
   }
 
+  // bool sql_string = 12;
+  if (this->sql_string() != 0) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(12, this->sql_string(), output);
+  }
+
   // @@protoc_insertion_point(serialize_end:pkt2.Variable)
 }
 
@@ -1484,6 +1505,11 @@ void Variable::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(11, this->index(), target);
   }
 
+  // bool sql_string = 12;
+  if (this->sql_string() != 0) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(12, this->sql_string(), target);
+  }
+
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Variable)
   return target;
 }
@@ -1570,6 +1596,11 @@ size_t Variable::ByteSizeLong() const {
         this->index());
   }
 
+  // bool sql_string = 12;
+  if (this->sql_string() != 0) {
+    total_size += 1 + 1;
+  }
+
   int cached_size = ::google::protobuf::internal::ToCachedSize(total_size);
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = cached_size;
@@ -1625,6 +1656,9 @@ void Variable::MergeFrom(const Variable& from) {
   if (from.index() != 0) {
     set_index(from.index());
   }
+  if (from.sql_string() != 0) {
+    set_sql_string(from.sql_string());
+  }
 }
 
 void Variable::CopyFrom(const ::google::protobuf::Message& from) {
@@ -1676,6 +1710,7 @@ void Variable::InternalSwap(Variable* other) {
   std::swap(type_, other->type_);
   std::swap(priority_, other->priority_);
   std::swap(index_, other->index_);
+  std::swap(sql_string_, other->sql_string_);
   std::swap(_cached_size_, other->_cached_size_);
 }
 
@@ -2233,6 +2268,20 @@ void Variable::set_index(::google::protobuf::uint32 value) {
   
   index_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Variable.index)
+}
+
+// bool sql_string = 12;
+void Variable::clear_sql_string() {
+  sql_string_ = false;
+}
+bool Variable::sql_string() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.sql_string)
+  return sql_string_;
+}
+void Variable::set_sql_string(bool value) {
+  
+  sql_string_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Variable.sql_string)
 }
 
 #endif  // PROTOBUF_INLINE_NOT_IN_HEADERS

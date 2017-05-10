@@ -872,6 +872,57 @@ protoc -I proto --decode_raw  < 1
 - 3 SQL "нативный"
 - 4 SQL(2) c использованием view.
 
+#### Режим 4(dict)
+
+Предварительно нужно создать две таблицы:
+
+- num для числовых данных
+- str для текстовых данных
+
+```
+DROP TABLE IF EXISTS num;
+DROP TABLE IF EXISTS str;
+DROP SEQUENCE IF EXISTS num_id_seq;
+DROP SEQUENCE IF EXISTS str_id_seq;
+
+CREATE SEQUENCE num_id_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+
+  CREATE SEQUENCE str_id_seq
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9223372036854775807
+  START 1
+  CACHE 1;
+  
+CREATE TABLE num
+(
+  id bigint NOT NULL DEFAULT nextval('num_id_seq'::regclass),
+  "message" bigserial,
+  "time" timestamp with time zone NOT NULL,
+  "device" text NOT NULL,
+  "field" text NOT NULL,
+  value NUMERIC NOT NULL,
+  CONSTRAINT num_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE str
+(
+  id bigint NOT NULL DEFAULT nextval('str_id_seq'::regclass),
+  "message" bigserial,
+  "time" timestamp with time zone NOT NULL,
+  "device" text NOT NULL,
+  "field" text NOT NULL,
+  value text NOT NULL,
+  CONSTRAINT str_pkey PRIMARY KEY (id)
+);
+```
+
+#### Режим 3(native)
 Предварительно для режима SQL нужно создать таблицы, для которых будуту поступать данные.
 
 Запустите с опцией -vv и остановите (Ctrl+C) программу.  

@@ -625,6 +625,12 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::google::protobuf::uint32 index() const;
   void set_index(::google::protobuf::uint32 value);
 
+  // bool sql_string = 12;
+  void clear_sql_string();
+  static const int kSqlStringFieldNumber = 12;
+  bool sql_string() const;
+  void set_sql_string(bool value);
+
   // @@protoc_insertion_point(class_scope:pkt2.Variable)
  private:
 
@@ -643,6 +649,7 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   int type_;
   ::google::protobuf::uint32 priority_;
   ::google::protobuf::uint32 index_;
+  bool sql_string_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
   friend void  protobuf_AddDesc_pkt2_2eproto_impl();
@@ -1917,6 +1924,20 @@ inline void Variable::set_index(::google::protobuf::uint32 value) {
   
   index_ = value;
   // @@protoc_insertion_point(field_set:pkt2.Variable.index)
+}
+
+// bool sql_string = 12;
+inline void Variable::clear_sql_string() {
+  sql_string_ = false;
+}
+inline bool Variable::sql_string() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.sql_string)
+  return sql_string_;
+}
+inline void Variable::set_sql_string(bool value) {
+  
+  sql_string_ = value;
+  // @@protoc_insertion_point(field_set:pkt2.Variable.sql_string)
 }
 
 // -------------------------------------------------------------------

@@ -62,8 +62,7 @@ void addFieldValueString
 	int index
 )
 {
-	((FieldNameValueIndexStrings *) env)->add(field->cpp_type(), field->name(),
-			decomposer->toString(message_descriptor, field, value, size, format_number), index);
+	((FieldNameValueIndexStrings *) env)->add(field, decomposer->toString(message_descriptor, field, value, size, format_number), index);
 }
 
 /**
