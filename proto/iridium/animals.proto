@@ -20,6 +20,7 @@ message IE_Packet
 {
     // input packet description
     option(pkt2.packet) = { 
+		id: 3008 
         name: "iepacketheader"
         short_name: "Iridium packet header"
         full_name: "Iridium message full packet header"

@@ -151,7 +151,6 @@ message Packet8
 	// structure 5 bytes long (bytes 25..30) 
     Time5 time5 = 2 [(pkt2.variable) = {
         get: "field.time5"
-        index: 1
     }];
 
     // output 

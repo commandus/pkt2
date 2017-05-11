@@ -61,6 +61,8 @@ message Time5
 	
 	// output
 	uint32 time5 = 1 [(pkt2.variable) = {
+		index: 1
+		sql_string: true
 		short_name: "Время"
 		full_name: "Время, Unix epoch"
 		measure_unit: "s"
