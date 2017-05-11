@@ -60,7 +60,7 @@ void addFieldValueString
 )
 {
 	pkt2::Variable variable = field->options().GetExtension(pkt2::variable);
-	((FieldNameValueIndexStrings *) env)->add(field,decomposer->toString(message_descriptor, field, value, size, format_number), index);
+	((FieldNameValueIndexStrings *) env)->add(field, decomposer->toString(message_descriptor, field, value, size, format_number), index, true);
 }
 
 #define CHECK_STMT(error_message) \

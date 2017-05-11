@@ -24,7 +24,6 @@
 #include "duk/duktape.h"
 
 #include "pkt2-impl.h"
-#include "pkt2-config.h"
 #include "utilstring.h"
 #include "errorcodes.h"
 

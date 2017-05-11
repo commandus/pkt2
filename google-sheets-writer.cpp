@@ -62,14 +62,14 @@ void addFieldValueString
 	int index
 )
 {
-	((FieldNameValueIndexStrings *) env)->add(field, decomposer->toString(message_descriptor, field, value, size, format_number), index);
+	((FieldNameValueIndexStrings *) env)->add(field, decomposer->toString(message_descriptor, field, value, size, format_number), index, false);
 }
 
 /**
  * @brief Print packet to the stdout as CSV
- * @param messageTypeNAddress
- * @param message
- * @return
+ * @param messageTypeNAddress message type
+ * @param message message
+ * @return 0 success
  */
 int put
 (
@@ -105,7 +105,7 @@ int put
 
 /**
  * @brief Write line loop
- * @param config
+ * @param config configuration
  * @return  0- success
  *          >0- error (see errorcodes.h)
  */

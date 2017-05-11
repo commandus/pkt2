@@ -67,7 +67,8 @@ public:
 	(
 		const google::protobuf::FieldDescriptor *field,
 		const std::string &value,
-		int index
+		int index,
+		bool allow_quotes
 	);
 
 	/**

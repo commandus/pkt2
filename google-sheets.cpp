@@ -174,7 +174,7 @@ static size_t write_string(void *contents, size_t size, size_t nmemb, void *user
   * @brief POST data, return received data in retval
   * Return 0- success, otherwise error code. retval contains error description
   */
-static CURLcode curl_post0
+static int curl_post0
 (
 	const std::string &url,
 	const std::string &data,
@@ -193,16 +193,25 @@ static CURLcode curl_post0
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
     res = curl_easy_perform(curl);
+	int http_code;
     if (res != CURLE_OK)
+	{
 		retval = curl_easy_strerror(res);
+		http_code = - res;
+	}
+	else
+	{
+		// std::cerr << "POST 0 return: " << retval << std::endl;
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+	}
 	curl_easy_cleanup(curl);
-	return res;
+	return http_code;
 }
 
 /**
   * @brief GET
   */
-CURLcode curl_get
+int curl_get
 (
 	const std::string &token,
 	const std::string &url,
@@ -222,17 +231,26 @@ CURLcode curl_get
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
     CURLcode res = curl_easy_perform(curl);
+	int http_code;
     if (res != CURLE_OK)
+	{
 		retval = curl_easy_strerror(res);
+		http_code = res;
+	}
+	else
+	{
+		// std::cerr << "GET return: " << retval << std::endl;
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+	}
 	curl_slist_free_all(chunk);
 	curl_easy_cleanup(curl);
-	return res;
+	return http_code;
 }
 
 /**
   * @brief PUT
   */
-CURLcode curl_put
+int curl_put
 (
 	const std::string &token,
 	const std::string &url,
@@ -242,7 +260,7 @@ CURLcode curl_put
 {
 	CURL *curl = curl_easy_init();
 	if (!curl)
-		return CURLE_FAILED_INIT;
+		return - CURLE_FAILED_INIT;
 	struct curl_slist *chunk = NULL;
 	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
 	chunk = curl_slist_append(chunk, "Content-Type: application/json");
@@ -258,17 +276,31 @@ CURLcode curl_put
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
     CURLcode res = curl_easy_perform(curl);
   
+	int http_code;
     if (res != CURLE_OK)
+	{
 		retval = curl_easy_strerror(res);
+		http_code = - res;
+	}
+	else
+	{
+		// std::cerr << "PUT return: " << retval << std::endl;
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+	}
+
 	curl_slist_free_all(chunk);
 	curl_easy_cleanup(curl);
-	return res;
+	return http_code;
 }
 
 /**
   * @brief POST
+  * @param token GWT
+  * @param url locator
+  * @param data data to POST
+  * @return negative number: CURL error code(invert sign to get CURL code), positive number: HTTP code
   */
-CURLcode curl_post
+int curl_post
 (
 	const std::string &token,
 	const std::string &url,
@@ -283,6 +315,9 @@ CURLcode curl_post
 	chunk = curl_slist_append(chunk, ("authorization: Bearer " + token).c_str());
 	chunk = curl_slist_append(chunk, "Content-Type: application/json");
 	
+	// Print out request
+	// curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+	
 	curl_easy_setopt(curl, CURLOPT_HTTPHEADER, chunk);
 	curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
 	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -293,19 +328,29 @@ CURLcode curl_post
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
     CURLcode res = curl_easy_perform(curl);
   
+	int http_code;
     if (res != CURLE_OK)
+	{
 		retval = curl_easy_strerror(res);
+		http_code = - res;
+	}
+	else
+	{
+		// std::cerr << "POST return: " << retval << std::endl;
+		curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
+	}
+
 	curl_slist_free_all(chunk);
 	curl_easy_cleanup(curl);
-	return res;
+	return http_code;
 }
 
 /**
  * @brief JWT signing. If error occurred, retval contains error descrtiption
- * @param data
+ * @param data data to sign
  * @param pemkey PEM private key
- * @param retval
- * @return
+ * @param retval return value
+ * @return 0- success
  */
 int jws_sign
 (
@@ -455,11 +500,11 @@ int loadGoogleToken
 	}
 	std::string json;
 	
-	CURLcode res = curl_post0(GOOGLE_TOKEN_URL,
+	int res = curl_post0(GOOGLE_TOKEN_URL,
 			"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + jwt, json);
-	if (res != CURLE_OK)
+	if (res != 200)
 	{
-		retval = curl_easy_strerror(res);
+		retval = curl_easy_strerror((CURLcode) res);
 		return res;
 	}
 	
@@ -797,14 +842,13 @@ bool GoogleSheets::token_get(
 )
 {
 	std::string response;
-	CURLcode r = curl_get(token, url, response);
+	int r = curl_get(token, url, response);
 	if (checkJSONErrorCode(response) != 200)
 	{
 		genToken();
 		r = curl_get(token, url, response);
 	}
-	int c = checkJSONErrorCode(response);
-	bool ok = (r == CURLE_OK) && (c == 200);
+	bool ok = (r == 200);
 	if (ok)
 		retval.parseJSON(response);
 	else
@@ -822,36 +866,36 @@ bool GoogleSheets::token_put(
 {
 	std::string json = values.toJSON();
 	std::string response;
-	CURLcode r = curl_put(token, url, json, response);
-	if (checkJSONErrorCode(response))
+	int r = curl_put(token, url, json, response);
+	if (r != 200)
 	{
 		genToken();
 		r = curl_put(token, url, json, response);
 	}
-	int c = checkJSONErrorCode(response);
-	bool ok = (r == CURLE_OK) && (c == 200);
-	return ok;
+	return (r == 200);
 }
 
 /**
   * @brief POST spreadsheet range values. If token expires, regenerate token bearer and try again
   */
-bool GoogleSheets::token_post(
+bool GoogleSheets::token_post
+(
 	const std::string &url,
 	const ValueRange &values
 )
 {
 	std::string json = values.toJSON();
 	std::string response;
-	CURLcode r = curl_post(token, url, json, response);
-	if (checkJSONErrorCode(response) != 200)
+	int r = curl_post(token, url, json, response);
+	
+	// std::cerr << json << std::endl;
+	
+	if (r != 200)
 	{
 		genToken();
 		r = curl_put(token, url, json, response);
 	}
-	int c = checkJSONErrorCode(response);
-	bool ok = (r == CURLE_OK) && (c == 200);
-	return ok;
+	return r == 200;
 }
 
 
@@ -889,5 +933,6 @@ bool GoogleSheets::append
 	const ValueRange &values
 )
 {
-	return token_post(API_SHEET + sheet_id + "/values/" + values.range + ":append?valueInputOption=USER_ENTERED", values);
+	std::string u(API_SHEET + sheet_id + "/values/" + values.range + ":append?valueInputOption=USER_ENTERED");
+	return token_post(u, values);
 }

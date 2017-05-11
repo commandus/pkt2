@@ -131,7 +131,8 @@ am_example1message_OBJECTS =  \
 	example1message-utilfile.$(OBJEXT) \
 	example1message-utilstring.$(OBJEXT) \
 	example1message-protobuf-declarations.$(OBJEXT) \
-	example1message-pbjson.$(OBJEXT) $(am__objects_1)
+	example1message-pbjson.$(OBJEXT) \
+	example1message-errorcodes.$(OBJEXT) $(am__objects_1)
 example1message_OBJECTS = $(am_example1message_OBJECTS)
 am__DEPENDENCIES_1 =
 example1message_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -143,7 +144,8 @@ am_example1message1_OBJECTS =  \
 	example1message1-example1message1.$(OBJEXT) \
 	example/example1message1-example1.pb.$(OBJEXT) \
 	example1message1-pkt2.pb.$(OBJEXT) \
-	example1message1-utilsnmp.$(OBJEXT) $(am__objects_1)
+	example1message1-utilsnmp.$(OBJEXT) \
+	example1message1-errorcodes.$(OBJEXT) $(am__objects_1)
 example1message1_OBJECTS = $(am_example1message1_OBJECTS)
 example1message1_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handler_google_sheets_OBJECTS =  \
@@ -157,6 +159,7 @@ am_handler_google_sheets_OBJECTS =  \
 	handler_google_sheets-utilfile.$(OBJEXT) \
 	handler_google_sheets-utilstring.$(OBJEXT) \
 	handler_google_sheets-utilinet.$(OBJEXT) \
+	handler_google_sheets-errorcodes.$(OBJEXT) \
 	handler_google_sheets-jsoncpp.$(OBJEXT) \
 	handler_google_sheets-pbjson.$(OBJEXT) \
 	duk/handler_google_sheets-duktape.$(OBJEXT) \
@@ -174,6 +177,7 @@ handler_google_sheets_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerline_OBJECTS = handlerline-handlerline.$(OBJEXT) \
 	handlerline-linewriter.$(OBJEXT) \
 	handlerline-handlerline-config.$(OBJEXT) \
+	handlerline-errorcodes.$(OBJEXT) \
 	handlerline-daemonize.$(OBJEXT) \
 	handlerline-protobuf-declarations.$(OBJEXT) \
 	handlerline-utilprotobuf.$(OBJEXT) \
@@ -200,7 +204,8 @@ am_handlerlmdb_OBJECTS = handlerlmdb-handlerlmdb.$(OBJEXT) \
 	handlerlmdb-error-printer.$(OBJEXT) \
 	handlerlmdb-utilfile.$(OBJEXT) \
 	handlerlmdb-utilstring.$(OBJEXT) \
-	handlerlmdb-utilinet.$(OBJEXT) handlerlmdb-pbjson.$(OBJEXT) \
+	handlerlmdb-utilinet.$(OBJEXT) \
+	handlerlmdb-errorcodes.$(OBJEXT) handlerlmdb-pbjson.$(OBJEXT) \
 	handlerlmdb-pkt2.pb.$(OBJEXT) \
 	handlerlmdb-pkt2packetvariable.$(OBJEXT) \
 	handlerlmdb-pkt2optionscache.$(OBJEXT) \
@@ -213,7 +218,8 @@ handlerlmdb_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_handlerpq_OBJECTS = handlerpq-handlerpq.$(OBJEXT) \
 	handlerpq-handlerpq-config.$(OBJEXT) \
 	handlerpq-daemonize.$(OBJEXT) handlerpq-pqwriter.$(OBJEXT) \
-	handlerpq-pbjson.$(OBJEXT) handlerpq-pkt2.pb.$(OBJEXT) \
+	handlerpq-errorcodes.$(OBJEXT) handlerpq-pbjson.$(OBJEXT) \
+	handlerpq-pkt2.pb.$(OBJEXT) \
 	handlerpq-pkt2packetvariable.$(OBJEXT) \
 	handlerpq-pkt2optionscache.$(OBJEXT) \
 	handlerpq-fieldnamevalueindexstrings.$(OBJEXT) \
@@ -240,6 +246,7 @@ am_message2gateway_OBJECTS =  \
 	message2gateway-protobuf-declarations.$(OBJEXT) \
 	message2gateway-utilprotobuf.$(OBJEXT) \
 	message2gateway-packet2message.$(OBJEXT) \
+	message2gateway-errorcodes.$(OBJEXT) \
 	message2gateway-pbjson.$(OBJEXT) \
 	message2gateway-pkt2.pb.$(OBJEXT) \
 	duk/message2gateway-duktape.$(OBJEXT) \
@@ -251,6 +258,7 @@ message2gateway_OBJECTS = $(am_message2gateway_OBJECTS)
 message2gateway_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_messageemitter_OBJECTS = messageemitter-messageemitter.$(OBJEXT) \
 	messageemitter-messageemitter-config.$(OBJEXT) \
+	messageemitter-errorcodes.$(OBJEXT) \
 	messageemitter-utilpriority.$(OBJEXT) \
 	messageemitter-utilstring.$(OBJEXT) \
 	messageemitter-utilinet.$(OBJEXT) \
@@ -273,7 +281,8 @@ messageemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_mqtt_emitter_iridium_OBJECTS =  \
 	mqtt_emitter_iridium-mqtt-emitter-iridium.$(OBJEXT) \
-	mqtt_emitter_iridium-utilstring.$(OBJEXT) $(am__objects_1)
+	mqtt_emitter_iridium-utilstring.$(OBJEXT) \
+	mqtt_emitter_iridium-errorcodes.$(OBJEXT) $(am__objects_1)
 mqtt_emitter_iridium_OBJECTS = $(am_mqtt_emitter_iridium_OBJECTS)
 mqtt_emitter_iridium_DEPENDENCIES =
 am_mqtt_receiver_OBJECTS = mqtt_receiver-mqtt-receiver.$(OBJEXT) \
@@ -283,6 +292,7 @@ am_mqtt_receiver_OBJECTS = mqtt_receiver-mqtt-receiver.$(OBJEXT) \
 	mqtt_receiver-daemonize.$(OBJEXT) \
 	mqtt_receiver-snmpagentpkt2.$(OBJEXT) \
 	mqtt_receiver-get_rss.$(OBJEXT) \
+	mqtt_receiver-errorcodes.$(OBJEXT) \
 	mqtt_receiver-utilpriority.$(OBJEXT) \
 	mqtt_receiver-utilstring.$(OBJEXT) \
 	mqtt_receiver-utilinet.$(OBJEXT) \
@@ -291,16 +301,17 @@ mqtt_receiver_OBJECTS = $(am_mqtt_receiver_OBJECTS)
 mqtt_receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
 am_pkt2_OBJECTS = pkt2-pkt2.$(OBJEXT) pkt2-pkt2-config.$(OBJEXT) \
-	pkt2-pkt2-impl.$(OBJEXT) pkt2-utilstring.$(OBJEXT) \
-	pkt2-daemonize.$(OBJEXT) duk/pkt2-duktape.$(OBJEXT) \
-	$(am__objects_1)
+	pkt2-pkt2-impl.$(OBJEXT) pkt2-errorcodes.$(OBJEXT) \
+	pkt2-utilstring.$(OBJEXT) pkt2-daemonize.$(OBJEXT) \
+	duk/pkt2-duktape.$(OBJEXT) $(am__objects_1)
 pkt2_OBJECTS = $(am_pkt2_OBJECTS)
 pkt2_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_pkt2dumppq_OBJECTS = pkt2dumppq-pkt2dumppq.$(OBJEXT) \
 	pkt2dumppq-pqdumper.$(OBJEXT) \
 	pkt2dumppq-pkt2dumppq-config.$(OBJEXT) \
 	pkt2dumppq-daemonize.$(OBJEXT) \
-	pkt2dumppq-input-packet.$(OBJEXT) pkt2dumppq-pbjson.$(OBJEXT) \
+	pkt2dumppq-input-packet.$(OBJEXT) \
+	pkt2dumppq-errorcodes.$(OBJEXT) pkt2dumppq-pbjson.$(OBJEXT) \
 	pkt2dumppq-pkt2.pb.$(OBJEXT) \
 	pkt2dumppq-pkt2packetvariable.$(OBJEXT) \
 	pkt2dumppq-pkt2optionscache.$(OBJEXT) \
@@ -320,6 +331,7 @@ am_pkt2gateway_OBJECTS = pkt2gateway-pkt2gateway.$(OBJEXT) \
 	pkt2gateway-pkt2gateway-config.$(OBJEXT) \
 	pkt2gateway-packet2message.$(OBJEXT) \
 	pkt2gateway-daemonize.$(OBJEXT) \
+	pkt2gateway-errorcodes.$(OBJEXT) \
 	pkt2gateway-utilpriority.$(OBJEXT) \
 	pkt2gateway-utilstring.$(OBJEXT) \
 	pkt2gateway-utilinet.$(OBJEXT) \
@@ -342,6 +354,7 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 	pkt2receiver-input-packet.$(OBJEXT) \
 	pkt2receiver-daemonize.$(OBJEXT) pkt2receiver-pbjson.$(OBJEXT) \
 	pkt2receiver-utilfile.$(OBJEXT) \
+	pkt2receiver-errorcodes.$(OBJEXT) \
 	pkt2receiver-utilpriority.$(OBJEXT) \
 	pkt2receiver-utilstring.$(OBJEXT) \
 	pkt2receiver-utilinet.$(OBJEXT) \
@@ -364,24 +377,26 @@ am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-pkt2_code_generator.$(OBJEXT) \
 	protoc_gen_pkt2-utilstring.$(OBJEXT) \
 	protoc_gen_pkt2-utilinet.$(OBJEXT) \
-	protoc_gen_pkt2-pkt2.pb.$(OBJEXT) $(am__objects_1)
+	protoc_gen_pkt2-pkt2.pb.$(OBJEXT) \
+	protoc_gen_pkt2-errorcodes.$(OBJEXT) $(am__objects_1)
 protoc_gen_pkt2_OBJECTS = $(am_protoc_gen_pkt2_OBJECTS)
 protoc_gen_pkt2_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-tcpemitter-config.$(OBJEXT) \
 	tcpemitter-tcpemitterline.$(OBJEXT) \
 	tcpemitter-utilstring.$(OBJEXT) tcpemitter-daemonize.$(OBJEXT) \
-	$(am__objects_1)
+	tcpemitter-errorcodes.$(OBJEXT) $(am__objects_1)
 tcpemitter_OBJECTS = $(am_tcpemitter_OBJECTS)
 tcpemitter_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcpemitter_example1_OBJECTS =  \
 	tcpemitter_example1-tcpemitter-example1.$(OBJEXT) \
-	$(am__objects_1)
+	tcpemitter_example1-errorcodes.$(OBJEXT) $(am__objects_1)
 tcpemitter_example1_OBJECTS = $(am_tcpemitter_example1_OBJECTS)
 tcpemitter_example1_DEPENDENCIES =
 am_tcpemitter_iridium_OBJECTS =  \
 	tcpemitter_iridium-tcpemitter-iridium.$(OBJEXT) \
-	tcpemitter_iridium-utilstring.$(OBJEXT) $(am__objects_1)
+	tcpemitter_iridium-utilstring.$(OBJEXT) \
+	tcpemitter_iridium-errorcodes.$(OBJEXT) $(am__objects_1)
 tcpemitter_iridium_OBJECTS = $(am_tcpemitter_iridium_OBJECTS)
 tcpemitter_iridium_DEPENDENCIES =
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
@@ -390,7 +405,7 @@ am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-input-packet.$(OBJEXT) \
 	tcpreceiver-daemonize.$(OBJEXT) \
 	tcpreceiver-snmpagentpkt2.$(OBJEXT) \
-	tcpreceiver-get_rss.$(OBJEXT) \
+	tcpreceiver-get_rss.$(OBJEXT) tcpreceiver-errorcodes.$(OBJEXT) \
 	tcpreceiver-utilpriority.$(OBJEXT) \
 	tcpreceiver-utilstring.$(OBJEXT) \
 	tcpreceiver-utilinet.$(OBJEXT) \
@@ -402,6 +417,7 @@ tcpreceiver_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcptransmitter_OBJECTS = tcptransmitter-tcptransmitter.$(OBJEXT) \
 	tcptransmitter-tcptransmitter-config.$(OBJEXT) \
 	tcptransmitter-daemonize.$(OBJEXT) \
+	tcptransmitter-errorcodes.$(OBJEXT) \
 	tcptransmitter-utilpriority.$(OBJEXT) \
 	tcptransmitter-utilstring.$(OBJEXT) \
 	tcptransmitter-utilinet.$(OBJEXT) \
@@ -954,7 +970,7 @@ commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 #	pkt2
 #
 pkt2_SOURCES = \
-	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp \
+	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp errorcodes.cpp \
 	utilstring.cpp daemonize.cpp duk/duktape.c \
 	$(common_src)
 
@@ -966,7 +982,7 @@ pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcpemitter_SOURCES = \
 	tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp \
-	utilstring.cpp daemonize.cpp \
+	utilstring.cpp daemonize.cpp errorcodes.cpp \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
@@ -976,7 +992,7 @@ tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	messageemitter
 #
 messageemitter_SOURCES = \
-	messageemitter.cpp messageemitter-config.cpp  \
+	messageemitter.cpp messageemitter-config.cpp errorcodes.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	messageemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
@@ -991,7 +1007,7 @@ messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcpreceiver_SOURCES = \
 	tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	daemonize.cpp snmpagentpkt2.c get_rss.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -1003,7 +1019,7 @@ tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 mqtt_receiver_SOURCES = \
 	mqtt-receiver.cpp   mqtt-receiver-config.cpp mqtt-receivernano.cpp input-packet.cpp \
-	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	daemonize.cpp snmpagentpkt2.c get_rss.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -1015,7 +1031,7 @@ mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2receiver_SOURCES = \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
-	daemonize.cpp pbjson.cpp utilfile.cpp \
+	daemonize.cpp pbjson.cpp utilfile.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
 	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
 	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
@@ -1030,7 +1046,7 @@ pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2gateway_SOURCES = \
 	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
-	daemonize.cpp \
+	daemonize.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	messagecomposer.cpp \
@@ -1044,7 +1060,7 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	handlerpq
 #
 handlerpq_SOURCES = \
-	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
+	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
@@ -1058,7 +1074,7 @@ handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcptransmitter_SOURCES = \
 	tcptransmitter.cpp  tcptransmitter-config.cpp  \
-	daemonize.cpp  \
+	daemonize.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -1071,7 +1087,7 @@ tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handlerlmdb_SOURCES = \
 	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
 	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
@@ -1083,7 +1099,7 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	handlerline
 #
 handlerline_SOURCES = \
-	handlerline.cpp linewriter.cpp handlerline-config.cpp \
+	handlerline.cpp linewriter.cpp handlerline-config.cpp errorcodes.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
@@ -1099,7 +1115,7 @@ handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
 	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
@@ -1113,7 +1129,7 @@ handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 protoc_gen_pkt2_SOURCES = \
 	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
-	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp errorcodes.cpp \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
@@ -1125,7 +1141,7 @@ protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
-	utilprotobuf.cpp packet2message.cpp \
+	utilprotobuf.cpp packet2message.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
 	javascript-context.cpp \
 	$(common_src)
@@ -1139,7 +1155,7 @@ message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
 	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp utilstring.cpp protobuf-declarations.cpp \
-	pbjson.cpp \
+	pbjson.cpp errorcodes.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
@@ -1149,7 +1165,7 @@ example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	example1message1
 #
 example1message1_SOURCES = \
-	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp \
+	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp errorcodes.cpp \
 	$(common_src)
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
@@ -1159,7 +1175,7 @@ example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	tcpemitter-example1
 #
 tcpemitter_example1_SOURCES = \
-	tcpemitter-example1.cpp \
+	tcpemitter-example1.cpp errorcodes.cpp \
 	$(common_src)
 
 tcpemitter_example1_LDADD = 
@@ -1169,7 +1185,7 @@ tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	tcpemitter-iridium
 #
 tcpemitter_iridium_SOURCES = \
-	tcpemitter-iridium.cpp utilstring.cpp \
+	tcpemitter-iridium.cpp utilstring.cpp errorcodes.cpp \
 	$(common_src)
 
 tcpemitter_iridium_LDADD = 
@@ -1179,7 +1195,7 @@ tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	mqtt-emitter-iridium
 #
 mqtt_emitter_iridium_SOURCES = \
-	mqtt-emitter-iridium.cpp utilstring.cpp \
+	mqtt-emitter-iridium.cpp utilstring.cpp errorcodes.cpp \
 	$(common_src)
 
 mqtt_emitter_iridium_LDADD = -lpaho-mqtt3c 
@@ -1189,7 +1205,7 @@ mqtt_emitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 # pkt2dumppq
 #
 pkt2dumppq_SOURCES = \
-	pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp daemonize.cpp input-packet.cpp \
+	pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp daemonize.cpp input-packet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
@@ -1440,6 +1456,7 @@ distclean-compile:
 	-rm -f *.tab.c
 
 include ./$(DEPDIR)/example1message-error-printer.Po
+include ./$(DEPDIR)/example1message-errorcodes.Po
 include ./$(DEPDIR)/example1message-example1message.Po
 include ./$(DEPDIR)/example1message-pbjson.Po
 include ./$(DEPDIR)/example1message-pkt2.pb.Po
@@ -1447,11 +1464,13 @@ include ./$(DEPDIR)/example1message-protobuf-declarations.Po
 include ./$(DEPDIR)/example1message-utilfile.Po
 include ./$(DEPDIR)/example1message-utilprotobuf.Po
 include ./$(DEPDIR)/example1message-utilstring.Po
+include ./$(DEPDIR)/example1message1-errorcodes.Po
 include ./$(DEPDIR)/example1message1-example1message1.Po
 include ./$(DEPDIR)/example1message1-pkt2.pb.Po
 include ./$(DEPDIR)/example1message1-utilsnmp.Po
 include ./$(DEPDIR)/handler_google_sheets-daemonize.Po
 include ./$(DEPDIR)/handler_google_sheets-error-printer.Po
+include ./$(DEPDIR)/handler_google_sheets-errorcodes.Po
 include ./$(DEPDIR)/handler_google_sheets-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handler_google_sheets-google-sheets-writer.Po
 include ./$(DEPDIR)/handler_google_sheets-google-sheets.Po
@@ -1472,6 +1491,7 @@ include ./$(DEPDIR)/handler_google_sheets-utilprotobuf.Po
 include ./$(DEPDIR)/handler_google_sheets-utilstring.Po
 include ./$(DEPDIR)/handlerline-daemonize.Po
 include ./$(DEPDIR)/handlerline-error-printer.Po
+include ./$(DEPDIR)/handlerline-errorcodes.Po
 include ./$(DEPDIR)/handlerline-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerline-handlerline-config.Po
 include ./$(DEPDIR)/handlerline-handlerline.Po
@@ -1489,6 +1509,7 @@ include ./$(DEPDIR)/handlerline-utilprotobuf.Po
 include ./$(DEPDIR)/handlerline-utilstring.Po
 include ./$(DEPDIR)/handlerlmdb-daemonize.Po
 include ./$(DEPDIR)/handlerlmdb-error-printer.Po
+include ./$(DEPDIR)/handlerlmdb-errorcodes.Po
 include ./$(DEPDIR)/handlerlmdb-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb-config.Po
 include ./$(DEPDIR)/handlerlmdb-handlerlmdb.Po
@@ -1507,6 +1528,7 @@ include ./$(DEPDIR)/handlerlmdb-utilstring.Po
 include ./$(DEPDIR)/handlerpq-NanoMessage.Po
 include ./$(DEPDIR)/handlerpq-daemonize.Po
 include ./$(DEPDIR)/handlerpq-error-printer.Po
+include ./$(DEPDIR)/handlerpq-errorcodes.Po
 include ./$(DEPDIR)/handlerpq-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/handlerpq-handlerpq-config.Po
 include ./$(DEPDIR)/handlerpq-handlerpq.Po
@@ -1525,6 +1547,7 @@ include ./$(DEPDIR)/handlerpq-utilprotobuf.Po
 include ./$(DEPDIR)/handlerpq-utilstring.Po
 include ./$(DEPDIR)/message2gateway-daemonize.Po
 include ./$(DEPDIR)/message2gateway-error-printer.Po
+include ./$(DEPDIR)/message2gateway-errorcodes.Po
 include ./$(DEPDIR)/message2gateway-javascript-context.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-config.Po
 include ./$(DEPDIR)/message2gateway-message2gateway-impl.Po
@@ -1543,6 +1566,7 @@ include ./$(DEPDIR)/message2gateway-utilstring.Po
 include ./$(DEPDIR)/messageemitter-NanoMessage.Po
 include ./$(DEPDIR)/messageemitter-daemonize.Po
 include ./$(DEPDIR)/messageemitter-error-printer.Po
+include ./$(DEPDIR)/messageemitter-errorcodes.Po
 include ./$(DEPDIR)/messageemitter-javascript-context.Po
 include ./$(DEPDIR)/messageemitter-messagedecomposer.Po
 include ./$(DEPDIR)/messageemitter-messageemitter-config.Po
@@ -1558,10 +1582,12 @@ include ./$(DEPDIR)/messageemitter-utilinet.Po
 include ./$(DEPDIR)/messageemitter-utilpriority.Po
 include ./$(DEPDIR)/messageemitter-utilprotobuf.Po
 include ./$(DEPDIR)/messageemitter-utilstring.Po
+include ./$(DEPDIR)/mqtt_emitter_iridium-errorcodes.Po
 include ./$(DEPDIR)/mqtt_emitter_iridium-mqtt-emitter-iridium.Po
 include ./$(DEPDIR)/mqtt_emitter_iridium-utilstring.Po
 include ./$(DEPDIR)/mqtt_receiver-NanoMessage.Po
 include ./$(DEPDIR)/mqtt_receiver-daemonize.Po
+include ./$(DEPDIR)/mqtt_receiver-errorcodes.Po
 include ./$(DEPDIR)/mqtt_receiver-get_rss.Po
 include ./$(DEPDIR)/mqtt_receiver-input-packet.Po
 include ./$(DEPDIR)/mqtt_receiver-mqtt-receiver-config.Po
@@ -1572,6 +1598,7 @@ include ./$(DEPDIR)/mqtt_receiver-utilinet.Po
 include ./$(DEPDIR)/mqtt_receiver-utilpriority.Po
 include ./$(DEPDIR)/mqtt_receiver-utilstring.Po
 include ./$(DEPDIR)/pkt2-daemonize.Po
+include ./$(DEPDIR)/pkt2-errorcodes.Po
 include ./$(DEPDIR)/pkt2-pkt2-config.Po
 include ./$(DEPDIR)/pkt2-pkt2-impl.Po
 include ./$(DEPDIR)/pkt2-pkt2.Po
@@ -1579,6 +1606,7 @@ include ./$(DEPDIR)/pkt2-utilstring.Po
 include ./$(DEPDIR)/pkt2dumppq-NanoMessage.Po
 include ./$(DEPDIR)/pkt2dumppq-daemonize.Po
 include ./$(DEPDIR)/pkt2dumppq-error-printer.Po
+include ./$(DEPDIR)/pkt2dumppq-errorcodes.Po
 include ./$(DEPDIR)/pkt2dumppq-fieldnamevalueindexstrings.Po
 include ./$(DEPDIR)/pkt2dumppq-input-packet.Po
 include ./$(DEPDIR)/pkt2dumppq-javascript-context.Po
@@ -1599,6 +1627,7 @@ include ./$(DEPDIR)/pkt2dumppq-utilstring.Po
 include ./$(DEPDIR)/pkt2gateway-NanoMessage.Po
 include ./$(DEPDIR)/pkt2gateway-daemonize.Po
 include ./$(DEPDIR)/pkt2gateway-error-printer.Po
+include ./$(DEPDIR)/pkt2gateway-errorcodes.Po
 include ./$(DEPDIR)/pkt2gateway-javascript-context.Po
 include ./$(DEPDIR)/pkt2gateway-messagecomposer.Po
 include ./$(DEPDIR)/pkt2gateway-packet2message.Po
@@ -1617,6 +1646,7 @@ include ./$(DEPDIR)/pkt2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2receiver-NanoMessage.Po
 include ./$(DEPDIR)/pkt2receiver-daemonize.Po
 include ./$(DEPDIR)/pkt2receiver-error-printer.Po
+include ./$(DEPDIR)/pkt2receiver-errorcodes.Po
 include ./$(DEPDIR)/pkt2receiver-input-packet.Po
 include ./$(DEPDIR)/pkt2receiver-javascript-context.Po
 include ./$(DEPDIR)/pkt2receiver-messagecomposer.Po
@@ -1634,21 +1664,26 @@ include ./$(DEPDIR)/pkt2receiver-utilinet.Po
 include ./$(DEPDIR)/pkt2receiver-utilpriority.Po
 include ./$(DEPDIR)/pkt2receiver-utilprotobuf.Po
 include ./$(DEPDIR)/pkt2receiver-utilstring.Po
+include ./$(DEPDIR)/protoc_gen_pkt2-errorcodes.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilinet.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilstring.Po
 include ./$(DEPDIR)/tcpemitter-daemonize.Po
+include ./$(DEPDIR)/tcpemitter-errorcodes.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter-config.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitterline.Po
 include ./$(DEPDIR)/tcpemitter-utilstring.Po
+include ./$(DEPDIR)/tcpemitter_example1-errorcodes.Po
 include ./$(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
+include ./$(DEPDIR)/tcpemitter_iridium-errorcodes.Po
 include ./$(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Po
 include ./$(DEPDIR)/tcpemitter_iridium-utilstring.Po
 include ./$(DEPDIR)/tcpreceiver-NanoMessage.Po
 include ./$(DEPDIR)/tcpreceiver-daemonize.Po
+include ./$(DEPDIR)/tcpreceiver-errorcodes.Po
 include ./$(DEPDIR)/tcpreceiver-get_rss.Po
 include ./$(DEPDIR)/tcpreceiver-input-packet.Po
 include ./$(DEPDIR)/tcpreceiver-snmpagentpkt2.Po
@@ -1660,6 +1695,7 @@ include ./$(DEPDIR)/tcpreceiver-utilpriority.Po
 include ./$(DEPDIR)/tcpreceiver-utilstring.Po
 include ./$(DEPDIR)/tcptransmitter-NanoMessage.Po
 include ./$(DEPDIR)/tcptransmitter-daemonize.Po
+include ./$(DEPDIR)/tcptransmitter-errorcodes.Po
 include ./$(DEPDIR)/tcptransmitter-tcptransmitter-config.Po
 include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
@@ -2048,6 +2084,20 @@ example1message-pbjson.obj: pbjson.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-pbjson.obj `if test -f 'pbjson.cpp'; then $(CYGPATH_W) 'pbjson.cpp'; else $(CYGPATH_W) '$(srcdir)/pbjson.cpp'; fi`
 
+example1message-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-errorcodes.o -MD -MP -MF $(DEPDIR)/example1message-errorcodes.Tpo -c -o example1message-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-errorcodes.Tpo $(DEPDIR)/example1message-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='example1message-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+example1message-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message-errorcodes.obj -MD -MP -MF $(DEPDIR)/example1message-errorcodes.Tpo -c -o example1message-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message-errorcodes.Tpo $(DEPDIR)/example1message-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='example1message-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 example1message1-example1message1.o: example1message1.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-example1message1.o -MD -MP -MF $(DEPDIR)/example1message1-example1message1.Tpo -c -o example1message1-example1message1.o `test -f 'example1message1.cpp' || echo '$(srcdir)/'`example1message1.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message1-example1message1.Tpo $(DEPDIR)/example1message1-example1message1.Po
@@ -2103,6 +2153,20 @@ example1message1-utilsnmp.obj: utilsnmp.cpp
 #	$(AM_V_CXX)source='utilsnmp.cpp' object='example1message1-utilsnmp.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-utilsnmp.obj `if test -f 'utilsnmp.cpp'; then $(CYGPATH_W) 'utilsnmp.cpp'; else $(CYGPATH_W) '$(srcdir)/utilsnmp.cpp'; fi`
+
+example1message1-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-errorcodes.o -MD -MP -MF $(DEPDIR)/example1message1-errorcodes.Tpo -c -o example1message1-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message1-errorcodes.Tpo $(DEPDIR)/example1message1-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='example1message1-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+example1message1-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT example1message1-errorcodes.obj -MD -MP -MF $(DEPDIR)/example1message1-errorcodes.Tpo -c -o example1message1-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/example1message1-errorcodes.Tpo $(DEPDIR)/example1message1-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='example1message1-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 handler_google_sheets-handler-google-sheets.o: handler-google-sheets.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-handler-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-handler-google-sheets.Tpo -c -o handler_google_sheets-handler-google-sheets.o `test -f 'handler-google-sheets.cpp' || echo '$(srcdir)/'`handler-google-sheets.cpp
@@ -2243,6 +2307,20 @@ handler_google_sheets-utilinet.obj: utilinet.cpp
 #	$(AM_V_CXX)source='utilinet.cpp' object='handler_google_sheets-utilinet.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+handler_google_sheets-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-errorcodes.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-errorcodes.Tpo -c -o handler_google_sheets-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-errorcodes.Tpo $(DEPDIR)/handler_google_sheets-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handler_google_sheets-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+handler_google_sheets-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-errorcodes.obj -MD -MP -MF $(DEPDIR)/handler_google_sheets-errorcodes.Tpo -c -o handler_google_sheets-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handler_google_sheets-errorcodes.Tpo $(DEPDIR)/handler_google_sheets-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handler_google_sheets-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handler_google_sheets-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 handler_google_sheets-jsoncpp.o: jsoncpp.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-jsoncpp.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-jsoncpp.Tpo -c -o handler_google_sheets-jsoncpp.o `test -f 'jsoncpp.cpp' || echo '$(srcdir)/'`jsoncpp.cpp
@@ -2425,6 +2503,20 @@ handlerline-handlerline-config.obj: handlerline-config.cpp
 #	$(AM_V_CXX)source='handlerline-config.cpp' object='handlerline-handlerline-config.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-handlerline-config.obj `if test -f 'handlerline-config.cpp'; then $(CYGPATH_W) 'handlerline-config.cpp'; else $(CYGPATH_W) '$(srcdir)/handlerline-config.cpp'; fi`
+
+handlerline-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-errorcodes.o -MD -MP -MF $(DEPDIR)/handlerline-errorcodes.Tpo -c -o handlerline-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-errorcodes.Tpo $(DEPDIR)/handlerline-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handlerline-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+handlerline-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-errorcodes.obj -MD -MP -MF $(DEPDIR)/handlerline-errorcodes.Tpo -c -o handlerline-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerline-errorcodes.Tpo $(DEPDIR)/handlerline-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handlerline-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerline-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 handlerline-daemonize.o: daemonize.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerline_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerline-daemonize.o -MD -MP -MF $(DEPDIR)/handlerline-daemonize.Tpo -c -o handlerline-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
@@ -2762,6 +2854,20 @@ handlerlmdb-utilinet.obj: utilinet.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
+handlerlmdb-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-errorcodes.o -MD -MP -MF $(DEPDIR)/handlerlmdb-errorcodes.Tpo -c -o handlerlmdb-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-errorcodes.Tpo $(DEPDIR)/handlerlmdb-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handlerlmdb-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+handlerlmdb-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-errorcodes.obj -MD -MP -MF $(DEPDIR)/handlerlmdb-errorcodes.Tpo -c -o handlerlmdb-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-errorcodes.Tpo $(DEPDIR)/handlerlmdb-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handlerlmdb-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerlmdb-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 handlerlmdb-pbjson.o: pbjson.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerlmdb_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerlmdb-pbjson.o -MD -MP -MF $(DEPDIR)/handlerlmdb-pbjson.Tpo -c -o handlerlmdb-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerlmdb-pbjson.Tpo $(DEPDIR)/handlerlmdb-pbjson.Po
@@ -2915,6 +3021,20 @@ handlerpq-pqwriter.obj: pqwriter.cpp
 #	$(AM_V_CXX)source='pqwriter.cpp' object='handlerpq-pqwriter.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-pqwriter.obj `if test -f 'pqwriter.cpp'; then $(CYGPATH_W) 'pqwriter.cpp'; else $(CYGPATH_W) '$(srcdir)/pqwriter.cpp'; fi`
+
+handlerpq-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-errorcodes.o -MD -MP -MF $(DEPDIR)/handlerpq-errorcodes.Tpo -c -o handlerpq-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-errorcodes.Tpo $(DEPDIR)/handlerpq-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handlerpq-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+handlerpq-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-errorcodes.obj -MD -MP -MF $(DEPDIR)/handlerpq-errorcodes.Tpo -c -o handlerpq-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/handlerpq-errorcodes.Tpo $(DEPDIR)/handlerpq-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='handlerpq-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o handlerpq-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 handlerpq-pbjson.o: pbjson.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handlerpq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handlerpq-pbjson.o -MD -MP -MF $(DEPDIR)/handlerpq-pbjson.Tpo -c -o handlerpq-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
@@ -3280,6 +3400,20 @@ message2gateway-packet2message.obj: packet2message.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-packet2message.obj `if test -f 'packet2message.cpp'; then $(CYGPATH_W) 'packet2message.cpp'; else $(CYGPATH_W) '$(srcdir)/packet2message.cpp'; fi`
 
+message2gateway-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-errorcodes.o -MD -MP -MF $(DEPDIR)/message2gateway-errorcodes.Tpo -c -o message2gateway-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-errorcodes.Tpo $(DEPDIR)/message2gateway-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='message2gateway-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+message2gateway-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-errorcodes.obj -MD -MP -MF $(DEPDIR)/message2gateway-errorcodes.Tpo -c -o message2gateway-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-errorcodes.Tpo $(DEPDIR)/message2gateway-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='message2gateway-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o message2gateway-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 message2gateway-pbjson.o: pbjson.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(message2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT message2gateway-pbjson.o -MD -MP -MF $(DEPDIR)/message2gateway-pbjson.Tpo -c -o message2gateway-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/message2gateway-pbjson.Tpo $(DEPDIR)/message2gateway-pbjson.Po
@@ -3391,6 +3525,20 @@ messageemitter-messageemitter-config.obj: messageemitter-config.cpp
 #	$(AM_V_CXX)source='messageemitter-config.cpp' object='messageemitter-messageemitter-config.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-messageemitter-config.obj `if test -f 'messageemitter-config.cpp'; then $(CYGPATH_W) 'messageemitter-config.cpp'; else $(CYGPATH_W) '$(srcdir)/messageemitter-config.cpp'; fi`
+
+messageemitter-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-errorcodes.o -MD -MP -MF $(DEPDIR)/messageemitter-errorcodes.Tpo -c -o messageemitter-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-errorcodes.Tpo $(DEPDIR)/messageemitter-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='messageemitter-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+messageemitter-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-errorcodes.obj -MD -MP -MF $(DEPDIR)/messageemitter-errorcodes.Tpo -c -o messageemitter-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/messageemitter-errorcodes.Tpo $(DEPDIR)/messageemitter-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='messageemitter-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o messageemitter-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 messageemitter-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(messageemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT messageemitter-utilpriority.o -MD -MP -MF $(DEPDIR)/messageemitter-utilpriority.Tpo -c -o messageemitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -3644,6 +3792,20 @@ mqtt_emitter_iridium-utilstring.obj: utilstring.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
 
+mqtt_emitter_iridium-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_emitter_iridium-errorcodes.o -MD -MP -MF $(DEPDIR)/mqtt_emitter_iridium-errorcodes.Tpo -c -o mqtt_emitter_iridium-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_emitter_iridium-errorcodes.Tpo $(DEPDIR)/mqtt_emitter_iridium-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='mqtt_emitter_iridium-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+mqtt_emitter_iridium-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_emitter_iridium-errorcodes.obj -MD -MP -MF $(DEPDIR)/mqtt_emitter_iridium-errorcodes.Tpo -c -o mqtt_emitter_iridium-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_emitter_iridium-errorcodes.Tpo $(DEPDIR)/mqtt_emitter_iridium-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='mqtt_emitter_iridium-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_emitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_emitter_iridium-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 mqtt_receiver-mqtt-receiver.o: mqtt-receiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-mqtt-receiver.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo -c -o mqtt_receiver-mqtt-receiver.o `test -f 'mqtt-receiver.cpp' || echo '$(srcdir)/'`mqtt-receiver.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-mqtt-receiver.Tpo $(DEPDIR)/mqtt_receiver-mqtt-receiver.Po
@@ -3713,6 +3875,20 @@ mqtt_receiver-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='mqtt_receiver-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+mqtt_receiver-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-errorcodes.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-errorcodes.Tpo -c -o mqtt_receiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-errorcodes.Tpo $(DEPDIR)/mqtt_receiver-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='mqtt_receiver-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+mqtt_receiver-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-errorcodes.obj -MD -MP -MF $(DEPDIR)/mqtt_receiver-errorcodes.Tpo -c -o mqtt_receiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/mqtt_receiver-errorcodes.Tpo $(DEPDIR)/mqtt_receiver-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='mqtt_receiver-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o mqtt_receiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 mqtt_receiver-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(mqtt_receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT mqtt_receiver-utilpriority.o -MD -MP -MF $(DEPDIR)/mqtt_receiver-utilpriority.Tpo -c -o mqtt_receiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -3812,6 +3988,20 @@ pkt2-pkt2-impl.obj: pkt2-impl.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-pkt2-impl.obj `if test -f 'pkt2-impl.cpp'; then $(CYGPATH_W) 'pkt2-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2-impl.cpp'; fi`
 
+pkt2-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-errorcodes.o -MD -MP -MF $(DEPDIR)/pkt2-errorcodes.Tpo -c -o pkt2-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-errorcodes.Tpo $(DEPDIR)/pkt2-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+pkt2-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-errorcodes.obj -MD -MP -MF $(DEPDIR)/pkt2-errorcodes.Tpo -c -o pkt2-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-errorcodes.Tpo $(DEPDIR)/pkt2-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 pkt2-utilstring.o: utilstring.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2-utilstring.o -MD -MP -MF $(DEPDIR)/pkt2-utilstring.Tpo -c -o pkt2-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2-utilstring.Tpo $(DEPDIR)/pkt2-utilstring.Po
@@ -3909,6 +4099,20 @@ pkt2dumppq-input-packet.obj: input-packet.cpp
 #	$(AM_V_CXX)source='input-packet.cpp' object='pkt2dumppq-input-packet.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2dumppq-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+
+pkt2dumppq-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2dumppq-errorcodes.o -MD -MP -MF $(DEPDIR)/pkt2dumppq-errorcodes.Tpo -c -o pkt2dumppq-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2dumppq-errorcodes.Tpo $(DEPDIR)/pkt2dumppq-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2dumppq-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2dumppq-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+pkt2dumppq-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2dumppq-errorcodes.obj -MD -MP -MF $(DEPDIR)/pkt2dumppq-errorcodes.Tpo -c -o pkt2dumppq-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2dumppq-errorcodes.Tpo $(DEPDIR)/pkt2dumppq-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2dumppq-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2dumppq-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 pkt2dumppq-pbjson.o: pbjson.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2dumppq_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2dumppq-pbjson.o -MD -MP -MF $(DEPDIR)/pkt2dumppq-pbjson.Tpo -c -o pkt2dumppq-pbjson.o `test -f 'pbjson.cpp' || echo '$(srcdir)/'`pbjson.cpp
@@ -4175,6 +4379,20 @@ pkt2gateway-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='pkt2gateway-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+pkt2gateway-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-errorcodes.o -MD -MP -MF $(DEPDIR)/pkt2gateway-errorcodes.Tpo -c -o pkt2gateway-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-errorcodes.Tpo $(DEPDIR)/pkt2gateway-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2gateway-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+pkt2gateway-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-errorcodes.obj -MD -MP -MF $(DEPDIR)/pkt2gateway-errorcodes.Tpo -c -o pkt2gateway-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2gateway-errorcodes.Tpo $(DEPDIR)/pkt2gateway-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2gateway-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2gateway-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 pkt2gateway-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2gateway_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2gateway-utilpriority.o -MD -MP -MF $(DEPDIR)/pkt2gateway-utilpriority.Tpo -c -o pkt2gateway-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -4470,6 +4688,20 @@ pkt2receiver-utilfile.obj: utilfile.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
 
+pkt2receiver-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-errorcodes.o -MD -MP -MF $(DEPDIR)/pkt2receiver-errorcodes.Tpo -c -o pkt2receiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-errorcodes.Tpo $(DEPDIR)/pkt2receiver-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2receiver-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+pkt2receiver-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-errorcodes.obj -MD -MP -MF $(DEPDIR)/pkt2receiver-errorcodes.Tpo -c -o pkt2receiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-errorcodes.Tpo $(DEPDIR)/pkt2receiver-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2receiver-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 pkt2receiver-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver-utilpriority.o -MD -MP -MF $(DEPDIR)/pkt2receiver-utilpriority.Tpo -c -o pkt2receiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver-utilpriority.Tpo $(DEPDIR)/pkt2receiver-utilpriority.Po
@@ -4722,6 +4954,20 @@ protoc_gen_pkt2-pkt2.pb.obj: pkt2.pb.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-pkt2.pb.obj `if test -f 'pkt2.pb.cpp'; then $(CYGPATH_W) 'pkt2.pb.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2.pb.cpp'; fi`
 
+protoc_gen_pkt2-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-errorcodes.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-errorcodes.Tpo -c -o protoc_gen_pkt2-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-errorcodes.Tpo $(DEPDIR)/protoc_gen_pkt2-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='protoc_gen_pkt2-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+protoc_gen_pkt2-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-errorcodes.obj -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-errorcodes.Tpo -c -o protoc_gen_pkt2-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/protoc_gen_pkt2-errorcodes.Tpo $(DEPDIR)/protoc_gen_pkt2-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='protoc_gen_pkt2-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 tcpemitter-tcpemitter.o: tcpemitter.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter.Tpo -c -o tcpemitter-tcpemitter.o `test -f 'tcpemitter.cpp' || echo '$(srcdir)/'`tcpemitter.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-tcpemitter.Tpo $(DEPDIR)/tcpemitter-tcpemitter.Po
@@ -4792,6 +5038,20 @@ tcpemitter-daemonize.obj: daemonize.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
 
+tcpemitter-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-errorcodes.o -MD -MP -MF $(DEPDIR)/tcpemitter-errorcodes.Tpo -c -o tcpemitter-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-errorcodes.Tpo $(DEPDIR)/tcpemitter-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpemitter-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+tcpemitter-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-errorcodes.obj -MD -MP -MF $(DEPDIR)/tcpemitter-errorcodes.Tpo -c -o tcpemitter-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter-errorcodes.Tpo $(DEPDIR)/tcpemitter-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpemitter-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
 tcpemitter_example1-tcpemitter-example1.o: tcpemitter-example1.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-tcpemitter-example1.o -MD -MP -MF $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo -c -o tcpemitter_example1-tcpemitter-example1.o `test -f 'tcpemitter-example1.cpp' || echo '$(srcdir)/'`tcpemitter-example1.cpp
 	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Tpo $(DEPDIR)/tcpemitter_example1-tcpemitter-example1.Po
@@ -4805,6 +5065,20 @@ tcpemitter_example1-tcpemitter-example1.obj: tcpemitter-example1.cpp
 #	$(AM_V_CXX)source='tcpemitter-example1.cpp' object='tcpemitter_example1-tcpemitter-example1.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_example1-tcpemitter-example1.obj `if test -f 'tcpemitter-example1.cpp'; then $(CYGPATH_W) 'tcpemitter-example1.cpp'; else $(CYGPATH_W) '$(srcdir)/tcpemitter-example1.cpp'; fi`
+
+tcpemitter_example1-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-errorcodes.o -MD -MP -MF $(DEPDIR)/tcpemitter_example1-errorcodes.Tpo -c -o tcpemitter_example1-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_example1-errorcodes.Tpo $(DEPDIR)/tcpemitter_example1-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpemitter_example1-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_example1-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+tcpemitter_example1-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_example1-errorcodes.obj -MD -MP -MF $(DEPDIR)/tcpemitter_example1-errorcodes.Tpo -c -o tcpemitter_example1-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_example1-errorcodes.Tpo $(DEPDIR)/tcpemitter_example1-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpemitter_example1-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_example1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_example1-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 tcpemitter_iridium-tcpemitter-iridium.o: tcpemitter-iridium.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-tcpemitter-iridium.o -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-tcpemitter-iridium.Tpo -c -o tcpemitter_iridium-tcpemitter-iridium.o `test -f 'tcpemitter-iridium.cpp' || echo '$(srcdir)/'`tcpemitter-iridium.cpp
@@ -4833,6 +5107,20 @@ tcpemitter_iridium-utilstring.obj: utilstring.cpp
 #	$(AM_V_CXX)source='utilstring.cpp' object='tcpemitter_iridium-utilstring.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+tcpemitter_iridium-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-errorcodes.o -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-errorcodes.Tpo -c -o tcpemitter_iridium-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_iridium-errorcodes.Tpo $(DEPDIR)/tcpemitter_iridium-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpemitter_iridium-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+tcpemitter_iridium-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter_iridium-errorcodes.obj -MD -MP -MF $(DEPDIR)/tcpemitter_iridium-errorcodes.Tpo -c -o tcpemitter_iridium-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpemitter_iridium-errorcodes.Tpo $(DEPDIR)/tcpemitter_iridium-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpemitter_iridium-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_iridium_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpemitter_iridium-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 tcpreceiver-tcpreceiver.o: tcpreceiver.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-tcpreceiver.o -MD -MP -MF $(DEPDIR)/tcpreceiver-tcpreceiver.Tpo -c -o tcpreceiver-tcpreceiver.o `test -f 'tcpreceiver.cpp' || echo '$(srcdir)/'`tcpreceiver.cpp
@@ -4903,6 +5191,20 @@ tcpreceiver-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='tcpreceiver-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+tcpreceiver-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-errorcodes.o -MD -MP -MF $(DEPDIR)/tcpreceiver-errorcodes.Tpo -c -o tcpreceiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-errorcodes.Tpo $(DEPDIR)/tcpreceiver-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpreceiver-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+tcpreceiver-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-errorcodes.obj -MD -MP -MF $(DEPDIR)/tcpreceiver-errorcodes.Tpo -c -o tcpreceiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcpreceiver-errorcodes.Tpo $(DEPDIR)/tcpreceiver-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcpreceiver-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 tcpreceiver-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpreceiver-utilpriority.o -MD -MP -MF $(DEPDIR)/tcpreceiver-utilpriority.Tpo -c -o tcpreceiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
@@ -5001,6 +5303,20 @@ tcptransmitter-daemonize.obj: daemonize.cpp
 #	$(AM_V_CXX)source='daemonize.cpp' object='tcptransmitter-daemonize.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+tcptransmitter-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-errorcodes.o -MD -MP -MF $(DEPDIR)/tcptransmitter-errorcodes.Tpo -c -o tcptransmitter-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-errorcodes.Tpo $(DEPDIR)/tcptransmitter-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcptransmitter-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+tcptransmitter-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-errorcodes.obj -MD -MP -MF $(DEPDIR)/tcptransmitter-errorcodes.Tpo -c -o tcptransmitter-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-errorcodes.Tpo $(DEPDIR)/tcptransmitter-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='tcptransmitter-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcptransmitter-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
 
 tcptransmitter-utilpriority.o: utilpriority.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-utilpriority.o -MD -MP -MF $(DEPDIR)/tcptransmitter-utilpriority.Tpo -c -o tcptransmitter-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp

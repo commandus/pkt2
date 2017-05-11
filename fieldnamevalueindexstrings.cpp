@@ -57,7 +57,8 @@ void FieldNameValueIndexStrings::add
 (
 	const google::protobuf::FieldDescriptor *field,
 	const std::string &value,
-	int index
+	int index,
+	bool allow_quotes
 )
 {
 	if (index > 0)
@@ -67,8 +68,13 @@ void FieldNameValueIndexStrings::add
 		index2values[index] = values.size();
 	}
 
-	pkt2::Variable variable = field->options().GetExtension(pkt2::variable);
-	values.push_back(FieldNameValueString(index, field->cpp_type(), variable.sql_string(), field->full_name(), value));
+	if (allow_quotes)
+	{
+		pkt2::Variable variable = field->options().GetExtension(pkt2::variable);
+		values.push_back(FieldNameValueString(index, field->cpp_type(), variable.sql_string(), field->full_name(), value));
+	}
+	else
+		values.push_back(FieldNameValueString(index, field->cpp_type(), false, field->full_name(), value));
 }
 
 /**

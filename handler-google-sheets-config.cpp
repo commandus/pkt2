@@ -49,16 +49,23 @@ Config::Config
 	lastError = parseCmd(argc, argv);
 
 	if (lastError != 0)
+	{
+		lastError = ERRCODE_COMMAND;
+		google_sheets = NULL;
 		return;
+	}
+	
 	std::string json_google_service = file2string(json);
-	int r;
-
-	google_sheets = NULL;
 
 	std::string pub_email;
 	readGoogleTokenJSON(json_google_service, service_account, pemkey, pub_email);
 	if (pemkey.empty() || service_account.empty())
+	{
+ 		lastError = ERRCODE_GS_INVALID_CFG_JSON;
+		google_sheets = NULL;
 		return;
+	}
+	
 	if (subject_email.empty())
 		subject_email = pub_email;
 
@@ -210,13 +217,12 @@ int Config::parseCmd
 		buffer_size = DEF_BUFFER_SIZE;
 
 	if (a_json->count)
-				json = *a_json->filename;
+		json = *a_json->filename;
 	else
 		json = DEF_GOOGLE_JSON;
 
-
 	if (a_token_file->count)
-		token_file = *a_json->filename;
+		token_file = *a_token_file->filename;
 	else
 		token_file = DEF_TOKEN_FILE;
 

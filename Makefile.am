@@ -90,7 +90,7 @@ commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 #	pkt2
 #
 pkt2_SOURCES = \
-	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp \
+	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp errorcodes.cpp \
 	utilstring.cpp daemonize.cpp duk/duktape.c \
 	$(common_src)
 
@@ -102,7 +102,7 @@ pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcpemitter_SOURCES = \
 	tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp \
-	utilstring.cpp daemonize.cpp \
+	utilstring.cpp daemonize.cpp errorcodes.cpp \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
@@ -112,7 +112,7 @@ tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	messageemitter
 #
 messageemitter_SOURCES = \
-	messageemitter.cpp messageemitter-config.cpp  \
+	messageemitter.cpp messageemitter-config.cpp errorcodes.cpp  \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	messageemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
@@ -127,7 +127,7 @@ messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcpreceiver_SOURCES = \
 	tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
-	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	daemonize.cpp snmpagentpkt2.c get_rss.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -139,7 +139,7 @@ tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 mqtt_receiver_SOURCES = \
 	mqtt-receiver.cpp   mqtt-receiver-config.cpp mqtt-receivernano.cpp input-packet.cpp \
-	daemonize.cpp snmpagentpkt2.c get_rss.c \
+	daemonize.cpp snmpagentpkt2.c get_rss.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -151,7 +151,7 @@ mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2receiver_SOURCES= \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
-	daemonize.cpp pbjson.cpp utilfile.cpp \
+	daemonize.cpp pbjson.cpp utilfile.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
 	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
 	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
@@ -166,7 +166,7 @@ pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 pkt2gateway_SOURCES= \
 	pkt2gateway.cpp  pkt2gateway-config.cpp packet2message.cpp \
-	daemonize.cpp \
+	daemonize.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	messagecomposer.cpp \
@@ -180,7 +180,7 @@ pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	handlerpq
 #
 handlerpq_SOURCES= \
-	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp \
+	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
@@ -194,7 +194,7 @@ handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 tcptransmitter_SOURCES = \
 	tcptransmitter.cpp  tcptransmitter-config.cpp  \
-	daemonize.cpp  \
+	daemonize.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
@@ -207,7 +207,7 @@ tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handlerlmdb_SOURCES = \
 	handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
 	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
@@ -218,7 +218,7 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	handlerline
 #
 handlerline_SOURCES = \
-	handlerline.cpp linewriter.cpp handlerline-config.cpp \
+	handlerline.cpp linewriter.cpp handlerline-config.cpp errorcodes.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
@@ -234,7 +234,7 @@ handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
 handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
 	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
@@ -248,7 +248,7 @@ handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 protoc_gen_pkt2_SOURCES = \
 	protoc-gen-pkt2.cpp pkt2_code_generator.cpp \
-	utilstring.cpp utilinet.cpp pkt2.pb.cpp \
+	utilstring.cpp utilinet.cpp pkt2.pb.cpp errorcodes.cpp \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
@@ -260,7 +260,7 @@ protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
 message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
-	utilprotobuf.cpp packet2message.cpp \
+	utilprotobuf.cpp packet2message.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
 	javascript-context.cpp \
 	$(common_src)
@@ -274,7 +274,7 @@ message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
 	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp utilstring.cpp protobuf-declarations.cpp \
-	pbjson.cpp \
+	pbjson.cpp errorcodes.cpp \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
@@ -284,7 +284,7 @@ example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	example1message1
 #
 example1message1_SOURCES = \
-	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp \
+	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp errorcodes.cpp \
 	$(common_src)
 
 example1message1_LDADD = -lprotobuf $(SNMPLIBS)
@@ -294,7 +294,7 @@ example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	tcpemitter-example1
 #
 tcpemitter_example1_SOURCES = \
-	tcpemitter-example1.cpp \
+	tcpemitter-example1.cpp errorcodes.cpp \
 	$(common_src)
 
 tcpemitter_example1_LDADD = 
@@ -304,7 +304,7 @@ tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	tcpemitter-iridium
 #
 tcpemitter_iridium_SOURCES = \
-	tcpemitter-iridium.cpp utilstring.cpp \
+	tcpemitter-iridium.cpp utilstring.cpp errorcodes.cpp \
 	$(common_src)
 
 tcpemitter_iridium_LDADD = 
@@ -314,7 +314,7 @@ tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #	mqtt-emitter-iridium
 #
 mqtt_emitter_iridium_SOURCES = \
-	mqtt-emitter-iridium.cpp utilstring.cpp \
+	mqtt-emitter-iridium.cpp utilstring.cpp errorcodes.cpp \
 	$(common_src)
 
 mqtt_emitter_iridium_LDADD = -lpaho-mqtt3c 
@@ -324,7 +324,7 @@ mqtt_emitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
 # pkt2dumppq
 #
 pkt2dumppq_SOURCES = \
-	pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp daemonize.cpp input-packet.cpp \
+	pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp daemonize.cpp input-packet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \

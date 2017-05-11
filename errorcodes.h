@@ -6,6 +6,8 @@
 #ifndef ERRORCODES_H_
 #define ERRORCODES_H_
 
+#include <string>
+
 #define MSG_OK									"OK"
 #define MSG_FAILED								"failed"
 #define MSG_START								"Start"
@@ -92,12 +94,13 @@
 #define ERRCODE_PACKET_TOO_SMALL				-51
 #define ERRCODE_TOKEN_BEARER					-52
 #define ERRCODE_GS_RANGE						-53
+#define ERRCODE_GS_INVALID_CFG_JSON				-54
 
-#define ERRCODE_MQTT_CONNECTION_LOST			-54
-#define ERRCODE_MQTT_CONNECT_FAIL				-55
-#define ERRCODE_FORK							-56
-#define ERRCODE_EXEC							-57
-#define ERRCODE_CONFIG							-58
+#define ERRCODE_MQTT_CONNECTION_LOST			-55
+#define ERRCODE_MQTT_CONNECT_FAIL				-56
+#define ERRCODE_FORK							-57
+#define ERRCODE_EXEC							-58
+#define ERRCODE_CONFIG							-59
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -132,6 +135,12 @@
 #define ERR_DECODE_MESSAGE_OR_EOF				"Error decode message or EOF, exit "
 #define ERR_MESSAGE_TYPE_NOT_FOUND				"Protobuf message not found "
 
+#define ERR_DECOMPOSE_NO_MESSAGE_DESCRIPTOR		"No message descriptor"
+#define ERR_DECOMPOSE_NO_FIELD_DESCRIPTOR		"No field descriptor"
+#define ERR_DECOMPOSE_FATAL						"Decompose message fatal error"
+#define ERR_DECOMPOSE_NO_REFECTION				"No reflection"
+#define ERR_NO_CALLBACK							"No callback"
+
 #define ERR_SOCKET_SEND							"Error socket send "
 
 #define ERR_NOT_IMPLEMENTED					    "Not implemented"
@@ -151,11 +160,14 @@
 #define ERR_PACKET_TOO_SMALL					"Packet size is too small, field "
 #define ERR_TOKEN_BEARER						"Token bearer error "
 #define ERR_GS_RANGE							"Google Sheet get range error "
+#define ERR_GS_INVALID_CFG_JSON					"Google Sheet JSON file not found or invalid "
 
 #define ERR_MQTT_CONNECTION_LOST				"MQTT connection lost, cause: "
 #define ERR_MQTT_CONNECT_FAIL					"Failed to connect to MQTT broker: "
 #define ERR_FORK								"Can not fork "
 #define ERR_EXEC								"Can not execute "
 #define ERR_CONFIG								"Load config file error "
+
+std:: string getErrorDescription(int code);
 
 #endif /* ERRORCODES_H_ */

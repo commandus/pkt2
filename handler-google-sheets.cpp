@@ -109,10 +109,10 @@ int main
 
 	config = new Config(argc, argv);
 	if (!config)
-		exit(3);
+		exit(ERRCODE_CONFIG);
     if (config->error() != 0)
 	{
-		LOG(ERROR) << ERR_COMMAND;
+		LOG(ERROR) << getErrorDescription(config->error());
 		exit(config->error());
 	}
 
@@ -120,6 +120,7 @@ int main
 
 	if (config->verbosity >= 2)
 	{
+		LOG(INFO) << "arguments: " << arg2String(argc, argv);
 		LOG(INFO) << "speadsheet: " << config->sheet;
 		LOG(INFO) << "subject email: " << config->subject_email;
 	}

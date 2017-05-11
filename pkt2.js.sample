@@ -106,10 +106,10 @@ write_file =
 	{
 		"messages":
 		[
-			"iridium.animals"
+			"iridium.IE_Packet"
 		],
 		"mode": 0,
-		"file": "/dev/null"
+		"file": "1.txt"
 	}
 ];
 
@@ -123,9 +123,9 @@ write_lmdb =
 	{
 		"messages":
 		[
-			"iridium.animals"
+			"iridium.IE_Packet"
 		],
-		"dbpath": "/dev/null"
+		"dbpath": "db"
 	}
 ];
 
@@ -142,13 +142,13 @@ write_pq =
 [
 	{
 		"user": "pkt2",
-		"password": "pkt2",
+		"password": "123456",
 		"scheme": "pkt2",
 		"host": "localhost",
 		"port": 5432,
 		"messages":
 		[
-			"iridium.animals"
+			"iridium.IE_Packet"
 		]
 	}
 ];
@@ -172,7 +172,7 @@ write_google_sheets =
 		"sheet": "Temperature",
 		"messages":
 		[
-			"iridium.animals"
+			"iridium.IE_Packet"
 		]
 	}
 ];
