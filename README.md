@@ -357,6 +357,14 @@ pkt2receiver осуществляет поиск подходящего прот
 
 #### Сокеты по отношению к шине
 
+pkt2receiver- единственный слушатель на каждой из двух шин(пакетов и сообщений). 
+К шине пакетов можно подключить несколько процессов программ tcpreceiver, mqtt-receiver. 
+Так как tcpreceiver прослушивают TCP порт, каждому такому процессу нужно задать отлельный порт.
+К шине сообщений можно подключить несколько процессов программ handler*.
+Нужно следить, чтобы запущенные несколько раз процессы не разделяли олинг и тот же ресурс.
+
+Схема соединения шин с pkt2receiver:
+
 ```
                      +---------------+
                  +-->|  pkt2receiver |<--+
@@ -367,6 +375,8 @@ pkt2receiver осуществляет поиск подходящего прот
             +---------------+   +---------------+
             
 ```
+
+Включение сокетов к шине в программах:
 
 +------------------------+-------------------------+-------------------------+
 | Программа              | Шина пакетов            | Шина сообщений          |
@@ -381,6 +391,132 @@ pkt2receiver осуществляет поиск подходящего прот
 | handler-google-sheets  |                         | connect                 |
 +------------------------+-------------------------+-------------------------+
 
+### Загрузчик
+
+Программа pkt2 запускает программы по конфигурационному файлу.
+
+Конфигурационный файл по умолчанию имеет имя pkt2.js.
+
+Программа pkt2 следит за запущенными ею процессами через файлы /proc/<номер процесса>/cmdline.
+
+Если файл перестает содержать данные, или отсутсвует файл или каталог процесса, pkt2 повторно запускает процесс.
+
+pkt2 не запускает процессы как демоны. Для запуска процессов нужно использовать опцию -d при запуске каждой отдельной программы. pkt2 таким же образом модет быть демонизирован.
+
+Хотя конфигурационный файл является формально программой на языке Javascript, то есть в нем можно делать вычисления параметров,
+в результате конфигурационный файл должен предоставить "глобальные" переменные:
+
+```
+proto_path = "proto";
+max_file_descriptors = 0;
+max_buffer_size = 4096;
+bus_in = "ipc:///tmp/packet.pkt2";
+bus_out = "ipc:///tmp/message.pkt2";
+```
+массивы программ- приемников пакетов (они передают полученные данные в шину пакетов):
+
+```
+tcp_listeners = 
+[
+	{
+		"port": 50052,
+		"ip": "0.0.0.0"
+	}
+];
+
+mqtt_listeners = 
+[
+	{
+		"client": "cli01",
+		"broker": "tcp://127.0.0.1",
+		"topic": "pkt2",
+		"port": 1883,
+		"qos": 1, 
+		"keep-alive": 20
+	}
+];
+```
+
+Массивы используются, потому что можнго запустить несколько экземпляров программ, за однгим исключением.
+
+В конфигурационном файле нужно указать один pkt2receiver
+
+```
+packet2message = 
+[
+	{
+		"sizes": 
+		[
+		],
+		"force-message": ""
+	}
+];
+```
+Так как входные и выходные шины заданы для всех программ в глобальных переменных. Если надо запусить друглй экземпляр, используйте pkt2 с другим конфигурационным файлом,
+использующим другие шины.
+
+Обработчики
+```
+write_file = 
+[
+	{
+		"messages":
+		[
+			"iridium.IE_Packet"
+		],
+		"mode": 0,
+		"file": "1.txt"
+	}
+];
+
+write_lmdb = 
+[
+	{
+		"messages":
+		[
+			"iridium.IE_Packet"
+		],
+		"dbpath": "db"
+	}
+];
+
+write_pq = 
+[
+	{
+		"user": "pkt2",
+		"password": "123456",
+		"scheme": "pkt2",
+		"host": "localhost",
+		"port": 5432,
+		"messages":
+		[
+			"iridium.IE_Packet"
+		]
+	}
+];
+
+write_google_sheets = 
+[
+	{
+		"json_service_file_name": "cert/pkt2-sheets.json",
+		"bearer_file_name": ".token-bearer.txt",
+		"email": "andrei.i.ivanov@commandus.com",
+		"spreadsheet": "1iDg77CjmqyxWyuFXZHat946NeAEtnhL6ipKtTZzF-mo",
+		"sheet": "Temperature",
+		"messages":
+		[
+			"iridium.IE_Packet"
+		]
+	}
+];
+```
+### Дампер
+
+Дампер предназначен для записи "черновых" пакетов в базу данных.
+
+pkt2receiver получает пакеты из очереди пакетов.
+
+pkt2receiver должен запускаться отдельно, программа pkt2 не управляет ею.
 
 ### Вспомогательные программы
 
@@ -1033,7 +1169,46 @@ cd pkt2-0.1
 ./configure
 make
 ```
+#### Сборка в docker
 
+```
+docker run -itv /home/andrei/src:/home/andrei/src centos:nova bash
+
+cd /home/andrei/src/pkt2
+./configure
+make clean
+make
+
+strip tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 example1message tcpemitter-iridium mqtt-emitter-iridium handlerpq handlerline handler-google-sheets handlerlmdb  messageemitter message2gateway protoc-gen-pkt2  pkt2dumppq protoc-gen-pkt2 pkt2gateway pkt2receiver pkt2gateway pkt2receiver pkt2
+
+scp tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 example1message tcpemitter-iridium mqtt-emitter-iridium handlerpq handlerline handler-google-sheets handlerlmdb  messageemitter message2gateway protoc-gen-pkt2  pkt2dumppq protoc-gen-pkt2 pkt2gateway pkt2receiver pkt2gateway pkt2receiver pkt2 andrei@nova.ysn.ru:/home/andrei/pkt2/bin
+
+scp pkt2.js cert/pkt2-sheets.json andrei@nova.ysn.ru:/home/andrei/pkt2/bin
+exit
+
+
+# закоммитить образ 
+docker ps
+..stoic_ramanujan
+docker commit [stoic_ramanujan]
+docker images
+docker tag c30cb68a6443 centos:nova
+
+```
+
+### Запуск в nova.ysn.ru
+
+копировать недостающие библиотеки из docker, как:
+```
+scp /usr/local/lib/libpaho-mqtt3c.so.1.0 andrei@nova.ysn.ru:/home/andrei/pkt2/lib/libpaho-mqtt3c.so.1
+# прото файлы
+scp -rp proto andrei@nova.ysn.ru:/home/andrei/pkt2/bin
+```
+
+Указать папку с библиотеками
+```
+export LD_LIBRARY_PATH=/home/andrei/pkt2/lib
+```
 #### DEBUG
 
 ```

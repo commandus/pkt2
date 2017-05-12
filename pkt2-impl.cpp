@@ -41,7 +41,7 @@ int start_program
 	pid_t *retval
 )
 {
-	std::cerr << "Start program " << " PID: " << getpid() << std::endl;
+	LOG(INFO) << "Start program " << " PID: " << getpid();
 	*retval = fork(); // create child process
 	switch (*retval)
 	{
@@ -62,9 +62,10 @@ int start_program
 			}
 			argv[args.size() + 1] = (char *) 0;
 			
-			if (execve(fp.c_str(), argv, env) == -1)
+			// if (execve(fp.c_str(), argv, env) == -1)
+			if (execv(fp.c_str(), argv) == -1)
 			{
-				std::cerr << fp << " error " << errno << ": " << strerror(errno) << std::endl;
+				LOG(ERROR) << fp << " error " << errno << ": " << strerror(errno);
 				kill(*retval, SIGKILL);
 				exit(errno);
 			}
@@ -72,11 +73,6 @@ int start_program
 			free(argv);
 		}
 		return ERRCODE_EXEC; 
-	default:
-		{
-			// parent process
-			std::cerr << "Program " << " started" << std::endl;
-		}
 	}
 	return 0;
 }
@@ -109,31 +105,39 @@ bool is_process_running
 	pid_t &pid
 )
 {
-	if (pid)
-	{
-		DIR *dir;
-		dir = opendir(("/proc/" + toString(pid)).c_str());
-		if (dir)
-		{
-			closedir(dir);
-std::cerr << "running! " << pid << std::endl;			
-			return true;
-		}
-		else
-			return false;
-	}
-	else
+	if (pid == 0)
 		return true;
+	DIR *dir;
+	if (!(dir = opendir(("/proc/" + toString(pid)).c_str()))) 
+        return false;
+	closedir(dir);
+	
+	// open the cmdline file
+	std::string fn("/proc/" + toString(pid) + "/cmdline");
+	FILE* fp = fopen(fn.c_str(), "r");
+	bool ok = false;
+	if (fp) 
+	{
+		char buf[128];
+		ok = fgets(buf, sizeof(buf), fp) != NULL;
+		fclose(fp);
+	}
+    return ok;
 }
 
 class ProcessDescriptor
 {
 public:
 	pid_t pid;
+	/// working directory (where binary resides)
 	std::string path;
+	/// executable file name
 	std::string cmd;
+	/// command line arguments
 	std::vector<std::string> args;
+	/// start count
 	int start_count;
+	/// last time started
 	time_t last_start;
 	
 	ProcessDescriptor(
@@ -141,7 +145,7 @@ public:
 		const std::string &a_cmd,
 		std::vector<std::string> a_args
 	)
-	: start_count(0), last_start(0), pid(0), path(a_path), cmd(a_cmd), args(a_args)
+	: pid(0), path(a_path), cmd(a_cmd), args(a_args), start_count(0), last_start(0)
 	{
 		// start();
 	}
@@ -997,8 +1001,10 @@ public:
 		{
 			if (!descriptors[i].is_running())
 			{
-std::cerr << "Re-start"	<< std::endl;
-				// descriptors[i].start();
+				time_t last_started = descriptors[i].last_start;
+				time_t now = time(NULL);
+				LOG(ERROR) << "Re-start " << descriptors[i].cmd << " elapsed time approximately " << now - last_started << "s. Count: " << descriptors[i].start_count + 1;
+				descriptors[i].start();
 			}
 		}
 		return 0;
@@ -1033,7 +1039,6 @@ START:
 	config->stop_request = 0;
 	while (!config->stop_request)
 	{
-std::cerr << "--" << std::endl;		
 		processes.check();
 		sleep(1);
 	}

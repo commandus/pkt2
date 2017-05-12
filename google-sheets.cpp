@@ -1,6 +1,5 @@
 /*
  * google-sheets.cpp
- *
  */
 
 #include "google-sheets.h"
@@ -411,12 +410,12 @@ err:
 /**
   *	@brief Generate JWT- base64url encoded JWT header
   * @param service_account accounts.google.com, https://accounts.google.com.
-  *	@param subject_email  
-  * @param pemkey
+  *	@param subject_email email
+  * @param pemkey PEM private key
   * @param scope https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/plus.me
   * @param audience app's client IDs 
   * @param expires 3600
-  * @param retval
+  * @param retval JWT
   */
 static int getJWT
 (
@@ -474,8 +473,8 @@ static int getJWT
 /**
   *	@brief Send JWT to the 
   * @param service_account accounts.google.com, https://accounts.google.com.
-  *	@param subject_email  
-  * @param pemkey
+  *	@param subject_email email
+  * @param pemkey PEM private key
   * @param scope https://www.googleapis.com/auth/spreadsheets https://www.googleapis.com/auth/plus.me
   * @param audience app's client IDs 
   * @param expires 3600
@@ -601,7 +600,7 @@ ValueRange::ValueRange
 (
 	const std::string &rang, 
 	std::istream &stream)
-	: major_dimension("ROWS"), range(rang)
+	: range(rang), major_dimension("ROWS")
 {
 	values.clear();
 	readCSV(stream, values);
@@ -670,7 +669,7 @@ GoogleSheets::GoogleSheets
 	on_token_bearer onTokenbearer,
 	void *environ
 )
-	: ontokenbearer(onTokenbearer), env(environ)
+	: env(environ), ontokenbearer(onTokenbearer)
 {
 	sheet_id = spreadsheet;
 	token = tokenbearer;	
@@ -914,7 +913,7 @@ bool GoogleSheets::get
 
 /**
  * @brief Replace values in a range 
- * @param values
+ * @param values value range
  */
 bool GoogleSheets::put
 (
@@ -926,7 +925,7 @@ bool GoogleSheets::put
 
 /**
  * @brief Append values to a range
- * @param values
+ * @param values value range
  */
 bool GoogleSheets::append
 (

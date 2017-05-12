@@ -154,7 +154,7 @@ write_pq =
 ];
 
 /**
- * Handler: write to PostgreSQL database 
+ * Handler: write to Google Sheets 
  * json_service_file_name: json service file name. Default "cert/pkt2-sheets.json"
  * bearer_file_name: bearer file name. Default ".token-bearer.txt"
  * email: email. E.g. "alice@acme.com"
