@@ -1188,8 +1188,7 @@ exit
 
 
 # закоммитить образ 
-docker ps
-..stoic_ramanujan
+docker ps -a
 docker commit [stoic_ramanujan]
 docker images
 docker tag c30cb68a6443 centos:nova
