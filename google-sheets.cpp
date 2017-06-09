@@ -92,9 +92,9 @@ static std::vector<std::string> readCSVRow
     std::vector<std::string> fields;
 	fields.push_back("");
     size_t i = 0; // index of the current field
-    for (int i = 0; i < row.length(); i++) 
+    for (int r = 0; r < row.length(); r++)
     {
-		char c = row.at(i);
+		char c = row.at(r);
 		switch (state) {
 		case UnquotedField:
 			switch (c) {
