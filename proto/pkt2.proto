@@ -17,6 +17,7 @@ enum InputType {
     INPUT_STRING              = 7;
 };
 
+// Not used.
 enum OutputType {
     // 0 is reserved for errors.
     OUTPUT_NONE               = 0;
@@ -40,6 +41,8 @@ enum OutputType {
     OUTPUT_SINT64             = 18;  // Uses ZigZag encoding.
 };
 
+// Default ENDIAN_NO_MATTER
+// x86 is ENDIAN_LITTLE_ENDIAN, ARM is ENDIAN_BIG_ENDIAN architecture
 enum Endian {
     ENDIAN_NO_MATTER          = 0;   // no order at all  
     ENDIAN_LITTLE_ENDIAN      = 1;
@@ -49,16 +52,17 @@ enum Endian {
 message Field {
     string name               = 1;
     InputType type            = 2;
-    Endian endian             = 3;
-    uint32 offset             = 4;
-    uint32 size               = 5;
+    Endian endian             = 3;	///<   порядок байт в слове. Если область состоит из 1 байта, или является массивом байт,Ю строкой, не имеет значения.
+    uint32 offset             = 4;	///<   смещение непрерывной области памяти в байтах. Начинается с 0 каждого сообщения(велючая вложенные)
+    uint32 size               = 5;	///<   число байт занимаемого непрерывного пространства. Все биты должны быть в области, задаваеимой offset и size
     uint64 tag                = 6;  ///<   тег. Значение должно быть равно указанному. Для значения 0 укажите -1 (18446744073709551616). Если 0, то не тег
 }
 
+/// Выходные данные- "переменная"
 message Variable {
     string field              = 1;  ///<   Только для вложенных message. Field задает смещение, где находится структура в родительском пакете. 
-    string name               = 2;
-    OutputType type           = 3;
+    string name               = 2;	///<   Зарезервировано. Сейчас имя совпадает с именем field Protobuf.
+    OutputType type           = 3;	///<   Зарезервировано. Сейчас тип совпадает с типом field Protobuf.
     string short_name         = 4;  ///<   отображаемое имя
     string full_name          = 5;  ///<   описание
     string measure_unit       = 6;  ///<   название единицы измерения (если не задан values)
@@ -72,18 +76,21 @@ message Variable {
     bool sql_string           = 12; ///<   Может применяться для индекса даты, когда значение преоброахуется в строку даты
 }
 
+/// Используемый протокол для приема пакета
 enum Proto {
     PROTO_NONE                = 0;   // unknown
     PROTO_TCP                 = 1;
     PROTO_UDP                 = 2;
 };
 
+/// IP Адрес и номер порта, откуда пришел пакет, и на какой интерфейс и порт (адрес назначения)
 message Address {
     Proto proto               = 1;
     string address            = 2;
     uint32 port               = 3;
 }
 
+/// Описание пакета
 message Packet {
     repeated Address source   = 1;   ///<   для фильтрации по источнику. Маска  адресов.
     repeated Address destination
@@ -98,22 +105,25 @@ message Packet {
     repeated string head      = 10;  ///<   Если задан(пустой и непустой)- начальный пакет. Если не задан, он не будет искаться. Содержит (опционально) список сообщений, которые могут следовать за ним в одном пакете (тогла они будут парсироваться).   
 }
 
-/// SQL dialects
+/// SQL dialects. Not used.
 enum Dialect {
     SQL_POSTGRESQL            = 0;     
     SQL_MYSQL                 = 1;
     SQL_FIREBIRD              = 2;
 };
 
+/// SQL options. Reserved.
 message Sql {
     Dialect dialect           = 1;
 }
 
+/// Output options
 message Output {
 	uint32	id                = 1;
     Sql     sql               = 2;
 }
 
+/// User defined numbers region start at 50000.
 extend google.protobuf.MessageOptions {
     pkt2.Packet packet = 50501;
 }
