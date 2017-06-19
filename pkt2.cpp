@@ -4,6 +4,8 @@
 #include <iostream>
 #include <glog/logging.h>
 #include <stdlib.h>
+#include <sys/wait.h>
+#include <errno.h>
 
 #include "platform.h"
 #include "daemonize.h"
@@ -57,16 +59,29 @@ void signalHandler(int signal)
 		std::cerr << MSG_RELOAD_CONFIG_REQUEST;
 		reload(config);
 		break;
+	case SIGCHLD:
+		{
+			int saved_errno = errno;
+			while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) 
+			{
+				std::cerr << MSG_CHILD_WAITING << std::endl;
+				sleep(1);
+			}
+			std::cerr << MSG_CHILD_TERMINATED << std::endl;
+			errno = saved_errno;
+		}
+		break;
 	default:
 		std::cerr << MSG_SIGNAL << signal;
 	}
 }
 
-void setSignalHandler(int signal)
+void setSignalHandler(int signal, int flags)
 {
 	struct sigaction action;
 	memset(&action, 0, sizeof(struct sigaction));
 	action.sa_handler = &signalHandler;
+	action.sa_flags = flags;
 	sigaction(signal, &action, NULL);
 }
 
@@ -77,8 +92,10 @@ int main
 )
 {
     // Signal handler
-	setSignalHandler(SIGINT);
-	setSignalHandler(SIGHUP);
+	setSignalHandler(SIGINT, 0);
+	setSignalHandler(SIGHUP, 0);
+	setSignalHandler(SIGCHLD, SA_RESTART | SA_NOCLDSTOP);
+	
 	reslt = 0;
 
 	config = new Config(argc, argv);

@@ -99,7 +99,8 @@ bin_PROGRAMS = pkt2$(EXEEXT) mqtt-receiver$(EXEEXT) \
 	tcpemitter-example1$(EXEEXT) tcpemitter-iridium$(EXEEXT) \
 	mqtt-emitter-iridium$(EXEEXT) handlerpq$(EXEEXT) \
 	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
-	handler-google-sheets$(EXEEXT) pkt2dumppq$(EXEEXT)
+	handler-google-sheets$(EXEEXT) pkt2receiver-check$(EXEEXT) \
+	pkt2dumppq$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -372,6 +373,13 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 pkt2receiver_OBJECTS = $(am_pkt2receiver_OBJECTS)
 pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
+am_pkt2receiver_check_OBJECTS = pkt2receiver-check.$(OBJEXT) \
+	pkt2receiver-check-config.$(OBJEXT) daemonize.$(OBJEXT) \
+	errorcodes.$(OBJEXT) utilpriority.$(OBJEXT) utilfile.$(OBJEXT) \
+	utilstring.$(OBJEXT) utilinet.$(OBJEXT) NanoMessage.$(OBJEXT) \
+	$(am__objects_1)
+pkt2receiver_check_OBJECTS = $(am_pkt2receiver_check_OBJECTS)
+pkt2receiver_check_LDADD = $(LDADD)
 am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-protoc-gen-pkt2.$(OBJEXT) \
 	protoc_gen_pkt2-pkt2_code_generator.$(OBJEXT) \
@@ -483,20 +491,21 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
 	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
 	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
-	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(pkt2receiver_SOURCES) $(pkt2receiver_check_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
 	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
 	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
 	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(protoc_gen_pkt2_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(pkt2receiver_SOURCES) $(pkt2receiver_check_SOURCES) \
+	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -961,7 +970,8 @@ duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
-pkt2-config.h pkt2-impl.h
+pkt2-config.h pkt2-impl.h \
+pkt2receiver-check-config.h
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
@@ -1215,6 +1225,15 @@ pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS
 pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
+# pkt2receiver-check
+#
+pkt2receiver_check_SOURCES = \
+	pkt2receiver-check.cpp pkt2receiver-check-config.cpp daemonize.cpp errorcodes.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+
+#
 # Configs, readme, CMake etc.
 #
 configdir = $(datadir)
@@ -1423,6 +1442,10 @@ pkt2receiver$(EXEEXT): $(pkt2receiver_OBJECTS) $(pkt2receiver_DEPENDENCIES) $(EX
 	@rm -f pkt2receiver$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(pkt2receiver_OBJECTS) $(pkt2receiver_LDADD) $(LIBS)
 
+pkt2receiver-check$(EXEEXT): $(pkt2receiver_check_OBJECTS) $(pkt2receiver_check_DEPENDENCIES) $(EXTRA_pkt2receiver_check_DEPENDENCIES) 
+	@rm -f pkt2receiver-check$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(pkt2receiver_check_OBJECTS) $(pkt2receiver_check_LDADD) $(LIBS)
+
 protoc-gen-pkt2$(EXEEXT): $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_DEPENDENCIES) $(EXTRA_protoc_gen_pkt2_DEPENDENCIES) 
 	@rm -f protoc-gen-pkt2$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_LDADD) $(LIBS)
@@ -1455,6 +1478,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/NanoMessage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errorcodes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message-error-printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message-errorcodes.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message-example1message.Po@am__quote@
@@ -1644,6 +1670,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-utilprotobuf.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2gateway-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2receiver-NanoMessage.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2receiver-check-config.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2receiver-check.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2receiver-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2receiver-error-printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/pkt2receiver-errorcodes.Po@am__quote@
@@ -1701,6 +1729,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilinet.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilpriority.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/tcptransmitter-utilstring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utilfile.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utilinet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utilpriority.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@duk/$(DEPDIR)/handler_google_sheets-duktape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@duk/$(DEPDIR)/handlerline-duktape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@duk/$(DEPDIR)/handlerlmdb-duktape.Po@am__quote@

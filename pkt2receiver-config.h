@@ -49,6 +49,7 @@ public:
 
 	std::string in_url;
 	std::string out_url;
+	std::string control_url;
 	std::string proto_path;			///< proto files directory path
 	std::string force_message;
 
@@ -61,6 +62,11 @@ public:
 	int stop_request;				///< 0- process, 1- stop request, 2- reload request
 	
 	int socket_accept;
+	int socket_control;
+	
+	uint64_t session_id;
+	uint64_t count_packet_in;
+	uint64_t count_packet_out;
 };
 
 

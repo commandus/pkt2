@@ -51,6 +51,7 @@ bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransm
 	message2gateway example1message example1message1 \
 	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
 	handlerpq handlerline handlerlmdb handler-google-sheets \
+	pkt2receiver-check \
 	pkt2dumppq
 
 #
@@ -80,7 +81,8 @@ duk/duk_config.h  duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
-pkt2-config.h pkt2-impl.h
+pkt2-config.h pkt2-impl.h \
+pkt2receiver-check-config.h
 
 common_src =
 
@@ -332,6 +334,14 @@ pkt2dumppq_SOURCES = \
 
 pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# pkt2receiver-check
+#
+pkt2receiver_check_SOURCES = \
+	pkt2receiver-check.cpp pkt2receiver-check-config.cpp daemonize.cpp errorcodes.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
 
 #
 # Configs, readme, CMake etc.

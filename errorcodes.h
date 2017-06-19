@@ -38,6 +38,9 @@
 #define MSG_MQTT_DELIVERED						"MQTT message delivery confirmed, token value: "
 #define MSG_MQTT_ARRIVED						"MQTT arrived topic, message: "
 #define MSG_MQTT_SUBSCRIBE						"Subscribing to MQTT topic, client, QoS: "
+#define MSG_CHILD_WAITING						"Child process terminating, waiting  "
+#define MSG_CHILD_TERMINATED					"Child process terminated "
+#define MSG_EMPTY_PACKET						"Empty packet received"
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							-1

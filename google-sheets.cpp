@@ -892,7 +892,7 @@ bool GoogleSheets::token_post
 	if (r != 200)
 	{
 		genToken();
-		r = curl_put(token, url, json, response);
+		r = curl_post(token, url, json, response);
 	}
 	return r == 200;
 }

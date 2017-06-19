@@ -3,8 +3,9 @@
 #include "errorcodes.h"
 
 #define DEF_PROTO_PATH				"proto"
-#define DEF_IN_QUEUE                "ipc:///tmp/packet.pkt2"
-#define DEF_OUT_QUEUE               "ipc:///tmp/message.pkt2"
+#define DEF_IN_QUEUE				"ipc:///tmp/packet.pkt2"
+#define DEF_OUT_QUEUE				"ipc:///tmp/message.pkt2"
+#define DEF_CONTROL_QUEUE			"ipc:///tmp/control.pkt2"
 #define DEF_BUFFER_SIZE 	         4096
 
 /**
@@ -45,8 +46,9 @@ int Config::parseCmd
 	char* argv[]
 )
 {
-	struct arg_str *a_in_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/packet.pkt2");
-	struct arg_str *a_out_url = arg_str0("o", "output", "<queue url>", "Default ipc:///tmp/message.pkt2");
+	struct arg_str *a_in_url = arg_str0("i", "input", "<queue url>", "Default " DEF_IN_QUEUE);
+	struct arg_str *a_out_url = arg_str0("o", "output", "<queue url>", "Default " DEF_OUT_QUEUE);
+	struct arg_str *a_control_url = arg_str0(NULL, "control", "<queue url>", "Default " DEF_CONTROL_QUEUE);
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 	struct arg_str *a_force_message = arg_str0(NULL, "message", "<packet.message>", "force message");
@@ -63,7 +65,8 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = { 
-		a_in_url, a_out_url, a_proto_path, a_force_message, a_allowed_packet_sizes,
+		a_in_url, a_out_url, a_control_url,
+		a_proto_path, a_force_message, a_allowed_packet_sizes,
 		a_buffer_size,
 		a_retries, a_retry_delay, a_max_fd, 
 		a_daemonize, a_verbosity,
@@ -103,6 +106,10 @@ int Config::parseCmd
 		out_url = *a_out_url->sval;
 	else
 		out_url = DEF_OUT_QUEUE;
+	if (a_control_url->count)
+		control_url = *a_control_url->sval;
+	else
+		control_url = DEF_CONTROL_QUEUE;
 
 	if (a_proto_path->count)
 		proto_path = *a_proto_path->sval;
