@@ -59,17 +59,17 @@ std::string timeToString(time_t value);
 std::string spaces(char ch, int count);
 
 /**
- * Return hex string
- * @param buffer
- * @param size
+ * @brief Return hex string
+ * @param buffer buffer
+ * @param size buffer size
  * @return hex string
  */
 std::string hexString(void *buffer, size_t size);
 
 /**
- * Return hex string
- * @param data
- * @return
+ * @brief Return hex string
+ * @param data binary data
+ * @return string hex
  */
 std::string hexString(const std::string &data);
 

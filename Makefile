@@ -373,13 +373,19 @@ am_pkt2receiver_OBJECTS = pkt2receiver-pkt2receiver.$(OBJEXT) \
 pkt2receiver_OBJECTS = $(am_pkt2receiver_OBJECTS)
 pkt2receiver_DEPENDENCIES = $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1)
-am_pkt2receiver_check_OBJECTS = pkt2receiver-check.$(OBJEXT) \
-	pkt2receiver-check-config.$(OBJEXT) daemonize.$(OBJEXT) \
-	errorcodes.$(OBJEXT) utilpriority.$(OBJEXT) utilfile.$(OBJEXT) \
-	utilstring.$(OBJEXT) utilinet.$(OBJEXT) NanoMessage.$(OBJEXT) \
-	$(am__objects_1)
+am_pkt2receiver_check_OBJECTS =  \
+	pkt2receiver_check-pkt2receiver-check.$(OBJEXT) \
+	pkt2receiver_check-pkt2receiver-check-config.$(OBJEXT) \
+	pkt2receiver_check-daemonize.$(OBJEXT) \
+	pkt2receiver_check-errorcodes.$(OBJEXT) \
+	pkt2receiver_check-utilpriority.$(OBJEXT) \
+	pkt2receiver_check-utilfile.$(OBJEXT) \
+	pkt2receiver_check-utilstring.$(OBJEXT) \
+	pkt2receiver_check-utilinet.$(OBJEXT) \
+	pkt2receiver_check-NanoMessage.$(OBJEXT) $(am__objects_1)
 pkt2receiver_check_OBJECTS = $(am_pkt2receiver_check_OBJECTS)
-pkt2receiver_check_LDADD = $(LDADD)
+pkt2receiver_check_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-protoc-gen-pkt2.$(OBJEXT) \
 	protoc_gen_pkt2-pkt2_code_generator.$(OBJEXT) \
@@ -1232,6 +1238,8 @@ pkt2receiver_check_SOURCES = \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
+pkt2receiver_check_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+pkt2receiver_check_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # Configs, readme, CMake etc.
@@ -1478,9 +1486,6 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-include ./$(DEPDIR)/NanoMessage.Po
-include ./$(DEPDIR)/daemonize.Po
-include ./$(DEPDIR)/errorcodes.Po
 include ./$(DEPDIR)/example1message-error-printer.Po
 include ./$(DEPDIR)/example1message-errorcodes.Po
 include ./$(DEPDIR)/example1message-example1message.Po
@@ -1670,8 +1675,6 @@ include ./$(DEPDIR)/pkt2gateway-utilpriority.Po
 include ./$(DEPDIR)/pkt2gateway-utilprotobuf.Po
 include ./$(DEPDIR)/pkt2gateway-utilstring.Po
 include ./$(DEPDIR)/pkt2receiver-NanoMessage.Po
-include ./$(DEPDIR)/pkt2receiver-check-config.Po
-include ./$(DEPDIR)/pkt2receiver-check.Po
 include ./$(DEPDIR)/pkt2receiver-daemonize.Po
 include ./$(DEPDIR)/pkt2receiver-error-printer.Po
 include ./$(DEPDIR)/pkt2receiver-errorcodes.Po
@@ -1692,6 +1695,15 @@ include ./$(DEPDIR)/pkt2receiver-utilinet.Po
 include ./$(DEPDIR)/pkt2receiver-utilpriority.Po
 include ./$(DEPDIR)/pkt2receiver-utilprotobuf.Po
 include ./$(DEPDIR)/pkt2receiver-utilstring.Po
+include ./$(DEPDIR)/pkt2receiver_check-NanoMessage.Po
+include ./$(DEPDIR)/pkt2receiver_check-daemonize.Po
+include ./$(DEPDIR)/pkt2receiver_check-errorcodes.Po
+include ./$(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Po
+include ./$(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Po
+include ./$(DEPDIR)/pkt2receiver_check-utilfile.Po
+include ./$(DEPDIR)/pkt2receiver_check-utilinet.Po
+include ./$(DEPDIR)/pkt2receiver_check-utilpriority.Po
+include ./$(DEPDIR)/pkt2receiver_check-utilstring.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-errorcodes.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-pkt2.pb.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
@@ -1729,10 +1741,6 @@ include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
 include ./$(DEPDIR)/tcptransmitter-utilpriority.Po
 include ./$(DEPDIR)/tcptransmitter-utilstring.Po
-include ./$(DEPDIR)/utilfile.Po
-include ./$(DEPDIR)/utilinet.Po
-include ./$(DEPDIR)/utilpriority.Po
-include ./$(DEPDIR)/utilstring.Po
 include duk/$(DEPDIR)/handler_google_sheets-duktape.Po
 include duk/$(DEPDIR)/handlerline-duktape.Po
 include duk/$(DEPDIR)/handlerlmdb-duktape.Po
@@ -4915,6 +4923,132 @@ pkt2receiver-javascript-context.obj: javascript-context.cpp
 #	$(AM_V_CXX)source='javascript-context.cpp' object='pkt2receiver-javascript-context.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver-javascript-context.obj `if test -f 'javascript-context.cpp'; then $(CYGPATH_W) 'javascript-context.cpp'; else $(CYGPATH_W) '$(srcdir)/javascript-context.cpp'; fi`
+
+pkt2receiver_check-pkt2receiver-check.o: pkt2receiver-check.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-pkt2receiver-check.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Tpo -c -o pkt2receiver_check-pkt2receiver-check.o `test -f 'pkt2receiver-check.cpp' || echo '$(srcdir)/'`pkt2receiver-check.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Tpo $(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Po
+#	$(AM_V_CXX)source='pkt2receiver-check.cpp' object='pkt2receiver_check-pkt2receiver-check.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-pkt2receiver-check.o `test -f 'pkt2receiver-check.cpp' || echo '$(srcdir)/'`pkt2receiver-check.cpp
+
+pkt2receiver_check-pkt2receiver-check.obj: pkt2receiver-check.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-pkt2receiver-check.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Tpo -c -o pkt2receiver_check-pkt2receiver-check.obj `if test -f 'pkt2receiver-check.cpp'; then $(CYGPATH_W) 'pkt2receiver-check.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2receiver-check.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Tpo $(DEPDIR)/pkt2receiver_check-pkt2receiver-check.Po
+#	$(AM_V_CXX)source='pkt2receiver-check.cpp' object='pkt2receiver_check-pkt2receiver-check.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-pkt2receiver-check.obj `if test -f 'pkt2receiver-check.cpp'; then $(CYGPATH_W) 'pkt2receiver-check.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2receiver-check.cpp'; fi`
+
+pkt2receiver_check-pkt2receiver-check-config.o: pkt2receiver-check-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-pkt2receiver-check-config.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Tpo -c -o pkt2receiver_check-pkt2receiver-check-config.o `test -f 'pkt2receiver-check-config.cpp' || echo '$(srcdir)/'`pkt2receiver-check-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Tpo $(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Po
+#	$(AM_V_CXX)source='pkt2receiver-check-config.cpp' object='pkt2receiver_check-pkt2receiver-check-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-pkt2receiver-check-config.o `test -f 'pkt2receiver-check-config.cpp' || echo '$(srcdir)/'`pkt2receiver-check-config.cpp
+
+pkt2receiver_check-pkt2receiver-check-config.obj: pkt2receiver-check-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-pkt2receiver-check-config.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Tpo -c -o pkt2receiver_check-pkt2receiver-check-config.obj `if test -f 'pkt2receiver-check-config.cpp'; then $(CYGPATH_W) 'pkt2receiver-check-config.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2receiver-check-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Tpo $(DEPDIR)/pkt2receiver_check-pkt2receiver-check-config.Po
+#	$(AM_V_CXX)source='pkt2receiver-check-config.cpp' object='pkt2receiver_check-pkt2receiver-check-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-pkt2receiver-check-config.obj `if test -f 'pkt2receiver-check-config.cpp'; then $(CYGPATH_W) 'pkt2receiver-check-config.cpp'; else $(CYGPATH_W) '$(srcdir)/pkt2receiver-check-config.cpp'; fi`
+
+pkt2receiver_check-daemonize.o: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-daemonize.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-daemonize.Tpo -c -o pkt2receiver_check-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-daemonize.Tpo $(DEPDIR)/pkt2receiver_check-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='pkt2receiver_check-daemonize.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+pkt2receiver_check-daemonize.obj: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-daemonize.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-daemonize.Tpo -c -o pkt2receiver_check-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-daemonize.Tpo $(DEPDIR)/pkt2receiver_check-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='pkt2receiver_check-daemonize.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+pkt2receiver_check-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-errorcodes.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-errorcodes.Tpo -c -o pkt2receiver_check-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-errorcodes.Tpo $(DEPDIR)/pkt2receiver_check-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2receiver_check-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+pkt2receiver_check-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-errorcodes.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-errorcodes.Tpo -c -o pkt2receiver_check-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-errorcodes.Tpo $(DEPDIR)/pkt2receiver_check-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='pkt2receiver_check-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
+pkt2receiver_check-utilpriority.o: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilpriority.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilpriority.Tpo -c -o pkt2receiver_check-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilpriority.Tpo $(DEPDIR)/pkt2receiver_check-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='pkt2receiver_check-utilpriority.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+pkt2receiver_check-utilpriority.obj: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilpriority.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilpriority.Tpo -c -o pkt2receiver_check-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilpriority.Tpo $(DEPDIR)/pkt2receiver_check-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='pkt2receiver_check-utilpriority.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+pkt2receiver_check-utilfile.o: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilfile.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilfile.Tpo -c -o pkt2receiver_check-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilfile.Tpo $(DEPDIR)/pkt2receiver_check-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='pkt2receiver_check-utilfile.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+pkt2receiver_check-utilfile.obj: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilfile.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilfile.Tpo -c -o pkt2receiver_check-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilfile.Tpo $(DEPDIR)/pkt2receiver_check-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='pkt2receiver_check-utilfile.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+pkt2receiver_check-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilstring.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilstring.Tpo -c -o pkt2receiver_check-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilstring.Tpo $(DEPDIR)/pkt2receiver_check-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='pkt2receiver_check-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+pkt2receiver_check-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilstring.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilstring.Tpo -c -o pkt2receiver_check-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilstring.Tpo $(DEPDIR)/pkt2receiver_check-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='pkt2receiver_check-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+pkt2receiver_check-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilinet.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilinet.Tpo -c -o pkt2receiver_check-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilinet.Tpo $(DEPDIR)/pkt2receiver_check-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='pkt2receiver_check-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+pkt2receiver_check-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-utilinet.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-utilinet.Tpo -c -o pkt2receiver_check-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-utilinet.Tpo $(DEPDIR)/pkt2receiver_check-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='pkt2receiver_check-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+pkt2receiver_check-NanoMessage.o: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-NanoMessage.o -MD -MP -MF $(DEPDIR)/pkt2receiver_check-NanoMessage.Tpo -c -o pkt2receiver_check-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-NanoMessage.Tpo $(DEPDIR)/pkt2receiver_check-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='pkt2receiver_check-NanoMessage.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+
+pkt2receiver_check-NanoMessage.obj: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT pkt2receiver_check-NanoMessage.obj -MD -MP -MF $(DEPDIR)/pkt2receiver_check-NanoMessage.Tpo -c -o pkt2receiver_check-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/pkt2receiver_check-NanoMessage.Tpo $(DEPDIR)/pkt2receiver_check-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='pkt2receiver_check-NanoMessage.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(pkt2receiver_check_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o pkt2receiver_check-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
 protoc_gen_pkt2-protoc-gen-pkt2.o: protoc-gen-pkt2.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT protoc_gen_pkt2-protoc-gen-pkt2.o -MD -MP -MF $(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Tpo -c -o protoc_gen_pkt2-protoc-gen-pkt2.o `test -f 'protoc-gen-pkt2.cpp' || echo '$(srcdir)/'`protoc-gen-pkt2.cpp

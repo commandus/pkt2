@@ -343,6 +343,9 @@ pkt2receiver_check_SOURCES = \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 
+pkt2receiver_check_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+pkt2receiver_check_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
 #
 # Configs, readme, CMake etc.
 #

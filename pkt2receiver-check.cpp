@@ -175,6 +175,21 @@ int run
 		{
 			LOG(INFO) << MSG_RECEIVED << bytes << ": " << hexString(buffer, bytes) ;
 		}
+		std::string s((char *)buffer, bytes);
+
+		std::vector<std::string> r = split(s, '\t');
+		if (r.size() >= 5)
+		{
+			uint64_t session_id = atoll(r[0].c_str());
+			uint64_t count_packet_in = atoll(r[1].c_str());
+			uint64_t count_packet_out = atoll(r[2].c_str());
+			int32_t typ = atoll(r[3].c_str());
+			uint64_t sz = atoll(r[4].c_str());
+			std::string msg = r[5];
+			std::string payload = r[6];
+			std::cout << count_packet_in << "/" << count_packet_out << std::endl;
+		}
+
     }
 
     free(buffer);
