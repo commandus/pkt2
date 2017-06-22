@@ -41,6 +41,11 @@ bus_in = "ipc:///tmp/packet.pkt2";
  */
 bus_out = "ipc:///tmp/message.pkt2";
 
+/**
+ * Set logging verbosity: 0- none, 1- error/warn, 2- info
+ */
+verbosity = 2;
+
 //------------------------- Listeners -------------------------------
 
 /* 
