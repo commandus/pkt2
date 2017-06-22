@@ -86,7 +86,6 @@ int listen_port
 int tcp_receiever_nano(Config *config)
 {
 START:	
-	LOG(INFO) << MSG_START;
 	config->stop_request = 0;
 	struct addrinfo *addr_dst;
 	if (get_addr_info(config, &addr_dst))
@@ -101,17 +100,18 @@ START:
 	config->socket_accept = listen_port(addr_dst);
 	if (config->socket_accept < 0)
 	{
+		LOG(ERROR) << ERR_SOCKET_LISTEN;
 		return config->socket_accept;
 	}
-
 	// Free the res linked list after we are done with it	
 	freeaddrinfo(addr_dst);
-
 	if (config->socket_accept == -1)
 	{
 		LOG(ERROR) << ERR_SOCKET_LISTEN;
 		return ERRCODE_SOCKET_LISTEN;
 	}
+
+	LOG(INFO) << MSG_START << " socket " << config->socket_accept;
 
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
 	sleep (1); // wait for connections
@@ -127,7 +127,7 @@ START:
 	int eoid = nn_connect(nano_socket, config->message_url.c_str());
     if (eoid < 0)
     {
-        LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
+		LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
 		return ERRCODE_NN_CONNECT;
     }
 
@@ -143,11 +143,16 @@ START:
 		LOG(INFO) << MSG_NN_BIND_SUCCESS << config->message_url << " with time out: " << timeout;
 	}
 
+	struct sockaddr_in *src = packet.get_sockaddr_src();
+	socklen_t addr_size = sizeof(struct sockaddr_in);
+
 	while (!config->stop_request)
 	{
 		// Wait now for a connection to accept, write source IP address into packet
-		struct sockaddr_in *src = packet.get_sockaddr_src();
-		socklen_t addr_size = sizeof(struct sockaddr_in);
+		if (config->verbosity > 1)
+		{
+			LOG(INFO) << "loop";
+		}
 
 		// Accept a new connection and return back the socket descriptor
 		int new_conn_fd = accept(config->socket_accept, (struct sockaddr *) src, &addr_size);
@@ -156,7 +161,6 @@ START:
 			LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno);
 			continue;
 		}
-
 		// Read
 		packet.setLength(read(new_conn_fd, packet.data(), packet.max_data_size));
 
@@ -187,6 +191,7 @@ START:
 
 		// send message to the nano queue
 		int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
+		
 		if (bytes != packet.size)
 		{
 			if (bytes < 0)

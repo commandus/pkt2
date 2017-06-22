@@ -81,8 +81,7 @@ int Config::parseCmd
 		file_name = *a_input_file->filename;
 	else
 		file_name = DEF_CFG;	
-	realpath(file_name.c_str(), b);
-	file_name = std::string(b);
+	file_name = std::string(realpath(file_name.c_str(), b));
 
 	if (a_path->count)
 		path = *a_path->filename;
@@ -93,8 +92,7 @@ int Config::parseCmd
 	}
 
 	// get real path
-	realpath(path.c_str(), b);
-	path = std::string(b);
+	path = std::string(realpath(path.c_str(), b));
 
 	mode_output = a_output->count;
 

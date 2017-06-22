@@ -35,7 +35,6 @@ void signalHandler(int signal)
 	case SIGTERM:
 		std::cerr << MSG_TERMINATE;
 		stopNWait();
-		LOG(ERROR) << MSG_TERMINATE;
 		// done();
 		{
 			int saved_errno = errno;
@@ -45,11 +44,9 @@ void signalHandler(int signal)
 				sleep(1);
 			}
 			std::cerr << MSG_CHILD_TERMINATED << std::endl;
-			LOG(ERROR) << MSG_CHILD_TERMINATED;
 			errno = saved_errno;
 		}
 		std::cerr << MSG_TERMINATED;
-		LOG(ERROR) << MSG_TERMINATED;
 		break;
 	case SIGINT:
 		std::cerr << MSG_INTERRUPTED;

@@ -1248,7 +1248,7 @@ configdir = $(datadir)
 dist_config_DATA = README.md HISTORY INSTALL \
 	pkt2.js.nova pkt2.js.sample pkt2.js \
 	CMakeLists.txt cmake/FindArgtable2.cmake cmake/FindGlog.cmake cmake/FindNanomsg.cmake \
-	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile \
+	tools/mkdependencies tools/mkdocker tools/mktools tools/docker/ubuntu/Dockerfile tools/rebuild-nova \
 	proto/pkt2.proto proto/google/protobuf/descriptor.proto \
 	proto/iridium/gps16.proto proto/iridium/time5.proto proto/iridium/packet8.proto proto/example/example1.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/animals.proto  \

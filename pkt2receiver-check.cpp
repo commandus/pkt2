@@ -50,6 +50,7 @@ void runner()
 		LOG(ERROR) << ERR_NO_CONFIG;
 		return;
 	}
+	config->stop_request = 0;
 	int n = 0;
 	while (!config->stop_request)
 	{

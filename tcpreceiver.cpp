@@ -102,7 +102,6 @@ int main
 	}
 	else
 	{
-		LOG(INFO) << MSG_START;
 		if (config->max_fd > 0)
 			Daemonize::setFdLimit(config->max_fd);
 		run();

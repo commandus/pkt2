@@ -1392,11 +1392,25 @@ cd pkt2-0.1
 ./configure
 make
 ```
-#### Сборка в docker
+#### Сборка в docker для nova.ysn.ru
 
+Предварительно нужно развернуть образ centos:nova с необходимыми инструментами и библиотеками.
+
+Запустите в docker со смонтированным каталогом с исходниками bash:
 ```
 docker run -itv /home/andrei/src:/home/andrei/src centos:nova bash
+```
 
+В нем из каталога с исходными кодами пересоберите проект:
+
+```
+cd /home/andrei/src/pkt2
+./tools/rebuild-nova
+```
+
+или
+
+```
 cd /home/andrei/src/pkt2
 ./configure
 make clean
