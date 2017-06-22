@@ -1,7 +1,9 @@
 #include "handler-google-sheets-config.h"
 #include <iostream>
+#include <limits.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <argtable2.h>
-
 #include "utilstring.h"
 #include "errorcodes.h"
 
@@ -170,6 +172,10 @@ int Config::parseCmd
 	else
 		proto_path = DEF_PROTO_PATH;
 
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
+
 	if (a_message_url->count)
 		message_url = *a_message_url->sval;
 	else
@@ -232,6 +238,9 @@ int Config::parseCmd
 	scope = DEF_SCOPE;
 	audience = DEF_AUDIENCE;
 	expires = DEF_EXPIRES;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;

@@ -76,6 +76,8 @@ public:
 	std::string token;
 	std::string token_file;			///< save token bearer in the file
 	GoogleSheets *google_sheets;
+	
+	char *path;
 };
 
 

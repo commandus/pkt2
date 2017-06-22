@@ -201,11 +201,14 @@ public:
 	std::string bus_out;
 	int max_file_descriptors;
 	int max_buffer_size;
+	int verbosity;
 
 	CfgCommon() 
-		: proto_path("proto"), bus_in("ipc:///tmp/packet.pkt2"), bus_out("ipc:///tmp/message.pkt2"), max_file_descriptors(0), max_buffer_size(0) {};
+		: proto_path("proto"), bus_in("ipc:///tmp/packet.pkt2"), bus_out("ipc:///tmp/message.pkt2"), 
+		max_file_descriptors(0), max_buffer_size(0), verbosity(0) {};
 };
 
+#define PUSH_BACK_ARG_LIT(r, a) 		r.push_back(a)
 #define PUSH_BACK_ARG_STR(r, a, s) 		r.push_back(a); r.push_back(s)
 #define PUSH_BACK_ARG_NUM(r, a, v) 		r.push_back(a); r.push_back(toString(v))
 /**
@@ -236,6 +239,15 @@ public:
 		}
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
+
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
@@ -288,6 +300,14 @@ public:
 		PUSH_BACK_ARG_NUM(r, "-q", qos);
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
@@ -333,6 +353,14 @@ public:
 		}
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-i", common->bus_in);
@@ -400,6 +428,14 @@ public:
 		
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
@@ -446,6 +482,14 @@ public:
 		
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
@@ -508,6 +552,14 @@ public:
 		
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
@@ -568,6 +620,14 @@ public:
 		
 		if (common)
 		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
@@ -638,6 +698,11 @@ public:
 		duk_get_prop_string(context, -1, "max_buffer_size");
 		if (duk_is_number(context, -1)) 
 			cfgCommon.max_buffer_size = duk_get_number(context, -1);
+		duk_pop(context);
+
+		duk_get_prop_string(context, -1, "verbosity");
+		if (duk_is_number(context, -1)) 
+			cfgCommon.verbosity = duk_get_number(context, -1);
 		duk_pop(context);
 
 		// read listener settings

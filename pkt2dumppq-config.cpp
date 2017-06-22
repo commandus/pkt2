@@ -1,6 +1,9 @@
 #include "pkt2dumppq-config.h"
 
 #include <argtable2.h>
+#include <limits.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <strings.h>
 
 #include "errorcodes.h"
@@ -167,6 +170,9 @@ int Config::parseCmd
 		buffer_size = *a_buffer_size->ival;
 	else
 		buffer_size = DEF_BUFFER_SIZE;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;

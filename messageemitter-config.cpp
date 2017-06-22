@@ -1,4 +1,6 @@
 #include "messageemitter-config.h"
+#include <limits.h>
+#include <stdlib.h>
 #include <argtable2.h>
 
 #define DEF_PROTO_PATH				"proto"
@@ -91,12 +93,14 @@ int Config::parseCmd
 		proto_path = *a_proto_path->sval;
 	else
 		proto_path = DEF_PROTO_PATH;
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
 
 	if (a_input_file->count)
 		file_name = *a_input_file->filename;
 	else
 		file_name = "";	// stdin
-
 
 	if (a_message_out_url->count)
 			message_out_url = *a_message_out_url->sval;

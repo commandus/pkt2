@@ -1,4 +1,6 @@
 #include <sstream>
+#include <limits.h>
+#include <unistd.h>
 #include <argtable2.h>
 
 #include "mqtt-receiver-config.h"
@@ -162,6 +164,9 @@ int Config::parseCmd
 		max_fd = *a_max_fd->ival;
 	else
 		max_fd = 0;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;

@@ -14,6 +14,7 @@
 #define MSG_STOP								"Stopped.."
 #define MSG_DONE								"Done"
 #define MSG_INTERRUPTED							"Interrupted"
+#define MSG_TERMINATE							"Terminate.. "
 #define MSG_TERMINATED							"Terminated"
 #define MSG_RELOAD_CONFIG_REQUEST				"Reload config signal requested "
 #define MSG_RELOAD_BEGIN						"Reload.. "

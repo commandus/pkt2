@@ -48,6 +48,8 @@ public:
 	int accept_socket;
 	
 	std::ostream *stream;
+	
+	char *path;
 };
 
 #endif

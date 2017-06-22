@@ -1,7 +1,7 @@
 #include "pkt2-config.h"
 #include <unistd.h>
 #include <linux/limits.h>
-
+#include <stdlib.h>
 #include <argtable2.h>
 
 #define DEF_PROTO_PATH				"proto"
@@ -74,10 +74,15 @@ int Config::parseCmd
 		return 1;
 	}
 
+	// get real path
+	char b[PATH_MAX];
+
 	if (a_input_file->count)
 		file_name = *a_input_file->filename;
 	else
 		file_name = DEF_CFG;	
+	realpath(file_name.c_str(), b);
+	file_name = std::string(b);
 
 	if (a_path->count)
 		path = *a_path->filename;
@@ -86,6 +91,10 @@ int Config::parseCmd
 		char wd[PATH_MAX];
 		path = getcwd(wd, PATH_MAX);	
 	}
+
+	// get real path
+	realpath(path.c_str(), b);
+	path = std::string(b);
 
 	mode_output = a_output->count;
 

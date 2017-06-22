@@ -1,4 +1,7 @@
 #include "tcpemitter-config.h"
+#include <limits.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <argtable2.h>
 
 #define DEF_PROTO_PATH				"proto"
@@ -94,6 +97,10 @@ int Config::parseCmd
 	else
 		proto_path = DEF_PROTO_PATH;
 
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
+
 	if (a_input_file->count)
 		file_name = *a_input_file->filename;
 	else
@@ -127,6 +134,9 @@ int Config::parseCmd
 			retry_delay = *a_retry_delay->ival;
 	else
 			retry_delay = 60;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;

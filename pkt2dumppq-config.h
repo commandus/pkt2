@@ -57,6 +57,8 @@ public:
 	int stop_request;
 	std::string packet_url;
 	int accept_socket;
+	
+	char *path;
 };
 
 /**

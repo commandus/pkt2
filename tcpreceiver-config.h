@@ -50,6 +50,8 @@ public:
 	std::string message_url;///< ipc:///tmp/packet.pkt2
 	
 	int socket_accept;
+	char *path;	
+
 };
 
 #endif // ifndef CONFIG_H

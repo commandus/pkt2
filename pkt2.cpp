@@ -28,28 +28,29 @@ void done()
 
 int reslt;
 
-void run()
-{
-	if (!config)
-	{
-		LOG(ERROR) << ERR_PARSE_COMMAND;
-		return;
-	}
-	while (!config->stop_request)
-	{
-		reslt = pkt2(config);
-		if (reslt == ERRCODE_CONFIG)
-		{
-			LOG(ERROR) << ERR_CONFIG;
-			break;
-		}
-	}
-}
-
 void signalHandler(int signal)
 {
 	switch(signal)
 	{
+	case SIGTERM:
+		std::cerr << MSG_TERMINATE;
+		stopNWait();
+		LOG(ERROR) << MSG_TERMINATE;
+		// done();
+		{
+			int saved_errno = errno;
+			while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) 
+			{
+				std::cerr << MSG_CHILD_WAITING << std::endl;
+				sleep(1);
+			}
+			std::cerr << MSG_CHILD_TERMINATED << std::endl;
+			LOG(ERROR) << MSG_CHILD_TERMINATED;
+			errno = saved_errno;
+		}
+		std::cerr << MSG_TERMINATED;
+		LOG(ERROR) << MSG_TERMINATED;
+		break;
 	case SIGINT:
 		std::cerr << MSG_INTERRUPTED;
 		stopNWait();
@@ -85,17 +86,37 @@ void setSignalHandler(int signal, int flags)
 	sigaction(signal, &action, NULL);
 }
 
+void run()
+{
+	if (!config)
+	{
+		LOG(ERROR) << ERR_PARSE_COMMAND;
+		return;
+	}
+
+	// Signal handlers
+	setSignalHandler(SIGINT, 0);
+	setSignalHandler(SIGTERM, 0);
+	setSignalHandler(SIGHUP, 0);
+	setSignalHandler(SIGCHLD, SA_RESTART | SA_NOCLDSTOP);
+
+	while (!config->stop_request)
+	{
+		reslt = pkt2(config);
+		if (reslt == ERRCODE_CONFIG)
+		{
+			LOG(ERROR) << ERR_CONFIG;
+			break;
+		}
+	}
+}
+
 int main
 (
 	int argc, 
 	char *argv[]
 )
 {
-    // Signal handler
-	setSignalHandler(SIGINT, 0);
-	setSignalHandler(SIGHUP, 0);
-	setSignalHandler(SIGCHLD, SA_RESTART | SA_NOCLDSTOP);
-	
 	reslt = 0;
 
 	config = new Config(argc, argv);
@@ -115,7 +136,7 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done);
+		Daemonize daemonize(PROGRAM_NAME, config->path, run, stopNWait, done);
 	}
 	else
 	{

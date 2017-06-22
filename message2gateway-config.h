@@ -43,7 +43,8 @@ public:
     int stop_request;
     size_t buffer_size;
 	int accept_socket;
-
+	
+	char *path;
 };
 
 

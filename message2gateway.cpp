@@ -124,7 +124,7 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, runner, stopNWait, done);
+		Daemonize daemonize(PROGRAM_NAME, config->path, runner, stopNWait, done);
 	}
 	else
 	{

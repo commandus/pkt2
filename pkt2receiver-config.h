@@ -67,6 +67,7 @@ public:
 	uint64_t session_id;
 	uint64_t count_packet_in;
 	uint64_t count_packet_out;
+	char *path;
 };
 
 

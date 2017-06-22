@@ -40,7 +40,7 @@ public:
 	int verbosity;			        ///< default 0
 	int control_socket;
 	int stop_request;
-	
+	char *path;
 };
 
 

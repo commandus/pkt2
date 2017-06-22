@@ -1412,7 +1412,7 @@ exit
 
 # закоммитить образ 
 docker ps -a
-docker commit [stoic_ramanujan]
+docker commit stoic_ramanujan
 docker images
 docker tag c30cb68a6443 centos:nova
 

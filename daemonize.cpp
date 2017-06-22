@@ -32,13 +32,14 @@ static TDaemonRunner daemonDone;
 
 Daemonize::Daemonize(
 		const std::string &daemonName,
+		const std::string &aworking_directory,
 		TDaemonRunner runner,
 		TDaemonRunner stopRequest,
 		TDaemonRunner done,
 		const int maxfile_descriptors,
 		const std::string pid_file_name
 )
-	: maxFileDescriptors(maxfile_descriptors)
+	: working_directory(aworking_directory), maxFileDescriptors(maxfile_descriptors)
 {
 	serviceName = daemonName;
 	if (pidFileName.empty())
@@ -221,7 +222,7 @@ int Daemonize::init()
 
 	/* Change the working directory to the root directory */
 	/* or another appropriated directory */
-	x = chdir("/");
+	x = chdir(working_directory.c_str());
 
 	/* Close all open file descriptors */
 	for (x = sysconf(_SC_OPEN_MAX); x>0; x--)

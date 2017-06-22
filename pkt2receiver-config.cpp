@@ -1,4 +1,7 @@
 #include <argtable2.h>
+#include <limits.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include "pkt2receiver-config.h"
 #include "errorcodes.h"
 
@@ -116,6 +119,10 @@ int Config::parseCmd
 	else
 		proto_path = DEF_PROTO_PATH;
 
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
+
 	if (a_force_message->count)
 		force_message = *a_force_message->sval;
 	else
@@ -149,6 +156,9 @@ int Config::parseCmd
 		max_fd = *a_max_fd->ival;
 	else
 		max_fd = 0;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;

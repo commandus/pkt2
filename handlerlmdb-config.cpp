@@ -1,4 +1,6 @@
 #include "handlerlmdb-config.h"
+#include <limits.h>
+#include <stdlib.h>
 #include <argtable2.h>
 
 #include "errorcodes.h"
@@ -94,6 +96,10 @@ int Config::parseCmd
 	else
 		proto_path = DEF_PROTO_PATH;
 
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
+
 	if (a_message_url->count)
 		message_url = *a_message_url->sval;
 	else
@@ -126,6 +132,8 @@ int Config::parseCmd
 		path = *a_db_path->sval;
 	else
 		path = DEF_DB_PATH;
+	realpath(path.c_str(), b);
+	path = std::string(b);
 
 	if (a_mode->count)
 		mode = *a_mode->ival;

@@ -1,4 +1,6 @@
 #include "tcpreceiver-config.h"
+#include <unistd.h>
+#include <limits.h>
 #include <argtable2.h>
 
 #define DEF_PORT                 50052
@@ -117,6 +119,9 @@ int Config::parseCmd
 		max_fd = *a_max_fd->ival;
 	else
 		max_fd = 0;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;

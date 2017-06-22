@@ -96,7 +96,7 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, run, stopNWait, done, config->max_fd);
+		Daemonize daemonize(PROGRAM_NAME, config->path, run, stopNWait, done, config->max_fd);
 	}
 	else
 	{

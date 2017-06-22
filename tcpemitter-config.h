@@ -46,6 +46,8 @@ private:
 
 	bool daemonize;
 	int stop_request;		///< 0- process, 1- stop request, 2- reload request
+	
+	char *path;
 };
 
 #endif

@@ -15,10 +15,12 @@ private:
 	std::string pidFileName;
 	int init();
 	bool setPidFile();
+	const std::string &working_directory;
 	int maxFileDescriptors;
 public:
 	Daemonize(
 		const std::string &daemonName,
+		const std::string &working_directory,
 		TDaemonRunner runner,					///< function to run as deamon
 		TDaemonRunner stopRequest, 				///< function to stop
 		TDaemonRunner done,						///< function to clean after runner exit

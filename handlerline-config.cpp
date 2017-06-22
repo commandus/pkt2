@@ -1,4 +1,7 @@
 #include "handlerline-config.h"
+#include <limits.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <argtable2.h>
 
 #include "errorcodes.h"
@@ -92,6 +95,9 @@ int Config::parseCmd
 	else
 		proto_path = DEF_PROTO_PATH;
 
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
 	
 	if (a_file_name->count)
 		file_name = *a_file_name->filename;
@@ -136,6 +142,9 @@ int Config::parseCmd
 		buffer_size = *a_buffer_size->ival;
 	else
 		buffer_size = DEF_BUFFER_SIZE;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;

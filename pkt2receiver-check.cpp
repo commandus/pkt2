@@ -27,7 +27,6 @@
 #include "utilstring.h"
 #include "errorcodes.h"
 
-
 Config *config;
 
 void stopNWait()
@@ -54,12 +53,15 @@ void runner()
 	int n = 0;
 	while (!config->stop_request)
 	{
+		LOG(INFO) << MSG_START << " " << n + 1;
 		reslt = run(config);
+		LOG(INFO) << MSG_STOP;
 		if (n >= config->retries)
 			break;
 		n++;
 		sleep(config->retry_delay);
 	}
+	LOG(INFO) << MSG_DONE;
 }
 
 void signalHandler(int signal)
@@ -116,7 +118,7 @@ int main
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
-		Daemonize daemonize(PROGRAM_NAME, runner, stopNWait, done, 0);
+		Daemonize daemonize(PROGRAM_NAME, config->path, runner, stopNWait, done, 0);
 	}
 	else
 	{
@@ -162,7 +164,7 @@ int run
 		LOG(ERROR) << ERR_NO_MEMORY;
 		return ERRCODE_NO_MEMORY;
 	}
-
+	LOG(INFO) << MSG_START << " success, main loop.";
 	while (!config->stop_request)
     {
     	int bytes = nn_recv(config->control_socket, buffer, config->buffer_size, 0);
@@ -189,7 +191,6 @@ int run
 			std::string payload = r[6];
 			std::cout << count_packet_in << "/" << count_packet_out << std::endl;
 		}
-
     }
 
     free(buffer);

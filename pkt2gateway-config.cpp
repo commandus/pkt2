@@ -1,4 +1,6 @@
 #include "pkt2gateway-config.h"
+#include <limits.h>
+#include <stdlib.h>
 #include <argtable2.h>
 
 #define DEF_PROTO_PATH				"proto"
@@ -84,6 +86,10 @@ int Config::parseCmd
         	proto_path = *a_proto_path->sval;
         else
         	proto_path = DEF_PROTO_PATH;
+		
+		// get real path
+		char b[PATH_MAX];
+		proto_path = std::string(realpath(proto_path.c_str(), b));
 
         if (a_force_message->count)
         	force_message = *a_force_message->sval;
@@ -118,9 +124,9 @@ int Config::parseCmd
         	retries = 1;
 
         if (a_retry_delay->count)
-                retry_delay = *a_retry_delay->ival;
+			retry_delay = *a_retry_delay->ival;
         else
-                retry_delay = 0;
+			retry_delay = 0;
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return 0;

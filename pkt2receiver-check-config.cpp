@@ -1,5 +1,7 @@
 #include "pkt2receiver-check-config.h"
 #include <iostream>
+#include <unistd.h>
+#include <limits.h>
 #include <argtable2.h>
 
 #include "utilstring.h"
@@ -104,6 +106,9 @@ int Config::parseCmd
 	verbosity = a_verbosity->count;
 
 	daemonize = a_daemonize->count > 0;
+
+	char wd[PATH_MAX];
+	path = getcwd(wd, PATH_MAX);	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;
