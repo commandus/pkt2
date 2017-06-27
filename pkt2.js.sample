@@ -181,3 +181,30 @@ write_google_sheets =
 		]
 	}
 ];
+
+/**
+ *	Repeators looks like:
+		repeators = 
+		[
+			{
+				"in": "ipc:///tmp/control.pkt2",
+				"outs": [
+					"tcp://0.0.0.0:50000"
+				]
+			}
+		];
+ */
+
+/*
+  
+repeators = 
+[
+	{
+		"in": "ipc:///tmp/control.pkt2",
+		"outs": [
+			"tcp://0.0.0.0:50000"
+		]
+	}
+];
+
+*/

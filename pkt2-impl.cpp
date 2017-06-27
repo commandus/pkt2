@@ -1031,7 +1031,7 @@ public:
 			duk_size_t n = duk_get_length(context, -1);
 			for (duk_size_t i = 0; i < n; i++) 
 			{
-				cfgRepeators cfg;
+				CfgRepeator cfg;
 				if (duk_get_prop_index(context, -1, i)) 
 				{
 					if (duk_get_prop_string(context, -1, "in"))
@@ -1052,7 +1052,7 @@ public:
 					duk_pop(context);
 				} 
 				duk_pop(context);
-				cfgWriteGoogleSheets.push_back(cfg);
+				cfgRepeators.push_back(cfg);
 			}
 		}
 		duk_pop(context); // duk_get_prop_string
