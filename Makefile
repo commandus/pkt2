@@ -100,7 +100,7 @@ bin_PROGRAMS = pkt2$(EXEEXT) mqtt-receiver$(EXEEXT) \
 	mqtt-emitter-iridium$(EXEEXT) handlerpq$(EXEEXT) \
 	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	handler-google-sheets$(EXEEXT) pkt2receiver-check$(EXEEXT) \
-	pkt2dumppq$(EXEEXT)
+	pkt2dumppq$(EXEEXT) repeator$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -395,6 +395,14 @@ am_protoc_gen_pkt2_OBJECTS =  \
 	protoc_gen_pkt2-errorcodes.$(OBJEXT) $(am__objects_1)
 protoc_gen_pkt2_OBJECTS = $(am_protoc_gen_pkt2_OBJECTS)
 protoc_gen_pkt2_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_repeator_OBJECTS = repeator-repeator.$(OBJEXT) \
+	repeator-repeator-config.$(OBJEXT) \
+	repeator-daemonize.$(OBJEXT) repeator-errorcodes.$(OBJEXT) \
+	repeator-utilpriority.$(OBJEXT) repeator-utilfile.$(OBJEXT) \
+	repeator-utilstring.$(OBJEXT) repeator-utilinet.$(OBJEXT) \
+	repeator-NanoMessage.$(OBJEXT) $(am__objects_1)
+repeator_OBJECTS = $(am_repeator_OBJECTS)
+repeator_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_tcpemitter_OBJECTS = tcpemitter-tcpemitter.$(OBJEXT) \
 	tcpemitter-tcpemitter-config.$(OBJEXT) \
 	tcpemitter-tcpemitterline.$(OBJEXT) \
@@ -498,10 +506,10 @@ SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
 	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(pkt2receiver_check_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
-	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
-	$(tcptransmitter_SOURCES)
+	$(protoc_gen_pkt2_SOURCES) $(repeator_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
 	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
@@ -509,9 +517,10 @@ DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
 	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
 	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
 	$(pkt2receiver_SOURCES) $(pkt2receiver_check_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(tcpemitter_SOURCES) \
-	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
-	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
+	$(protoc_gen_pkt2_SOURCES) $(repeator_SOURCES) \
+	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
+	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -977,7 +986,8 @@ handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
 pkt2-config.h pkt2-impl.h \
-pkt2receiver-check-config.h
+pkt2receiver-check-config.h \
+repeator-config.h 
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
@@ -1242,6 +1252,17 @@ pkt2receiver_check_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2receiver_check_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
+# repeator
+#
+repeator_SOURCES = \
+	repeator.cpp repeator-config.cpp daemonize.cpp errorcodes.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
 # Configs, readme, CMake etc.
 #
 configdir = $(datadir)
@@ -1253,7 +1274,9 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	proto/iridium/gps16.proto proto/iridium/time5.proto proto/iridium/packet8.proto proto/example/example1.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/animals.proto  \
 	mib/EAS-IKFIA-MIB \
-	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
+	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h \
+	wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c wireshark/example/packet-sir.c wireshark/example/plugin.c \
+	wireshark/example/plugin.rc.in 
 
 all: $(BUILT_SOURCES) config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -1457,6 +1480,10 @@ pkt2receiver-check$(EXEEXT): $(pkt2receiver_check_OBJECTS) $(pkt2receiver_check_
 protoc-gen-pkt2$(EXEEXT): $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_DEPENDENCIES) $(EXTRA_protoc_gen_pkt2_DEPENDENCIES) 
 	@rm -f protoc-gen-pkt2$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(protoc_gen_pkt2_OBJECTS) $(protoc_gen_pkt2_LDADD) $(LIBS)
+
+repeator$(EXEEXT): $(repeator_OBJECTS) $(repeator_DEPENDENCIES) $(EXTRA_repeator_DEPENDENCIES) 
+	@rm -f repeator$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(repeator_OBJECTS) $(repeator_LDADD) $(LIBS)
 
 tcpemitter$(EXEEXT): $(tcpemitter_OBJECTS) $(tcpemitter_DEPENDENCIES) $(EXTRA_tcpemitter_DEPENDENCIES) 
 	@rm -f tcpemitter$(EXEEXT)
@@ -1710,6 +1737,15 @@ include ./$(DEPDIR)/protoc_gen_pkt2-pkt2_code_generator.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-protoc-gen-pkt2.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilinet.Po
 include ./$(DEPDIR)/protoc_gen_pkt2-utilstring.Po
+include ./$(DEPDIR)/repeator-NanoMessage.Po
+include ./$(DEPDIR)/repeator-daemonize.Po
+include ./$(DEPDIR)/repeator-errorcodes.Po
+include ./$(DEPDIR)/repeator-repeator-config.Po
+include ./$(DEPDIR)/repeator-repeator.Po
+include ./$(DEPDIR)/repeator-utilfile.Po
+include ./$(DEPDIR)/repeator-utilinet.Po
+include ./$(DEPDIR)/repeator-utilpriority.Po
+include ./$(DEPDIR)/repeator-utilstring.Po
 include ./$(DEPDIR)/tcpemitter-daemonize.Po
 include ./$(DEPDIR)/tcpemitter-errorcodes.Po
 include ./$(DEPDIR)/tcpemitter-tcpemitter-config.Po
@@ -5133,6 +5169,132 @@ protoc_gen_pkt2-errorcodes.obj: errorcodes.cpp
 #	$(AM_V_CXX)source='errorcodes.cpp' object='protoc_gen_pkt2-errorcodes.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(protoc_gen_pkt2_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o protoc_gen_pkt2-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
+repeator-repeator.o: repeator.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-repeator.o -MD -MP -MF $(DEPDIR)/repeator-repeator.Tpo -c -o repeator-repeator.o `test -f 'repeator.cpp' || echo '$(srcdir)/'`repeator.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-repeator.Tpo $(DEPDIR)/repeator-repeator.Po
+#	$(AM_V_CXX)source='repeator.cpp' object='repeator-repeator.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-repeator.o `test -f 'repeator.cpp' || echo '$(srcdir)/'`repeator.cpp
+
+repeator-repeator.obj: repeator.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-repeator.obj -MD -MP -MF $(DEPDIR)/repeator-repeator.Tpo -c -o repeator-repeator.obj `if test -f 'repeator.cpp'; then $(CYGPATH_W) 'repeator.cpp'; else $(CYGPATH_W) '$(srcdir)/repeator.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-repeator.Tpo $(DEPDIR)/repeator-repeator.Po
+#	$(AM_V_CXX)source='repeator.cpp' object='repeator-repeator.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-repeator.obj `if test -f 'repeator.cpp'; then $(CYGPATH_W) 'repeator.cpp'; else $(CYGPATH_W) '$(srcdir)/repeator.cpp'; fi`
+
+repeator-repeator-config.o: repeator-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-repeator-config.o -MD -MP -MF $(DEPDIR)/repeator-repeator-config.Tpo -c -o repeator-repeator-config.o `test -f 'repeator-config.cpp' || echo '$(srcdir)/'`repeator-config.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-repeator-config.Tpo $(DEPDIR)/repeator-repeator-config.Po
+#	$(AM_V_CXX)source='repeator-config.cpp' object='repeator-repeator-config.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-repeator-config.o `test -f 'repeator-config.cpp' || echo '$(srcdir)/'`repeator-config.cpp
+
+repeator-repeator-config.obj: repeator-config.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-repeator-config.obj -MD -MP -MF $(DEPDIR)/repeator-repeator-config.Tpo -c -o repeator-repeator-config.obj `if test -f 'repeator-config.cpp'; then $(CYGPATH_W) 'repeator-config.cpp'; else $(CYGPATH_W) '$(srcdir)/repeator-config.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-repeator-config.Tpo $(DEPDIR)/repeator-repeator-config.Po
+#	$(AM_V_CXX)source='repeator-config.cpp' object='repeator-repeator-config.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-repeator-config.obj `if test -f 'repeator-config.cpp'; then $(CYGPATH_W) 'repeator-config.cpp'; else $(CYGPATH_W) '$(srcdir)/repeator-config.cpp'; fi`
+
+repeator-daemonize.o: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-daemonize.o -MD -MP -MF $(DEPDIR)/repeator-daemonize.Tpo -c -o repeator-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-daemonize.Tpo $(DEPDIR)/repeator-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='repeator-daemonize.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+repeator-daemonize.obj: daemonize.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-daemonize.obj -MD -MP -MF $(DEPDIR)/repeator-daemonize.Tpo -c -o repeator-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-daemonize.Tpo $(DEPDIR)/repeator-daemonize.Po
+#	$(AM_V_CXX)source='daemonize.cpp' object='repeator-daemonize.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+repeator-errorcodes.o: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-errorcodes.o -MD -MP -MF $(DEPDIR)/repeator-errorcodes.Tpo -c -o repeator-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-errorcodes.Tpo $(DEPDIR)/repeator-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='repeator-errorcodes.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+repeator-errorcodes.obj: errorcodes.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-errorcodes.obj -MD -MP -MF $(DEPDIR)/repeator-errorcodes.Tpo -c -o repeator-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-errorcodes.Tpo $(DEPDIR)/repeator-errorcodes.Po
+#	$(AM_V_CXX)source='errorcodes.cpp' object='repeator-errorcodes.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
+repeator-utilpriority.o: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilpriority.o -MD -MP -MF $(DEPDIR)/repeator-utilpriority.Tpo -c -o repeator-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilpriority.Tpo $(DEPDIR)/repeator-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='repeator-utilpriority.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+repeator-utilpriority.obj: utilpriority.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilpriority.obj -MD -MP -MF $(DEPDIR)/repeator-utilpriority.Tpo -c -o repeator-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilpriority.Tpo $(DEPDIR)/repeator-utilpriority.Po
+#	$(AM_V_CXX)source='utilpriority.cpp' object='repeator-utilpriority.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+repeator-utilfile.o: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilfile.o -MD -MP -MF $(DEPDIR)/repeator-utilfile.Tpo -c -o repeator-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilfile.Tpo $(DEPDIR)/repeator-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='repeator-utilfile.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilfile.o `test -f 'utilfile.cpp' || echo '$(srcdir)/'`utilfile.cpp
+
+repeator-utilfile.obj: utilfile.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilfile.obj -MD -MP -MF $(DEPDIR)/repeator-utilfile.Tpo -c -o repeator-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilfile.Tpo $(DEPDIR)/repeator-utilfile.Po
+#	$(AM_V_CXX)source='utilfile.cpp' object='repeator-utilfile.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilfile.obj `if test -f 'utilfile.cpp'; then $(CYGPATH_W) 'utilfile.cpp'; else $(CYGPATH_W) '$(srcdir)/utilfile.cpp'; fi`
+
+repeator-utilstring.o: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilstring.o -MD -MP -MF $(DEPDIR)/repeator-utilstring.Tpo -c -o repeator-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilstring.Tpo $(DEPDIR)/repeator-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='repeator-utilstring.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+repeator-utilstring.obj: utilstring.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilstring.obj -MD -MP -MF $(DEPDIR)/repeator-utilstring.Tpo -c -o repeator-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilstring.Tpo $(DEPDIR)/repeator-utilstring.Po
+#	$(AM_V_CXX)source='utilstring.cpp' object='repeator-utilstring.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+repeator-utilinet.o: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilinet.o -MD -MP -MF $(DEPDIR)/repeator-utilinet.Tpo -c -o repeator-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilinet.Tpo $(DEPDIR)/repeator-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='repeator-utilinet.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+repeator-utilinet.obj: utilinet.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-utilinet.obj -MD -MP -MF $(DEPDIR)/repeator-utilinet.Tpo -c -o repeator-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-utilinet.Tpo $(DEPDIR)/repeator-utilinet.Po
+#	$(AM_V_CXX)source='utilinet.cpp' object='repeator-utilinet.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+
+repeator-NanoMessage.o: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-NanoMessage.o -MD -MP -MF $(DEPDIR)/repeator-NanoMessage.Tpo -c -o repeator-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-NanoMessage.Tpo $(DEPDIR)/repeator-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='repeator-NanoMessage.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-NanoMessage.o `test -f 'NanoMessage.cpp' || echo '$(srcdir)/'`NanoMessage.cpp
+
+repeator-NanoMessage.obj: NanoMessage.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT repeator-NanoMessage.obj -MD -MP -MF $(DEPDIR)/repeator-NanoMessage.Tpo -c -o repeator-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
+	$(AM_V_at)$(am__mv) $(DEPDIR)/repeator-NanoMessage.Tpo $(DEPDIR)/repeator-NanoMessage.Po
+#	$(AM_V_CXX)source='NanoMessage.cpp' object='repeator-NanoMessage.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(repeator_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o repeator-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
 tcpemitter-tcpemitter.o: tcpemitter.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpemitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcpemitter-tcpemitter.o -MD -MP -MF $(DEPDIR)/tcpemitter-tcpemitter.Tpo -c -o tcpemitter-tcpemitter.o `test -f 'tcpemitter.cpp' || echo '$(srcdir)/'`tcpemitter.cpp

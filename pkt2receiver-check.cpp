@@ -149,8 +149,8 @@ int run
 	config->control_socket = nn_socket(AF_SP, NN_BUS);
 	if (config->control_socket < 0)
 	{
-		LOG(ERROR) << ERR_NN_SUBSCRIBE << config->control_url << " " << errno << " " << strerror(errno);
-		return ERRCODE_NN_SUBSCRIBE;
+		LOG(ERROR) << ERR_NN_SOCKET << config->control_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_SOCKET;
 	}
 	int eid = nn_connect(config->control_socket, config->control_url.c_str());
 	if (eid < 0)

@@ -1,4 +1,4 @@
-#include "pkt2receiver-check-config.h"
+#include "repeator-config.h"
 #include <iostream>
 #include <unistd.h>
 #include <limits.h>
@@ -7,7 +7,9 @@
 #include "utilstring.h"
 #include "errorcodes.h"
 
-#define DEF_QUEUE							"ipc:///tmp/control.pkt2"
+#define MAX_OUTS				100
+#define DEF_IN                	"ipc:///tmp/control.pkt2"
+#define DEF_OUT                	"tcp://0.0.0.0:50000"
 
 Config::Config
 (
@@ -15,7 +17,7 @@ Config::Config
     char* argv[]
 )
 {
-	control_socket = 0;
+	in_socket = 0;
 	buffer_size = 4096;
 	
 	lastError = parseCmd(argc, argv);
@@ -48,7 +50,8 @@ int Config::parseCmd
         char* argv[]
 )
 {
-	struct arg_str *a_control_url = arg_str0("c", "control", "<queue url>", "Default " DEF_QUEUE);
+	struct arg_str *a_in_url = arg_str0("i", "in", "<url>", "Default " DEF_IN);
+	struct arg_str *a_out_url = arg_strn("o", "out", "<url>", 1, MAX_OUTS, "One or more output. Default " DEF_OUT);
 
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
@@ -59,7 +62,7 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = {
-		a_control_url, 
+		a_in_url, a_out_url,
 		a_retries, a_retry_delay,
 		a_daemonize, a_verbosity, a_help, a_end 
 	};
@@ -88,10 +91,17 @@ int Config::parseCmd
 			return ERRCODE_PARSE_COMMAND;
 	}
 
-	if (a_control_url->count)
-		control_url = *a_control_url->sval;
+	if (a_in_url->count)
+		in_url = *a_in_url->sval;
 	else
-		control_url = DEF_QUEUE;
+		in_url = DEF_IN;
+
+	for (int i = 0; i < a_in_url->count; i++)
+	{
+		out_urls.push_back(*a_in_url->sval);
+	}
+	if (out_urls.size() <= 0)
+		out_urls.push_back(DEF_OUT);
 
 	if (a_retries->count)
 		retries = *a_retries->ival;

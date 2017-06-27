@@ -52,7 +52,7 @@ bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransm
 	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
 	handlerpq handlerline handlerlmdb handler-google-sheets \
 	pkt2receiver-check \
-	pkt2dumppq
+	pkt2dumppq repeator
 
 #
 #	Headers
@@ -82,7 +82,8 @@ handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
 pkt2-config.h pkt2-impl.h \
-pkt2receiver-check-config.h
+pkt2receiver-check-config.h \
+repeator-config.h 
 
 common_src =
 
@@ -347,6 +348,17 @@ pkt2receiver_check_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 pkt2receiver_check_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
+# repeator
+#
+repeator_SOURCES = \
+	repeator.cpp repeator-config.cpp daemonize.cpp errorcodes.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
+
+repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
 # Configs, readme, CMake etc.
 #
 configdir = $(datadir)
@@ -358,5 +370,6 @@ dist_config_DATA = README.md HISTORY INSTALL \
 	proto/iridium/gps16.proto proto/iridium/time5.proto proto/iridium/packet8.proto proto/example/example1.proto \
 	proto/iridium/ie_ioheader.proto proto/iridium/ie_location.proto proto/iridium/animals.proto  \
 	mib/EAS-IKFIA-MIB \
-	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c 	wireshark/example/packet-sir.c wireshark/example/plugin.c wireshark/example/plugin.rc.in 
-	
+	wireshark/example/Makefile.am wireshark/example/Makefile.in	wireshark/example/irda-appl.h wireshark/example/moduleinfo.h \
+	wireshark/example/packet-ircomm.c wireshark/example/packet-irda.c wireshark/example/packet-sir.c wireshark/example/plugin.c \
+	wireshark/example/plugin.rc.in 

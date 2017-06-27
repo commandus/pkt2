@@ -70,6 +70,7 @@ tcp_listeners =
  * qos: QOS 0, 1, 2. Default 1
  * keep-alive: keep-alive, seconds. Default 20.
  */
+/*
 mqtt_listeners = 
 [
 	{
@@ -81,7 +82,7 @@ mqtt_listeners =
 		"keep-alive": 20
 	}
 ];
-
+*/
 //------------------------- pkt2receiver --------------------
 
 /**
@@ -128,7 +129,6 @@ write_lmdb =
 	{
 		"messages":
 		[
-			"iridium.IE_Packet"
 		],
 		"dbpath": "db"
 	}
@@ -146,20 +146,19 @@ write_lmdb =
 write_pq = 
 [
 	{
-		"user": "pkt2",
-		"password": "123456",
-		"scheme": "pkt2",
-		"host": "localhost",
+		"user": "imz",
+		"password": "LC50vbHc",
+		"scheme": "iridium",
+		"host": "pgsql.ysn.ru",
 		"port": 5432,
 		"messages":
 		[
-			"iridium.IE_Packet"
 		]
 	}
 ];
 
 /**
- * Handler: write to Google Sheets 
+ * Handler: write to the Google spreasheet 
  * json_service_file_name: json service file name. Default "cert/pkt2-sheets.json"
  * bearer_file_name: bearer file name. Default ".token-bearer.txt"
  * email: email. E.g. "alice@acme.com"

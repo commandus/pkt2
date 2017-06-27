@@ -1,15 +1,15 @@
-#ifndef PKT2RECEIVER_CHECK_CONFIG_H
-#define PKT2RECEIVER_CHECK_CONFIG_H     1
+#ifndef REPEATOR_CONFIG_H
+#define REPEATOR_CONFIG_H     1
 
 #include <string>
 #include <vector>
 
 #define PROGRAM_NAME				"pkt2receiver-check"
-#define PROGRAM_DESCRIPTION			"Check pkt2receiver bus state"
+#define PROGRAM_DESCRIPTION			"bus repeator receive from bus and send to other(s)"
 
 /**
-  * @brief pkt2receiver-check command line options
-  * @see pkt2receiver-check.cpp
+  * @brief repeator command line options
+  * @see repeator.cpp
   */
 class Config
 {
@@ -29,7 +29,8 @@ public:
 	virtual ~Config();
 	int error();
 
-	std::string control_url; 		///< nano message URL
+	std::string in_url;		 		///< nano message URL
+	std::vector<std::string> out_urls;	 		///< nano message URL
 	int retries;             		///< default 1
 	int retry_delay;         		///<
 
@@ -37,10 +38,10 @@ public:
 	
 	bool daemonize;
 	int verbosity;			        ///< default 0
-	int control_socket;
+	int in_socket;
+	std::vector<int> out_sockets;
 	int stop_request;
 	char *path;
 };
-
 
 #endif

@@ -649,6 +649,51 @@ public:
 	};
 };
 
+/**
+ * repeators = 
+[
+	{
+		"in": "ipc:///tmp/control.pkt2",
+		"outs": [
+			"tcp://0.0.0.0:50000"
+		]
+	}
+];
+*/
+class CfgRepeator
+{
+public:
+	std::string url_in;
+	std::vector<std::string> url_outs;
+	CfgRepeator() : url_in("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "-i", url_in);
+		for (int i = 0; i < url_outs.size(); i++)
+		{
+			PUSH_BACK_ARG_STR(r, "-o", url_outs[i]);
+		}
+		
+		if (common)
+		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
+			if (common->max_buffer_size != 4096)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
+		}
+		return r;
+	};
+};
+
 class ProcessDescriptors
 {
 private:
@@ -663,6 +708,7 @@ public:
 	std::vector<CfgWriteLmdb> cfgWriteLmdb;
 	std::vector<CfgWritePq> cfgWritePq;
 	std::vector<CfgWriteGoogleSheets> cfgWriteGoogleSheets;
+	std::vector<CfgRepeator> cfgRepeators;
 	
 	std::vector<ProcessDescriptor> descriptors;
 	
@@ -977,6 +1023,40 @@ public:
 			}
 		}
 		duk_pop(context); // duk_get_prop_string
+		
+		// write repeators
+		duk_get_prop_string(context, -1, "repeators");
+		if (duk_is_array(context, -1)) 
+		{
+			duk_size_t n = duk_get_length(context, -1);
+			for (duk_size_t i = 0; i < n; i++) 
+			{
+				cfgRepeators cfg;
+				if (duk_get_prop_index(context, -1, i)) 
+				{
+					if (duk_get_prop_string(context, -1, "in"))
+						cfg.url_in = duk_get_string(context, -1);
+					duk_pop(context);
+
+					duk_get_prop_string(context, -1, "outs");
+					if (duk_is_array(context, -1)) 
+					{
+						duk_size_t sn = duk_get_length(context, -1);
+						for (duk_size_t s = 0; s < sn; s++) 
+						{
+							if (duk_get_prop_index(context, -1, s)) 
+								cfg.url_outs.push_back(duk_get_string(context, -1));
+							duk_pop(context);
+						}
+					}
+					duk_pop(context);
+				} 
+				duk_pop(context);
+				cfgWriteGoogleSheets.push_back(cfg);
+			}
+		}
+		duk_pop(context); // duk_get_prop_string
+
 	}
 	
 	~ProcessDescriptors()
