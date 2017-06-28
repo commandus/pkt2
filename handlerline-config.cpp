@@ -22,7 +22,6 @@ Config::Config
 {
 	stop_request = 0; ///< 0- process, 1- stop request, 2- reload request
 	lastError = parseCmd(argc, argv);
-	accept_socket = 0;
 }
 
 int Config::error() 

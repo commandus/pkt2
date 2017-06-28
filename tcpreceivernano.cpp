@@ -97,21 +97,21 @@ START:
 	InputPacket packet('T', config->buffer_size);
 	packet.set_socket_addr_dst(addr_dst);
 
-	config->socket_accept = listen_port(addr_dst);
-	if (config->socket_accept < 0)
+	int socket_accept = listen_port(addr_dst);
+	if (socket_accept < 0)
 	{
 		LOG(ERROR) << ERR_SOCKET_LISTEN;
-		return config->socket_accept;
+		return socket_accept;
 	}
 	// Free the res linked list after we are done with it	
 	freeaddrinfo(addr_dst);
-	if (config->socket_accept == -1)
+	if (socket_accept == -1)
 	{
 		LOG(ERROR) << ERR_SOCKET_LISTEN;
 		return ERRCODE_SOCKET_LISTEN;
 	}
 
-	LOG(INFO) << MSG_START << " socket " << config->socket_accept;
+	LOG(INFO) << MSG_START << " socket " << socket_accept;
 
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
 	sleep (1); // wait for connections
@@ -120,7 +120,7 @@ START:
 	if (r < 0)
 	{
 		LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->message_url << " " << errno << ": " << nn_strerror(errno);
-		close(config->socket_accept);
+		close(socket_accept);
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
@@ -133,7 +133,7 @@ START:
 
 	if (packet.error() != 0)
 	{
-		close(config->socket_accept);	
+		close(socket_accept);	
 		LOG(ERROR) << ERR_GET_ADDRINFO << config->message_url;
 		return ERRCODE_NN_CONNECT;
 	}
@@ -155,7 +155,7 @@ START:
 		}
 
 		// Accept a new connection and return back the socket descriptor
-		int new_conn_fd = accept(config->socket_accept, (struct sockaddr *) src, &addr_size);
+		int new_conn_fd = accept(socket_accept, (struct sockaddr *) src, &addr_size);
 		if (new_conn_fd < 0)
 		{
 			LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno);
@@ -213,9 +213,19 @@ START:
 			}
 		}
 	}
-	if (config->socket_accept)
-		close(config->socket_accept);	
+
+	if (socket_accept)
+	{
+		close(socket_accept);	
+		socket_accept = 0;
+	}
 	r = nn_shutdown(nano_socket, eoid);
+	
+	if (nano_socket)
+	{
+		close(nano_socket);	
+		nano_socket = 0;
+	}
 	
 	LOG(ERROR) << MSG_STOP;
 	if (config->stop_request == 2)
@@ -239,8 +249,6 @@ int stop(Config *config)
 	if (!config)
 		return ERRCODE_NO_CONFIG;
 	config->stop_request = 1;
-	close(config->socket_accept);
-	config->socket_accept = 0;
 	return ERR_OK;
 
 }
@@ -252,7 +260,5 @@ int reload(Config *config)
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
 
 	config->stop_request = 2;
-	close(config->socket_accept);
-	config->socket_accept = 0;
 	return ERR_OK;
 }

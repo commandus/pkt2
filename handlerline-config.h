@@ -45,8 +45,6 @@ public:
 	int stop_request;
 	int verbosity;          ///< default 0
 	
-	int accept_socket;
-	
 	std::ostream *stream;
 	
 	char *path;

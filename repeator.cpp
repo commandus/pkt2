@@ -43,7 +43,7 @@ int reslt;
  */
 int stop
 (
-		Config *config
+	Config *config
 )
 {
     if (!config)
@@ -52,13 +52,6 @@ int stop
         return ERRCODE_STOP;
     }
     config->stop_request = 1;
-	close(config->in_socket);
-	config->in_socket = 0;
-	for (int i = 0; i < config->out_sockets.size(); i++) 
-	{
-		close(config->out_sockets[i]);
-		config->out_sockets[i] = 0;
-	}	
     return ERR_OK;
 }
 
@@ -68,13 +61,6 @@ int reload(Config *config)
 		return ERRCODE_NO_CONFIG;
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
 	config->stop_request = 2;
-	close(config->in_socket);
-	config->in_socket = 0;
-	for (int i = 0; i < config->out_sockets.size(); i++) 
-	{
-		close(config->out_sockets[i]);
-		config->out_sockets[i] = 0;
-	}	
 	return ERR_OK;
 }
 
@@ -91,13 +77,13 @@ int run
 {
 	START:
 	config->stop_request = 0;
-	config->in_socket = nn_socket(AF_SP, NN_BUS);
-	if (config->in_socket < 0)
+	int in_socket = nn_socket(AF_SP, NN_BUS);
+	if (in_socket < 0)
 	{
 		LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_SOCKET;
 	}
-	int eid = nn_connect(config->in_socket, config->in_url.c_str());
+	int eid = nn_connect(in_socket, config->in_url.c_str());
 	if (eid < 0)
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->in_url << " " << errno << " " << strerror(errno);
@@ -113,52 +99,71 @@ int run
 
 	std::vector<int> eids;
 
-	for (int i = 0; i < config->out_sockets.size(); i++) 
+	std::vector<int> out_sockets;
+	out_sockets.resize(config->out_urls.size());
+	eids.resize(config->out_urls.size());
+	for (int i = 0; i < config->out_urls.size(); i++) 
 	{
-		config->out_sockets[i] = nn_socket(AF_SP, NN_BUS);
-		if (config->out_sockets[i] < 0)
+		out_sockets[i] = nn_socket(AF_SP, NN_BUS);
+		if (out_sockets[i] < 0)
 		{
 			LOG(ERROR) << ERR_NN_SOCKET << config->out_urls[i] << " " << errno << " " << strerror(errno);
 			return ERRCODE_NN_SOCKET;
 		}
-		int eid = nn_connect(config->out_sockets[i], config->out_urls[i].c_str());
-		if (eid < 0)
+		eids[i] = nn_bind(out_sockets[i], config->out_urls[i].c_str());
+		if (eids[i] < 0)
 		{
-			LOG(ERROR) << ERR_NN_CONNECT << config->out_sockets[i] << " " << errno << " " << strerror(errno);
+			LOG(ERROR) << ERR_NN_BIND << out_sockets[i] << " " << errno << " " << strerror(errno);
 			return ERRCODE_NN_CONNECT;
 		}
-		eids.push_back(eid);
+		
+		if (config->verbosity >= 2)
+		{
+			LOG(INFO) << "Bind socket " << out_sockets[i] << "/" << eid << " to " << config->out_urls[i];
+		}
 	}	
 	
 	LOG(INFO) << MSG_START << " success, main loop.";
+	
 	while (!config->stop_request)
-    {
-    	int bytes = nn_recv(config->in_socket, buffer, config->buffer_size, 0);
-    	if (bytes < 0)
-    	{
-    		LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
-    		continue;
-    	}
+	{
+		int bytes = nn_recv(in_socket, buffer, config->buffer_size, 0);
+		if (bytes < 0)
+		{
+			if (errno == EINTR) 
+			{
+				LOG(ERROR) << ERR_INTERRUPTED;
+				config->stop_request = true;
+				break;
+			}
+			else
+				LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
+			continue;
+		}
 		if (config->verbosity >= 2)
 		{
 			LOG(INFO) << MSG_RECEIVED << bytes << ": " << hexString(buffer, bytes) ;
 		}
-
 		for (int i = 0; i < eids.size(); i++)
 		{
-			int r = nn_send(eids[i], buffer, config->buffer_size, 0);
+			int r = nn_send(out_sockets[i], buffer, bytes, 0);
 			if (r)
 			{
-				LOG(ERROR) << ERR_NN_SHUTDOWN << config->out_urls[i] << " " << errno << " " << strerror(errno);
-				r = ERRCODE_NN_SHUTDOWN;
+				LOG(ERROR) << ERR_NN_SEND << config->out_urls[i] << " " << errno << " " << strerror(errno);
+				r = ERRCODE_NN_SEND;
+			}
+			else
+			{
+				if (config->verbosity >= 2)
+				{
+					LOG(INFO) << MSG_SENT << bytes << " to : " << config->out_urls[i];
+				}
 			}
 		}
+	}
+	free(buffer);
 
-    }
-
-    free(buffer);
-
-	int r = nn_shutdown(config->in_socket, eid);
+	int r = nn_shutdown(in_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->in_url << " " << errno << " " << strerror(errno);
@@ -167,14 +172,23 @@ int run
 
 	for (int i = 0; i < eids.size(); i++)
 	{
-		int r = nn_shutdown(config->out_sockets[i], eids[i]);
+		int r = nn_shutdown(out_sockets[i], eids[i]);
 		if (r)
 		{
-			LOG(ERROR) << ERR_NN_SHUTDOWN << config->out_urls[i] << " " << errno << " " << strerror(errno);
+			LOG(ERROR) << ERR_NN_SHUTDOWN << i << ")" << out_sockets[i] << "/" << eids[i] << " " << config->out_urls[i] << " " << errno << " " << strerror(errno);
 			r = ERRCODE_NN_SHUTDOWN;
+		}
+		else
+		{
+			if (config->verbosity >= 2)
+			{
+				LOG(INFO) << MSG_SHUTDOWN << i << ") " << out_sockets[i] << "/" << eids[i] << " " << config->out_urls[i];
+			}
 		}
 	}
 	
+	close(in_socket);
+
 	if (config->stop_request == 2)
 		goto START;
 	
@@ -192,7 +206,7 @@ void runner()
 	int n = 0;
 	while (!config->stop_request)
 	{
-		LOG(INFO) << MSG_START << " " << n + 1;
+		LOG(INFO) << MSG_START << " # " << n + 1;
 		reslt = run(config);
 		LOG(INFO) << MSG_STOP;
 		if (n >= config->retries)
@@ -237,29 +251,29 @@ void setSignalHandler(int signal)
 }
 
 /**
- * @returns @see errorcodes.h
+ * @see errorcodes.h
  */
 int main
 (
-    int argc, 
-    char *argv[]
+	int argc, 
+	char *argv[]
 )
 {
-    // Signal handler
-    setSignalHandler(SIGINT);
+	// Signal handler
+	setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
-    reslt = 0;
+	reslt = 0;
 
 	config = new Config(argc, argv);
 	if (!config)
 		exit(ERRCODE_CONFIG);
-    if (config->error() != 0)
+	if (config->error() != 0)
 	{
 		LOG(ERROR) << getErrorDescription(config->error());
 		exit(config->error());
 	}
 
-    INIT_LOGGING(PROGRAM_NAME)
+	INIT_LOGGING(PROGRAM_NAME)
 
 	if (config->daemonize)
 	{

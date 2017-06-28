@@ -55,7 +55,7 @@ void control_message
 		<< msg << "\t" 
 		<< payload << std::endl; 
 	std::string s(ss.str());
-	nn_send(config->socket_control, s.c_str(), s.size(), 0);
+	// nn_send(socket_control, s.c_str(), s.size(), 0);
 }
 
 /**
@@ -74,30 +74,34 @@ int pkt2_receiever_nano(Config *config)
 	config->stop_request = 0;
 
 	// Control socket
-    config->socket_control = nn_socket(AF_SP, NN_BUS);
-	if (config->socket_control < 0)
+    int socket_control = nn_socket(AF_SP, NN_BUS);
+	if (socket_control < 0)
 	{
-			LOG(ERROR) << ERR_NN_SOCKET << config->control_url << " " << errno << " " << strerror(errno);
-			return ERRCODE_NN_SOCKET;
+		LOG(ERROR) << ERR_NN_SOCKET << config->control_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_SOCKET;
 	}
-	int ecid = nn_bind(config->socket_accept, config->control_url.c_str());
+	int ecid = nn_bind(socket_control, config->control_url.c_str());
     if (ecid < 0)
     {
         LOG(ERROR) << ERR_NN_BIND << config->control_url << " " << errno << ": " << nn_strerror(errno);;
 		return ERRCODE_NN_BIND;
     }
 
+    LOG(INFO) << "Control bind " 
+		<< socket_control << "/" << ecid << " url "
+		<< config->control_url;
+
 	// IN socket
-    config->socket_accept = nn_socket(AF_SP, NN_BUS); // was NN_SUB
-    // int r = nn_setsockopt(config->socket_accept, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-	if (config->socket_accept < 0)
+    int socket_accept = nn_socket(AF_SP, NN_BUS); // was NN_SUB
+    // int r = nn_setsockopt(socket_accept, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (socket_accept < 0)
 	{
 			LOG(ERROR) << ERR_NN_SOCKET << config->in_url << " " << errno << " " << strerror(errno);
 			return ERRCODE_NN_SOCKET;
 	}
 
 	// bind
-	int eid = nn_bind(config->socket_accept, config->in_url.c_str());
+	int eid = nn_bind(socket_accept, config->in_url.c_str());
     if (eid < 0)
     {
         LOG(ERROR) << ERR_NN_BIND << config->in_url << " " << errno << ": " << nn_strerror(errno);;
@@ -106,11 +110,11 @@ int pkt2_receiever_nano(Config *config)
 
 	// OUT socket
     int nn_sock_out = nn_socket(AF_SP, NN_BUS); // was NN_SUB
-    // int r = nn_setsockopt(config->socket_accept, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+    // int r = nn_setsockopt(socket_accept, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
 	if (nn_sock_out < 0)
 	{
-			LOG(ERROR) << ERR_NN_SOCKET << config->out_url << " " << errno << " " << strerror(errno);
-			return ERRCODE_NN_SOCKET;
+		LOG(ERROR) << ERR_NN_SOCKET << config->out_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_SOCKET;
 	}
 
 	int eoid = nn_bind(nn_sock_out, config->out_url.c_str());
@@ -128,7 +132,7 @@ int pkt2_receiever_nano(Config *config)
 	{
 		config->session_id++;
 		char *buf = NULL;
-		int bytes = nn_recv(config->socket_accept, &buf, NN_MSG, 0);
+		int bytes = nn_recv(socket_accept, &buf, NN_MSG, 0);
 
 		int payload_size = InputPacket::getPayloadSize(bytes);
 		
@@ -138,7 +142,14 @@ int pkt2_receiever_nano(Config *config)
 		if (payload_size < 0)
 		{
 			control_message(config, CONTROL_TYP_ERROR_CODE, payload_size, CONTROL_TYP_ERROR, ERR_NN_RECV);
-			LOG(ERROR) << ERR_NN_RECV << " too small " << payload_size;
+			if (errno == EINTR) 
+			{
+				LOG(ERROR) << ERR_INTERRUPTED;
+				config->stop_request = true;
+				break;
+			}
+			else
+				LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
 			continue;
 		}
 		else
@@ -224,22 +235,32 @@ int pkt2_receiever_nano(Config *config)
             	LOG(ERROR) << ERR_NN_FREE_MSG << " " << errno << ": " << nn_strerror(errno);
 			}
 			sleep(0);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
-
         }
 	}
 
     int r = nn_shutdown(nn_sock_out, eoid);
-    r = r | nn_shutdown(config->socket_accept, eid);
-    r = r | nn_shutdown(config->socket_control, ecid);
+    if (r)
+    	LOG(ERROR) << ERR_NN_SHUTDOWN << " out " << errno << ": " << nn_strerror(errno);
+    r = nn_shutdown(socket_accept, eid);
+    if (r)
+    	LOG(ERROR) << ERR_NN_SHUTDOWN << " in " << errno << ": " << nn_strerror(errno);
+    r = nn_shutdown(socket_control, ecid);
+    if (r)
+    	LOG(ERROR) << ERR_NN_SHUTDOWN << " control " 
+		<< socket_control << "/" << ecid << " error "
+		<< errno << ": " << nn_strerror(errno);
+
+	close(socket_accept);
+	socket_accept = 0;
+
+	close(socket_control);
+	socket_control = 0;
 
 	if (config->stop_request == 2)
 		goto START;
 
     if (r)
-    {
-    	LOG(ERROR) << ERR_NN_SHUTDOWN << " " << errno << ": " << nn_strerror(errno);
     	return ERRCODE_NN_SHUTDOWN;
-    }
     else
     	return ERR_OK;
 }
@@ -253,8 +274,6 @@ int stop(Config *config)
     if (!config)
         return ERRCODE_STOP;
 	config->stop_request = 1;
-	close(config->socket_accept);
-	config->socket_accept = 0;
     return ERR_OK;
 
 }
@@ -265,7 +284,5 @@ int reload(Config *config)
 		return ERRCODE_NO_CONFIG;
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
 	config->stop_request = 2;
-	close(config->socket_accept);
-	config->socket_accept = 0;
 	return ERR_OK;
 }

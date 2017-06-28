@@ -16,7 +16,6 @@ Config::Config
 )
 {
 	stop_request = 0;
-	accept_socket = 0;
 
 	lastError = parseCmd(argc, argv);
 	buffer_size = DEF_BUFFER_SIZE;

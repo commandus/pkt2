@@ -42,6 +42,7 @@
 #define MSG_CHILD_WAITING						"Child process terminating, waiting  "
 #define MSG_CHILD_TERMINATED					"Child process terminated "
 #define MSG_EMPTY_PACKET						"Empty packet received"
+#define MSG_SHUTDOWN							"Shutdown "
 
 #define ERR_OK									0
 #define ERRCODE_COMMAND							-1
@@ -171,6 +172,7 @@
 #define ERR_FORK								"Can not fork "
 #define ERR_EXEC								"Can not execute "
 #define ERR_CONFIG								"Load config file error "
+#define ERR_INTERRUPTED							"Interruped "
 
 std:: string getErrorDescription(int code);
 

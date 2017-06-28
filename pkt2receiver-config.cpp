@@ -22,7 +22,6 @@ Config::Config
 )
 {
 	stop_request = 0;
-	socket_accept = 0;
 	lastError = parseCmd(argc, argv);
 }
 

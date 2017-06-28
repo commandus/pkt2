@@ -18,14 +18,13 @@ Config::Config
 	char* argv[]
 )
 {
-        stop_request = 0;
-		accept_socket = 0;
-        lastError = parseCmd(argc, argv);
+	stop_request = 0;
+	lastError = parseCmd(argc, argv);
 }
 
 int Config::error() 
 {
-    return lastError;
+	return lastError;
 }
 
 /**

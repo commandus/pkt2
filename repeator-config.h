@@ -38,8 +38,6 @@ public:
 	
 	bool daemonize;
 	int verbosity;			        ///< default 0
-	int in_socket;
-	std::vector<int> out_sockets;
 	int stop_request;
 	char *path;
 };

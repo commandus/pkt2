@@ -56,7 +56,6 @@ public:
 
 	bool daemonize;
 	int stop_request;
-	int accept_socket;
 
 	int verbosity;			        ///< default 0
 

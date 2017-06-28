@@ -8,6 +8,7 @@
 #include "errorcodes.h"
 
 #define MAX_OUTS				100
+#define DEF_BUFFER_SIZE			4096
 #define DEF_IN                	"ipc:///tmp/control.pkt2"
 #define DEF_OUT                	"tcp://0.0.0.0:50000"
 
@@ -17,8 +18,7 @@ Config::Config
     char* argv[]
 )
 {
-	in_socket = 0;
-	buffer_size = 4096;
+	buffer_size = DEF_BUFFER_SIZE;
 	
 	lastError = parseCmd(argc, argv);
 
@@ -51,8 +51,8 @@ int Config::parseCmd
 )
 {
 	struct arg_str *a_in_url = arg_str0("i", "in", "<url>", "Default " DEF_IN);
-	struct arg_str *a_out_url = arg_strn("o", "out", "<url>", 1, MAX_OUTS, "One or more output. Default " DEF_OUT);
-
+	struct arg_str *a_out_url = arg_strn("o", "out", "<url>", 0, MAX_OUTS, "One or more output. Default " DEF_OUT);
+	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
@@ -63,6 +63,7 @@ int Config::parseCmd
 
 	void* argtable[] = {
 		a_in_url, a_out_url,
+		a_buffer_size,
 		a_retries, a_retry_delay,
 		a_daemonize, a_verbosity, a_help, a_end 
 	};
@@ -96,12 +97,20 @@ int Config::parseCmd
 	else
 		in_url = DEF_IN;
 
-	for (int i = 0; i < a_in_url->count; i++)
-	{
-		out_urls.push_back(*a_in_url->sval);
-	}
 	if (out_urls.size() <= 0)
 		out_urls.push_back(DEF_OUT);
+	else
+	{
+		for (int i = 0; i < a_out_url->count; i++)
+		{
+			out_urls.push_back(a_out_url->sval[i]);
+		}
+	}
+	
+	if (a_buffer_size->count)
+		buffer_size = *a_buffer_size->ival;
+	else
+		buffer_size = DEF_BUFFER_SIZE;
 
 	if (a_retries->count)
 		retries = *a_retries->ival;

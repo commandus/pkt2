@@ -60,7 +60,6 @@ public:
 
 	int stop_request;
 	std::string message_url;
-	int accept_socket;
 	
 	char *path;
 };

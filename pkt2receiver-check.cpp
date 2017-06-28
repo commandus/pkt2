@@ -146,13 +146,13 @@ int run
 {
 	START:
 	config->stop_request = 0;
-	config->control_socket = nn_socket(AF_SP, NN_BUS);
-	if (config->control_socket < 0)
+	int control_socket = nn_socket(AF_SP, NN_BUS);
+	if (control_socket < 0)
 	{
 		LOG(ERROR) << ERR_NN_SOCKET << config->control_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_SOCKET;
 	}
-	int eid = nn_connect(config->control_socket, config->control_url.c_str());
+	int eid = nn_connect(control_socket, config->control_url.c_str());
 	if (eid < 0)
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->control_url << " " << errno << " " << strerror(errno);
@@ -168,10 +168,17 @@ int run
 	LOG(INFO) << MSG_START << " success, main loop.";
 	while (!config->stop_request)
     {
-    	int bytes = nn_recv(config->control_socket, buffer, config->buffer_size, 0);
+    	int bytes = nn_recv(control_socket, buffer, config->buffer_size, 0);
     	if (bytes < 0)
     	{
-    		LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
+			if (errno == EINTR) 
+			{
+				LOG(ERROR) << ERR_INTERRUPTED;
+				config->stop_request = true;
+				break;
+			}
+			else
+				LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
     		continue;
     	}
 		if (config->verbosity >= 2)
@@ -196,12 +203,15 @@ int run
 
     free(buffer);
 
-	int r = nn_shutdown(config->control_socket, eid);
+	int r = nn_shutdown(control_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->control_url << " " << errno << " " << strerror(errno);
 		r = ERRCODE_NN_SHUTDOWN;
 	}
+
+	close(control_socket);
+	control_socket = 0;
 
 	if (config->stop_request == 2)
 		goto START;
@@ -226,8 +236,6 @@ int stop
         return ERRCODE_STOP;
     }
     config->stop_request = 1;
-	close(config->control_socket);
-	config->control_socket = 0;
     return ERR_OK;
 }
 
@@ -237,7 +245,5 @@ int reload(Config *config)
 		return ERRCODE_NO_CONFIG;
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
 	config->stop_request = 2;
-	close(config->control_socket);
-	config->control_socket = 0;
 	return ERR_OK;
 }

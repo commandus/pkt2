@@ -89,14 +89,14 @@ int run
 	START:
 	config->stop_request = 0;
 
-	config->accept_socket = nn_socket(AF_SP, NN_BUS);
-	// int r = nn_setsockopt(config->accept_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
-	if (config->accept_socket < 0)
+	int accept_socket = nn_socket(AF_SP, NN_BUS);
+	// int r = nn_setsockopt(accept_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);
+	if (accept_socket < 0)
 	{
 		LOG(ERROR) << ERR_NN_SUBSCRIBE << config->packet_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_SUBSCRIBE;
 	}
-	int eid = nn_connect(config->accept_socket, config->packet_url.c_str());
+	int eid = nn_connect(accept_socket, config->packet_url.c_str());
 	if (eid < 0)
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->packet_url << " " << errno << " " << strerror(errno);
@@ -127,9 +127,9 @@ int run
     {
 		int bytes;
 		if (config->buffer_size > 0)
-    		bytes = nn_recv(config->accept_socket, buffer, config->buffer_size, 0);
+    		bytes = nn_recv(accept_socket, buffer, config->buffer_size, 0);
     	else
-    		bytes = nn_recv(config->accept_socket, &buffer, NN_MSG, 0);
+    		bytes = nn_recv(accept_socket, &buffer, NN_MSG, 0);
 		
 		int payload_size = InputPacket::getPayloadSize(bytes);
         if (payload_size < 0)
@@ -156,15 +156,19 @@ int run
 
 	free(buffer);
 
-	int r = nn_shutdown(config->accept_socket, eid);
+	int r = nn_shutdown(accept_socket, eid);
 	if (r)
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->packet_url << " " << errno << " " << strerror(errno);
 		r = ERRCODE_NN_SHUTDOWN;
 	}
 
+	close(accept_socket);
+	accept_socket = 0;
+
 	if (config->stop_request == 2)
 		goto START;
+
 	return r;
 }
 
@@ -182,8 +186,6 @@ int stop
 	if (!config)
 		return ERRCODE_NO_CONFIG;
 	config->stop_request = 1;
-	close(config->accept_socket);
-	config->accept_socket = 0;
 	return ERR_OK;
 }
 
@@ -193,7 +195,5 @@ int reload(Config *config)
 		return ERRCODE_NO_CONFIG;
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
 	config->stop_request = 2;
-	close(config->accept_socket);
-	config->accept_socket = 0;
 	return ERR_OK;
 }

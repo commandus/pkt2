@@ -669,10 +669,16 @@ public:
 	std::vector<std::string> args(CfgCommon *common)
 	{
 		std::vector<std::string> r;
-		PUSH_BACK_ARG_STR(r, "-i", url_in);
-		for (int i = 0; i < url_outs.size(); i++)
+		if (url_in != "ipc:///tmp/control.pkt2")
 		{
-			PUSH_BACK_ARG_STR(r, "-o", url_outs[i]);
+			PUSH_BACK_ARG_STR(r, "-i", url_in);
+		}
+		if (!((url_outs.size() == 1) && (url_outs[0] == "tcp://0.0.0.0:50000")))
+		{
+			for (int i = 0; i < url_outs.size(); i++)
+			{
+				PUSH_BACK_ARG_STR(r, "-o", url_outs[i]);
+			}
 		}
 		
 		if (common)
@@ -1084,6 +1090,7 @@ public:
 		cfgWriteLmdb.clear();
 		cfgWritePq.clear();
 		cfgWriteGoogleSheets.clear();
+		cfgRepeators.clear();
 		
 		load_config();
 		return 0;
@@ -1127,7 +1134,12 @@ public:
 		{
 			descriptors.push_back(ProcessDescriptor(path, "handler-google-sheets", it->args(&cfgCommon)));
 		}
-		
+
+		for (std::vector<CfgRepeator>::iterator it(cfgRepeators.begin()); it != cfgRepeators.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "repeator", it->args(&cfgCommon)));
+		}
+
 		return 0;
 	}
 	

@@ -15,9 +15,7 @@ Config::Config
     char* argv[]
 )
 {
-	control_socket = 0;
 	buffer_size = 4096;
-	
 	lastError = parseCmd(argc, argv);
 
 	if (lastError != 0)
