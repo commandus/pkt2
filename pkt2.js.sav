@@ -196,7 +196,6 @@ write_google_sheets =
 		];
  */
 
-/*
 repeators = 
 [
 	{
@@ -206,4 +205,3 @@ repeators =
 		]
 	}
 ];
-*/

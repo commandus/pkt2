@@ -40,6 +40,7 @@ using namespace google::protobuf::io;
 void control_message
 (
 	Config *config,
+	int socket_control,
 	int typ,
 	int sz,
 	const std::string &msg,
@@ -55,7 +56,7 @@ void control_message
 		<< msg << "\t" 
 		<< payload << std::endl; 
 	std::string s(ss.str());
-	// nn_send(socket_control, s.c_str(), s.size(), 0);
+	nn_send(socket_control, s.c_str(), s.size(), 0);
 }
 
 /**
@@ -136,12 +137,12 @@ int pkt2_receiever_nano(Config *config)
 
 		int payload_size = InputPacket::getPayloadSize(bytes);
 		
-		control_message(config, CONTROL_TYP_RECEIVED_CODE, payload_size, CONTROL_TYP_RECEIVED, "");
+		control_message(config, socket_control, CONTROL_TYP_RECEIVED_CODE, payload_size, CONTROL_TYP_RECEIVED, "");
 		config->count_packet_in++;
 		
 		if (payload_size < 0)
 		{
-			control_message(config, CONTROL_TYP_ERROR_CODE, payload_size, CONTROL_TYP_ERROR, ERR_NN_RECV);
+			control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, payload_size, CONTROL_TYP_ERROR, ERR_NN_RECV);
 			if (errno == EINTR) 
 			{
 				LOG(ERROR) << ERR_INTERRUPTED;
@@ -157,7 +158,7 @@ int pkt2_receiever_nano(Config *config)
 			if (payload_size == 0)
 			{
 				config->count_packet_out++;
-				control_message(config, CONTROL_TYP_EMPTY_CODE, payload_size, CONTROL_TYP_EMPTY, "");
+				control_message(config, socket_control, CONTROL_TYP_EMPTY_CODE, payload_size, CONTROL_TYP_EMPTY, "");
 				LOG(INFO) << MSG_EMPTY_PACKET;
 				continue;
 			}
@@ -168,7 +169,7 @@ int pkt2_receiever_nano(Config *config)
 			if (std::find(config->allowed_packet_sizes.begin(), config->allowed_packet_sizes.end(), payload_size) == config->allowed_packet_sizes.end())
 			{
 				LOG(INFO) << MSG_PACKET_REJECTED << payload_size;
-				control_message(config, CONTROL_TYP_ERROR_CODE, payload_size, CONTROL_TYP_ERROR, "");
+				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, payload_size, CONTROL_TYP_ERROR, "");
 				continue;
 			}
 			
@@ -179,7 +180,7 @@ int pkt2_receiever_nano(Config *config)
 
 			if (packet.error() != 0)
 			{
-				control_message(config, CONTROL_TYP_ERROR_CODE, packet.error(), CONTROL_TYP_ERROR, "");
+				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, packet.error(), CONTROL_TYP_ERROR, "");
 				LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
 				continue;
 			}
@@ -195,7 +196,7 @@ int pkt2_receiever_nano(Config *config)
 			google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
 			if (m == NULL)
 			{
-				control_message(config, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");
+				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");
 				LOG(ERROR) << ERR_PARSE_PACKET << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
         		continue;
 			}
@@ -205,7 +206,7 @@ int pkt2_receiever_nano(Config *config)
 			int sent = nn_send(nn_sock_out, outstr.c_str(), outstr.size(), 0);
 			if (sent < 0)
 			{
-				control_message(config, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");
+				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");
 				LOG(ERROR) << ERR_NN_SEND << sent;
 			}
 			else
@@ -217,7 +218,7 @@ int pkt2_receiever_nano(Config *config)
 					pbjson::pb2json(m, s);
 					LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr) << std::endl 
 						<< s;
-					control_message(config, CONTROL_TYP_MSG_SENT_CODE, outstr.size(), CONTROL_TYP_MSG_SENT, s);	
+					control_message(config, socket_control, CONTROL_TYP_MSG_SENT_CODE, outstr.size(), CONTROL_TYP_MSG_SENT, s);	
 					if (config->verbosity >= 2)
 					{
 						std::cerr << MSG_SENT << sent << " " << hexString(outstr) << std::endl
@@ -226,7 +227,7 @@ int pkt2_receiever_nano(Config *config)
 				}
 				else
 				{
-					control_message(config, CONTROL_TYP_MSG_SENT_CODE, outstr.size(), CONTROL_TYP_MSG_SENT, "");
+					control_message(config, socket_control, CONTROL_TYP_MSG_SENT_CODE, outstr.size(), CONTROL_TYP_MSG_SENT, "");
 				}
 			}
 
@@ -250,11 +251,23 @@ int pkt2_receiever_nano(Config *config)
 		<< socket_control << "/" << ecid << " error "
 		<< errno << ": " << nn_strerror(errno);
 
-	close(socket_accept);
-	socket_accept = 0;
+	if (nn_sock_out)
+	{
+		close(nn_sock_out);
+		nn_sock_out = 0;
+	}
+	
+	if (socket_accept)
+	{
+		close(socket_accept);
+		socket_accept = 0;
+	}
 
-	close(socket_control);
-	socket_control = 0;
+	if (socket_control)
+	{
+		close(socket_control);
+		socket_control = 0;
+	}
 
 	if (config->stop_request == 2)
 		goto START;

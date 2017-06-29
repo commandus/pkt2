@@ -30,7 +30,6 @@ Config *config;
 
 void done()
 {
-	LOG(INFO) << MSG_DONE;
 }
 
 int reslt;
@@ -59,7 +58,6 @@ int reload(Config *config)
 {
 	if (!config)
 		return ERRCODE_NO_CONFIG;
-	LOG(ERROR) << MSG_RELOAD_BEGIN;
 	config->stop_request = 2;
 	return ERR_OK;
 }
@@ -123,7 +121,7 @@ int run
 		}
 	}	
 	
-	LOG(INFO) << MSG_START << " success, main loop.";
+	LOG(INFO) << MSG_START << " success, main loop. Output count: " << eids.size();
 	
 	while (!config->stop_request)
 	{
@@ -147,7 +145,7 @@ int run
 		for (int i = 0; i < eids.size(); i++)
 		{
 			int r = nn_send(out_sockets[i], buffer, bytes, 0);
-			if (r)
+			if (r < 0)
 			{
 				LOG(ERROR) << ERR_NN_SEND << config->out_urls[i] << " " << errno << " " << strerror(errno);
 				r = ERRCODE_NN_SEND;
@@ -219,7 +217,6 @@ void runner()
 
 void stopNWait()
 {
-	LOG(INFO) << MSG_STOP;
 	if (config)
 		stop(config);
 }

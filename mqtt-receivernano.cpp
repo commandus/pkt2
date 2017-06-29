@@ -230,7 +230,6 @@ int reload(Config *config)
 	if (!config)
 		return ERRCODE_NO_CONFIG;
 	LOG(ERROR) << MSG_RELOAD_BEGIN;
-
 	config->stop_request = 2;
 	return ERR_OK;
 }

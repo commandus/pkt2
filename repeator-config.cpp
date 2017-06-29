@@ -97,7 +97,7 @@ int Config::parseCmd
 	else
 		in_url = DEF_IN;
 
-	if (out_urls.size() <= 0)
+	if (a_out_url->count <= 0)
 		out_urls.push_back(DEF_OUT);
 	else
 	{

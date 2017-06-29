@@ -31,14 +31,12 @@ Config *config;
 
 void stopNWait()
 {
-    LOG(INFO) << MSG_STOP;
 	if (config)
 		stop(config);
 }
 
 void done()
 {
-    LOG(INFO) << MSG_DONE;
 }
 
 int reslt;

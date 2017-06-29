@@ -17,13 +17,11 @@ Config *config;
 
 void stopNWait()
 {
-    LOG(INFO) << MSG_STOP;
 	stop(config);
 }
 
 void done()
 {
-    LOG(INFO) << MSG_DONE;
 }
 
 int reslt;

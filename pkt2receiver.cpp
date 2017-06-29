@@ -16,13 +16,11 @@ Config *config;
 
 void stopNWait()
 {
-    LOG(INFO) << MSG_STOP;
 	stop(config);
 }
 
 void done()
 {
-    std::cerr << MSG_DONE;
 }
 
 int reslt;

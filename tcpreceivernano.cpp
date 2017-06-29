@@ -55,21 +55,25 @@ int listen_port
 	int reuseaddr = 1;
 	if (setsockopt(listner, SOL_SOCKET, SO_REUSEADDR, &reuseaddr, sizeof(reuseaddr)) ==-1) 
 	{
+		close(listner);
 		LOG(ERROR) << ERR_SOCKET_SET_OPTIONS;
 		return ERRCODE_SOCKET_SET_OPTIONS;
 	}
 
 	// Bind the socket to the address of my local machine and port number 
+	LOG(ERROR) << "Bind len " << res->ai_addrlen;
 	int status = bind(listner, res->ai_addr, res->ai_addrlen); 
 	if (status < 0)
 	{
-		LOG(ERROR) << ERR_SOCKET_BIND << gai_strerror(status);
+		close(listner);
+		LOG(ERROR) << ERR_SOCKET_BIND << gai_strerror(status) << " addr len " << res->ai_addrlen;
 		return ERRCODE_SOCKET_BIND;
 	}
 
 	status = listen(listner, 10); 
 	if (status < 0)
 	{
+		close(listner);
 		LOG(ERROR) << ERR_SOCKET_LISTEN << gai_strerror(status);
 		return ERRCODE_SOCKET_LISTEN;
 	}
@@ -158,7 +162,7 @@ START:
 		int new_conn_fd = accept(socket_accept, (struct sockaddr *) src, &addr_size);
 		if (new_conn_fd < 0)
 		{
-			LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno);
+			LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno) << ", continue.";
 			continue;
 		}
 		// Read
