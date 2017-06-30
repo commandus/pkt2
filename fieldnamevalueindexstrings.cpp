@@ -8,13 +8,20 @@
 #include "fieldnamevalueindexstrings.h"
 #include <algorithm>
 #include <glog/logging.h>
-#include <google/protobuf/message.h>
 #include "utilstring.h"
 
 static const std::string sql2tableNumeric = "num";
 static const std::string sql2tableString = "str";
 static const std::string sql2names[] = {"message", "time", "device", "field", "value"};
 
+FieldNameValueString::FieldNameValueString
+(
+	const FieldNameValueString &value
+)
+	: index(value.index), field_type(value.field_type), field(value.field), value(value.value)
+{
+	sql_string = value.sql_string;
+}	
 
 FieldNameValueString::FieldNameValueString
 (
@@ -24,9 +31,17 @@ FieldNameValueString::FieldNameValueString
 	const std::string &fld,
 	const std::string &val
 )
-		: index(idx), field_type(fieldtype), sql_string(sqlstring), field(fld), value(val)
+		: index(idx), field_type(fieldtype), field(fld), value(val), sql_string(sqlstring) 
 {
 
+}
+
+static const std::string empty_string("");
+
+FieldNameValueIndexStrings::FieldNameValueIndexStrings()
+	: table(empty_string), string_quote ("'"), quote("\"")
+{
+	index2values.reserve(3);
 }
 
 FieldNameValueIndexStrings::FieldNameValueIndexStrings
@@ -40,6 +55,15 @@ FieldNameValueIndexStrings::FieldNameValueIndexStrings
 	index2values.push_back(options->getMessageId(message_name));
 }
 
+FieldNameValueIndexStrings::FieldNameValueIndexStrings
+(
+	const FieldNameValueIndexStrings &value
+)
+	: options(value.options), table(value.table), index2values(value.index2values), 
+	string_quote(value.string_quote), quote(value.quote), values(value.values)
+{
+}
+	
 FieldNameValueIndexStrings::FieldNameValueIndexStrings
 (
 		Pkt2OptionsCache *pkt2_options,

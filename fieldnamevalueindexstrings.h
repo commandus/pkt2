@@ -26,6 +26,14 @@ public:
 	std::string field;
 	std::string value;
 	bool sql_string;
+
+	FieldNameValueString();
+
+	FieldNameValueString
+	(
+		const FieldNameValueString &value 
+	);
+
 	FieldNameValueString
 	(
 		int idx,
@@ -49,6 +57,19 @@ private:
 public:
 	std::vector<FieldNameValueString> values;
 
+	FieldNameValueIndexStrings();
+
+	FieldNameValueIndexStrings
+	(
+		const FieldNameValueIndexStrings &value
+	);
+
+	FieldNameValueIndexStrings operator= (const FieldNameValueIndexStrings&value) 
+	{
+		FieldNameValueIndexStrings r(value);
+		return r;
+	};
+	
 	FieldNameValueIndexStrings
 	(
 		Pkt2OptionsCache *pkt2_options,
