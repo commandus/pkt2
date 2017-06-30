@@ -155,6 +155,7 @@ public:
 	 * @param json message value
 	 * @return NULL if no protobuf found or error occurred
 	 */
+
 	google::protobuf::Message *decode
 	(
 		const std::string &message_name,
