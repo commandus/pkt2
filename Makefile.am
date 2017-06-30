@@ -123,7 +123,7 @@ messageemitter_SOURCES = \
 	$(common_src)
 
 messageemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
-messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	tcpreceiver
@@ -162,7 +162,7 @@ pkt2receiver_SOURCES= \
 	$(common_src)
 
 pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) 
+pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	pkt2gateway
@@ -177,7 +177,7 @@ pkt2gateway_SOURCES= \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) 
+pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	handlerpq
@@ -190,7 +190,7 @@ handlerpq_SOURCES= \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS)
+handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	tcptransmitter
@@ -215,7 +215,7 @@ handlerlmdb_SOURCES = \
 	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
-handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS)
+handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	handlerline
@@ -229,7 +229,7 @@ handlerline_SOURCES = \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
-handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS)
+handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	handler-google-sheets
@@ -244,7 +244,7 @@ handler_google_sheets_SOURCES = \
 	$(common_src)
 
 handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS)
-handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS)
+handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	protoc-gen-pkt2
@@ -269,7 +269,7 @@ message2gateway_SOURCES = \
 	$(common_src)
 
 message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
-message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS)
+message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	example1message
@@ -281,7 +281,7 @@ example1message_SOURCES = \
 	$(common_src)
 
 example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
-example1message_CPPFLAGS = $(COMMON_CPP_FLAGS)
+example1message_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	example1message1
@@ -334,7 +334,7 @@ pkt2dumppq_SOURCES = \
 	$(common_src)
 
 pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS)
+pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 # pkt2receiver-check

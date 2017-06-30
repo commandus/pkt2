@@ -1474,9 +1474,9 @@ cd /home/andrei/src/pkt2
 make clean
 make
 
-strip tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 example1message tcpemitter-iridium mqtt-emitter-iridium handlerpq handlerline handler-google-sheets handlerlmdb  messageemitter message2gateway protoc-gen-pkt2  pkt2dumppq protoc-gen-pkt2 pkt2gateway pkt2receiver pkt2gateway pkt2receiver pkt2 pkt2receiver-check
+strip tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 example1message tcpemitter-iridium mqtt-emitter-iridium handlerpq handlerline handler-google-sheets handlerlmdb  messageemitter message2gateway protoc-gen-pkt2  pkt2dumppq protoc-gen-pkt2 pkt2gateway pkt2receiver pkt2gateway pkt2receiver pkt2 pkt2receiver-check repeator
 
-scp tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 example1message tcpemitter-iridium mqtt-emitter-iridium handlerpq handlerline handler-google-sheets handlerlmdb  messageemitter message2gateway protoc-gen-pkt2  pkt2dumppq protoc-gen-pkt2 pkt2gateway pkt2receiver pkt2gateway pkt2receiver pkt2receiver-check pkt2 andrei@nova.ysn.ru:/home/andrei/pkt2/bin
+scp tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 example1message tcpemitter-iridium mqtt-emitter-iridium handlerpq handlerline handler-google-sheets handlerlmdb  messageemitter message2gateway protoc-gen-pkt2  pkt2dumppq protoc-gen-pkt2 pkt2gateway pkt2receiver pkt2gateway pkt2receiver pkt2receiver-check pkt2 repeator andrei@nova.ysn.ru:/home/andrei/pkt2/bin
 
 scp pkt2.js cert/pkt2-sheets.json andrei@nova.ysn.ru:/home/andrei/pkt2/bin
 exit
