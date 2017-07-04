@@ -346,6 +346,7 @@ int MessageDecomposer::decompose
 
 /**
   * @brief return human readable value as string
+  * @param format_number -1 - do not format using javascript(as is)
   */
 std::string MessageDecomposer::toString
 (
@@ -393,7 +394,10 @@ std::string MessageDecomposer::toString
             break;
     }
 
-	return format(message_descriptor, field, ss.str(), format_number);
+    if (format_number >= 0)
+		return format(message_descriptor, field, ss.str(), format_number);
+	else
+		return ss.str();
 }
 
 /**
