@@ -33,7 +33,7 @@ message GPS_Coordinates
         name: "gpc_coord"
         short_name: "Координаты GPS"
         full_name: "Координаты GPS приемника"
-        set: "        double g = abs(latitude);        latitude_g = g;        double m = (g - latitude_g) * 60;        latitude_m = m;        double s = (m - latitude_m) * 60;        latitude_s = s;        latitude_s1 = 0;        latitude_ns = latitude >= 0 ? 'N' : 'S';        g = abs(longitude);        longitude_g = = g;        m = (g - longitude_g) * 60;        longitude_m = m;        s = (m - longitude_m) * 60;        longitude_s = s;        longitude_s = 0;        longitude_ew = longitude >= 0 ? 'E' : 'W';        h_dop = hdop;        p_dop = pdop;        "
+        // set: "        double g = abs(latitude);        latitude_g = g;        double m = (g - latitude_g) * 60;        latitude_m = m;        double s = (m - latitude_m) * 60;        latitude_s = s;        latitude_s1 = 0;        latitude_ns = latitude >= 0 ? 'N' : 'S';        g = abs(longitude);        longitude_g = = g;        m = (g - longitude_g) * 60;        longitude_m = m;        s = (m - longitude_m) * 60;        longitude_s = s;        longitude_s = 0;        longitude_ew = longitude >= 0 ? 'E' : 'W';        h_dop = hdop;        p_dop = pdop;        "
         fields: [
         {
             name: "latitude_g"

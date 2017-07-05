@@ -434,6 +434,30 @@ uint64_t extractFieldUInt
 	return 0;
 }
 
+
+/**
+ * @brief Set field value in the packet from 64 bit integer
+ * @param packet binary data 
+ * @param field descriptor of area in binary data: offset, size, bytes order
+ */
+void setFieldUInt
+(
+	std::string &packet,
+	const pkt2::Field &field,
+	uint64_t value
+)
+{
+	int sz = field.size();
+	if (sz == 0)
+		return;
+	if ((sz > 1) && ENDIAN_NEED_SWAP(field.endian()))
+	{
+		char *p = (char *) &value;
+		std::reverse(p, p + field.size());
+	}
+	memmove((char *) packet.c_str() + field.offset(), &value, (sz < sizeof(uint64_t) ? sz : sizeof(uint64_t)));
+}
+
 /**
  * @brief Return minimum size of the packet
  * @param packet data packet containing field

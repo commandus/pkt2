@@ -20,13 +20,13 @@ message IE_Packet
 {
     // input packet description
     option(pkt2.packet) = { 
-		id: 3008 
+        id: 3008 
         name: "iepacketheader"
         short_name: "Iridium packet header"
         full_name: "Iridium message full packet header"
         head: [
-        	"IE_Location",
-        	"Packet8"
+                "IE_Location",
+                "Packet8"
         ]
         fields: [
         {
@@ -34,8 +34,8 @@ message IE_Packet
             type: INPUT_UINT
             size: 1
             offset: 0
-            tag: 1			      ///< tag 1- Iridium version 1.
-        },  
+            tag: 1                 ///< tag 1- Iridium version 1.
+        },
         {
             name: "ie_size"
             type: INPUT_UINT
@@ -65,33 +65,33 @@ message IE_Packet
         ]
     };
 
-	uint32 iridium_version = 1 [(pkt2.variable) = {
+    uint32 iridium_version = 1 [(pkt2.variable) = {
         get: "field.ie_id"
         short_name: "Размер сообщения Iridium"
         full_name: "Размер всего сообщения Iridium"
     }];
-    
-	uint32 iridium_size = 2 [(pkt2.variable) = {
+
+    uint32 iridium_size = 2 [(pkt2.variable) = {
         get: "field.ie_size"
         short_name: "Размер сообщения Iridium"
         full_name: "Размер всего сообщения Iridium"
         measure_unit: "bytes"
     }];
-    
+
     IE_IOHeader ioheader = 3 [(pkt2.variable) = {
-		get: "field.ioheader"
+        get: "field.ioheader"
         short_name: "I/O заголовок"
         full_name: "I/O заголовок Iridium"
     }];
 
     IE_Location location = 4 [(pkt2.variable) = {
-		get: "field.location"
+        get: "field.location"
         short_name: "Iridium координаты"
         full_name: "Iridium координаты"
     }];
 
     Packet8 packet8 = 5 [(pkt2.variable) = {
-		get: "field.packet8"
+        get: "field.packet8"
         short_name: "Животные"
         full_name: "Животные"
     }];

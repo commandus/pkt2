@@ -24,7 +24,7 @@ class MessageComposer {
 		const google::protobuf::FieldDescriptor::CppType field_type,
 		const int field_number,
 		bool repeated,
-		int index,
+		int index,	
 		std::string &retval
 	);
 

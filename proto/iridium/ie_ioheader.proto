@@ -24,14 +24,14 @@ message IE_IOHeader
         name: "ioheader"
         short_name: "Iridium IO header"
         full_name: "Iridium message IO header"
-        set: "packet_type = 8; gps_flags = SET_BIT(gpsolddata, 0) | SET_BIT(gpsencoded, 1) | SET_BIT(gpsfrommemory, 2) | SET_BIT(gpsnoformat, 3) | SET_BIT(gpsnosats, 4) | SET_BIT(gpsbadhdop, 5) | SET_BIT(gpstime, 6) | SET_BIT(gpsnavdata, 7); sats = satellite_visible_count; battery = ((battery_voltage * 10) & 0x3f) | SET_BIT(battery_low, 6) | SET_BIT(battery_high, 7); packet_key = 0; r2 = 0; temperature = temperature_c; SET(gps_coords, coordinates); SET(time5, measure_time);" 
+        // set: "packet_type = 8; gps_flags = SET_BIT(gpsolddata, 0) | SET_BIT(gpsencoded, 1) | SET_BIT(gpsfrommemory, 2) | SET_BIT(gpsnoformat, 3) | SET_BIT(gpsnosats, 4) | SET_BIT(gpsbadhdop, 5) | SET_BIT(gpstime, 6) | SET_BIT(gpsnavdata, 7); sats = satellite_visible_count; battery = ((battery_voltage * 10) & 0x3f) | SET_BIT(battery_low, 6) | SET_BIT(battery_high, 7); packet_key = 0; r2 = 0; temperature = temperature_c; SET(gps_coords, coordinates); SET(time5, measure_time);" 
         fields: [
         {
             name: "ie_id"
             type: INPUT_UINT
             size: 1
             offset: 0
-            tag: 1			      ///< tag 1- I/O header
+            tag: 1                ///< tag 1- I/O header
         },
         {
             name: "ie_size"

@@ -63,6 +63,7 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, full_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, measure_unit_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, get_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, set_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, values_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, priority_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Variable, format_),
@@ -86,7 +87,6 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, short_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, full_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, fields_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, set_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Packet, head_),
     ~0u,  // no _has_bits_
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Sql, _internal_metadata_),
@@ -106,8 +106,8 @@ const ::google::protobuf::uint32* protobuf_Offsets_pkt2_2eproto() {
 static const ::google::protobuf::internal::MigrationSchema schemas[] = {
   { 0, -1, sizeof(Field)},
   { 10, -1, sizeof(Variable)},
-  { 26, -1, sizeof(Address)},
-  { 33, -1, sizeof(Packet)},
+  { 27, -1, sizeof(Address)},
+  { 34, -1, sizeof(Packet)},
   { 46, -1, sizeof(Sql)},
   { 51, -1, sizeof(Output)},
 };
@@ -197,19 +197,19 @@ void protobuf_AddDesc_pkt2_2eproto_impl() {
       "riptor.proto\"}\n\005Field\022\014\n\004name\030\001 \001(\t\022\035\n\004t"
       "ype\030\002 \001(\0162\017.pkt2.InputType\022\034\n\006endian\030\003 \001"
       "(\0162\014.pkt2.Endian\022\016\n\006offset\030\004 \001(\r\022\014\n\004size"
-      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\004\"\346\001\n\010Variable\022\r\n\005fiel"
+      "\030\005 \001(\r\022\013\n\003tag\030\006 \001(\004\"\363\001\n\010Variable\022\r\n\005fiel"
       "d\030\001 \001(\t\022\014\n\004name\030\002 \001(\t\022\036\n\004type\030\003 \001(\0162\020.pk"
       "t2.OutputType\022\022\n\nshort_name\030\004 \001(\t\022\021\n\tful"
       "l_name\030\005 \001(\t\022\024\n\014measure_unit\030\006 \001(\t\022\013\n\003ge"
-      "t\030\007 \001(\t\022\016\n\006values\030\010 \003(\t\022\020\n\010priority\030\t \001("
-      "\r\022\016\n\006format\030\n \003(\t\022\r\n\005index\030\013 \001(\r\022\022\n\nsql_"
-      "string\030\014 \001(\010\"D\n\007Address\022\032\n\005proto\030\001 \001(\0162\013"
-      ".pkt2.Proto\022\017\n\007address\030\002 \001(\t\022\014\n\004port\030\003 \001"
-      "(\r\"\304\001\n\006Packet\022\035\n\006source\030\001 \003(\0132\r.pkt2.Add"
-      "ress\022\"\n\013destination\030\002 \003(\0132\r.pkt2.Address"
-      "\022\014\n\004name\030\003 \001(\t\022\n\n\002id\030\004 \001(\004\022\022\n\nshort_name"
-      "\030\005 \001(\t\022\021\n\tfull_name\030\006 \001(\t\022\033\n\006fields\030\007 \003("
-      "\0132\013.pkt2.Field\022\013\n\003set\030\010 \001(\t\022\014\n\004head\030\n \003("
+      "t\030\007 \001(\t\022\013\n\003set\030\010 \001(\t\022\016\n\006values\030\t \003(\t\022\020\n\010"
+      "priority\030\n \001(\r\022\016\n\006format\030\013 \003(\t\022\r\n\005index\030"
+      "\014 \001(\r\022\022\n\nsql_string\030\r \001(\010\"D\n\007Address\022\032\n\005"
+      "proto\030\001 \001(\0162\013.pkt2.Proto\022\017\n\007address\030\002 \001("
+      "\t\022\014\n\004port\030\003 \001(\r\"\267\001\n\006Packet\022\035\n\006source\030\001 \003"
+      "(\0132\r.pkt2.Address\022\"\n\013destination\030\002 \003(\0132\r"
+      ".pkt2.Address\022\014\n\004name\030\003 \001(\t\022\n\n\002id\030\004 \001(\004\022"
+      "\022\n\nshort_name\030\005 \001(\t\022\021\n\tfull_name\030\006 \001(\t\022\033"
+      "\n\006fields\030\007 \003(\0132\013.pkt2.Field\022\014\n\004head\030\n \003("
       "\t\"%\n\003Sql\022\036\n\007dialect\030\001 \001(\0162\r.pkt2.Dialect"
       "\",\n\006Output\022\n\n\002id\030\001 \001(\r\022\026\n\003sql\030\002 \001(\0132\t.pk"
       "t2.Sql*\222\001\n\tInputType\022\016\n\nINPUT_NONE\020\000\022\021\n\r"
@@ -946,6 +946,7 @@ const int Variable::kShortNameFieldNumber;
 const int Variable::kFullNameFieldNumber;
 const int Variable::kMeasureUnitFieldNumber;
 const int Variable::kGetFieldNumber;
+const int Variable::kSetFieldNumber;
 const int Variable::kValuesFieldNumber;
 const int Variable::kPriorityFieldNumber;
 const int Variable::kFormatFieldNumber;
@@ -1010,6 +1011,11 @@ Variable::Variable(const Variable& from)
     get_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.get(),
       GetArenaNoVirtual());
   }
+  set_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  if (from.set().size() > 0) {
+    set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.set(),
+      GetArenaNoVirtual());
+  }
   ::memcpy(&type_, &from.type_,
     reinterpret_cast<char*>(&sql_string_) -
     reinterpret_cast<char*>(&type_) + sizeof(sql_string_));
@@ -1023,6 +1029,7 @@ void Variable::SharedCtor() {
   full_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   measure_unit_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   get_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  set_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(&type_, 0, reinterpret_cast<char*>(&sql_string_) -
     reinterpret_cast<char*>(&type_) + sizeof(sql_string_));
   _cached_size_ = 0;
@@ -1045,6 +1052,7 @@ void Variable::SharedDtor() {
   full_name_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
   measure_unit_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
   get_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
+  set_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
 }
 
 void Variable::ArenaDtor(void* object) {
@@ -1082,6 +1090,7 @@ void Variable::Clear() {
   full_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   measure_unit_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   get_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+  set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   ::memset(&type_, 0, reinterpret_cast<char*>(&sql_string_) -
     reinterpret_cast<char*>(&type_) + sizeof(sql_string_));
 }
@@ -1200,9 +1209,24 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated string values = 8;
+      // string set = 8;
       case 8: {
         if (tag == 66u) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_set()));
+          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+            this->set().data(), this->set().length(),
+            ::google::protobuf::internal::WireFormatLite::PARSE,
+            "pkt2.Variable.set"));
+        } else {
+          goto handle_unusual;
+        }
+        break;
+      }
+
+      // repeated string values = 9;
+      case 9: {
+        if (tag == 74u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->add_values()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -1216,9 +1240,9 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 priority = 9;
-      case 9: {
-        if (tag == 72u) {
+      // uint32 priority = 10;
+      case 10: {
+        if (tag == 80u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -1229,9 +1253,9 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
-      // repeated string format = 10;
-      case 10: {
-        if (tag == 82u) {
+      // repeated string format = 11;
+      case 11: {
+        if (tag == 90u) {
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->add_format()));
           DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -1245,9 +1269,9 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
-      // uint32 index = 11;
-      case 11: {
-        if (tag == 88u) {
+      // uint32 index = 12;
+      case 12: {
+        if (tag == 96u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
@@ -1258,9 +1282,9 @@ bool Variable::MergePartialFromCodedStream(
         break;
       }
 
-      // bool sql_string = 12;
-      case 12: {
-        if (tag == 96u) {
+      // bool sql_string = 13;
+      case 13: {
+        if (tag == 104u) {
 
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
@@ -1361,39 +1385,49 @@ void Variable::SerializeWithCachedSizes(
       7, this->get(), output);
   }
 
-  // repeated string values = 8;
+  // string set = 8;
+  if (this->set().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->set().data(), this->set().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "pkt2.Variable.set");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->set(), output);
+  }
+
+  // repeated string values = 9;
   for (int i = 0; i < this->values_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->values(i).data(), this->values(i).length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Variable.values");
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      8, this->values(i), output);
+      9, this->values(i), output);
   }
 
-  // uint32 priority = 9;
+  // uint32 priority = 10;
   if (this->priority() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(9, this->priority(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(10, this->priority(), output);
   }
 
-  // repeated string format = 10;
+  // repeated string format = 11;
   for (int i = 0; i < this->format_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->format(i).data(), this->format(i).length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Variable.format");
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      10, this->format(i), output);
+      11, this->format(i), output);
   }
 
-  // uint32 index = 11;
+  // uint32 index = 12;
   if (this->index() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteUInt32(11, this->index(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(12, this->index(), output);
   }
 
-  // bool sql_string = 12;
+  // bool sql_string = 13;
   if (this->sql_string() != 0) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(12, this->sql_string(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteBool(13, this->sql_string(), output);
   }
 
   // @@protoc_insertion_point(serialize_end:pkt2.Variable)
@@ -1475,39 +1509,50 @@ void Variable::SerializeWithCachedSizes(
         7, this->get(), target);
   }
 
-  // repeated string values = 8;
+  // string set = 8;
+  if (this->set().size() > 0) {
+    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
+      this->set().data(), this->set().length(),
+      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
+      "pkt2.Variable.set");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->set(), target);
+  }
+
+  // repeated string values = 9;
   for (int i = 0; i < this->values_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->values(i).data(), this->values(i).length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Variable.values");
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(8, this->values(i), target);
+      WriteStringToArray(9, this->values(i), target);
   }
 
-  // uint32 priority = 9;
+  // uint32 priority = 10;
   if (this->priority() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(9, this->priority(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(10, this->priority(), target);
   }
 
-  // repeated string format = 10;
+  // repeated string format = 11;
   for (int i = 0; i < this->format_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
       this->format(i).data(), this->format(i).length(),
       ::google::protobuf::internal::WireFormatLite::SERIALIZE,
       "pkt2.Variable.format");
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(10, this->format(i), target);
+      WriteStringToArray(11, this->format(i), target);
   }
 
-  // uint32 index = 11;
+  // uint32 index = 12;
   if (this->index() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(11, this->index(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(12, this->index(), target);
   }
 
-  // bool sql_string = 12;
+  // bool sql_string = 13;
   if (this->sql_string() != 0) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(12, this->sql_string(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(13, this->sql_string(), target);
   }
 
   // @@protoc_insertion_point(serialize_to_array_end:pkt2.Variable)
@@ -1518,7 +1563,7 @@ size_t Variable::ByteSizeLong() const {
 // @@protoc_insertion_point(message_byte_size_start:pkt2.Variable)
   size_t total_size = 0;
 
-  // repeated string values = 8;
+  // repeated string values = 9;
   total_size += 1 *
       ::google::protobuf::internal::FromIntSize(this->values_size());
   for (int i = 0; i < this->values_size(); i++) {
@@ -1526,7 +1571,7 @@ size_t Variable::ByteSizeLong() const {
       this->values(i));
   }
 
-  // repeated string format = 10;
+  // repeated string format = 11;
   total_size += 1 *
       ::google::protobuf::internal::FromIntSize(this->format_size());
   for (int i = 0; i < this->format_size(); i++) {
@@ -1576,27 +1621,34 @@ size_t Variable::ByteSizeLong() const {
         this->get());
   }
 
+  // string set = 8;
+  if (this->set().size() > 0) {
+    total_size += 1 +
+      ::google::protobuf::internal::WireFormatLite::StringSize(
+        this->set());
+  }
+
   // .pkt2.OutputType type = 3;
   if (this->type() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
   }
 
-  // uint32 priority = 9;
+  // uint32 priority = 10;
   if (this->priority() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->priority());
   }
 
-  // uint32 index = 11;
+  // uint32 index = 12;
   if (this->index() != 0) {
     total_size += 1 +
       ::google::protobuf::internal::WireFormatLite::UInt32Size(
         this->index());
   }
 
-  // bool sql_string = 12;
+  // bool sql_string = 13;
   if (this->sql_string() != 0) {
     total_size += 1 + 1;
   }
@@ -1646,6 +1698,9 @@ void Variable::MergeFrom(const Variable& from) {
   }
   if (from.get().size() > 0) {
     set_get(from.get());
+  }
+  if (from.set().size() > 0) {
+    set_set(from.set());
   }
   if (from.type() != 0) {
     set_type(from.type());
@@ -1707,6 +1762,7 @@ void Variable::InternalSwap(Variable* other) {
   full_name_.Swap(&other->full_name_);
   measure_unit_.Swap(&other->measure_unit_);
   get_.Swap(&other->get_);
+  set_.Swap(&other->set_);
   std::swap(type_, other->type_);
   std::swap(priority_, other->priority_);
   std::swap(index_, other->index_);
@@ -2132,7 +2188,73 @@ void Variable::unsafe_arena_set_allocated_get(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Variable.get)
 }
 
-// repeated string values = 8;
+// string set = 8;
+void Variable::clear_set() {
+  set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+}
+const ::std::string& Variable::set() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.set)
+  return set_.Get();
+}
+void Variable::set_set(const ::std::string& value) {
+  
+  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set:pkt2.Variable.set)
+}
+void Variable::set_set(const char* value) {
+  
+  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set_char:pkt2.Variable.set)
+}
+void Variable::set_set(const char* value,
+    size_t size) {
+  
+  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.set)
+}
+::std::string* Variable::mutable_set() {
+  
+  // @@protoc_insertion_point(field_mutable:pkt2.Variable.set)
+  return set_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+}
+::std::string* Variable::release_set() {
+  // @@protoc_insertion_point(field_release:pkt2.Variable.set)
+  
+  return set_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+}
+::std::string* Variable::unsafe_arena_release_set() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:pkt2.Variable.set)
+  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
+  
+  return set_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      GetArenaNoVirtual());
+}
+void Variable::set_allocated_set(::std::string* set) {
+  if (set != NULL) {
+    
+  } else {
+    
+  }
+  set_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), set,
+      GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.set)
+}
+void Variable::unsafe_arena_set_allocated_set(
+    ::std::string* set) {
+  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
+  if (set != NULL) {
+    
+  } else {
+    
+  }
+  set_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      set, GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Variable.set)
+}
+
+// repeated string values = 9;
 int Variable::values_size() const {
   return values_.size();
 }
@@ -2187,7 +2309,7 @@ Variable::mutable_values() {
   return &values_;
 }
 
-// uint32 priority = 9;
+// uint32 priority = 10;
 void Variable::clear_priority() {
   priority_ = 0u;
 }
@@ -2201,7 +2323,7 @@ void Variable::set_priority(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.priority)
 }
 
-// repeated string format = 10;
+// repeated string format = 11;
 int Variable::format_size() const {
   return format_.size();
 }
@@ -2256,7 +2378,7 @@ Variable::mutable_format() {
   return &format_;
 }
 
-// uint32 index = 11;
+// uint32 index = 12;
 void Variable::clear_index() {
   index_ = 0u;
 }
@@ -2270,7 +2392,7 @@ void Variable::set_index(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.index)
 }
 
-// bool sql_string = 12;
+// bool sql_string = 13;
 void Variable::clear_sql_string() {
   sql_string_ = false;
 }
@@ -2730,7 +2852,6 @@ const int Packet::kIdFieldNumber;
 const int Packet::kShortNameFieldNumber;
 const int Packet::kFullNameFieldNumber;
 const int Packet::kFieldsFieldNumber;
-const int Packet::kSetFieldNumber;
 const int Packet::kHeadFieldNumber;
 #endif  // !defined(_MSC_VER) || _MSC_VER >= 1900
 
@@ -2780,11 +2901,6 @@ Packet::Packet(const Packet& from)
     full_name_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.full_name(),
       GetArenaNoVirtual());
   }
-  set_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  if (from.set().size() > 0) {
-    set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), from.set(),
-      GetArenaNoVirtual());
-  }
   id_ = from.id_;
   // @@protoc_insertion_point(copy_constructor:pkt2.Packet)
 }
@@ -2793,7 +2909,6 @@ void Packet::SharedCtor() {
   name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   short_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   full_name_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  set_.UnsafeSetDefault(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   id_ = GOOGLE_ULONGLONG(0);
   _cached_size_ = 0;
 }
@@ -2812,7 +2927,6 @@ void Packet::SharedDtor() {
   name_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
   short_name_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
   full_name_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
-  set_.Destroy(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), arena);
 }
 
 void Packet::ArenaDtor(void* object) {
@@ -2849,7 +2963,6 @@ void Packet::Clear() {
   name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   short_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   full_name_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-  set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
   id_ = GOOGLE_ULONGLONG(0);
 }
 
@@ -2960,21 +3073,6 @@ bool Packet::MergePartialFromCodedStream(
         break;
       }
 
-      // string set = 8;
-      case 8: {
-        if (tag == 66u) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_set()));
-          DO_(::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-            this->set().data(), this->set().length(),
-            ::google::protobuf::internal::WireFormatLite::PARSE,
-            "pkt2.Packet.set"));
-        } else {
-          goto handle_unusual;
-        }
-        break;
-      }
-
       // repeated string head = 10;
       case 10: {
         if (tag == 82u) {
@@ -3068,16 +3166,6 @@ void Packet::SerializeWithCachedSizes(
       7, this->fields(i), output);
   }
 
-  // string set = 8;
-  if (this->set().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->set().data(), this->set().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "pkt2.Packet.set");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      8, this->set(), output);
-  }
-
   // repeated string head = 10;
   for (int i = 0; i < this->head_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
@@ -3152,17 +3240,6 @@ void Packet::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::
       InternalWriteMessageNoVirtualToArray(
         7, this->fields(i), false, target);
-  }
-
-  // string set = 8;
-  if (this->set().size() > 0) {
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-      this->set().data(), this->set().length(),
-      ::google::protobuf::internal::WireFormatLite::SERIALIZE,
-      "pkt2.Packet.set");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        8, this->set(), target);
   }
 
   // repeated string head = 10;
@@ -3245,13 +3322,6 @@ size_t Packet::ByteSizeLong() const {
         this->full_name());
   }
 
-  // string set = 8;
-  if (this->set().size() > 0) {
-    total_size += 1 +
-      ::google::protobuf::internal::WireFormatLite::StringSize(
-        this->set());
-  }
-
   // uint64 id = 4;
   if (this->id() != 0) {
     total_size += 1 +
@@ -3297,9 +3367,6 @@ void Packet::MergeFrom(const Packet& from) {
   }
   if (from.full_name().size() > 0) {
     set_full_name(from.full_name());
-  }
-  if (from.set().size() > 0) {
-    set_set(from.set());
   }
   if (from.id() != 0) {
     set_id(from.id());
@@ -3351,7 +3418,6 @@ void Packet::InternalSwap(Packet* other) {
   name_.Swap(&other->name_);
   short_name_.Swap(&other->short_name_);
   full_name_.Swap(&other->full_name_);
-  set_.Swap(&other->set_);
   std::swap(id_, other->id_);
   std::swap(_cached_size_, other->_cached_size_);
 }
@@ -3664,72 +3730,6 @@ const ::google::protobuf::RepeatedPtrField< ::pkt2::Field >&
 Packet::fields() const {
   // @@protoc_insertion_point(field_list:pkt2.Packet.fields)
   return fields_;
-}
-
-// string set = 8;
-void Packet::clear_set() {
-  set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-const ::std::string& Packet::set() const {
-  // @@protoc_insertion_point(field_get:pkt2.Packet.set)
-  return set_.Get();
-}
-void Packet::set_set(const ::std::string& value) {
-  
-  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:pkt2.Packet.set)
-}
-void Packet::set_set(const char* value) {
-  
-  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:pkt2.Packet.set)
-}
-void Packet::set_set(const char* value,
-    size_t size) {
-  
-  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:pkt2.Packet.set)
-}
-::std::string* Packet::mutable_set() {
-  
-  // @@protoc_insertion_point(field_mutable:pkt2.Packet.set)
-  return set_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-::std::string* Packet::release_set() {
-  // @@protoc_insertion_point(field_release:pkt2.Packet.set)
-  
-  return set_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-::std::string* Packet::unsafe_arena_release_set() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:pkt2.Packet.set)
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  
-  return set_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      GetArenaNoVirtual());
-}
-void Packet::set_allocated_set(::std::string* set) {
-  if (set != NULL) {
-    
-  } else {
-    
-  }
-  set_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), set,
-      GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Packet.set)
-}
-void Packet::unsafe_arena_set_allocated_set(
-    ::std::string* set) {
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  if (set != NULL) {
-    
-  } else {
-    
-  }
-  set_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      set, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.set)
 }
 
 // repeated string head = 10;

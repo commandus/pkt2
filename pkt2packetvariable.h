@@ -49,7 +49,7 @@ public:
 	Pkt2PacketVariable
 	(
 		const std::string &message_type,
-		ProtobufDeclarations *pd
+		const ProtobufDeclarations *pd
 	);
 	
 	virtual ~Pkt2PacketVariable();
@@ -80,6 +80,18 @@ public:
 	) const;
 	/// debugging information
 	std::string toString();
+
+	std::string getEmptyPacket();
+	
+	/**
+	 * @brief Set required tag values
+	 * @param packet packet to parse
+	 * @return true if enough space
+	 **/
+	bool setTags
+	(
+		std::string &packet
+	) const;
 };
 
 #endif /* PKT2PACKETVARIABLE_H_ */

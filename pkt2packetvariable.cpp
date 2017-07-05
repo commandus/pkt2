@@ -43,7 +43,7 @@ int hashCode
 Pkt2PacketVariable::Pkt2PacketVariable
 (
 	const std::string &message_type,
-	ProtobufDeclarations *pd
+	const ProtobufDeclarations *pd
 )
 {
 	status = ERR_OK;
@@ -123,6 +123,14 @@ std::string Pkt2PacketVariable::toString()
 	return ss.str();
 }
 
+std::string Pkt2PacketVariable::getEmptyPacket() 
+{
+	std::string r(packet_size, '\0');
+	setTags(r);
+	return r;
+}
+
+
 Pkt2PacketVariable::~Pkt2PacketVariable() {
 }
 
@@ -166,6 +174,34 @@ bool Pkt2PacketVariable::validTags
 				LOG(ERROR) << "tag " << packet.fields(i).name() << " not found . Request: " << t << ", value: " << f;
 				return false;
 			}
+		}
+	}
+	return true;
+}
+
+/**
+	* @brief Set required tag values
+	* @param packet packet to parse
+	**/
+bool Pkt2PacketVariable::setTags
+(
+	std::string &data
+) const
+{
+	// TODO if (data.size() < packet_size)
+	if (data.size() < packet_size)
+	{
+		return false;
+	}
+	for (int i = 0; i < packet.fields_size(); i++)
+	{
+		uint64_t t = packet.fields(i).tag();
+		if (t)
+		{
+			// special case
+			if (t == 0xFFFFFFFFFFFFFFFF)
+				t = 0;
+			setFieldUInt(data, packet.fields(i), t);
 		}
 	}
 	return true;

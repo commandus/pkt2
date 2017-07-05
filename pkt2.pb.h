@@ -581,10 +581,24 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   void unsafe_arena_set_allocated_get(
       ::std::string* get);
 
-  // repeated string values = 8;
+  // string set = 8;
+  void clear_set();
+  static const int kSetFieldNumber = 8;
+  const ::std::string& set() const;
+  void set_set(const ::std::string& value);
+  void set_set(const char* value);
+  void set_set(const char* value, size_t size);
+  ::std::string* mutable_set();
+  ::std::string* release_set();
+  void set_allocated_set(::std::string* set);
+  ::std::string* unsafe_arena_release_set();
+  void unsafe_arena_set_allocated_set(
+      ::std::string* set);
+
+  // repeated string values = 9;
   int values_size() const;
   void clear_values();
-  static const int kValuesFieldNumber = 8;
+  static const int kValuesFieldNumber = 9;
   const ::std::string& values(int index) const;
   ::std::string* mutable_values(int index);
   void set_values(int index, const ::std::string& value);
@@ -597,16 +611,16 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::std::string>& values() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_values();
 
-  // uint32 priority = 9;
+  // uint32 priority = 10;
   void clear_priority();
-  static const int kPriorityFieldNumber = 9;
+  static const int kPriorityFieldNumber = 10;
   ::google::protobuf::uint32 priority() const;
   void set_priority(::google::protobuf::uint32 value);
 
-  // repeated string format = 10;
+  // repeated string format = 11;
   int format_size() const;
   void clear_format();
-  static const int kFormatFieldNumber = 10;
+  static const int kFormatFieldNumber = 11;
   const ::std::string& format(int index) const;
   ::std::string* mutable_format(int index);
   void set_format(int index, const ::std::string& value);
@@ -619,15 +633,15 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   const ::google::protobuf::RepeatedPtrField< ::std::string>& format() const;
   ::google::protobuf::RepeatedPtrField< ::std::string>* mutable_format();
 
-  // uint32 index = 11;
+  // uint32 index = 12;
   void clear_index();
-  static const int kIndexFieldNumber = 11;
+  static const int kIndexFieldNumber = 12;
   ::google::protobuf::uint32 index() const;
   void set_index(::google::protobuf::uint32 value);
 
-  // bool sql_string = 12;
+  // bool sql_string = 13;
   void clear_sql_string();
-  static const int kSqlStringFieldNumber = 12;
+  static const int kSqlStringFieldNumber = 13;
   bool sql_string() const;
   void set_sql_string(bool value);
 
@@ -646,6 +660,7 @@ class Variable : public ::google::protobuf::Message /* @@protoc_insertion_point(
   ::google::protobuf::internal::ArenaStringPtr full_name_;
   ::google::protobuf::internal::ArenaStringPtr measure_unit_;
   ::google::protobuf::internal::ArenaStringPtr get_;
+  ::google::protobuf::internal::ArenaStringPtr set_;
   int type_;
   ::google::protobuf::uint32 priority_;
   ::google::protobuf::uint32 index_;
@@ -944,20 +959,6 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   const ::google::protobuf::RepeatedPtrField< ::pkt2::Field >&
       fields() const;
 
-  // string set = 8;
-  void clear_set();
-  static const int kSetFieldNumber = 8;
-  const ::std::string& set() const;
-  void set_set(const ::std::string& value);
-  void set_set(const char* value);
-  void set_set(const char* value, size_t size);
-  ::std::string* mutable_set();
-  ::std::string* release_set();
-  void set_allocated_set(::std::string* set);
-  ::std::string* unsafe_arena_release_set();
-  void unsafe_arena_set_allocated_set(
-      ::std::string* set);
-
   // repeated string head = 10;
   int head_size() const;
   void clear_head();
@@ -988,7 +989,6 @@ class Packet : public ::google::protobuf::Message /* @@protoc_insertion_point(cl
   ::google::protobuf::internal::ArenaStringPtr name_;
   ::google::protobuf::internal::ArenaStringPtr short_name_;
   ::google::protobuf::internal::ArenaStringPtr full_name_;
-  ::google::protobuf::internal::ArenaStringPtr set_;
   ::google::protobuf::uint64 id_;
   mutable int _cached_size_;
   friend void  protobuf_InitDefaults_pkt2_2eproto_impl();
@@ -1788,7 +1788,73 @@ inline void Variable::unsafe_arena_set_allocated_get(
   // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Variable.get)
 }
 
-// repeated string values = 8;
+// string set = 8;
+inline void Variable::clear_set() {
+  set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+}
+inline const ::std::string& Variable::set() const {
+  // @@protoc_insertion_point(field_get:pkt2.Variable.set)
+  return set_.Get();
+}
+inline void Variable::set_set(const ::std::string& value) {
+  
+  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set:pkt2.Variable.set)
+}
+inline void Variable::set_set(const char* value) {
+  
+  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
+              GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set_char:pkt2.Variable.set)
+}
+inline void Variable::set_set(const char* value,
+    size_t size) {
+  
+  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
+      reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set_pointer:pkt2.Variable.set)
+}
+inline ::std::string* Variable::mutable_set() {
+  
+  // @@protoc_insertion_point(field_mutable:pkt2.Variable.set)
+  return set_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+}
+inline ::std::string* Variable::release_set() {
+  // @@protoc_insertion_point(field_release:pkt2.Variable.set)
+  
+  return set_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
+}
+inline ::std::string* Variable::unsafe_arena_release_set() {
+  // @@protoc_insertion_point(field_unsafe_arena_release:pkt2.Variable.set)
+  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
+  
+  return set_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      GetArenaNoVirtual());
+}
+inline void Variable::set_allocated_set(::std::string* set) {
+  if (set != NULL) {
+    
+  } else {
+    
+  }
+  set_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), set,
+      GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_set_allocated:pkt2.Variable.set)
+}
+inline void Variable::unsafe_arena_set_allocated_set(
+    ::std::string* set) {
+  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
+  if (set != NULL) {
+    
+  } else {
+    
+  }
+  set_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
+      set, GetArenaNoVirtual());
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Variable.set)
+}
+
+// repeated string values = 9;
 inline int Variable::values_size() const {
   return values_.size();
 }
@@ -1843,7 +1909,7 @@ Variable::mutable_values() {
   return &values_;
 }
 
-// uint32 priority = 9;
+// uint32 priority = 10;
 inline void Variable::clear_priority() {
   priority_ = 0u;
 }
@@ -1857,7 +1923,7 @@ inline void Variable::set_priority(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.priority)
 }
 
-// repeated string format = 10;
+// repeated string format = 11;
 inline int Variable::format_size() const {
   return format_.size();
 }
@@ -1912,7 +1978,7 @@ Variable::mutable_format() {
   return &format_;
 }
 
-// uint32 index = 11;
+// uint32 index = 12;
 inline void Variable::clear_index() {
   index_ = 0u;
 }
@@ -1926,7 +1992,7 @@ inline void Variable::set_index(::google::protobuf::uint32 value) {
   // @@protoc_insertion_point(field_set:pkt2.Variable.index)
 }
 
-// bool sql_string = 12;
+// bool sql_string = 13;
 inline void Variable::clear_sql_string() {
   sql_string_ = false;
 }
@@ -2342,72 +2408,6 @@ inline const ::google::protobuf::RepeatedPtrField< ::pkt2::Field >&
 Packet::fields() const {
   // @@protoc_insertion_point(field_list:pkt2.Packet.fields)
   return fields_;
-}
-
-// string set = 8;
-inline void Packet::clear_set() {
-  set_.ClearToEmpty(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-inline const ::std::string& Packet::set() const {
-  // @@protoc_insertion_point(field_get:pkt2.Packet.set)
-  return set_.Get();
-}
-inline void Packet::set_set(const ::std::string& value) {
-  
-  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), value, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set:pkt2.Packet.set)
-}
-inline void Packet::set_set(const char* value) {
-  
-  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(value),
-              GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_char:pkt2.Packet.set)
-}
-inline void Packet::set_set(const char* value,
-    size_t size) {
-  
-  set_.Set(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), ::std::string(
-      reinterpret_cast<const char*>(value), size), GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_pointer:pkt2.Packet.set)
-}
-inline ::std::string* Packet::mutable_set() {
-  
-  // @@protoc_insertion_point(field_mutable:pkt2.Packet.set)
-  return set_.Mutable(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-inline ::std::string* Packet::release_set() {
-  // @@protoc_insertion_point(field_release:pkt2.Packet.set)
-  
-  return set_.Release(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), GetArenaNoVirtual());
-}
-inline ::std::string* Packet::unsafe_arena_release_set() {
-  // @@protoc_insertion_point(field_unsafe_arena_release:pkt2.Packet.set)
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  
-  return set_.UnsafeArenaRelease(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      GetArenaNoVirtual());
-}
-inline void Packet::set_allocated_set(::std::string* set) {
-  if (set != NULL) {
-    
-  } else {
-    
-  }
-  set_.SetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(), set,
-      GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_set_allocated:pkt2.Packet.set)
-}
-inline void Packet::unsafe_arena_set_allocated_set(
-    ::std::string* set) {
-  GOOGLE_DCHECK(GetArenaNoVirtual() != NULL);
-  if (set != NULL) {
-    
-  } else {
-    
-  }
-  set_.UnsafeArenaSetAllocated(&::google::protobuf::internal::GetEmptyStringAlreadyInited(),
-      set, GetArenaNoVirtual());
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:pkt2.Packet.set)
 }
 
 // repeated string head = 10;

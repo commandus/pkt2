@@ -29,7 +29,7 @@ message Time5
 		name: "time5"
 		short_name: "Время"
 		full_name: "Дата и время"
-		set: "1"
+		// set: "1"
 		fields: [
 		{
 			name: "day_month_year"

@@ -346,7 +346,6 @@ int MessageDecomposer::decompose
 
 /**
   * @brief return human readable value as string
-  * @param format_number -1 - do not format using javascript(as is)
   */
 std::string MessageDecomposer::toString
 (
