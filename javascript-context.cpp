@@ -1,11 +1,16 @@
-/*
- * javascript-context.cpp
+/**
+ * @file javascript-context.cpp
  */
 #include <arpa/inet.h>
 #include "javascript-context.h"
 #include "utilprotobuf.h"
 #include "utilstring.h"
 #include "pkt2.pb.h"
+
+#define	DUK_DEBUG(context) \
+	duk_push_context_dump(context); \
+	std::cout << duk_to_string(context, -1) << std::endl; \
+	duk_pop(context); \
 
 void putSocketAddress
 (
@@ -16,9 +21,9 @@ void putSocketAddress
 
 void pushMessage
 (
-    duk_context *ctx,
+	duk_context *ctx,
 	Pkt2OptionsCache *options_cache,
-    const Pkt2PacketVariable *packet_variable,
+	const Pkt2PacketVariable *packet_variable,
 	const std::string &packet
 );
 
@@ -64,22 +69,48 @@ JavascriptContext::~JavascriptContext()
 
 	// current time
 	time_t t =  time(NULL);
+	
 	duk_push_global_object(context);
 	duk_push_uint(context, t);
 	duk_put_prop_string(context, -2, "time");
-
 	// src.ip, src.port
 	putSocketAddress(context, "src", socket_src);
 	// dst
 	putSocketAddress(context, "dst", socket_dst);
+	// field
+	duk_push_global_object(context);
+    pushMessage(context, options_cache, packet_root_variable, packet);
+	duk_put_prop_string(context, -2, "field");
+	duk_pop(context);
+}
+
+/**
+ * @brief Create Javascript context with global object field.xxx
+ * @param options_cache option cache
+ * @param packet_root_variable "root" packet input fields and output variables
+ * @param packet data
+ * @see pushField
+ */
+ JavascriptContext::JavascriptContext
+(
+	Pkt2OptionsCache *options_cache,
+	const Pkt2PacketVariable *packet_root_variable,
+	const std::string &packet
+)
+{
+	context = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
+
+	// current time
+	time_t t =  time(NULL);
+	duk_push_global_object(context);
+	duk_push_uint(context, t);
+	duk_put_prop_string(context, -2, "time");
 
 	// field
 	duk_push_global_object(context);
-	duk_push_object(context);
-
     pushMessage(context, options_cache, packet_root_variable, packet);
-
-    duk_put_global_string(context, "field");
+    duk_put_prop_string(context, -2, "field");
+	duk_pop(context);
 }
 
 /**
@@ -197,17 +228,58 @@ void putSocketAddress
 
 		}
 	}
-
 	duk_push_uint(ctx, ip4);
 	duk_put_prop_string(ctx, -2, "ip4");
-
 	duk_push_uint(ctx, port);
 	duk_put_prop_string(ctx, -2, "port");
-
 	duk_push_string(ctx, ip.c_str());
 	duk_put_prop_string(ctx, -2, "ip");
+	duk_put_prop_string(ctx, -2, objectName.c_str());
+//	duk_put_global_string(ctx, objectName.c_str());
+	duk_pop(ctx);
+}
 
-	duk_put_global_string(ctx, objectName.c_str());
+/**
+ * @brief find field number. 
+ * Usage: const std::string &field_packet = packet.substr(packet_variable->packet.fields(z).offset(), packet_variable->packet.fields(z).size());
+ * @param packet_variable packet variable where to find out
+ * @param fd field descriptor to find out
+ * @return -1 if not found
+ */
+int findFieldNumber
+(
+    const Pkt2PacketVariable *packet_variable,
+	const google::protobuf::FieldDescriptor* fd
+)
+{
+	// get a "zone" inside a packet corresponding to the message in the entire data
+	const FieldNameVariable *fnv = packet_variable->getVariableByFieldNumber(fd->number());
+	if (!fnv) 
+	{
+		// TODO report error
+		return -1;
+	}
+	// extract "zone" (field in the parent message) by name in the variable's "get" property.
+	// get can be: "field.name" (preferred) or "name" (optional)
+	std::string zone = fnv->var.get();
+	// if "get" contains "field." prefix, remove it
+	std::string::size_type pos = zone.find("field.");
+	if (pos != std::string::npos)
+	{
+		zone = zone.substr(pos + 6);
+	}
+
+	// Search field in the parent packet fields by the name
+	int z = -1;
+	for (int j = 0; j < packet_variable->packet.fields_size(); j++)
+	{
+		if (packet_variable->packet.fields(j).name() == zone)
+		{
+			z = j;
+			break;
+		}
+	}
+	return z;
 }
 
 /**
@@ -252,42 +324,14 @@ void pushMessage
 			// TODO report error
 			continue;
 		}
-		// get a "zone" inside a packet corresponding to the message in the entire data
-		const FieldNameVariable *fnv = packet_variable->getVariableByFieldNumber(fd->number());
-		if (!fnv) 
-		{
-			// TODO report error
-			continue;
-		}
-		// extract "zone" (field in the parent message) by name in the variable's "get" property.
-		// get can be: "field.name" (preferred) or "name" (optional)
-		std::string zone = fnv->var.get();
-		// if "get" contains "field." prefix, remove it
-		std::string::size_type pos = zone.find("field.");
-		if (pos != std::string::npos)
-		{
-			zone = zone.substr(pos + 6);
-		}
-
-		// Search field in the parent packet fields by the name
-		int z = -1;
-		for (int j = 0; j < packet_variable->packet.fields_size(); j++)
-		{
-			if (packet_variable->packet.fields(j).name() == zone)
-			{
-				z = j;
-				break;
-			}
-		}
+		
+		int z = findFieldNumber(packet_variable, fd);
 		if (z < 0)
-		{
-			// field not found.
-			// TODO report error
 			continue;
-		}
 			
 		// extract field from the parent packet
-		const std::string &field_packet = packet.substr(packet_variable->packet.fields(z).offset(), packet_variable->packet.fields(z).size());
+		const pkt2::Field &fld = packet_variable->packet.fields(z);
+		const std::string &field_packet = packet.substr(fld .offset(), fld .size());
 		pushMessage(ctx, options_cache, &packet_var, field_packet);
 		duk_put_prop_string(ctx, -2, fd->name().c_str());
 	}

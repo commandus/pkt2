@@ -186,7 +186,10 @@ int run
 			}
 
 			FieldNameValueIndexStrings vals(&options, messageTypeNAddress.message_type);
-			MessageDecomposer md(&vals, &options, m, addFieldValueString);
+			
+			// MessageDecomposer md(&vals, &context, &options, m, addFieldValueString);
+			MessageDecomposer md(&vals, messageTypeNAddress.message_type, &options, m, addFieldValueString);
+			
 			stmts.clear();
 			switch (config->mode)
 			{

@@ -80,7 +80,7 @@ int put
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
-	MessageDecomposer md(&vals, options, message, addFieldValueString);
+	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::cout << vals.toStringTab();
 	
 	int count = vals.values.size();

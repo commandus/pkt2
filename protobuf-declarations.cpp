@@ -232,13 +232,13 @@ Message *ProtobufDeclarations::decode
 	return message;
 }
 
+#ifdef LIB_PBJSON
 /**
  * Decode JSON data
  * @param message_name message name
  * @param json message value
  * @return NULL if no protobuf found or error occurred
  */
-
 google::protobuf::Message *ProtobufDeclarations::decode
 (
 	const std::string &message_name,
@@ -255,18 +255,17 @@ google::protobuf::Message *ProtobufDeclarations::decode
 	if (message)
 	{
 		std::string err;
-#ifdef LIB_PBJSON
 		if (pbjson::json2pb(json, message, err))
 		{
 			LOG(ERROR) << ERR_INVALID_JSON << " " << err << ": " << json;
 			return NULL;
 		}
-#else
-#error pbjson library missed 
-#endif
 	}
 	return message;
 }
+#else
+#error pbjson library missed 
+#endif
 
 /**
  * Encode message to the packet

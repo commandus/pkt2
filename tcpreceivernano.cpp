@@ -61,7 +61,7 @@ int listen_port
 	}
 
 	// Bind the socket to the address of my local machine and port number 
-	LOG(ERROR) << "Bind len " << res->ai_addrlen;
+	// LOG(INFO) << "Bind len " << res->ai_addrlen;
 	int status = bind(listner, res->ai_addr, res->ai_addrlen); 
 	if (status < 0)
 	{

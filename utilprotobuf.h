@@ -129,6 +129,18 @@ uint64_t extractFieldUInt
 );
 
 /**
+ * @brief Set field value in the packet from the string
+ * @param packet binary data 
+ * @param field descriptor of area in binary data: offset, size, bytes order
+ */
+void setFieldString
+(
+	std::string &packet,
+	const pkt2::Field &field,
+	const std::string &value
+);
+
+/**
  * @brief Set field value in the packet from 64 bit integer
  * @param packet binary data 
  * @param field descriptor of area in binary data: offset, size, bytes order
@@ -138,6 +150,18 @@ void setFieldUInt
 	std::string &packet,
 	const pkt2::Field &field,
 	uint64_t value
+);
+
+/**
+ * @brief Set field value in the packet from 64 bit integer
+ * @param packet binary data 
+ * @param field descriptor of area in binary data: offset, size, bytes order
+ */
+void setFieldDouble
+(
+	std::string &packet,
+	const pkt2::Field &field,
+	double value
 );
 
 /**

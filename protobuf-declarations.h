@@ -149,6 +149,7 @@ public:
 		google::protobuf::io::CodedInputStream *stream
 	);
 
+#ifdef LIB_PBJSON
 	/**
 	 * Decode JSON data
 	 * @param message_name message name
@@ -161,7 +162,8 @@ public:
 		const std::string &message_name,
 		const std::string &json
 	);
-
+#endif
+	
 	/**
 	 * Encode message to the packet
 	 * @param buffer can be NULL. Return size
