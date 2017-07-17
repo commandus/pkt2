@@ -37,8 +37,8 @@ void run()
 		reslt = tcp_receiever_nano(config);
 		if (n >= config->retries)
 			break;
-		n++;
 		sleep(config->retry_delay);
+		n++;
 	}
 }
 

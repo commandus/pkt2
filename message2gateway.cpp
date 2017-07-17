@@ -68,8 +68,8 @@ void runner()
 		reslt = run(config);
 		if (n >= config->retries)
 			break;
-		n++;
 		sleep(config->retry_delay);
+		n++;
 	}
 }
 

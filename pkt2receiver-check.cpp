@@ -53,12 +53,12 @@ void runner()
 	while (!config->stop_request)
 	{
 		LOG(INFO) << MSG_START << " " << n + 1;
-		reslt = run(config);
+//		reslt = run(config);
 		LOG(INFO) << MSG_STOP;
 		if (n >= config->retries)
 			break;
-		n++;
 		sleep(config->retry_delay);
+		n++;
 	}
 	LOG(INFO) << MSG_DONE;
 }

@@ -25,7 +25,7 @@ private:
 		char* argv[]
 	);
 public:
-	Config(int argc, char* argv[]);
+ 	Config(int argc, char* argv[]);
 	virtual ~Config();
 	int error();
 
