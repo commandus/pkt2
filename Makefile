@@ -826,7 +826,7 @@ CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = gcc -E
-CPPFLAGS =  -Icppcodec -I/usr/include/postgresql
+CPPFLAGS =  -Icppcodec
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -878,7 +878,7 @@ PATH_SEPARATOR = :
 RANLIB = ranlib
 SED = /bin/sed
 SET_MAKE = 
-SHELL = /bin/bash
+SHELL = /bin/sh
 STRIP = strip
 VERSION = 0.1
 abs_builddir = /home/andrei/src/pkt2
@@ -1093,7 +1093,7 @@ handlerpq_SOURCES = \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
 
 #
 #	tcptransmitter
@@ -1238,7 +1238,7 @@ pkt2dumppq_SOURCES = \
 	$(common_src)
 
 pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
 
 #
 # pkt2receiver-check

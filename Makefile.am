@@ -190,7 +190,7 @@ handlerpq_SOURCES= \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
 
 #
 #	tcptransmitter
@@ -334,7 +334,7 @@ pkt2dumppq_SOURCES = \
 	$(common_src)
 
 pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
 
 #
 # pkt2receiver-check
