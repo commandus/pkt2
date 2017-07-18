@@ -207,3 +207,40 @@ repeators =
 	}
 ];
 */
+
+/**
+ * Scripts actually is file named "script" like:
+ * 
+ * #!/bin/sh
+ * ...
+ * 
+ * getting arguments:
+ *  -c "command" (optional)
+ *  -i input queue (optional)
+ *  -o output queue (optional)
+ * 
+	Scripts config looks like:
+		scripts = 
+		[
+			{
+				"command": "1"
+				"in": "ipc:///tmp/control.pkt2",
+				"outs": [
+					"tcp://0.0.0.0:50000"
+				]
+			}
+		];
+ */
+
+/*
+scripts = 
+[
+	{
+		"command": "1"
+		"in": "ipc:///tmp/control.pkt2",
+		"outs": [
+			"tcp://127.0.0.1:50000"
+		]
+	}
+];
+*/
