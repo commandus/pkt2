@@ -700,6 +700,64 @@ public:
 	};
 };
 
+/**
+ * script -c -i -o
+ * scripts = 
+[
+	{
+		"command: "",
+		"in": "ipc:///tmp/control.pkt2",
+		"outs": [
+			"tcp://0.0.0.0:50000"
+		]
+	}
+];
+*/
+class CfgScript
+{
+public:
+	std::string url_in;
+	std::string command;
+	std::vector<std::string> url_outs;
+	CfgScript() : url_in(""), command("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		if (!command.empty())
+		{
+			PUSH_BACK_ARG_STR(r, "-c", command);
+		}
+		if (url_in != "ipc:///tmp/control.pkt2")
+		{
+			PUSH_BACK_ARG_STR(r, "-i", url_in);
+		}
+		if (!((url_outs.size() == 1) && (url_outs[0] == "tcp://0.0.0.0:50000")))
+		{
+			for (int i = 0; i < url_outs.size(); i++)
+			{
+				PUSH_BACK_ARG_STR(r, "-o", url_outs[i]);
+			}
+		}
+		
+		if (common)
+		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
+			if (common->max_buffer_size != 4096)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
+		}
+		return r;
+	};
+};
+
 class ProcessDescriptors
 {
 private:
@@ -715,6 +773,7 @@ public:
 	std::vector<CfgWritePq> cfgWritePq;
 	std::vector<CfgWriteGoogleSheets> cfgWriteGoogleSheets;
 	std::vector<CfgRepeator> cfgRepeators;
+	std::vector<CfgScript> CfgScripts;
 	
 	std::vector<ProcessDescriptor> descriptors;
 	
@@ -1138,6 +1197,11 @@ public:
 		for (std::vector<CfgRepeator>::iterator it(cfgRepeators.begin()); it != cfgRepeators.end(); ++it)
 		{
 			descriptors.push_back(ProcessDescriptor(path, "repeator", it->args(&cfgCommon)));
+		}
+
+		for (std::vector<CfgScript>::iterator it(CfgScripts.begin()); it != CfgScripts.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "script", it->args(&cfgCommon)));
 		}
 
 		return 0;
