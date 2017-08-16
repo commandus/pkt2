@@ -3,6 +3,7 @@ pkt2
 
 История изменений
 -----------------
+2017/08/16 добавлен раздел "Чтение данных из бинарных и текстовых файлов"
 2017/06/13 исправлен раздел "Описание пакетов"
 2017/04/25 pkt2dumppq
 2017/01/18 Пример описания
@@ -768,7 +769,7 @@ pkt2receiver осуществляет поиск подходящего прот
 [tcpemitter]
               tcpreceiver                       pkt2receiver               [pkt2gateway]     handlerpq             
               mqtt-receiver                                                [message2gateway] handler-google-sheets  
-                                                                           [example1message] handlerline
+              freceiver                                                    [example1message] handlerline
                                                                                              handlerlmdb
 ```                                                                                             
 В квадратных скобках ([]) тестирующие программы
@@ -871,6 +872,14 @@ mqtt_listeners =
 		"keep-alive": 20
 	}
 ];
+
+file_listeners = 
+[
+	{
+		"device": "/dev/device",
+	}
+];
+
 ```
 
 Массивы используются, потому что можнго запустить несколько экземпляров программ, за однгим исключением.
@@ -1081,7 +1090,7 @@ codex -protofile proto/example/example1.proto -message_name TemperaturePkt 1
  
 По умолчанию шлет в порт 50052.
 
-Один экземпляр tcpreceiver должен быть запущен. По умолчанию он слушает порт 50052.
+Один экземпляр tcpreceiver, mqtt-receiver или freceiver должен быть запущен. По умолчанию tcpreceiver слушает порт 50052.
 
 #### tcpemitter-iridium
 
@@ -1149,6 +1158,9 @@ values
 ------
 Record# PK
 
+### Чтение данных из бинарных и текстовых файлов
+
+Программа freceiver получает данные из файла(устройства).
 
 
 ## Баги

@@ -20,7 +20,6 @@ AM_CXXFLAGS =  -O0 -DDEBUG
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
 
-
 gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
@@ -52,7 +51,7 @@ bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransm
 	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
 	handlerpq handlerline handlerlmdb handler-google-sheets \
 	pkt2receiver-check \
-	pkt2dumppq repeator
+	pkt2dumppq repeator freceiver
 
 #
 #	Headers
@@ -83,7 +82,8 @@ pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
 pkt2-config.h pkt2-impl.h \
 pkt2receiver-check-config.h \
-repeator-config.h 
+repeator-config.h  \
+freceiver-impl.h freceiver-impl.h freceiver-config.h
 
 common_src =
 
@@ -145,9 +145,20 @@ mqtt_receiver_SOURCES = \
 	daemonize.cpp snmpagentpkt2.c get_rss.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
-
 mqtt_receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lpaho-mqtt3c $(SNMPLIBS)
 mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+	
+#
+#	freceiver
+#
+freceiver_SOURCES = \
+	freceiver.cpp freceiver-config.cpp freceiver-impl.cpp input-packet.cpp \
+	daemonize.cpp snmpagentpkt2.c errorcodes.cpp \
+	utilpriority.cpp utilstring.cpp utilinet.cpp \
+	$(common_src)
+
+freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	pkt2receiver
