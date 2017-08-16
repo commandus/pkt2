@@ -1198,6 +1198,11 @@ smilint -l3  -s -p ./mib/EAS-IKFIA-MIB
 
 ```
 
+### Проверка синтаксиса
+
+```
+protoc logger60.proto  --php_out /tmp
+```
 #### Cannot find module (SNMPv2-MIB)
 
 ```
