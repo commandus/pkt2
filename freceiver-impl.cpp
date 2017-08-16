@@ -151,7 +151,6 @@ START:
 	}
 
 	struct sockaddr_in *src = packet.get_sockaddr_src();
-	socklen_t addr_size = sizeof(struct sockaddr_in);
 
 	while (!config->stop_request)
 	{
@@ -192,7 +191,7 @@ START:
 
 		// send message to the nano queue
 		int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
-		
+
 		if (bytes != packet.size)
 		{
 			if (bytes < 0)
@@ -215,16 +214,17 @@ START:
 		}
 	}
 
-	if (config->file_mode == 0)
+	if (!config->filename_in.empty())
 		delete f;
+
 	r = nn_shutdown(nano_socket, eoid);
-	
+
 	if (nano_socket)
 	{
 		close(nano_socket);	
 		nano_socket = 0;
 	}
-	
+
 	LOG(ERROR) << MSG_STOP;
 	if (config->stop_request == 2)
 		goto START;
