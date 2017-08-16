@@ -100,7 +100,7 @@ bin_PROGRAMS = pkt2$(EXEEXT) mqtt-receiver$(EXEEXT) \
 	mqtt-emitter-iridium$(EXEEXT) handlerpq$(EXEEXT) \
 	handlerline$(EXEEXT) handlerlmdb$(EXEEXT) \
 	handler-google-sheets$(EXEEXT) pkt2receiver-check$(EXEEXT) \
-	pkt2dumppq$(EXEEXT) repeator$(EXEEXT)
+	pkt2dumppq$(EXEEXT) repeator$(EXEEXT) freceiver$(EXEEXT)
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
@@ -149,6 +149,17 @@ am_example1message1_OBJECTS =  \
 	example1message1-errorcodes.$(OBJEXT) $(am__objects_1)
 example1message1_OBJECTS = $(am_example1message1_OBJECTS)
 example1message1_DEPENDENCIES = $(am__DEPENDENCIES_1)
+am_freceiver_OBJECTS = freceiver-freceiver.$(OBJEXT) \
+	freceiver-freceiver-config.$(OBJEXT) \
+	freceiver-freceiver-impl.$(OBJEXT) \
+	freceiver-input-packet.$(OBJEXT) freceiver-daemonize.$(OBJEXT) \
+	freceiver-snmpagentpkt2.$(OBJEXT) \
+	freceiver-errorcodes.$(OBJEXT) \
+	freceiver-utilpriority.$(OBJEXT) \
+	freceiver-utilstring.$(OBJEXT) freceiver-utilinet.$(OBJEXT) \
+	$(am__objects_1)
+freceiver_OBJECTS = $(am_freceiver_OBJECTS)
+freceiver_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1)
 am_handler_google_sheets_OBJECTS =  \
 	handler_google_sheets-handler-google-sheets.$(OBJEXT) \
 	handler_google_sheets-google-sheets-writer.$(OBJEXT) \
@@ -500,27 +511,28 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
-	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
-	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
-	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
-	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
-	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(pkt2receiver_check_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(repeator_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
-	$(nodist_tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
-DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
-	$(handler_google_sheets_SOURCES) $(handlerline_SOURCES) \
-	$(handlerlmdb_SOURCES) $(handlerpq_SOURCES) \
-	$(message2gateway_SOURCES) $(messageemitter_SOURCES) \
-	$(mqtt_emitter_iridium_SOURCES) $(mqtt_receiver_SOURCES) \
-	$(pkt2_SOURCES) $(pkt2dumppq_SOURCES) $(pkt2gateway_SOURCES) \
-	$(pkt2receiver_SOURCES) $(pkt2receiver_check_SOURCES) \
-	$(protoc_gen_pkt2_SOURCES) $(repeator_SOURCES) \
-	$(tcpemitter_SOURCES) $(tcpemitter_example1_SOURCES) \
-	$(tcpemitter_iridium_SOURCES) $(tcpreceiver_SOURCES) \
+	$(freceiver_SOURCES) $(handler_google_sheets_SOURCES) \
+	$(handlerline_SOURCES) $(handlerlmdb_SOURCES) \
+	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
+	$(messageemitter_SOURCES) $(mqtt_emitter_iridium_SOURCES) \
+	$(mqtt_receiver_SOURCES) $(pkt2_SOURCES) $(pkt2dumppq_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(pkt2receiver_check_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(repeator_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(nodist_tcpreceiver_SOURCES) \
 	$(tcptransmitter_SOURCES)
+DIST_SOURCES = $(example1message_SOURCES) $(example1message1_SOURCES) \
+	$(freceiver_SOURCES) $(handler_google_sheets_SOURCES) \
+	$(handlerline_SOURCES) $(handlerlmdb_SOURCES) \
+	$(handlerpq_SOURCES) $(message2gateway_SOURCES) \
+	$(messageemitter_SOURCES) $(mqtt_emitter_iridium_SOURCES) \
+	$(mqtt_receiver_SOURCES) $(pkt2_SOURCES) $(pkt2dumppq_SOURCES) \
+	$(pkt2gateway_SOURCES) $(pkt2receiver_SOURCES) \
+	$(pkt2receiver_check_SOURCES) $(protoc_gen_pkt2_SOURCES) \
+	$(repeator_SOURCES) $(tcpemitter_SOURCES) \
+	$(tcpemitter_example1_SOURCES) $(tcpemitter_iridium_SOURCES) \
+	$(tcpreceiver_SOURCES) $(tcptransmitter_SOURCES)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -987,7 +999,8 @@ pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
 pkt2-config.h pkt2-impl.h \
 pkt2receiver-check-config.h \
-repeator-config.h 
+repeator-config.h  \
+freceiver-impl.h freceiver-impl.h freceiver-config.h
 
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
@@ -1051,6 +1064,18 @@ mqtt_receiver_SOURCES = \
 
 mqtt_receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lpaho-mqtt3c $(SNMPLIBS)
 mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+#	freceiver
+#
+freceiver_SOURCES = \
+	freceiver.cpp freceiver-config.cpp freceiver-impl.cpp input-packet.cpp \
+	daemonize.cpp snmpagentpkt2.c errorcodes.cpp \
+	utilpriority.cpp utilstring.cpp utilinet.cpp \
+	$(common_src)
+
+freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	pkt2receiver
@@ -1398,6 +1423,10 @@ example/example1message1-example1.pb.$(OBJEXT):  \
 example1message1$(EXEEXT): $(example1message1_OBJECTS) $(example1message1_DEPENDENCIES) $(EXTRA_example1message1_DEPENDENCIES) 
 	@rm -f example1message1$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(example1message1_OBJECTS) $(example1message1_LDADD) $(LIBS)
+
+freceiver$(EXEEXT): $(freceiver_OBJECTS) $(freceiver_DEPENDENCIES) $(EXTRA_freceiver_DEPENDENCIES) 
+	@rm -f freceiver$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(freceiver_OBJECTS) $(freceiver_LDADD) $(LIBS)
 duk/$(am__dirstamp):
 	@$(MKDIR_P) duk
 	@: > duk/$(am__dirstamp)
@@ -1526,6 +1555,16 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message1-example1message1.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message1-pkt2.pb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/example1message1-utilsnmp.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-daemonize.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-errorcodes.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-freceiver-config.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-freceiver-impl.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-freceiver.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-input-packet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-snmpagentpkt2.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-utilinet.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-utilpriority.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/freceiver-utilstring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handler_google_sheets-daemonize.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handler_google_sheets-error-printer.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/handler_google_sheets-errorcodes.Po@am__quote@
@@ -1813,6 +1852,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LTCOMPILE) -c -o $@ $<
+
+freceiver-snmpagentpkt2.o: snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT freceiver-snmpagentpkt2.o -MD -MP -MF $(DEPDIR)/freceiver-snmpagentpkt2.Tpo -c -o freceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-snmpagentpkt2.Tpo $(DEPDIR)/freceiver-snmpagentpkt2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='snmpagentpkt2.c' object='freceiver-snmpagentpkt2.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o freceiver-snmpagentpkt2.o `test -f 'snmpagentpkt2.c' || echo '$(srcdir)/'`snmpagentpkt2.c
+
+freceiver-snmpagentpkt2.obj: snmpagentpkt2.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT freceiver-snmpagentpkt2.obj -MD -MP -MF $(DEPDIR)/freceiver-snmpagentpkt2.Tpo -c -o freceiver-snmpagentpkt2.obj `if test -f 'snmpagentpkt2.c'; then $(CYGPATH_W) 'snmpagentpkt2.c'; else $(CYGPATH_W) '$(srcdir)/snmpagentpkt2.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-snmpagentpkt2.Tpo $(DEPDIR)/freceiver-snmpagentpkt2.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='snmpagentpkt2.c' object='freceiver-snmpagentpkt2.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o freceiver-snmpagentpkt2.obj `if test -f 'snmpagentpkt2.c'; then $(CYGPATH_W) 'snmpagentpkt2.c'; else $(CYGPATH_W) '$(srcdir)/snmpagentpkt2.c'; fi`
 
 duk/handler_google_sheets-duktape.o: duk/duktape.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT duk/handler_google_sheets-duktape.o -MD -MP -MF duk/$(DEPDIR)/handler_google_sheets-duktape.Tpo -c -o duk/handler_google_sheets-duktape.o `test -f 'duk/duktape.c' || echo '$(srcdir)/'`duk/duktape.c
@@ -2243,6 +2296,132 @@ example1message1-errorcodes.obj: errorcodes.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='errorcodes.cpp' object='example1message1-errorcodes.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(example1message1_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o example1message1-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
+freceiver-freceiver.o: freceiver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-freceiver.o -MD -MP -MF $(DEPDIR)/freceiver-freceiver.Tpo -c -o freceiver-freceiver.o `test -f 'freceiver.cpp' || echo '$(srcdir)/'`freceiver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-freceiver.Tpo $(DEPDIR)/freceiver-freceiver.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='freceiver.cpp' object='freceiver-freceiver.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-freceiver.o `test -f 'freceiver.cpp' || echo '$(srcdir)/'`freceiver.cpp
+
+freceiver-freceiver.obj: freceiver.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-freceiver.obj -MD -MP -MF $(DEPDIR)/freceiver-freceiver.Tpo -c -o freceiver-freceiver.obj `if test -f 'freceiver.cpp'; then $(CYGPATH_W) 'freceiver.cpp'; else $(CYGPATH_W) '$(srcdir)/freceiver.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-freceiver.Tpo $(DEPDIR)/freceiver-freceiver.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='freceiver.cpp' object='freceiver-freceiver.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-freceiver.obj `if test -f 'freceiver.cpp'; then $(CYGPATH_W) 'freceiver.cpp'; else $(CYGPATH_W) '$(srcdir)/freceiver.cpp'; fi`
+
+freceiver-freceiver-config.o: freceiver-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-freceiver-config.o -MD -MP -MF $(DEPDIR)/freceiver-freceiver-config.Tpo -c -o freceiver-freceiver-config.o `test -f 'freceiver-config.cpp' || echo '$(srcdir)/'`freceiver-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-freceiver-config.Tpo $(DEPDIR)/freceiver-freceiver-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='freceiver-config.cpp' object='freceiver-freceiver-config.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-freceiver-config.o `test -f 'freceiver-config.cpp' || echo '$(srcdir)/'`freceiver-config.cpp
+
+freceiver-freceiver-config.obj: freceiver-config.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-freceiver-config.obj -MD -MP -MF $(DEPDIR)/freceiver-freceiver-config.Tpo -c -o freceiver-freceiver-config.obj `if test -f 'freceiver-config.cpp'; then $(CYGPATH_W) 'freceiver-config.cpp'; else $(CYGPATH_W) '$(srcdir)/freceiver-config.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-freceiver-config.Tpo $(DEPDIR)/freceiver-freceiver-config.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='freceiver-config.cpp' object='freceiver-freceiver-config.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-freceiver-config.obj `if test -f 'freceiver-config.cpp'; then $(CYGPATH_W) 'freceiver-config.cpp'; else $(CYGPATH_W) '$(srcdir)/freceiver-config.cpp'; fi`
+
+freceiver-freceiver-impl.o: freceiver-impl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-freceiver-impl.o -MD -MP -MF $(DEPDIR)/freceiver-freceiver-impl.Tpo -c -o freceiver-freceiver-impl.o `test -f 'freceiver-impl.cpp' || echo '$(srcdir)/'`freceiver-impl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-freceiver-impl.Tpo $(DEPDIR)/freceiver-freceiver-impl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='freceiver-impl.cpp' object='freceiver-freceiver-impl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-freceiver-impl.o `test -f 'freceiver-impl.cpp' || echo '$(srcdir)/'`freceiver-impl.cpp
+
+freceiver-freceiver-impl.obj: freceiver-impl.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-freceiver-impl.obj -MD -MP -MF $(DEPDIR)/freceiver-freceiver-impl.Tpo -c -o freceiver-freceiver-impl.obj `if test -f 'freceiver-impl.cpp'; then $(CYGPATH_W) 'freceiver-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/freceiver-impl.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-freceiver-impl.Tpo $(DEPDIR)/freceiver-freceiver-impl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='freceiver-impl.cpp' object='freceiver-freceiver-impl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-freceiver-impl.obj `if test -f 'freceiver-impl.cpp'; then $(CYGPATH_W) 'freceiver-impl.cpp'; else $(CYGPATH_W) '$(srcdir)/freceiver-impl.cpp'; fi`
+
+freceiver-input-packet.o: input-packet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-input-packet.o -MD -MP -MF $(DEPDIR)/freceiver-input-packet.Tpo -c -o freceiver-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-input-packet.Tpo $(DEPDIR)/freceiver-input-packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='input-packet.cpp' object='freceiver-input-packet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-input-packet.o `test -f 'input-packet.cpp' || echo '$(srcdir)/'`input-packet.cpp
+
+freceiver-input-packet.obj: input-packet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-input-packet.obj -MD -MP -MF $(DEPDIR)/freceiver-input-packet.Tpo -c -o freceiver-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-input-packet.Tpo $(DEPDIR)/freceiver-input-packet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='input-packet.cpp' object='freceiver-input-packet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-input-packet.obj `if test -f 'input-packet.cpp'; then $(CYGPATH_W) 'input-packet.cpp'; else $(CYGPATH_W) '$(srcdir)/input-packet.cpp'; fi`
+
+freceiver-daemonize.o: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-daemonize.o -MD -MP -MF $(DEPDIR)/freceiver-daemonize.Tpo -c -o freceiver-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-daemonize.Tpo $(DEPDIR)/freceiver-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='freceiver-daemonize.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-daemonize.o `test -f 'daemonize.cpp' || echo '$(srcdir)/'`daemonize.cpp
+
+freceiver-daemonize.obj: daemonize.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-daemonize.obj -MD -MP -MF $(DEPDIR)/freceiver-daemonize.Tpo -c -o freceiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-daemonize.Tpo $(DEPDIR)/freceiver-daemonize.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='daemonize.cpp' object='freceiver-daemonize.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-daemonize.obj `if test -f 'daemonize.cpp'; then $(CYGPATH_W) 'daemonize.cpp'; else $(CYGPATH_W) '$(srcdir)/daemonize.cpp'; fi`
+
+freceiver-errorcodes.o: errorcodes.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-errorcodes.o -MD -MP -MF $(DEPDIR)/freceiver-errorcodes.Tpo -c -o freceiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-errorcodes.Tpo $(DEPDIR)/freceiver-errorcodes.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='errorcodes.cpp' object='freceiver-errorcodes.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-errorcodes.o `test -f 'errorcodes.cpp' || echo '$(srcdir)/'`errorcodes.cpp
+
+freceiver-errorcodes.obj: errorcodes.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-errorcodes.obj -MD -MP -MF $(DEPDIR)/freceiver-errorcodes.Tpo -c -o freceiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-errorcodes.Tpo $(DEPDIR)/freceiver-errorcodes.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='errorcodes.cpp' object='freceiver-errorcodes.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-errorcodes.obj `if test -f 'errorcodes.cpp'; then $(CYGPATH_W) 'errorcodes.cpp'; else $(CYGPATH_W) '$(srcdir)/errorcodes.cpp'; fi`
+
+freceiver-utilpriority.o: utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-utilpriority.o -MD -MP -MF $(DEPDIR)/freceiver-utilpriority.Tpo -c -o freceiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-utilpriority.Tpo $(DEPDIR)/freceiver-utilpriority.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilpriority.cpp' object='freceiver-utilpriority.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-utilpriority.o `test -f 'utilpriority.cpp' || echo '$(srcdir)/'`utilpriority.cpp
+
+freceiver-utilpriority.obj: utilpriority.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-utilpriority.obj -MD -MP -MF $(DEPDIR)/freceiver-utilpriority.Tpo -c -o freceiver-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-utilpriority.Tpo $(DEPDIR)/freceiver-utilpriority.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilpriority.cpp' object='freceiver-utilpriority.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-utilpriority.obj `if test -f 'utilpriority.cpp'; then $(CYGPATH_W) 'utilpriority.cpp'; else $(CYGPATH_W) '$(srcdir)/utilpriority.cpp'; fi`
+
+freceiver-utilstring.o: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-utilstring.o -MD -MP -MF $(DEPDIR)/freceiver-utilstring.Tpo -c -o freceiver-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-utilstring.Tpo $(DEPDIR)/freceiver-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='freceiver-utilstring.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-utilstring.o `test -f 'utilstring.cpp' || echo '$(srcdir)/'`utilstring.cpp
+
+freceiver-utilstring.obj: utilstring.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-utilstring.obj -MD -MP -MF $(DEPDIR)/freceiver-utilstring.Tpo -c -o freceiver-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-utilstring.Tpo $(DEPDIR)/freceiver-utilstring.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilstring.cpp' object='freceiver-utilstring.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-utilstring.obj `if test -f 'utilstring.cpp'; then $(CYGPATH_W) 'utilstring.cpp'; else $(CYGPATH_W) '$(srcdir)/utilstring.cpp'; fi`
+
+freceiver-utilinet.o: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-utilinet.o -MD -MP -MF $(DEPDIR)/freceiver-utilinet.Tpo -c -o freceiver-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-utilinet.Tpo $(DEPDIR)/freceiver-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='freceiver-utilinet.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-utilinet.o `test -f 'utilinet.cpp' || echo '$(srcdir)/'`utilinet.cpp
+
+freceiver-utilinet.obj: utilinet.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT freceiver-utilinet.obj -MD -MP -MF $(DEPDIR)/freceiver-utilinet.Tpo -c -o freceiver-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/freceiver-utilinet.Tpo $(DEPDIR)/freceiver-utilinet.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='utilinet.cpp' object='freceiver-utilinet.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(freceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o freceiver-utilinet.obj `if test -f 'utilinet.cpp'; then $(CYGPATH_W) 'utilinet.cpp'; else $(CYGPATH_W) '$(srcdir)/utilinet.cpp'; fi`
 
 handler_google_sheets-handler-google-sheets.o: handler-google-sheets.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(handler_google_sheets_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT handler_google_sheets-handler-google-sheets.o -MD -MP -MF $(DEPDIR)/handler_google_sheets-handler-google-sheets.Tpo -c -o handler_google_sheets-handler-google-sheets.o `test -f 'handler-google-sheets.cpp' || echo '$(srcdir)/'`handler-google-sheets.cpp
