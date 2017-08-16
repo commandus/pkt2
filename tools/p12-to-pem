@@ -1,0 +1,4 @@
+#!/bin/sh
+IN=$1
+openssl pkcs12 -in $IN -out $IN.crt -clcerts -nokeys
+openssl pkcs12 -in $IN -out $IN.key -nocerts -nodes
