@@ -873,10 +873,13 @@ mqtt_listeners =
 	}
 ];
 
+// mode: 0- binary, 1- hex lines, 2- integers
+// file: default stdin
 file_listeners = 
 [
 	{
-		"device": "/dev/device",
+		"file": "/dev/device",
+		"mode": 0
 	}
 ];
 

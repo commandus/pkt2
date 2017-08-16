@@ -322,6 +322,52 @@ public:
 };
 
 /**
+ * 		mqtt_listeners = 
+[
+	{
+		"client": "cli01",
+		"broker": "tcp://127.0.0.1",
+		"port": 1883,
+		"qos": 1, 
+		"keep-alive": 20
+	}
+];
+*/
+class CfgListenerFile
+{
+public:
+	std::string file;
+	int mode;
+	CfgListenerFile() : file(""), mode(0) {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		PUSH_BACK_ARG_STR(r, "-i", file);
+		PUSH_BACK_ARG_NUM(r, "-t", mode);
+		if (common)
+		{
+			if (common->verbosity == 1)
+			{
+				PUSH_BACK_ARG_LIT(r, "-v");
+			}
+			if (common->verbosity >= 2)
+			{
+				PUSH_BACK_ARG_LIT(r, "-vv");
+			}
+			if (common->bus_in != "ipc:///tmp/packet.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
+			}
+			if (common->max_file_descriptors)
+			{
+				PUSH_BACK_ARG_NUM(r, "--maxfd", common->max_file_descriptors);
+			}
+		}
+		return r;
+	};
+};
+
+/**
  * 	packet2message = 
 [
 	{
@@ -767,6 +813,7 @@ public:
 	CfgCommon cfgCommon;
 	std::vector<CfgListenerTcp> cfgListenerTcp;
 	std::vector<CfgListenerMqtt> cfgListenerMqtt;
+	std::vector<CfgListenerFile> cfgListenerFile;
 	std::vector<CfgPacket2Message> cfgPacket2Message;
 	std::vector<CfgWriteFile> cfgWriteFile;
 	std::vector<CfgWriteLmdb> cfgWriteLmdb;
@@ -871,6 +918,29 @@ public:
 				} 
 				duk_pop(context);
 				cfgListenerMqtt.push_back(cfg);
+			}
+		}
+		duk_pop(context);
+
+		// File listener
+		duk_get_prop_string(context, -1, "file_listeners");
+		if (duk_is_array(context, -1)) 
+		{
+			duk_size_t n = duk_get_length(context, -1);
+			for (duk_size_t i = 0; i < n; i++) 
+			{
+				CfgListenerFile cfg;
+				if (duk_get_prop_index(context, -1, i)) 
+				{
+					if (duk_get_prop_string(context, -1, "file"))
+						cfg.file = duk_get_string(context, -1);
+					duk_pop(context);
+					if (duk_get_prop_string(context, -1, "mode"))
+						cfg.mode = duk_get_int(context, -1);
+					duk_pop(context);
+				} 
+				duk_pop(context);
+				cfgListenerFile.push_back(cfg);
 			}
 		}
 		duk_pop(context);
@@ -1144,12 +1214,14 @@ public:
 		
 		cfgListenerTcp.clear();
 		cfgListenerMqtt.clear();
+		cfgListenerFile.clear();
 		cfgPacket2Message.clear();
 		cfgWriteFile.clear();
 		cfgWriteLmdb.clear();
 		cfgWritePq.clear();
 		cfgWriteGoogleSheets.clear();
 		cfgRepeators.clear();
+		CfgScripts.clear();
 		
 		load_config();
 		return 0;
@@ -1168,7 +1240,12 @@ public:
 		{
 			descriptors.push_back(ProcessDescriptor(path, "mqtt-receiver", it->args(&cfgCommon)));
 		}
-		
+
+		for (std::vector<CfgListenerFile>::iterator it(cfgListenerFile.begin()); it != cfgListenerFile.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "freceiver", it->args(&cfgCommon)));
+		}
+
 		for (std::vector<CfgPacket2Message>::iterator it(cfgPacket2Message.begin()); it != cfgPacket2Message.end(); ++it)
 		{
 			descriptors.push_back(ProcessDescriptor(path, "pkt2receiver", it->args(&cfgCommon)));

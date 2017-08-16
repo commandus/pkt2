@@ -4,8 +4,6 @@
 #include <cstring>
 #include <argtable2.h>
 
-#define DEF_PORT                 50052
-#define DEF_ADDRESS              "0.0.0.0"
 #define DEF_QUEUE                "ipc:///tmp/packet.pkt2"
 #define DEF_BUFFER_SIZE          4096
 
@@ -37,7 +35,7 @@ int Config::parseCmd
 )
 {
 	// input options
-	struct arg_str *a_cmd_text = arg_str0("t", "text", "<hex|int>", "hex lines or decimal per line");
+	struct arg_str *a_cmd_text = arg_str0("t", "text", "<hex|int>", "1, hex: hex lines; 2, int: lines or decimal per line. Default 0: binary");
 	struct arg_file *a_filename_in = arg_file0("i", "input", "<file>", "Default read stdin.");
 	struct arg_int *a_packet_size = arg_int0("s", "size", "<bytes>", "Packet size. Default 0- to EOL or EOF");
 	struct arg_str *a_message_url = arg_str0("o", "output", "<bus url>", "Default ipc:///tmp/packet.pkt2");
@@ -89,6 +87,10 @@ int Config::parseCmd
 		if (strcmp(*a_cmd_text->sval, "hex") == 0)
 			file_mode = FILE_MODE_TEXT_HEX;
 		if (strcmp(*a_cmd_text->sval, "int") == 0)
+			file_mode = FILE_MODE_TEXT_INT;
+		if (strcmp(*a_cmd_text->sval, "1") == 0)
+			file_mode = FILE_MODE_TEXT_HEX;
+		if (strcmp(*a_cmd_text->sval, "2") == 0)
 			file_mode = FILE_MODE_TEXT_INT;
 	}
 
