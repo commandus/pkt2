@@ -33,7 +33,11 @@ static int char2int
 	return 0;
 }
 
-void readData
+/**
+ * @brief copy bytes from input to output stream
+ * @return -1 EOF, copied bytes count otherwise 
+ */
+int readData
 (
 	std::ostream &ostrm,
 	int cmd,
@@ -41,6 +45,9 @@ void readData
 	std::istream *istrm
 )
 {
+	int r = 0;
+	if (istrm->bad()) 
+		return -1;	// EOF or error
 	switch(cmd)
 	{
 		case FILE_MODE_TEXT_HEX:
@@ -48,11 +55,10 @@ void readData
 				std::string line;
 				if (std::getline(*istrm, line))
 				{
-					size_t sz = line.size() / 2;
-					if ((packet_size > 0) && (packet_size < sz))
-						sz = packet_size;
-
-					for (int i = 0; i < sz; i++)
+					r = line.size() / 2;
+					if ((packet_size > 0) && (packet_size < r))
+						r = packet_size;
+					for (int i = 0; i < r; i++)
 					{
 						unsigned char v = char2int(line.at(i * 2)) * 16 + char2int(line.at((i * 2) + 1));
 						ostrm.write((char *)&v, 1);
@@ -63,7 +69,6 @@ void readData
 		case FILE_MODE_TEXT_INT:
 			{
 				std::string line;
-				int r = 0;
 				while (std::getline(*istrm, line))
 				{
 					int v = strtol(line.c_str(), NULL, 10);
@@ -77,7 +82,6 @@ void readData
 		default:	// case FILE_MODE_BIN:
 		{
 			char v;
-			int r = 0;
 			while (istrm->read((char *)&v, 1))
 			{
 				r++;
@@ -90,6 +94,7 @@ void readData
 			}
 		}
 	}
+	return r;
 }
 
 /**
@@ -161,12 +166,13 @@ START:
 		}
 
 		std::stringstream ss;
-		readData(ss, config->file_mode, config->packet_size, f);
+		if (readData(ss, config->file_mode, config->packet_size, f) == 0)
+			break;
 		std:: string s = ss.str();
 		size_t sz = s.size();
 		// Read
 		packet.setLength(sz);
-
+		memcpy(packet.data(), s.c_str(), sz);
 		if (packet.length <= 0)
 		{
 			LOG(ERROR) << ERR_SOCKET_READ << gai_strerror(errno);

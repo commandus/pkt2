@@ -3,7 +3,7 @@
 #include "freceiver-config.h"
 #include "utilstring.h"
 
-void readData
+int readData
 (
 	std::ostream &ostrm,
 	int cmd,
