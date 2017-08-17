@@ -70,6 +70,7 @@ tcp_listeners =
  * qos: QOS 0, 1, 2. Default 1
  * keep-alive: keep-alive, seconds. Default 20.
  */
+/*
 mqtt_listeners = 
 [
 	{
@@ -81,6 +82,7 @@ mqtt_listeners =
 		"keep-alive": 20
 	}
 ];
+*/
 
 //------------------------- pkt2receiver --------------------
 
