@@ -117,6 +117,18 @@ double extractFieldDouble
 );
 
 /**
+ * @brief Get field value from the packet as 64 bit signed integer
+ * @param packet data packet containing field
+ * @param field field 
+ * @return integer
+ */
+int64_t extractFieldInt
+(
+		const std::string &packet,
+		const pkt2::Field &field
+);
+
+/**
  * @brief Get field value from the packet as 64 bit integer
  * @param packet binary data 
  * @param field descriptor of area in binary data: offset, size, bytes order
@@ -144,6 +156,20 @@ void setFieldString
  * @brief Set field value in the packet from 64 bit integer
  * @param packet binary data 
  * @param field descriptor of area in binary data: offset, size, bytes order
+ * @param value integer
+ */
+void setFieldInt
+(
+	std::string &packet,
+	const pkt2::Field &field,
+	int64_t value
+);
+
+/**
+ * @brief Set field value in the packet from 64 bit integer
+ * @param packet binary data 
+ * @param field descriptor of area in binary data: offset, size, bytes order
+ * @param value unsigned integer
  */
 void setFieldUInt
 (

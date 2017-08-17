@@ -28,8 +28,71 @@ message TemperatureNAngles
         }
         fields: [
         {
+            name: "fx1"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 18
+        },
+        {
+            name: "fy1"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 20
+        },
+        {
+            name: "fz1"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 22
+        },
+        {
+            name: "fx2"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 34
+        },
+        {
+            name: "fy2"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 36
+        },
+        {
+            name: "fz2"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 38
+        },        
+        {
+            name: "fx3"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 50
+        },
+        {
+            name: "fy3"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 52
+        },
+        {
+            name: "fz3"
+            type: INPUT_INT
+            size: 2
+            endian: ENDIAN_LITTLE_ENDIAN
+            offset: 54
+        },        
+        {
             name: "ft1"
-            type: INPUT_UINT
+            type: INPUT_INT
             size: 1
             offset: 24
         },
@@ -41,7 +104,7 @@ message TemperatureNAngles
         },
         {
             name: "ft2"
-            type: INPUT_UINT
+            type: INPUT_INT
             size: 1
             offset: 40
         },
@@ -53,7 +116,7 @@ message TemperatureNAngles
         },
         {
             name: "ft3"
-            type: INPUT_UINT
+            type: INPUT_INT
             size: 1
             offset: 56
         },
@@ -81,7 +144,7 @@ message TemperatureNAngles
         measure_unit: "C"
         get: "field.ft1 + (field.ft1f / 256)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(2).replace('.', ',')"]
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
     }];
     double t2 = 2 [(pkt2.variable) = {
         name: "T"
@@ -90,7 +153,7 @@ message TemperatureNAngles
         measure_unit: "C"
         get: "field.ft2 + (field.ft2f / 256)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(2).replace('.', ',')"]
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
     }];
     double t3 = 3 [(pkt2.variable) = {
         name: "T"
@@ -99,6 +162,87 @@ message TemperatureNAngles
         measure_unit: "C"
         get: "field.ft3 + (field.ft3f / 256)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(2).replace('.', ',')"]
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double x1 = 4 [(pkt2.variable) = {
+        name: "x1"
+        short_name: "X 1"
+        full_name: "Угол X 1"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fx1 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double y1 = 5 [(pkt2.variable) = {
+        name: "y1"
+        short_name: "Y 1"
+        full_name: "Угол Y 1"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fy1 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double z1 = 6 [(pkt2.variable) = {
+        name: "x1"
+        short_name: "X 1"
+        full_name: "Угол Z 1"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fz1 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double x2 = 7 [(pkt2.variable) = {
+        name: "x2"
+        short_name: "X 2"
+        full_name: "Угол X 2"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fx2 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double y2 = 8 [(pkt2.variable) = {
+        name: "y2"
+        short_name: "Y 2"
+        full_name: "Угол Y 2"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fy2 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double z2 = 9 [(pkt2.variable) = {
+        name: "x2"
+        short_name: "X 2"
+        full_name: "Угол Z 2"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fz2 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double x3 = 10 [(pkt2.variable) = {
+        name: "x3"
+        short_name: "X 3"
+        full_name: "Угол X 3"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fx3 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double y3 = 11 [(pkt2.variable) = {
+        name: "y3"
+        short_name: "Y 3"
+        full_name: "Угол Y 3"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fy3 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+    }];
+    double z3 = 12 [(pkt2.variable) = {
+        name: "x3"
+        short_name: "X 3"
+        full_name: "Угол Z 3"
+        measure_unit: "°"
+        get: "0.02197265625 * (field.fz3 >> 2)"
+        priority: 0                                 // required
+        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
     }];
 }

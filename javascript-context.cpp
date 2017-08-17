@@ -179,6 +179,12 @@ void pushField
 			duk_put_prop_string(ctx, -2, field.name().c_str());
 			break;
 		}
+		case pkt2::INPUT_INT:
+			{
+				duk_push_uint(ctx, extractFieldInt(packet, field));
+				duk_put_prop_string(ctx, -2, field.name().c_str());
+			}
+			break;
 		default:
 			duk_push_uint(ctx, extractFieldUInt(packet, field));
 			duk_put_prop_string(ctx, -2, field.name().c_str());

@@ -608,7 +608,7 @@ std::string MessageDecomposer::reflectJsFieldsToMessagePacketField
 {
 	std::string r = packet;
 	std::string vs = getJsField(context, field.name());
-	
+  
 	switch (field.type()) {
 		case pkt2::INPUT_MESSAGE:
 		case pkt2::INPUT_NONE:
@@ -634,6 +634,12 @@ std::string MessageDecomposer::reflectJsFieldsToMessagePacketField
 			}
 			break;
 		}
+		case pkt2::INPUT_INT:
+			{
+				int64_t v = strtol(vs.c_str(), NULL, 10);
+				setFieldInt(r, field, v);
+			}
+			break;
 		default:
 			{
 				uint64_t v = strtoul(vs.c_str(), NULL, 10);

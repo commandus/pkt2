@@ -399,7 +399,7 @@ std::string extractField
 }
 
 /**
- * @brief Get field value from the packet as 64 bit integer
+ * @brief Get field value from the packet as 64 bit unsigned integer
  * @param packet data packet containing field
  * @param field field 
  * @return integer
@@ -435,6 +435,42 @@ uint64_t extractFieldUInt
 }
 
 /**
+ * @brief Get field value from the packet as 64 bit signed integer
+ * @param packet data packet containing field
+ * @param field field 
+ * @return integer
+ */
+int64_t extractFieldInt
+(
+		const std::string &packet,
+		const pkt2::Field &field
+)
+{
+	std::string r = extractField(packet, field);
+	int sz = field.size();
+	switch (sz)
+	{
+	case 0:
+		return 0;
+	case 1:
+		return *((int8_t*) &r[0]);
+	case 2:
+		return *((int16_t*) &r[0]);
+	case 4:
+		return *((int32_t*) &r[0]);
+	case 8:
+		return *((int64_t*) &r[0]);
+	default:
+	{
+		int64_t v = 0;
+		memmove(&v, &r[0], (sz < sizeof(int64_t) ? sz : sizeof(int64_t)));
+		return v;
+	}
+	}
+	return 0;
+}
+
+/**
  * @brief Set field value in the packet from the string
  * @param packet binary data 
  * @param field descriptor of area in binary data: offset, size, bytes order
@@ -456,6 +492,31 @@ void setFieldString
  * @brief Set field value in the packet from 64 bit integer
  * @param packet binary data 
  * @param field descriptor of area in binary data: offset, size, bytes order
+ * @param value integer
+ */
+void setFieldInt
+(
+	std::string &packet,
+	const pkt2::Field &field,
+	int64_t value
+)
+{
+	int sz = field.size();
+	if (sz == 0)
+		return;
+	if ((sz > 1) && ENDIAN_NEED_SWAP(field.endian()))
+	{
+		char *p = (char *) &value;
+		std::reverse(p, p + field.size());
+	}
+	memmove((char *) packet.c_str() + field.offset(), &value, (sz < sizeof(int64_t) ? sz : sizeof(int64_t)));
+}
+
+/**
+ * @brief Set field value in the packet from 64 bit integer
+ * @param packet binary data 
+ * @param field descriptor of area in binary data: offset, size, bytes order
+ * @param value unsigned integer
  */
 void setFieldUInt
 (
