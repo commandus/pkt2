@@ -66,7 +66,7 @@ int listen_port
 	if (status < 0)
 	{
 		close(listner);
-		LOG(ERROR) << ERR_SOCKET_BIND << gai_strerror(status) << " addr len " << res->ai_addrlen;
+		LOG(ERROR) << ERR_SOCKET_BIND << errno << ": " << strerror(errno) << ", addr len " << res->ai_addrlen;
 		return ERRCODE_SOCKET_BIND;
 	}
 
@@ -74,7 +74,7 @@ int listen_port
 	if (status < 0)
 	{
 		close(listner);
-		LOG(ERROR) << ERR_SOCKET_LISTEN << gai_strerror(status);
+		LOG(ERROR) << ERR_SOCKET_LISTEN << errno << ": " << strerror(errno);
 		return ERRCODE_SOCKET_LISTEN;
 	}
 	return listner;

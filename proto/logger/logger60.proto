@@ -67,7 +67,7 @@ message TemperatureNAngles
             name: "tag0"
             type: INPUT_UINT
             size: 1
-            offset: 0
+            offset: 63
             tag: 0
         }
         ]
