@@ -1,8 +1,0 @@
-huff/tcpreceiver-internalnode.o: huff/internalnode.cpp \
- /usr/include/stdc-predef.h huff/internalnode.h huff/node.h
-
-/usr/include/stdc-predef.h:
-
-huff/internalnode.h:
-
-huff/node.h:
