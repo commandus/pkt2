@@ -1,0 +1,6 @@
+huff/tcpreceiver-node.o: huff/node.cpp /usr/include/stdc-predef.h \
+ huff/node.h
+
+/usr/include/stdc-predef.h:
+
+huff/node.h:

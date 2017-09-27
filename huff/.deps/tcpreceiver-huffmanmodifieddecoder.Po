@@ -1,0 +1,7 @@
+huff/tcpreceiver-huffmanmodifieddecoder.o: \
+ huff/huffmanmodifieddecoder.cpp /usr/include/stdc-predef.h \
+ huff/huffmanmodifieddecoder.h
+
+/usr/include/stdc-predef.h:
+
+huff/huffmanmodifieddecoder.h:

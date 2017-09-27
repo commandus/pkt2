@@ -1,0 +1,8 @@
+huff/tcpreceiver-leafnode.o: huff/leafnode.cpp /usr/include/stdc-predef.h \
+ huff/leafnode.h huff/node.h
+
+/usr/include/stdc-predef.h:
+
+huff/leafnode.h:
+
+huff/node.h:
