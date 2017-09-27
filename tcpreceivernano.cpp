@@ -16,6 +16,8 @@
 #include "input-packet.h"
 #include "helper_socket.h"
 
+#include "huffmanmodifieddecoder.h"
+
 int get_addr_info
 (
 	Config *config,
@@ -89,6 +91,10 @@ int listen_port
 */
 int tcp_receiever_nano(Config *config)
 {
+	HuffmanModifiedDecoder decoder(config->compression_type, config->compression_offset, 
+		config->frequence_file,
+		config->codemap_file, 
+		config->buffer_size);
 START:	
 	config->stop_request = 0;
 	struct addrinfo *addr_dst;
@@ -166,7 +172,9 @@ START:
 			continue;
 		}
 		// Read
-		packet.setLength(read(new_conn_fd, packet.data(), packet.max_data_size));
+		size_t sz = read(new_conn_fd, packet.data(), packet.max_data_size);
+		sz = decoder.decode(packet.data(), sz, packet.max_data_size);
+		packet.setLength(sz);
 
 		// Close the socket
 		close(new_conn_fd);

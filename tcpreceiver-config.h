@@ -43,6 +43,12 @@ public:
 
 	int retries;			///< default 0
 	int retry_delay;		///< default 60 seconds
+	
+	// decompression
+	int compression_type;			///< default 0- none
+	int compression_offset;			///< offset where data compression is started
+	std::string frequence_file;		///< huffman frequnces
+	std::string codemap_file;		///< huffman code dictionary
 
 	bool daemonize;
 	int max_fd;				///< 0- use default max file descriptor count per process

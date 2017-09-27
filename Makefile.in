@@ -432,6 +432,11 @@ am_tcpemitter_iridium_OBJECTS =  \
 	tcpemitter_iridium-errorcodes.$(OBJEXT) $(am__objects_1)
 tcpemitter_iridium_OBJECTS = $(am_tcpemitter_iridium_OBJECTS)
 tcpemitter_iridium_DEPENDENCIES =
+am__objects_2 = huff/tcpreceiver-huffcode.$(OBJEXT) \
+	huff/tcpreceiver-huffmanmodifieddecoder.$(OBJEXT) \
+	huff/tcpreceiver-internalnode.$(OBJEXT) \
+	huff/tcpreceiver-leafnode.$(OBJEXT) \
+	huff/tcpreceiver-node.$(OBJEXT)
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
@@ -442,7 +447,8 @@ am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-utilpriority.$(OBJEXT) \
 	tcpreceiver-utilstring.$(OBJEXT) \
 	tcpreceiver-utilinet.$(OBJEXT) \
-	tcpreceiver-NanoMessage.$(OBJEXT) $(am__objects_1)
+	tcpreceiver-NanoMessage.$(OBJEXT) $(am__objects_2) \
+	$(am__objects_1)
 nodist_tcpreceiver_OBJECTS =
 tcpreceiver_OBJECTS = $(am_tcpreceiver_OBJECTS) \
 	$(nodist_tcpreceiver_OBJECTS)
@@ -1000,8 +1006,10 @@ mqtt-receivernano.h mqtt-receiver-config.h \
 pkt2-config.h pkt2-impl.h \
 pkt2receiver-check-config.h \
 repeator-config.h  \
-freceiver-impl.h freceiver-impl.h freceiver-config.h
+freceiver-impl.h freceiver-impl.h freceiver-config.h \
+huff/huffcode.h  huff/huffmanmodifieddecoder.h  huff/internalnode.h  huff/leafnode.h  huff/node.h
 
+huff_src = huff/huffcode.cpp  huff/huffmanmodifieddecoder.cpp  huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp
 common_src = 
 commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
 
@@ -1048,10 +1056,11 @@ tcpreceiver_SOURCES = \
 	tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp input-packet.cpp \
 	daemonize.cpp snmpagentpkt2.c get_rss.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(huff_src) \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -Ihuff
 
 #
 #	mqtt-receiver
@@ -1525,6 +1534,22 @@ tcpemitter-example1$(EXEEXT): $(tcpemitter_example1_OBJECTS) $(tcpemitter_exampl
 tcpemitter-iridium$(EXEEXT): $(tcpemitter_iridium_OBJECTS) $(tcpemitter_iridium_DEPENDENCIES) $(EXTRA_tcpemitter_iridium_DEPENDENCIES) 
 	@rm -f tcpemitter-iridium$(EXEEXT)
 	$(AM_V_CXXLD)$(CXXLINK) $(tcpemitter_iridium_OBJECTS) $(tcpemitter_iridium_LDADD) $(LIBS)
+huff/$(am__dirstamp):
+	@$(MKDIR_P) huff
+	@: > huff/$(am__dirstamp)
+huff/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) huff/$(DEPDIR)
+	@: > huff/$(DEPDIR)/$(am__dirstamp)
+huff/tcpreceiver-huffcode.$(OBJEXT): huff/$(am__dirstamp) \
+	huff/$(DEPDIR)/$(am__dirstamp)
+huff/tcpreceiver-huffmanmodifieddecoder.$(OBJEXT):  \
+	huff/$(am__dirstamp) huff/$(DEPDIR)/$(am__dirstamp)
+huff/tcpreceiver-internalnode.$(OBJEXT): huff/$(am__dirstamp) \
+	huff/$(DEPDIR)/$(am__dirstamp)
+huff/tcpreceiver-leafnode.$(OBJEXT): huff/$(am__dirstamp) \
+	huff/$(DEPDIR)/$(am__dirstamp)
+huff/tcpreceiver-node.$(OBJEXT): huff/$(am__dirstamp) \
+	huff/$(DEPDIR)/$(am__dirstamp)
 
 tcpreceiver$(EXEEXT): $(tcpreceiver_OBJECTS) $(tcpreceiver_DEPENDENCIES) $(EXTRA_tcpreceiver_DEPENDENCIES) 
 	@rm -f tcpreceiver$(EXEEXT)
@@ -1538,6 +1563,7 @@ mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f duk/*.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
+	-rm -f huff/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -1828,6 +1854,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@duk/$(DEPDIR)/pkt2receiver-duktape.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/example1message-example1.pb.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@example/$(DEPDIR)/example1message1-example1.pb.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@huff/$(DEPDIR)/tcpreceiver-huffcode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@huff/$(DEPDIR)/tcpreceiver-internalnode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@huff/$(DEPDIR)/tcpreceiver-leafnode.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@huff/$(DEPDIR)/tcpreceiver-node.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	$(AM_V_CC)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
@@ -5769,6 +5800,76 @@ tcpreceiver-NanoMessage.obj: NanoMessage.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o tcpreceiver-NanoMessage.obj `if test -f 'NanoMessage.cpp'; then $(CYGPATH_W) 'NanoMessage.cpp'; else $(CYGPATH_W) '$(srcdir)/NanoMessage.cpp'; fi`
 
+huff/tcpreceiver-huffcode.o: huff/huffcode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-huffcode.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-huffcode.Tpo -c -o huff/tcpreceiver-huffcode.o `test -f 'huff/huffcode.cpp' || echo '$(srcdir)/'`huff/huffcode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-huffcode.Tpo huff/$(DEPDIR)/tcpreceiver-huffcode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/huffcode.cpp' object='huff/tcpreceiver-huffcode.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffcode.o `test -f 'huff/huffcode.cpp' || echo '$(srcdir)/'`huff/huffcode.cpp
+
+huff/tcpreceiver-huffcode.obj: huff/huffcode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-huffcode.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-huffcode.Tpo -c -o huff/tcpreceiver-huffcode.obj `if test -f 'huff/huffcode.cpp'; then $(CYGPATH_W) 'huff/huffcode.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffcode.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-huffcode.Tpo huff/$(DEPDIR)/tcpreceiver-huffcode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/huffcode.cpp' object='huff/tcpreceiver-huffcode.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffcode.obj `if test -f 'huff/huffcode.cpp'; then $(CYGPATH_W) 'huff/huffcode.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffcode.cpp'; fi`
+
+huff/tcpreceiver-huffmanmodifieddecoder.o: huff/huffmanmodifieddecoder.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-huffmanmodifieddecoder.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Tpo -c -o huff/tcpreceiver-huffmanmodifieddecoder.o `test -f 'huff/huffmanmodifieddecoder.cpp' || echo '$(srcdir)/'`huff/huffmanmodifieddecoder.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Tpo huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/huffmanmodifieddecoder.cpp' object='huff/tcpreceiver-huffmanmodifieddecoder.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffmanmodifieddecoder.o `test -f 'huff/huffmanmodifieddecoder.cpp' || echo '$(srcdir)/'`huff/huffmanmodifieddecoder.cpp
+
+huff/tcpreceiver-huffmanmodifieddecoder.obj: huff/huffmanmodifieddecoder.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-huffmanmodifieddecoder.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Tpo -c -o huff/tcpreceiver-huffmanmodifieddecoder.obj `if test -f 'huff/huffmanmodifieddecoder.cpp'; then $(CYGPATH_W) 'huff/huffmanmodifieddecoder.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffmanmodifieddecoder.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Tpo huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/huffmanmodifieddecoder.cpp' object='huff/tcpreceiver-huffmanmodifieddecoder.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffmanmodifieddecoder.obj `if test -f 'huff/huffmanmodifieddecoder.cpp'; then $(CYGPATH_W) 'huff/huffmanmodifieddecoder.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffmanmodifieddecoder.cpp'; fi`
+
+huff/tcpreceiver-internalnode.o: huff/internalnode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-internalnode.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-internalnode.Tpo -c -o huff/tcpreceiver-internalnode.o `test -f 'huff/internalnode.cpp' || echo '$(srcdir)/'`huff/internalnode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-internalnode.Tpo huff/$(DEPDIR)/tcpreceiver-internalnode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/internalnode.cpp' object='huff/tcpreceiver-internalnode.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-internalnode.o `test -f 'huff/internalnode.cpp' || echo '$(srcdir)/'`huff/internalnode.cpp
+
+huff/tcpreceiver-internalnode.obj: huff/internalnode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-internalnode.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-internalnode.Tpo -c -o huff/tcpreceiver-internalnode.obj `if test -f 'huff/internalnode.cpp'; then $(CYGPATH_W) 'huff/internalnode.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/internalnode.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-internalnode.Tpo huff/$(DEPDIR)/tcpreceiver-internalnode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/internalnode.cpp' object='huff/tcpreceiver-internalnode.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-internalnode.obj `if test -f 'huff/internalnode.cpp'; then $(CYGPATH_W) 'huff/internalnode.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/internalnode.cpp'; fi`
+
+huff/tcpreceiver-leafnode.o: huff/leafnode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-leafnode.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-leafnode.Tpo -c -o huff/tcpreceiver-leafnode.o `test -f 'huff/leafnode.cpp' || echo '$(srcdir)/'`huff/leafnode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-leafnode.Tpo huff/$(DEPDIR)/tcpreceiver-leafnode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/leafnode.cpp' object='huff/tcpreceiver-leafnode.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-leafnode.o `test -f 'huff/leafnode.cpp' || echo '$(srcdir)/'`huff/leafnode.cpp
+
+huff/tcpreceiver-leafnode.obj: huff/leafnode.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-leafnode.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-leafnode.Tpo -c -o huff/tcpreceiver-leafnode.obj `if test -f 'huff/leafnode.cpp'; then $(CYGPATH_W) 'huff/leafnode.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/leafnode.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-leafnode.Tpo huff/$(DEPDIR)/tcpreceiver-leafnode.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/leafnode.cpp' object='huff/tcpreceiver-leafnode.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-leafnode.obj `if test -f 'huff/leafnode.cpp'; then $(CYGPATH_W) 'huff/leafnode.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/leafnode.cpp'; fi`
+
+huff/tcpreceiver-node.o: huff/node.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-node.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-node.Tpo -c -o huff/tcpreceiver-node.o `test -f 'huff/node.cpp' || echo '$(srcdir)/'`huff/node.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-node.Tpo huff/$(DEPDIR)/tcpreceiver-node.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/node.cpp' object='huff/tcpreceiver-node.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-node.o `test -f 'huff/node.cpp' || echo '$(srcdir)/'`huff/node.cpp
+
+huff/tcpreceiver-node.obj: huff/node.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-node.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-node.Tpo -c -o huff/tcpreceiver-node.obj `if test -f 'huff/node.cpp'; then $(CYGPATH_W) 'huff/node.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/node.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-node.Tpo huff/$(DEPDIR)/tcpreceiver-node.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='huff/node.cpp' object='huff/tcpreceiver-node.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-node.obj `if test -f 'huff/node.cpp'; then $(CYGPATH_W) 'huff/node.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/node.cpp'; fi`
+
 tcptransmitter-tcptransmitter.o: tcptransmitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter.o -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo -c -o tcptransmitter-tcptransmitter.o `test -f 'tcptransmitter.cpp' || echo '$(srcdir)/'`tcptransmitter.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo $(DEPDIR)/tcptransmitter-tcptransmitter.Po
@@ -6444,6 +6545,8 @@ distclean-generic:
 	-rm -f duk/$(am__dirstamp)
 	-rm -f example/$(DEPDIR)/$(am__dirstamp)
 	-rm -f example/$(am__dirstamp)
+	-rm -f huff/$(DEPDIR)/$(am__dirstamp)
+	-rm -f huff/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -6455,7 +6558,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR) huff/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -6504,7 +6607,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR) huff/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

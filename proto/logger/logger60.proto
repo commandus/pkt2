@@ -68,7 +68,7 @@ message TemperatureNAngles
             size: 2
             endian: ENDIAN_LITTLE_ENDIAN
             offset: 38
-        },        
+        },
         {
             name: "fx3"
             type: INPUT_INT
@@ -89,7 +89,7 @@ message TemperatureNAngles
             size: 2
             endian: ENDIAN_LITTLE_ENDIAN
             offset: 54
-        },        
+        },
         {
             name: "ft1"
             type: INPUT_INT

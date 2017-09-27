@@ -42,6 +42,12 @@ int Config::parseCmd
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
+	
+	// decompression
+	struct arg_int *a_compression_type = arg_int0("c", "compression", "<number>", "1- Huffman(modified). Default 0- none.");
+	struct arg_int *a_compression_offset = arg_int0("s", "start", "<offset>", "Valid with -c option. Default 0."); ///< offset where data compression is started
+	struct arg_file *a_frequence_file = arg_file0("f", "freq", "<file>", "Compression frequence file name (in conjuction with -m) .");
+	struct arg_file *a_codemap_file = arg_file0("m", "map", "<file>", "Compression code dictionary file name.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
@@ -52,6 +58,7 @@ int Config::parseCmd
 	void* argtable[] = { 
 			a_interface, a_port, a_message_url, a_buffer_size, 
 			a_retries, a_retry_delay,
+			a_compression_type, a_compression_offset, a_frequence_file, a_codemap_file,
 			a_daemonize, a_max_fd, a_verbosity,
 			a_help, a_end 
 	};
@@ -109,6 +116,27 @@ int Config::parseCmd
 		retry_delay = *a_retry_delay->ival;
 	else
 		retry_delay = 60;
+
+	// decompression options
+	if (a_compression_type->count)
+		compression_type = *a_compression_type->ival;
+	else
+		compression_type = 0;
+
+	if (a_compression_offset->count)
+		compression_offset = *a_compression_offset->ival;
+	else
+		compression_offset = 0;
+
+	if (a_frequence_file->count)
+		frequence_file = std::string(*a_frequence_file->filename);
+	else
+		frequence_file = "";
+
+	if (a_codemap_file->count)
+		codemap_file = std::string(*a_codemap_file->filename);
+	else
+		codemap_file = "";
 
 	verbosity = a_verbosity->count;
 	
