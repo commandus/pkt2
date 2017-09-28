@@ -45,7 +45,8 @@ size_t loadFrequencies
 (
 	size_t *frequencies,
 	size_t symbols_size,
-	std::istream *strm
+	std::istream *strm,
+	const log_func cblog
 )
 {
 	size_t r = 0;
@@ -64,7 +65,12 @@ size_t loadFrequencies
 			}
 			else
 			{
-				std::cerr << "First column is symbol number " << inputs[0] << " is not between 0 and " << symbols_size<< " in line: " << line << std::endl;
+				if (cblog != NULL)
+				{
+					std::stringstream ss;
+					ss << "First column is symbol number " << inputs[0] << " is not between 0 and " << symbols_size<< " in line: " << line << std::endl;
+					cblog(0, 1, ss.str());
+				}
 				return r;
 			}
 			r++;
@@ -79,17 +85,30 @@ void printFrequencies
 	std::ostream &strm,
 	size_t *frequencies,
 	size_t symbols_size,
-	bool include_zeroes
+	bool include_zeroes,
+	const log_func cblog
 )
 {
 	for (int i = 0; i < symbols_size; ++i)
 	{
 		if (include_zeroes || (frequencies[i] != 0))
 		{
-			strm << std::dec << std::setw(3) << std::left << std::setfill(' ') << i << std::right << "\t"
-				<< frequencies[i] << "\t"
-				<< "0x" << std::setw(2) << std::setfill('0') << std::hex << i
-				<< std::dec << std::endl;
+			if (cblog != NULL)
+			{
+				std::stringstream ss;
+				ss << std::dec << std::setw(3) << std::left << std::setfill(' ') << i << std::right << "\t"
+					<< frequencies[i] << "\t"
+					<< "0x" << std::setw(2) << std::setfill('0') << std::hex << i
+					<< std::dec << std::endl;
+				cblog(0, 1, ss.str());
+			}
+			else
+			{
+				strm << std::dec << std::setw(3) << std::left << std::setfill(' ') << i << std::right << "\t"
+					<< frequencies[i] << "\t"
+					<< "0x" << std::setw(2) << std::setfill('0') << std::hex << i
+					<< std::dec << std::endl;
+			}
 		}
 	}
 }
@@ -149,15 +168,28 @@ void generateCodes
 void printCodeMap
 (
 	std::ostream &strm,
-	const HuffCodeMap& codes
+	const HuffCodeMap& codes,
+	const log_func cblog
 )
 {
 	for (HuffCodeMap::const_iterator it = codes.begin(); it != codes.end(); ++it)
 	{
-		strm << std::dec << std::setw(3) << std::left << std::setfill(' ') << (int) it->first << "\t" << std::right;
-		std::copy(it->second.begin(), it->second.end(), std::ostream_iterator<bool>(std::cout));
-		strm << "\t0x" << std::setw(2) << std::setfill('0') << std::hex << (int) it->first;
-		strm << std::right << std::dec << std::endl;
+			if (cblog != NULL)
+			{
+				std::stringstream ss;
+				ss << std::dec << std::setw(3) << std::left << std::setfill(' ') << (int) it->first << "\t" << std::right;
+				std::copy(it->second.begin(), it->second.end(), std::ostream_iterator<bool>(std::cout));
+				strm << "\t0x" << std::setw(2) << std::setfill('0') << std::hex << (int) it->first;
+				strm << std::right << std::dec << std::endl;
+				cblog(0, 1, ss.str());
+			}
+			else
+			{
+				strm << std::dec << std::setw(3) << std::left << std::setfill(' ') << (int) it->first << "\t" << std::right;
+				std::copy(it->second.begin(), it->second.end(), std::ostream_iterator<bool>(std::cout));
+				strm << "\t0x" << std::setw(2) << std::setfill('0') << std::hex << (int) it->first;
+				strm << std::right << std::dec << std::endl;
+			}
 	}
 }
 
@@ -170,7 +202,8 @@ bool BothAreSpaces(char lhs, char rhs)
 size_t loadCodeMap
 (
 	HuffCodeMap& codes,
-	std::istream *strm
+	std::istream *strm,
+	const log_func cblog
 )
 {
 	size_t r = 0;
@@ -199,7 +232,14 @@ size_t loadCodeMap
 		}
 		else
 		{
-			std::cerr << "First column is symbol number " << symbol << " is not between 0 and " << 255 << " in line: " << line << std::endl;
+			if (cblog != NULL)
+			{
+				std::stringstream ss;
+				ss << "First column is symbol number " << symbol << " is not between 0 and " << 255 << " in line: " << line << std::endl;
+				cblog(0, 1, ss.str());
+			}
+			else
+				std::cerr << "First column is symbol number " << symbol << " is not between 0 and " << 255 << " in line: " << line << std::endl;
 			return r;
 		}
 		r++;
@@ -211,7 +251,8 @@ size_t calc_coded_size_bits
 (
 	HuffCodeMap& codes,
 	const void *data, 
-	size_t size
+	size_t size,
+ 	const log_func cblog
 )
 {
 	size_t r = 0;
@@ -220,7 +261,15 @@ size_t calc_coded_size_bits
 		std::map<unsigned char, HuffCode>::const_iterator it = codes.find(((unsigned char*) data)[i]);
 		if (it == codes.end())
 		{
-			std::cerr << "Error: no code for " << (int)((unsigned char*) data)[i]  << " 0x" << std::hex << std::setw(2) << (int)((unsigned char*) data)[i] << std::dec << std::endl;
+			if (cblog != NULL)
+			{
+				std::stringstream ss;
+				ss << "Error: no code for " << (int)((unsigned char*) data)[i]  << " 0x" << std::hex << std::setw(2) << (int)((unsigned char*) data)[i] << std::dec << std::endl;
+				cblog(0, 1, ss.str());
+			}
+			else
+				std::cerr << "Error: no code for " << (int)((unsigned char*) data)[i]  << " 0x" << std::hex << std::setw(2) << (int)((unsigned char*) data)[i] << std::dec << std::endl;
+
 			return std::numeric_limits<uint64_t>::max();
 		}
 		r += it->second.size();

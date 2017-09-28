@@ -12,6 +12,8 @@
 #include "internalnode.h"
 #include "leafnode.h"
 
+typedef int (*log_func)(int, int, const std::string&);
+
 typedef std::vector<bool> HuffCode;
 typedef std::map<unsigned char, HuffCode> HuffCodeMap;
 
@@ -27,7 +29,8 @@ size_t loadFrequencies
 (
 	size_t *frequencies,
 	size_t symbols_size,
-	std::istream *strm
+	std::istream *strm,
+	const log_func cblog = NULL
 );
 
 void printFrequencies
@@ -35,7 +38,8 @@ void printFrequencies
 	std::ostream &strm,
 	size_t *frequencies,
 	size_t symbols_size,
-	bool include_zeroes
+	bool include_zeroes,
+	const log_func cblog = NULL
 );
 
 Node* buildTree
@@ -54,20 +58,23 @@ void generateCodes
 void printCodeMap
 (
 	std::ostream &strm,
-	const HuffCodeMap& codes
+	const HuffCodeMap& codes,
+	const log_func cblog = NULL
 );
 
 size_t loadCodeMap
 (
 	HuffCodeMap& codes,
-	std::istream *strm
+	std::istream *strm,
+	const log_func cblog = NULL
 );
 
 size_t calc_coded_size_bits
 (
 	HuffCodeMap& codes,
 	const void *data, 
-	size_t size
+	size_t size,
+ 	const log_func cblog = NULL
 );
 
 size_t encode_string
