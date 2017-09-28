@@ -91,11 +91,12 @@ int listen_port
 */
 int tcp_receiever_nano(Config *config)
 {
+START:	
 	HuffmanModifiedDecoder decoder(config->compression_type, config->compression_offset, 
 		config->frequence_file,
 		config->codemap_file, 
-		config->buffer_size);
-START:	
+		config->buffer_size,
+		config->valid_sizes);
 	config->stop_request = 0;
 	struct addrinfo *addr_dst;
 	if (get_addr_info(config, &addr_dst))

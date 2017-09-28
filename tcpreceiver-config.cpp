@@ -48,6 +48,9 @@ int Config::parseCmd
 	struct arg_int *a_compression_offset = arg_int0("s", "start", "<offset>", "Valid with -c option. Default 0."); ///< offset where data compression is started
 	struct arg_file *a_frequence_file = arg_file0("f", "freq", "<file>", "Compression frequence file name (in conjuction with -m) .");
 	struct arg_file *a_codemap_file = arg_file0("m", "map", "<file>", "Compression code dictionary file name.");
+	/// empty- do not control size of decompressed pacxet. If size if not in the list, try get packet as-is (w/o decompresson).
+	struct arg_int *a_valid_sizes = arg_intn("p", "packetsize", "<bytes number>", 0, 256, "Default any sizes."); 
+	
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
@@ -58,7 +61,8 @@ int Config::parseCmd
 	void* argtable[] = { 
 			a_interface, a_port, a_message_url, a_buffer_size, 
 			a_retries, a_retry_delay,
-			a_compression_type, a_compression_offset, a_frequence_file, a_codemap_file,
+			a_compression_type, a_compression_offset, a_frequence_file, a_codemap_file, 
+			a_valid_sizes,
 			a_daemonize, a_max_fd, a_verbosity,
 			a_help, a_end 
 	};
@@ -137,6 +141,12 @@ int Config::parseCmd
 		codemap_file = std::string(*a_codemap_file->filename);
 	else
 		codemap_file = "";
+
+	// empty- do not control size of decompressed pacxet. If size if not in the list, try get packet as-is (w/o decompresson).
+	for (int i = 0; i < a_valid_sizes->count; i++)
+	{
+		valid_sizes.push_back(a_valid_sizes->ival[i]);
+	}
 
 	verbosity = a_verbosity->count;
 	

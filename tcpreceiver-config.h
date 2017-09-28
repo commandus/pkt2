@@ -2,6 +2,7 @@
 #define CONFIG_H     1
 
 #include <string>
+#include <vector>
 #include <stdint.h>
 
 #define PROGRAM_NAME				"tcpreceiver"
@@ -36,19 +37,20 @@ public:
 		char *argv[]
 	);
 	int error();
-	std::string intface;	///< default 0.0.0.0
-	uint32_t    port;		///< default 50052
+	std::string intface;				///< default 0.0.0.0
+	uint32_t    port;					///< default 50052
 	uint32_t    verbosity;
 	size_t buffer_size;
 
-	int retries;			///< default 0
-	int retry_delay;		///< default 60 seconds
+	int retries;						///< default 0
+	int retry_delay;					///< default 60 seconds
 	
 	// decompression
-	int compression_type;			///< default 0- none
-	int compression_offset;			///< offset where data compression is started
-	std::string frequence_file;		///< huffman frequnces
-	std::string codemap_file;		///< huffman code dictionary
+	int compression_type;				///< default 0- none
+	int compression_offset;				///< offset where data compression is started
+	std::string frequence_file;			///< huffman frequnces
+	std::string codemap_file;			///< huffman code dictionary
+	std::vector<size_t> valid_sizes;	///< empty- do not control size of decompressed pacxet. If size if not in the list, try get packet as-is (w/o decompresson).
 
 	bool daemonize;
 	int max_fd;				///< 0- use default max file descriptor count per process
