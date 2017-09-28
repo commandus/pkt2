@@ -10,12 +10,14 @@ HuffmanModifiedDecoder::HuffmanModifiedDecoder
 	size_t aoffset,								///< offset where data compression begins
 	const std::string &adictionary_file_name,	///< file name
 	const std::string &acodemap_file_name,		///< file name
-	size_t abuffer_size
+	size_t abuffer_size,
+	const std::vector<size_t> &a_valid_packet_sizes
 )
 :	mode(amode), offset(aoffset), 
 		dictionary_file_name(adictionary_file_name), 
 		codemap_file_name(acodemap_file_name), 
-		buffer_size(abuffer_size)
+		buffer_size(abuffer_size),
+		valid_packet_sizes(a_valid_packet_sizes)
 {
 	if (buffer_size > 0)
 		buffer = std::malloc(buffer_size);
@@ -85,6 +87,7 @@ size_t HuffmanModifiedDecoder::decode(void *data, size_t len, size_t data_size)
 			size_t sz = decompress(buffer, (char *) data + offset, len - offset);
 			if (sz > 0)
 			{
+				// truncate buffer to maximum size if exceed
 				if (sz > data_size)
 					sz = data_size;
 				if (sz > 0)
@@ -93,9 +96,17 @@ size_t HuffmanModifiedDecoder::decode(void *data, size_t len, size_t data_size)
 					if (offset > 0)
 						std::memmove(data, buffer, offset);
 					*/
+					// check allowed sizes
+					if (valid_packet_sizes.size())
+					{
+						if (std::find(valid_packet_sizes.begin(), valid_packet_sizes.end(), sz + offset) != valid_packet_sizes.end())
+							// if packet size is not in list, retuen as is(not decompressed)
+							return len;
+					}
 					std::memmove((char *) data + offset, buffer, sz);
 				}
 			}
+			
 			return sz + offset;
 		}
 	}

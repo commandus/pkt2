@@ -2,6 +2,7 @@
 #define HUFFMANMODIFIEDDECODER_H
 
 #include <string>
+#include <vector>
 #include "huffcode.h"
 
 class HuffmanModifiedDecoder
@@ -17,6 +18,7 @@ private:
 	size_t frequencies[256];
 	int UniqueSymbols;
 	HuffCodeMap codeMap;
+	std::vector<size_t> valid_packet_sizes;
 		
 	size_t decompress(void *dest, void *src, size_t size);
 public:
@@ -25,7 +27,8 @@ public:
 		size_t offset,								///< offset where data compression begins
 		const std::string &dictionary_file_name,	///< file name
 		const std::string &code_map_file_name,		///< file name
-		size_t buffer_size
+		size_t buffer_size,
+		const std::vector<size_t> &valid_packet_sizes
 	);
 	~HuffmanModifiedDecoder();
 	size_t decode(void *buffer, size_t len, size_t buffer_size);
