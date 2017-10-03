@@ -45,6 +45,7 @@ int Config::parseCmd
 	
 	// decompression
 	struct arg_int *a_compression_type = arg_int0("c", "compression", "<number>", "1- Huffman(modified). Default 0- none.");
+	struct arg_int *a_escape_code = arg_int0("e", "escapecode", "<number>", "Escape code is a prefix for 8 bit value(not a Huffman code). Default 0- none.");
 	struct arg_int *a_compression_offset = arg_int0("s", "start", "<offset>", "Valid with -c option. Default 0."); ///< offset where data compression is started
 	struct arg_file *a_frequence_file = arg_file0("f", "freq", "<file>", "Compression frequence file name (in conjuction with -m) .");
 	struct arg_file *a_codemap_file = arg_file0("m", "map", "<file>", "Compression code dictionary file name.");
@@ -61,7 +62,7 @@ int Config::parseCmd
 	void* argtable[] = { 
 			a_interface, a_port, a_message_url, a_buffer_size, 
 			a_retries, a_retry_delay,
-			a_compression_type, a_compression_offset, a_frequence_file, a_codemap_file, 
+			a_compression_type, a_escape_code, a_compression_offset, a_frequence_file, a_codemap_file, 
 			a_valid_sizes,
 			a_daemonize, a_max_fd, a_verbosity,
 			a_help, a_end 
@@ -126,6 +127,11 @@ int Config::parseCmd
 		compression_type = *a_compression_type->ival;
 	else
 		compression_type = 0;
+
+	if (a_escape_code->count)
+		escape_code = *a_escape_code->ival;
+	else
+		escape_code = 0;
 
 	if (a_compression_offset->count)
 		compression_offset = *a_compression_offset->ival;

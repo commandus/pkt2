@@ -212,20 +212,51 @@ public:
 #define PUSH_BACK_ARG_STR(r, a, s) 		r.push_back(a); r.push_back(s)
 #define PUSH_BACK_ARG_NUM(r, a, v) 		r.push_back(a); r.push_back(toString(v))
 /**
+ * 
+ * - compression_type	По умолчанию 0. 1- сжатие (Huffman). Для сжатия нудно указать или файл частот для построения таблицы кодов или готовую таблицу кодов 
+ * - escape_code Специальный экранирующий код- префикс(escape- код), который используется в качестве префикса для следующих за ним восьми бит значения. 
+ * По умолчанию 0(не задан). Имеет значение, если compression_type	больше 0.
+ * - compression_offset Смещение в байтах, начиная с которого данные сжимаются. По умолчанию 0. Имеет значение, если compression_type	больше 0.
+ * - frequence_file	Файл частот, используемый для построения таблицы кодов Хаффмана. Имеет значение, если compression_type больше 0 и не задан параметр codemap_file.
+ * - codemap_file	 Готовая таблицы кодов Хаффмана. Имеет значение, если compression_type	больше 0. 
+ * - valid_sizes: [] Допустимые размеры пакета после распаковки. Если не указано ни одного размера, проверка на размер после распаковки не делается. 
+ * Если указан хотя бы один размер, то если после распаквки размер пакета не равен олдноу из перечисленных, распаквка отменяется, и пакет передается как есть.
+ *
  *	tcp_listeners = 
-[
-	{
-		"port": 50052,
-		"ip": "0.0.0.0"
-	}
-];
+ *	[
+ *	{
+ *		"port": 50052,
+ *		"ip": "0.0.0.0"
+ *		compression_type: 0,
+ *		escape_code: 0,
+ *		compression_offset: 0,
+ *		frequence_file: "",
+ *		codemap_file: "",
+ *		valid_sizes: []
+ *}
+ *];
+ * 
 */
 class CfgListenerTcp
 {
 public:
 	std::string ip;
 	int port;
-	CfgListenerTcp() : ip("0.0.0.0"), port(50052) {};
+	int compression_type;
+	int escape_code;
+	int compression_offset;
+	std::string frequence_file;
+	std::string codemap_file;
+	std::vector<int> valid_sizes;
+
+	CfgListenerTcp() 
+	: ip("0.0.0.0"), port(50052),
+		compression_type(0), escape_code(0), compression_offset(0), 
+		frequence_file(""), codemap_file("")
+	{
+		
+	};
+	
 	std::vector<std::string> args(CfgCommon *common) 
 	{
 		std::vector<std::string> r;
@@ -233,10 +264,42 @@ public:
 		{
 			PUSH_BACK_ARG_STR(r, "-i", ip);
 		}
+		
 		if (port != 50052)
 		{
 			PUSH_BACK_ARG_NUM(r, "-l", port);
 		}
+
+		if (compression_type)
+		{
+			PUSH_BACK_ARG_NUM(r, "-c", compression_type);
+		}
+
+		if (escape_code)
+		{
+			PUSH_BACK_ARG_NUM(r, "-e", escape_code);
+		}
+
+		if (compression_offset)
+		{
+			PUSH_BACK_ARG_NUM(r, "-s", compression_offset);
+		}
+		
+		if (!frequence_file.empty())
+		{
+			PUSH_BACK_ARG_STR(r, "-f", frequence_file);
+		}
+
+		if (!codemap_file.empty())
+		{
+			PUSH_BACK_ARG_STR(r, "-m", codemap_file);
+		}
+
+		for (int i = 0; i < valid_sizes.size(); i++)
+		{
+			PUSH_BACK_ARG_NUM(r, "-p", valid_sizes[i]);
+		}
+
 		if (common)
 		{
 			if (common->verbosity == 1)
@@ -877,10 +940,48 @@ public:
 					if (duk_get_prop_string(context, -1, "ip"))
 						cfg.ip = duk_get_string(context, -1);
 					duk_pop(context);
+
 					if (duk_get_prop_string(context, -1, "port"))
 						cfg.port = duk_get_number(context, -1);
 					duk_pop(context);
-				} 
+
+					if (duk_get_prop_string(context, -1, "compression_type"))
+						cfg.compression_type = duk_get_number(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "escape_code"))
+						cfg.escape_code = duk_get_number(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "compression_offset"))
+						cfg.compression_offset = duk_get_number(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "frequence_file"))
+						cfg.frequence_file = duk_get_string(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "codemap_file"))
+						cfg.codemap_file = duk_get_string(context, -1);
+					duk_pop(context);
+					
+
+					duk_get_prop_string(context, -1, "valid_sizes");
+					if (duk_is_array(context, -1)) 
+					{
+						duk_size_t sz = duk_get_length(context, -1);
+						for (duk_size_t v = 0; v < sz; v++) 
+						{
+							if (duk_get_prop_index(context, -1, i)) 
+							{
+								cfg.valid_sizes.push_back(duk_get_number(context, -1));
+								duk_pop(context);
+							}
+							duk_pop(context);
+						}
+					}
+					duk_pop(context);
+				}
 				duk_pop(context);
 				cfgListenerTcp.push_back(cfg);
 			}
