@@ -972,10 +972,9 @@ public:
 						duk_size_t sz = duk_get_length(context, -1);
 						for (duk_size_t v = 0; v < sz; v++) 
 						{
-							if (duk_get_prop_index(context, -1, i)) 
+							if (duk_get_prop_index(context, -1, v)) 
 							{
 								cfg.valid_sizes.push_back(duk_get_number(context, -1));
-								duk_pop(context);
 							}
 							duk_pop(context);
 						}

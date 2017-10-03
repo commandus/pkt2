@@ -44,7 +44,7 @@ bus_out = "ipc:///tmp/message.pkt2";
 /**
  * Set logging verbosity: 0- none, 1- error/warn, 2- info
  */
-verbosity = 2;
+verbosity = 0;
 
 //------------------------- Listeners -------------------------------
 
@@ -57,7 +57,14 @@ tcp_listeners =
 [
 	{
 		"port": 50052,
-		"ip": "0.0.0.0"
+		"ip": "0.0.0.0",
+		"compression_type": 0,
+		"escape_code": 0,
+		"compression_offset": 0,
+		"frequence_file": "",
+		"codemap_file": "",
+		"valid_sizes": []
+
 	}
 ];
 
