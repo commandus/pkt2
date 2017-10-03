@@ -222,13 +222,7 @@ size_t loadCodeMap
 		uint64_t symbol = strtod(t[0].c_str(), NULL);
 		if (symbol < 255)
 		{
-			HuffCode prefix;
-
-			for (int i = 0; i < t[1].size(); i++)
-			{
-				prefix.push_back(t[1][i] == '1');
-			}
-			codes[symbol] = prefix;
+			codes[symbol] = getHuffCode(t[1]);
 		}
 		else
 		{
@@ -303,4 +297,17 @@ size_t encode_string
 	}
 */
 	return r;
+}
+
+HuffCode getHuffCode
+(
+	const std::string &t
+)
+{
+	HuffCode hc;
+	for (int i = 0; i < t.length(); i++)
+	{
+		hc.push_back(t[i] == '1');
+	}
+	return hc;
 }

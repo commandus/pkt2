@@ -84,3 +84,8 @@ size_t encode_string
 	const void *data, 
 	size_t size
 );
+
+HuffCode getHuffCode
+(
+	const std::string &t
+);
