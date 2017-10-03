@@ -45,7 +45,7 @@ int Config::parseCmd
 	
 	// decompression
 	struct arg_int *a_compression_type = arg_int0("c", "compression", "<number>", "1- Huffman(modified). Default 0- none.");
-	struct arg_int *a_escape_code = arg_int0("e", "escapecode", "<number>", "Escape code is a prefix for 8 bit value(not a Huffman code). Default 0- none.");
+	struct arg_str *a_escape_code = arg_str0("e", "escapecode", "<BINARY CODE>", "Escape binary code is a prefix for 8 bit value(not a Huffman code). Default none.");
 	struct arg_int *a_compression_offset = arg_int0("s", "start", "<offset>", "Valid with -c option. Default 0."); ///< offset where data compression is started
 	struct arg_file *a_frequence_file = arg_file0("f", "freq", "<file>", "Compression frequence file name (in conjuction with -m) .");
 	struct arg_file *a_codemap_file = arg_file0("m", "map", "<file>", "Compression code dictionary file name.");
@@ -129,9 +129,9 @@ int Config::parseCmd
 		compression_type = 0;
 
 	if (a_escape_code->count)
-		escape_code = *a_escape_code->ival;
+		escape_code = *a_escape_code->sval;
 	else
-		escape_code = 0;
+		escape_code = "";
 
 	if (a_compression_offset->count)
 		compression_offset = *a_compression_offset->ival;

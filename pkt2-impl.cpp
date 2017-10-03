@@ -228,7 +228,7 @@ public:
  *		"port": 50052,
  *		"ip": "0.0.0.0"
  *		compression_type: 0,
- *		escape_code: 0,
+ *		escape_code: "",
  *		compression_offset: 0,
  *		frequence_file: "",
  *		codemap_file: "",
@@ -243,7 +243,7 @@ public:
 	std::string ip;
 	int port;
 	int compression_type;
-	int escape_code;
+	std::string escape_code;
 	int compression_offset;
 	std::string frequence_file;
 	std::string codemap_file;
@@ -251,7 +251,7 @@ public:
 
 	CfgListenerTcp() 
 	: ip("0.0.0.0"), port(50052),
-		compression_type(0), escape_code(0), compression_offset(0), 
+		compression_type(0), escape_code(""), compression_offset(0), 
 		frequence_file(""), codemap_file("")
 	{
 		
@@ -275,9 +275,9 @@ public:
 			PUSH_BACK_ARG_NUM(r, "-c", compression_type);
 		}
 
-		if (escape_code)
+		if (escape_code.empty())
 		{
-			PUSH_BACK_ARG_NUM(r, "-e", escape_code);
+			PUSH_BACK_ARG_STR(r, "-e", escape_code);
 		}
 
 		if (compression_offset)
@@ -950,7 +950,7 @@ public:
 					duk_pop(context);
 
 					if (duk_get_prop_string(context, -1, "escape_code"))
-						cfg.escape_code = duk_get_number(context, -1);
+						cfg.escape_code = duk_get_string(context, -1);
 					duk_pop(context);
 
 					if (duk_get_prop_string(context, -1, "compression_offset"))

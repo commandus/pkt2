@@ -59,7 +59,7 @@ tcp_listeners =
 		"port": 50052,
 		"ip": "0.0.0.0",
 		"compression_type": 0,
-		"escape_code": 0,
+		"escape_code": "",
 		"compression_offset": 0,
 		"frequence_file": "",
 		"codemap_file": "",

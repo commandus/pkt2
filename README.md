@@ -377,7 +377,7 @@ field- это объект, содержащий поля:
         format: ["value.degrees_c.toFixed(2).replace('.', ',')"]
 ```
 
-Преобразование в строку делается или неявно, в зависимоьи от типа, или явно.
+Преобразование в строку делается или неявно, в зависимости от типа, или явно.
 
 Во втором случае нужно задать опцию format. В следующем примере:
 
@@ -505,6 +505,65 @@ kill -1 <номер процесса>
 ```
 чтобы программы перезапустились с чтением обновленных .proto файлов или остановить выполнение программ и запустить заново.
 
+
+## Описание опций программ
+
+### tcpreceiver
+
+```
+./tcpreceiver --help
+Usage: tcpreceiver
+ [-dvh] [-i <IP address>] [-l <port>] [-o <bus url>] [-b <size>] [-r <n>] [-y <seconds>] [-c <number>] [-e <number>] [-s <offset>] [-f <file>] [-m <file>] [-p <bytes number>]... [--maxfd=<number>]
+PKT2 tcp packet listener sends raw packet
+  -i, --ipaddr=<IP address> Network interface name or address. Default 0.0.0.0
+  -l, --listen=<port>       TCP port to listen. Default 50052
+  -o, --output=<bus url>    Default ipc:///tmp/packet.pkt2
+  -b, --buffer=<size>       Default 4096 bytes
+  -r, --repeat=<n>          Restart listen. Default 0.
+  -y, --delay=<seconds>     Delay on restart in seconds. Default 60.
+  -c, --compression=<number> 1- Huffman(modified). Default 0- none.
+  -e, --escapecode=<BITS>   Escape code is a prefix for 8 bit value(not a Huffman code). Default none.
+  -s, --start=<offset>      Valid with -c option. Default 0.
+  -f, --freq=<file>         Compression frequence file name (in conjuction with -m) .
+  -m, --map=<file>          Compression code dictionary file name.
+  -p, --packetsize=<bytes number> Default any sizes.
+  -d, --daemonize           Start as daemon/service
+  --maxfd=<number>          Set max file descriptors. 0- use default (1024).
+  -v, --verbosity           Verbosity level
+  -h, --help                Show this help
+```
+
+Опция -p <размер> задает допустимые размеры пакета после распаковки и может быть повторена не более 256 раз, чтобы указать разные пакеты.
+
+Опция -c со значением больше нуля включает распаковку пакета, начиная со смещения, задаваемого опцией -s (если не задана, то с начала).
+
+Опции -f или -m взаимоисключающие, ими можно задать таблицу кодов Хаффмана по таблице частот (-f) или явно (-m).
+
+#### Формат файла частот
+
+Текст со строками частот(разделитель LF) из двух колонок(разделитель TAB)- код и частота. В примере ниже частоты заданы десятичныvb числами:
+
+```
+90	1
+0	1
+1	999999999999
+2	999999999999
+3	999999999999
+4	999999999999
+```
+
+#### Формат файла кодов Хаффмана
+
+Текст с кодами(разделитель LF) из двух обязательных колонок(разделитель TAB или пробелы)- значение кодирумого байта(десятичное число), код в двоичной системе. В примере ниже в третьей необязательной колонке(при чтении файла все, что правее второй колонки, игнорируется) сделаны примечания:
+
+```
+0  	01	0x00
+1  	100	0x10
+2  	101	0x20
+3  	11	0x30
+4  	000	0x40
+90 	001	0x5a
+```
 
 ## Плагин компилятора protoc
 
@@ -862,7 +921,7 @@ tcp_listeners =
 		"port": 50052,
 		"ip": "0.0.0.0",
 		"compression_type": 0,
-		"escape_code": 0,
+		"escape_code": "",
 		"compression_offset": 0,
 		"frequence_file": "",
 		"codemap_file": "",
@@ -923,7 +982,7 @@ packet2message =
 Параметры декомпрессии пакетов(необяательные):
 
 - compression_type	По умолчанию 0. 1- сжатие (Huffman). Для сжатия нудно указать или файл частот для построения таблицы кодов или готовую таблицу кодов 
-- escape_code Специальный экранирующий код- префикс(escape- код), который используется в качестве префикса для следующих за ним восьми бит значения. По умолчанию 0(не задан). Имеет значение, если compression_type	больше 0.
+- escape_code Специальный экранирующий код- префикс(escape- код) в бинарном коде, который используется в качестве префикса для следующих за ним восьми бит значения. По умолчанию не задан. Имеет значение, если compression_type больше 0.
 - compression_offset Смещение в байтах, начиная с которого данные сжимаются. По умолчанию 0. Имеет значение, если compression_type	больше 0.
 - frequence_file	Файл частот, используемый для построения таблицы кодов Хаффмана. Имеет значение, если compression_type больше 0 и не задан параметр codemap_file.
 - codemap_file	 Готовая таблицы кодов Хаффмана. Имеет значение, если compression_type	больше 0. 
