@@ -1,21 +1,22 @@
 pkt2
 ====
 
-История изменений
------------------
+# История изменений
+
+2017/10/03 добавлено описание опций сжатия tcpreceiver
 2017/08/16 добавлен раздел "Чтение данных из бинарных и текстовых файлов"
 2017/06/13 исправлен раздел "Описание пакетов"
 2017/04/25 pkt2dumppq
 2017/01/18 Пример описания
 2017/01/11 Черновик
 
-Назначение
-----------
+# Назначение
+
 
 Разбор приходящих TCP/IP пакетов по формальному описанию.
 
-Описание пакетов
-----------------
+# Описание пакетов
+
 
 Каждому пакету необходимо его описание (протокол).
 
@@ -505,65 +506,6 @@ kill -1 <номер процесса>
 ```
 чтобы программы перезапустились с чтением обновленных .proto файлов или остановить выполнение программ и запустить заново.
 
-
-## Описание опций программ
-
-### tcpreceiver
-
-```
-./tcpreceiver --help
-Usage: tcpreceiver
- [-dvh] [-i <IP address>] [-l <port>] [-o <bus url>] [-b <size>] [-r <n>] [-y <seconds>] [-c <number>] [-e <number>] [-s <offset>] [-f <file>] [-m <file>] [-p <bytes number>]... [--maxfd=<number>]
-PKT2 tcp packet listener sends raw packet
-  -i, --ipaddr=<IP address> Network interface name or address. Default 0.0.0.0
-  -l, --listen=<port>       TCP port to listen. Default 50052
-  -o, --output=<bus url>    Default ipc:///tmp/packet.pkt2
-  -b, --buffer=<size>       Default 4096 bytes
-  -r, --repeat=<n>          Restart listen. Default 0.
-  -y, --delay=<seconds>     Delay on restart in seconds. Default 60.
-  -c, --compression=<number> 1- Huffman(modified). Default 0- none.
-  -e, --escapecode=<BITS>   Escape code is a prefix for 8 bit value(not a Huffman code). Default none.
-  -s, --start=<offset>      Valid with -c option. Default 0.
-  -f, --freq=<file>         Compression frequence file name (in conjuction with -m) .
-  -m, --map=<file>          Compression code dictionary file name.
-  -p, --packetsize=<bytes number> Default any sizes.
-  -d, --daemonize           Start as daemon/service
-  --maxfd=<number>          Set max file descriptors. 0- use default (1024).
-  -v, --verbosity           Verbosity level
-  -h, --help                Show this help
-```
-
-Опция -p <размер> задает допустимые размеры пакета после распаковки и может быть повторена не более 256 раз, чтобы указать разные пакеты.
-
-Опция -c со значением больше нуля включает распаковку пакета, начиная со смещения, задаваемого опцией -s (если не задана, то с начала).
-
-Опции -f или -m взаимоисключающие, ими можно задать таблицу кодов Хаффмана по таблице частот (-f) или явно (-m).
-
-#### Формат файла частот
-
-Текст со строками частот(разделитель LF) из двух колонок(разделитель TAB)- код и частота. В примере ниже частоты заданы десятичныvb числами:
-
-```
-90	1
-0	1
-1	999999999999
-2	999999999999
-3	999999999999
-4	999999999999
-```
-
-#### Формат файла кодов Хаффмана
-
-Текст с кодами(разделитель LF) из двух обязательных колонок(разделитель TAB или пробелы)- значение кодирумого байта(десятичное число), код в двоичной системе. В примере ниже в третьей необязательной колонке(при чтении файла все, что правее второй колонки, игнорируется) сделаны примечания:
-
-```
-0  	01	0x00
-1  	100	0x10
-2  	101	0x20
-3  	11	0x30
-4  	000	0x40
-90 	001	0x5a
-```
 
 ## Плагин компилятора protoc
 
@@ -1159,8 +1101,113 @@ tcpreceiver TCP по умолчанию порт 50052
 - ipc:///tmp/message.pkt2
 
                                                                            
-### Тесты
+## Программы
 
+Основные
+
+- tcpemitter
+- tcpreceiver
+- pkt2receiver
+- pkt2gateway
+- handlerpq
+- handlerline
+- tcptransmitter
+- message2gateway
+
+Тестирующие
+
+- example1message1
+- pkt2gateway
+- tcpemitter-example1
+- tcpemitter-iridium
+
+example1message - тестирующая программа для message2gateway. Генерирует сообщения для записи.
+
+
+показаны на схеме, для передачи данных друг другу используется передача через именованные разделяемые области памяти
+ библиотекой nanomsg (http://nanomsg.org/), эмулирующих межпроцессное взаимодействие с очередями сообщений как с сокетами.
+
+### tcpreceiver
+
+```
+./tcpreceiver --help
+PKT2 tcp packet listener sends raw packet
+  -i, --ipaddr=<IP address> Network interface name or address. Default 0.0.0.0
+  -l, --listen=<port>       TCP port to listen. Default 50052
+  -o, --output=<bus url>    Default ipc:///tmp/packet.pkt2
+  -b, --buffer=<size>       Default 4096 bytes
+  -r, --repeat=<n>          Restart listen. Default 0.
+  -y, --delay=<seconds>     Delay on restart in seconds. Default 60.
+  -c, --compression=<number> 1- Huffman(modified). Default 0- none.
+  -e, --escapecode=<BITS>   Escape code is a prefix for 8 bit value(not a Huffman code). Default none.
+  -s, --start=<offset>      Valid with -c option. Default 0.
+  -f, --freq=<file>         Compression frequence file name (in conjuction with -m) .
+  -m, --map=<file>          Compression code dictionary file name.
+  -p, --packetsize=<bytes number> Default any sizes.
+  -d, --daemonize           Start as daemon/service
+  --maxfd=<number>          Set max file descriptors. 0- use default (1024).
+  -v, --verbosity           Verbosity level
+  -h, --help                Show this help
+```
+
+Опция -p <размер> задает допустимые размеры пакета после распаковки и может быть повторена не более 256 раз, чтобы указать разные пакеты.
+
+Опция -c со значением больше нуля включает распаковку пакета, начиная со смещения, задаваемого опцией -s (если не задана, то с начала).
+
+Опции -f или -m взаимоисключающие, ими можно задать таблицу кодов Хаффмана по таблице частот (-f) или явно (-m).
+
+#### Формат файла частот
+
+Текст со строками частот(разделитель LF) из двух колонок(разделитель TAB)- код(от 0 до 255) и частота(>=0). В примере ниже частоты заданы десятичными числами:
+
+```
+90	1
+0	1
+1	999999999999
+2	999999999999
+3	999999999999
+4	999999999999
+```
+
+#### Формат файла кодов Хаффмана
+
+Текст с кодами(разделитель LF) из двух обязательных колонок(разделитель TAB или пробелы)- значение кодирумого байта(десятичное число), код в двоичной системе. В примере ниже в третьей необязательной колонке(при чтении файла все, что правее второй колонки, игнорируется) сделаны примечания:
+
+```
+0  	01
+1  	100
+2  	101
+3  	11
+4  	000
+90 	001	конец
+```
+
+Строки без двух колонок(пустые строки) пропускаются.
+
+### tcpemitter
+
+```
+tcpemitter -i localhost -l 50052 << messages.txt
+```
+
+Каждая строка должна иметь тип сообщения и значения в формате JSON, разделенный знаком двоеточия ":"
+
+```
+Packet.MessageType:{"json-object-in-one-line"}
+```
+
+### handlerlmdb
+
+Значения
+
+- Record#
+- PK
+
+### Чтение данных из бинарных и текстовых файлов
+
+Программа freceiver получает данные из файла(устройства).
+
+### Тестирующие
 
 #### example1message1
 
@@ -1186,23 +1233,7 @@ codex -protofile proto/example/example1.proto -message_name TemperaturePkt 1
 #### tcpemitter-iridium
 
 Отправляет TCP пакеты Iridium пакет 8
- 
 
-Программы
----------
-
-Программы:
-
-tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq handlerline tcptransmitter message2gateway
-
-### Примеры
-
-- example1message - тестирующая программа для message2gateway. Генерирует сообщения для записи.
-
-
-показаны на схеме, для передачи данных друг другу используется передача через именованные разделяемые области памяти
- библиотекой nanomsg (http://nanomsg.org/), эмулирующих межпроцессное взаимодействие с очередями сообщений как с сокетами.
- 
 ### Плагин компилятора protoc protoc-gen-pkt2
 
 Плагин компилятора protoc (компилятор скачать можно тут https://github.com/google/protobuf/releases)
@@ -1211,13 +1242,9 @@ tcpemitter tcpreceiver pkt2receiver pkt2gateway handlerpq handlerline tcptransmi
 
 ```
 protoc --proto_path=proto --cpp_out=. proto/pkt2.proto
-
 protoc --proto_path=proto --cpp_out=. proto/example/example1.proto
-
 protoc --proto_path=proto --cpp_out=. proto/iridium/packet8.proto
-
 protoc --plugin=protoc-gen-pkt2="../protoc-gen-pkt2" --proto_path=../proto --pkt2_out=pkt2 ../proto/example1.proto
-
 protoc --plugin=protoc-gen-pkt2="protoc-gen-pkt2" --proto_path=proto --pkt2_out=pkt2 proto/example1.proto
 
 ```
@@ -1226,33 +1253,6 @@ protoc --plugin=protoc-gen-pkt2="protoc-gen-pkt2" --proto_path=proto --pkt2_out=
 
 - pkt2_out каталог, где будут сохранены сгенерированные файлы 
 - plugin имя плагина и путь к его исполнимому файлу
-
-## Программы
-
-### tcpemitter
-
-```
-tcpemitter -i localhost -l 50052 << messages.txt
-```
-
-Каждая строка должна иметь тип сообщения и значения в формате JSON, разделенный знаком двоеточия ":"
-
-```
-Packet.MessageType:{"json-object-in-one-line"}
-```
-
-### handlerlmdb
-
-Значения
-
-values 
-------
-Record# PK
-
-### Чтение данных из бинарных и текстовых файлов
-
-Программа freceiver получает данные из файла(устройства).
-
 
 ## Баги
 
@@ -1697,4 +1697,3 @@ extend google.protobuf.FieldOptions {
 }
 
 ```
-

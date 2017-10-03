@@ -54,9 +54,9 @@ size_t loadFrequencies
 	std::string line;
 	while (std::getline(*strm, line))
 	{
-		std::vector<uint64_t> inputs;
+		std::vector<int64_t> inputs;
 		std::istringstream in(line);
-		std::copy(std::istream_iterator<uint64_t>(in), std::istream_iterator<uint64_t>(), std::back_inserter(inputs));
+		std::copy(std::istream_iterator<int64_t>(in), std::istream_iterator<int64_t>(), std::back_inserter(inputs));
 		if (inputs.size() >= 2)
 		{
 			if ((inputs[0] < symbols_size) && (inputs[0] >= 0))
