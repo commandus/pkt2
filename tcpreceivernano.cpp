@@ -95,7 +95,6 @@ START:
 	HuffmanModifiedDecoder decoder(config->compression_type, config->compression_offset, 
 		config->frequence_file,
 		config->codemap_file, 
-		config->buffer_size,
 		config->valid_sizes);
 	config->stop_request = 0;
 	struct addrinfo *addr_dst;
@@ -174,7 +173,7 @@ START:
 		}
 		// Read
 		size_t sz = read(new_conn_fd, packet.data(), packet.max_data_size);
-		sz = decoder.decode(packet.data(), sz, packet.max_data_size);
+		sz = decoder.decode_buffer2buffer(packet.data(), packet.max_data_size, packet.data(), sz, 0);
 		packet.setLength(sz);
 
 		// Close the socket

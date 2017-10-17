@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include "huffmanmodifieddecoder.h"
+#include "huffcode.h"
 
 HuffmanModifiedDecoder::HuffmanModifiedDecoder
 (
@@ -10,20 +11,13 @@ HuffmanModifiedDecoder::HuffmanModifiedDecoder
 	size_t aoffset,								///< offset where data compression begins
 	const std::string &adictionary_file_name,	///< file name
 	const std::string &acodemap_file_name,		///< file name
-	size_t abuffer_size,
 	const std::vector<size_t> &a_valid_packet_sizes
 )
 :	mode(amode), offset(aoffset), 
 		dictionary_file_name(adictionary_file_name), 
 		codemap_file_name(acodemap_file_name), 
-		buffer_size(abuffer_size),
 		valid_packet_sizes(a_valid_packet_sizes)
 {
-	if (buffer_size > 0)
-		buffer = std::malloc(buffer_size);
-	else
-		buffer = NULL;
-
 	// Build frequency table
 	if (adictionary_file_name.empty())
 	{
@@ -42,39 +36,101 @@ HuffmanModifiedDecoder::HuffmanModifiedDecoder
 		delete strm;
 	}
 	
+	HuffCodeMap codeMap;
 	if (acodemap_file_name.empty())
 	{
-		Node* root = buildTree(frequencies, UniqueSymbols);
-		generateCodes(codeMap, root, HuffCode());
-		delete root;
+		mRoot = buildTree(frequencies, UniqueSymbols);
+		generateCodes(codeMap, mRoot, HuffCode());
 	}
 	else
 	{
 		std::istream *strm = new std::ifstream(acodemap_file_name.c_str(), std::ifstream::in);
 		loadCodeMap(codeMap, strm);
 		delete strm;
+		HuffCodeMap codes;
+		mRoot = buildTreeFromCodes(codes);
 	}
 	// printCodeMap(std::cout, codes);
 }
 
 HuffmanModifiedDecoder::~HuffmanModifiedDecoder()
 {
-	if (buffer)
-		free(buffer);
-	buffer = NULL;
+	if (mRoot)
+		delete mRoot;
 }
 
-size_t HuffmanModifiedDecoder::decompress(void *dest, void *src, size_t size)
+size_t HuffmanModifiedDecoder::unpack
+(
+	std::ostream *retval,
+	void *src,
+	size_t size,
+	size_t offset
+)
 {
 	if (mode != 1) 
 	{
-		std::memmove(dest, src, size);
+		retval->write((const char *) src, size);
 		return size;
 	}
 	// huffman
+ 	HuffCode escape_code;
+	size_t sz = decompress(retval, mRoot, escape_code, offset, src, size); 
+	return sz;
 }
 
-size_t HuffmanModifiedDecoder::decode(void *data, size_t len, size_t data_size)
+/**
+	* @brief Decode buffer to string
+	* @param value Data to unpack
+	* @param len You nedd to know unpacket(original) size)
+	* @return decoded value as string
+	*/
+std::string HuffmanModifiedDecoder::decode_buffer2string
+(
+	void *value, 
+	size_t len,
+	size_t offset
+)
+{
+	// get size
+	size_t sz = decode_buffer2buffer(NULL, 0, value, len, offset);
+	if (sz == 0)
+		return "";
+	std::string r('\0', sz);
+	decode_buffer2buffer((void *) r.c_str(), sz, value, len, offset);
+	return r;
+}
+
+/**
+	* @brief Decode string to string
+	* @param value Data to unpack
+	* @return decoded value as string
+	*/
+std::string HuffmanModifiedDecoder::decode_string2string
+(
+	const std::string &value, 
+	size_t len,
+	size_t offset
+)
+{
+	return decode_buffer2string((void *) value.c_str(), len, offset);
+}
+
+/**
+	* @brief Decode buffer to pre-allocated buffer or just return required size (if dest is NULL)
+	* @param dest Destination buffer. Can be NULL
+	* @param dest_size buffer size Can be 0
+	* @param data Data to unpack
+	* @param len You nedd to know unpacket(original) size)
+	* @return size
+	*/
+size_t HuffmanModifiedDecoder::decode_buffer2buffer
+(
+	void *dest, 
+	size_t dest_size, 
+	void *data, 
+	size_t len,
+	size_t offset
+)
 {
 	switch (mode) 
 	{
@@ -84,27 +140,22 @@ size_t HuffmanModifiedDecoder::decode(void *data, size_t len, size_t data_size)
 		{
 			if (!data)
 				return 0;
-			size_t sz = decompress(buffer, (char *) data + offset, len - offset);
+			std::stringstream ss;
+			size_t sz = unpack(&ss, (char *) data + offset, len - offset, offset);
 			if (sz > 0)
 			{
 				// truncate buffer to maximum size if exceed
-				if (sz > data_size)
-					sz = data_size;
-				if (sz > 0)
+				if (sz > dest_size)
+					sz = dest_size;
+				// check allowed sizes
+				if (valid_packet_sizes.size())
 				{
-					/* Already
-					if (offset > 0)
-						std::memmove(data, buffer, offset);
-					*/
-					// check allowed sizes
-					if (valid_packet_sizes.size())
-					{
-						if (std::find(valid_packet_sizes.begin(), valid_packet_sizes.end(), sz + offset) != valid_packet_sizes.end())
-							// if packet size is not in list, retuen as is(not decompressed)
-							return len;
-					}
-					std::memmove((char *) data + offset, buffer, sz);
+					if (std::find(valid_packet_sizes.begin(), valid_packet_sizes.end(), sz + offset) != valid_packet_sizes.end())
+						// if packet size is not in list, return as is(not decompressed)
+						return len;
 				}
+				std::string s = ss.str();
+				std::memmove((char *) dest + offset, s.c_str(), sz);
 			}
 			
 			return sz + offset;
