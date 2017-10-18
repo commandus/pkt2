@@ -106,22 +106,22 @@ size_t HuffmanModifiedDecoder::unpack
 /**
 	* @brief Decode buffer to string
 	* @param value Data to unpack
-	* @param len You nedd to know unpacket(original) size)
+	* @param size Data size
 	* @return decoded value as string
-	*/
+*/
 std::string HuffmanModifiedDecoder::decode_buffer2string
 (
 	void *value, 
-	size_t len,
+	size_t size,
 	size_t offset
 )
 {
 	// get size
-	size_t sz = decode_buffer2buffer(NULL, 0, value, len, offset);
+	size_t sz = decode_buffer2buffer(NULL, 0, value, size, offset);
 	if (sz == 0)
 		return "";
 	std::string r('\0', sz);
-	decode_buffer2buffer((void *) r.c_str(), sz, value, len, offset);
+	decode_buffer2buffer((void *) r.c_str(), sz, value, size, offset);
 	return r;
 }
 
@@ -129,15 +129,14 @@ std::string HuffmanModifiedDecoder::decode_buffer2string
 	* @brief Decode string to string
 	* @param value Data to unpack
 	* @return decoded value as string
-	*/
+*/
 std::string HuffmanModifiedDecoder::decode_string2string
 (
 	const std::string &value, 
-	size_t len,
 	size_t offset
 )
 {
-	return decode_buffer2string((void *) value.c_str(), len, offset);
+	return decode_buffer2string((void *) value.c_str(), value.size(), offset);
 }
 
 /**
@@ -145,28 +144,28 @@ std::string HuffmanModifiedDecoder::decode_string2string
 	* @param dest Destination buffer. Can be NULL
 	* @param dest_size buffer size Can be 0
 	* @param data Data to unpack
-	* @param len You nedd to know unpacket(original) size)
+	* @param size Data size
 	* @return size
-	*/
+*/
 size_t HuffmanModifiedDecoder::decode_buffer2buffer
 (
 	void *dest, 
 	size_t dest_size, 
 	void *data, 
-	size_t len,
+	size_t size,
 	size_t offset
 )
 {
 	switch (mode) 
 	{
 		case 0: 
-			return len;
+			return size;
 		default:
 		{
 			if (!data)
 				return 0;
 			std::stringstream ss;
-			size_t sz = unpack(&ss, (char *) data + offset, len - offset, offset);
+			size_t sz = unpack(&ss, (char *) data + offset, size - offset, offset);
 			if (sz > 0)
 			{
 				// truncate buffer to maximum size if exceed
@@ -177,12 +176,12 @@ size_t HuffmanModifiedDecoder::decode_buffer2buffer
 				{
 					if (std::find(valid_packet_sizes.begin(), valid_packet_sizes.end(), sz + offset) != valid_packet_sizes.end())
 						// if packet size is not in list, return as is(not decompressed)
-						return len;
+						return size;
 				}
 				std::string s = ss.str();
-				std::memmove((char *) dest + offset, s.c_str(), sz);
+				if (dest)
+					std::memmove((char *) dest + offset, s.c_str(), sz);
 			}
-			
 			return sz + offset;
 		}
 	}

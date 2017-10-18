@@ -34,32 +34,35 @@ public:
 	 * @brief Unpack buffer to stream
 	 * @param retval Destination buffer. Can be NULL
 	 * @param src input buffer
-	 * @param len You nedd to know unpacket(original) size)
+	 * @param size Data size
 	 * @return size
 	 */
-	size_t unpack(std::ostream *retval, void *src, size_t len, size_t offset);
+	size_t unpack(std::ostream *retval, void *src, size_t size, size_t offset);
+
 	/**
 	 * @brief Decode buffer to pre-allocated buffer or just return required size (if dest is NULL)
 	 * @param dest Destination buffer. Can be NULL
 	 * @param dest_size buffer size Can be 0
 	 * @param value Data to unpack
-	 * @param len You nedd to know unpacket(original) size)
+	 * @param size Data size
 	 * @return size
 	 */
-	size_t decode_buffer2buffer(void *dest, size_t dest_size, void *value, size_t len, size_t offset);
+	size_t decode_buffer2buffer(void *dest, size_t dest_size, void *value, size_t size, size_t offset);
+	
 	/**
 	 * @brief Decode buffer to string
 	 * @param value Data to unpack
-	 * @param len You nedd to know unpacket(original) size)
+	 * @param size Data size
 	 * @return decoded value as string
 	 */
-	std::string decode_buffer2string(void *value, size_t len, size_t offset);
+	std::string decode_buffer2string(void *value, size_t size, size_t offset);
+
 	/**
 	 * @brief Decode string to string
 	 * @param value Data to unpack
 	 * @return decoded value as string
 	 */
-	std::string decode_string2string(const std::string &value, size_t len, size_t offset);
+	std::string decode_string2string(const std::string &value, size_t offset);
 };
 
 #endif // HUFFMANMODIFIEDDECODER_H
