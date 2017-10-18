@@ -211,3 +211,27 @@ HuffCode getHuffCode
 (
 	const std::string &t
 );
+
+Node* defaultHuffmanCodeTree
+(
+);
+
+Node* loadHuffmanCodeTreeFromFrequencyStream
+(
+	std::istream *frequencies_stream	///< stream
+);
+
+Node* loadHuffmanCodeTreeFromFrequencyFile
+(
+	const std::string &frequencies_file	///< file name
+);
+
+Node* loadHuffmanCodeTreeFromCodeStream
+(
+	std::istream *codes_stream	///< stream
+);
+
+Node* loadHuffmanCodeTreeFromCodeFile
+(
+	const std::string &codes_file	///< file name
+);

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <iomanip>
+#include <fstream>
 #include <algorithm>
 
 #include <queue>
@@ -956,3 +957,65 @@ size_t encode_string
 	return r;
 }
 
+Node* defaultHuffmanCodeTree
+(
+)
+{
+	std::stringstream alphabet;
+	size_t frequencies[256];
+	
+	// Linear
+	for (int i = 0; i < 256; i++) 
+	{
+		alphabet << (unsigned char) (256 - i);
+	}
+	
+	// TODO logarithmic?
+	
+	Node* r = buildTree(frequencies, 256);
+	return r;
+}
+
+Node* loadHuffmanCodeTreeFromFrequencyStream
+(
+	std::istream *frequencies_stream	///< stream
+)
+{
+	size_t frequencies[256];
+	int UniqueSymbols = loadFrequencies(frequencies, 256, frequencies_stream);
+	Node* r = buildTree(frequencies, UniqueSymbols);
+	return r;
+}
+
+Node* loadHuffmanCodeTreeFromFrequencyFile
+(
+	const std::string &frequencies_file	///< file name
+)
+{
+	std::istream *strm = new std::ifstream(frequencies_file.c_str(), std::ifstream::in);
+	Node* r = loadHuffmanCodeTreeFromFrequencyStream(strm);
+	delete strm;
+	return r;
+}
+
+Node* loadHuffmanCodeTreeFromCodeStream
+(
+	std::istream *codes_stream	///< stream
+)
+{
+	HuffCodeMap codeMap;
+	loadCodeMap(codeMap, codes_stream);
+	Node *r = buildTreeFromCodes(codeMap);
+	return r;
+}
+
+Node* loadHuffmanCodeTreeFromCodeFile
+(
+	const std::string &codes_file	///< file name
+)
+{
+	std::istream *strm = new std::ifstream(codes_file.c_str(), std::ifstream::in);
+	Node* r = loadHuffmanCodeTreeFromCodeStream(strm);
+	delete strm;
+	return r;
+}

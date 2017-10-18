@@ -5,52 +5,78 @@
 #include "huffmanmodifieddecoder.h"
 #include "huffcode.h"
 
-HuffmanModifiedDecoder::HuffmanModifiedDecoder
-(
-	int amode,									///< 0- no compression, 1- modified Huffman
-	size_t aoffset,								///< offset where data compression begins
-	const std::string &adictionary_file_name,	///< file name
-	const std::string &acodemap_file_name,		///< file name
-	const std::vector<size_t> &a_valid_packet_sizes
-)
-:	mode(amode), offset(aoffset), 
-		dictionary_file_name(adictionary_file_name), 
-		codemap_file_name(acodemap_file_name), 
-		valid_packet_sizes(a_valid_packet_sizes)
+HuffmanModifiedDecoder::HuffmanModifiedDecoder()
+:	mode(1), offset(0)
 {
-	// Build frequency table
-	if (adictionary_file_name.empty())
-	{
-		std::stringstream alphabet;
-		UniqueSymbols = 256;
-		for (int i = 0; i < UniqueSymbols; i++) 
-		{
-			alphabet << (unsigned char) i;
-		}
-		buildFrequencies(frequencies, UniqueSymbols, alphabet.str().c_str(), UniqueSymbols);
-	}
-	else
-	{
-		std::istream *strm = new std::ifstream(adictionary_file_name.c_str(), std::ifstream::in);
-		UniqueSymbols = loadFrequencies(frequencies, 256, strm);
-		delete strm;
-	}
-	
-	HuffCodeMap codeMap;
-	if (acodemap_file_name.empty())
-	{
-		mRoot = buildTree(frequencies, UniqueSymbols);
-		generateCodes(codeMap, mRoot, HuffCode());
-	}
-	else
-	{
-		std::istream *strm = new std::ifstream(acodemap_file_name.c_str(), std::ifstream::in);
-		loadCodeMap(codeMap, strm);
-		delete strm;
-		HuffCodeMap codes;
-		mRoot = buildTreeFromCodes(codes);
-	}
-	// printCodeMap(std::cout, codes);
+	mRoot = defaultHuffmanCodeTree();
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setMode
+(
+	int value		///< 0- no compression, 1- modified Huffman
+)
+{
+	mode = value;
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEscapeCode
+(
+	const std::string &escape_code				///< for mode 1
+)
+{
+	mEscapeCode = getHuffCode(escape_code); 
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setOffset
+(
+	size_t value								///< offset where data compression begins
+)
+{
+	offset = value;
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setTreeFromFrequencies(size_t *frequencies, size_t len)
+{
+	if (mRoot)
+		delete mRoot;
+	mRoot = buildTree(frequencies, len);
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setTreeFromFrequenciesStream(std::istream *strm)
+{
+	mRoot = loadHuffmanCodeTreeFromFrequencyStream(strm);
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setTreeFromCodesStream(std::istream *strm)
+{
+	mRoot = loadHuffmanCodeTreeFromCodeStream(strm);
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setTreeFromFrequenciesFile(const std::string &value)
+{
+	mRoot = loadHuffmanCodeTreeFromFrequencyFile(value);
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setTreeFromCodesFile(const std::string &value)
+{
+	mRoot = loadHuffmanCodeTreeFromCodeFile(value);
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setValidPacketSizes
+(
+	const std::vector<size_t> &value			///< can be NULL
+)
+{
+	valid_packet_sizes = value;
+	return this;
 }
 
 HuffmanModifiedDecoder::~HuffmanModifiedDecoder()
@@ -73,8 +99,7 @@ size_t HuffmanModifiedDecoder::unpack
 		return size;
 	}
 	// huffman
- 	HuffCode escape_code;
-	size_t sz = decompress(retval, mRoot, escape_code, offset, src, size); 
+	size_t sz = decompress(retval, mRoot, mEscapeCode, offset, src, size); 
 	return sz;
 }
 
