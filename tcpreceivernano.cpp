@@ -94,7 +94,6 @@ int tcp_receiever_nano(Config *config)
 START:	
 	HuffmanModifiedDecoder decoder;
 	decoder.setMode(config->compression_type);
-	decoder.setOffset(config->compression_offset);
 	if (!config->frequence_file.empty())
 		decoder.setTreeFromFrequenciesFile(config->frequence_file);
 	else
@@ -180,7 +179,7 @@ START:
 		}
 		// Read
 		size_t sz = read(new_conn_fd, packet.data(), packet.max_data_size);
-		sz = decoder.decode_buffer2buffer(packet.data(), packet.max_data_size, packet.data(), sz, 0);
+		sz = decoder.decode_buffer2buffer(packet.data(), packet.max_data_size, packet.data(), sz, config->compression_offset);
 		packet.setLength(sz);
 
 		// Close the socket
