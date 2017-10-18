@@ -92,10 +92,17 @@ int listen_port
 int tcp_receiever_nano(Config *config)
 {
 START:	
-	HuffmanModifiedDecoder decoder(config->compression_type, config->compression_offset, 
-		config->frequence_file,
-		config->codemap_file, 
-		config->valid_sizes);
+	HuffmanModifiedDecoder decoder;
+	decoder.setMode(config->compression_type);
+	decoder.setOffset(config->compression_offset);
+	if (!config->frequence_file.empty())
+		decoder.setTreeFromFrequenciesFile(config->frequence_file);
+	else
+		if (!config->codemap_file.empty())
+			decoder.setTreeFromCodesFile(config->codemap_file);
+	decoder.setEscapeCode(config->escape_code);
+	decoder.setValidPacketSizes(config->valid_sizes);
+
 	config->stop_request = 0;
 	struct addrinfo *addr_dst;
 	if (get_addr_info(config, &addr_dst))
