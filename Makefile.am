@@ -3,17 +3,21 @@ ACLOCAL_AMFLAGS = -I m4
 
 TESTS = tests/p1.sh tests/t1 
 
+INCLUDES = -I/usr/local/include
+
+HUFF_CPP_FLAGS = -Ibitstream -Ihuff
+
 if DEBUG
-	AM_CFLAGS = -g3 -O0
-	AM_CXXFLAGS = -g3 -O0 -DDEBUG
+	AM_CFLAGS = -g3 -O0 $(INCLUDES)
+	AM_CXXFLAGS = -g3 -O0 -DDEBUG $(INCLUDES)
 else
-	AM_CFLAGS = -O2
-	AM_CXXFLAGS = -O2
+	AM_CFLAGS = -O2 $(INCLUDES)
+	AM_CXXFLAGS = -O2 $(INCLUDES)
 endif
 
 # ----------------- REMOVE IT!!!! ------------------
 # -std=c++11
-AM_CXXFLAGS =  -O0 -DDEBUG
+AM_CXXFLAGS =  -O0 -DDEBUG $(INCLUDES)
 #COMMON_CPP_FLAGS = 
 # ----------------- REMOVE IT!!!! ------------------
 
@@ -84,14 +88,17 @@ pkt2-config.h pkt2-impl.h \
 pkt2receiver-check-config.h \
 repeator-config.h  \
 freceiver-impl.h freceiver-impl.h freceiver-config.h \
-huff/huffcode.h  huff/huffmanmodifieddecoder.h  huff/internalnode.h  huff/leafnode.h  huff/node.h \
-huff/bitstream.h huff/varint.h
+huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
+huff/internalnode.h  huff/leafnode.h  huff/node.h \
+bitstream/bitstream.h bitstream/varint.h
 
-huff_src = huff/huffcode.cpp  huff/huffmanmodifieddecoder.cpp  huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp huff/bitstream.cpp
+huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
+	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  \
+	bitstream/bitstream.cpp
 
 common_src =
 
-commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
+commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2 -L/usr/local/lib
 
 #
 #	pkt2
@@ -140,7 +147,7 @@ tcpreceiver_SOURCES = \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -Ihuff
+tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(HUFF_CPP_FLAGS) 
 
 #
 #	mqtt-receiver

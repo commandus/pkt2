@@ -434,10 +434,11 @@ tcpemitter_iridium_OBJECTS = $(am_tcpemitter_iridium_OBJECTS)
 tcpemitter_iridium_DEPENDENCIES =
 am__objects_2 = huff/tcpreceiver-huffcode.$(OBJEXT) \
 	huff/tcpreceiver-huffmanmodifieddecoder.$(OBJEXT) \
+	huff/tcpreceiver-huffmanmodifiedencoder.$(OBJEXT) \
 	huff/tcpreceiver-internalnode.$(OBJEXT) \
 	huff/tcpreceiver-leafnode.$(OBJEXT) \
 	huff/tcpreceiver-node.$(OBJEXT) \
-	huff/tcpreceiver-bitstream.$(OBJEXT)
+	bitstream/tcpreceiver-bitstream.$(OBJEXT)
 am_tcpreceiver_OBJECTS = tcpreceiver-tcpreceiver.$(OBJEXT) \
 	tcpreceiver-tcpreceiver-config.$(OBJEXT) \
 	tcpreceiver-tcpreceivernano.$(OBJEXT) \
@@ -957,10 +958,12 @@ top_srcdir = .
 SUBDIRS = . tests
 ACLOCAL_AMFLAGS = -I m4
 TESTS = tests/p1.sh tests/t1 
+INCLUDES = -I/usr/local/include
+HUFF_CPP_FLAGS = -Ibitstream -Ihuff
 
 # ----------------- REMOVE IT!!!! ------------------
 # -std=c++11
-AM_CXXFLAGS = -O0 -DDEBUG
+AM_CXXFLAGS = -O0 -DDEBUG $(INCLUDES)
 #COMMON_CPP_FLAGS = 
 # ----------------- REMOVE IT!!!! ------------------
 
@@ -1008,12 +1011,16 @@ pkt2-config.h pkt2-impl.h \
 pkt2receiver-check-config.h \
 repeator-config.h  \
 freceiver-impl.h freceiver-impl.h freceiver-config.h \
-huff/huffcode.h  huff/huffmanmodifieddecoder.h  huff/internalnode.h  huff/leafnode.h  huff/node.h \
-huff/bitstream.h huff/varint.h
+huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
+huff/internalnode.h  huff/leafnode.h  huff/node.h \
+bitstream/bitstream.h bitstream/varint.h
 
-huff_src = huff/huffcode.cpp  huff/huffmanmodifieddecoder.cpp  huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp huff/bitstream.cpp
+huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
+	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  \
+	bitstream/bitstream.cpp
+
 common_src = 
-commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2
+commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2 -L/usr/local/lib
 
 #
 #	pkt2
@@ -1062,7 +1069,7 @@ tcpreceiver_SOURCES = \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -Ihuff
+tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(HUFF_CPP_FLAGS) 
 
 #
 #	mqtt-receiver
@@ -1546,14 +1553,22 @@ huff/tcpreceiver-huffcode.$(OBJEXT): huff/$(am__dirstamp) \
 	huff/$(DEPDIR)/$(am__dirstamp)
 huff/tcpreceiver-huffmanmodifieddecoder.$(OBJEXT):  \
 	huff/$(am__dirstamp) huff/$(DEPDIR)/$(am__dirstamp)
+huff/tcpreceiver-huffmanmodifiedencoder.$(OBJEXT):  \
+	huff/$(am__dirstamp) huff/$(DEPDIR)/$(am__dirstamp)
 huff/tcpreceiver-internalnode.$(OBJEXT): huff/$(am__dirstamp) \
 	huff/$(DEPDIR)/$(am__dirstamp)
 huff/tcpreceiver-leafnode.$(OBJEXT): huff/$(am__dirstamp) \
 	huff/$(DEPDIR)/$(am__dirstamp)
 huff/tcpreceiver-node.$(OBJEXT): huff/$(am__dirstamp) \
 	huff/$(DEPDIR)/$(am__dirstamp)
-huff/tcpreceiver-bitstream.$(OBJEXT): huff/$(am__dirstamp) \
-	huff/$(DEPDIR)/$(am__dirstamp)
+bitstream/$(am__dirstamp):
+	@$(MKDIR_P) bitstream
+	@: > bitstream/$(am__dirstamp)
+bitstream/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) bitstream/$(DEPDIR)
+	@: > bitstream/$(DEPDIR)/$(am__dirstamp)
+bitstream/tcpreceiver-bitstream.$(OBJEXT): bitstream/$(am__dirstamp) \
+	bitstream/$(DEPDIR)/$(am__dirstamp)
 
 tcpreceiver$(EXEEXT): $(tcpreceiver_OBJECTS) $(tcpreceiver_DEPENDENCIES) $(EXTRA_tcpreceiver_DEPENDENCIES) 
 	@rm -f tcpreceiver$(EXEEXT)
@@ -1565,6 +1580,7 @@ tcptransmitter$(EXEEXT): $(tcptransmitter_OBJECTS) $(tcptransmitter_DEPENDENCIES
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
+	-rm -f bitstream/*.$(OBJEXT)
 	-rm -f duk/*.$(OBJEXT)
 	-rm -f example/*.$(OBJEXT)
 	-rm -f huff/*.$(OBJEXT)
@@ -1846,6 +1862,7 @@ include ./$(DEPDIR)/tcptransmitter-tcptransmitter.Po
 include ./$(DEPDIR)/tcptransmitter-utilinet.Po
 include ./$(DEPDIR)/tcptransmitter-utilpriority.Po
 include ./$(DEPDIR)/tcptransmitter-utilstring.Po
+include bitstream/$(DEPDIR)/tcpreceiver-bitstream.Po
 include duk/$(DEPDIR)/handler_google_sheets-duktape.Po
 include duk/$(DEPDIR)/handlerline-duktape.Po
 include duk/$(DEPDIR)/handlerlmdb-duktape.Po
@@ -1858,9 +1875,9 @@ include duk/$(DEPDIR)/pkt2gateway-duktape.Po
 include duk/$(DEPDIR)/pkt2receiver-duktape.Po
 include example/$(DEPDIR)/example1message-example1.pb.Po
 include example/$(DEPDIR)/example1message1-example1.pb.Po
-include huff/$(DEPDIR)/tcpreceiver-bitstream.Po
 include huff/$(DEPDIR)/tcpreceiver-huffcode.Po
 include huff/$(DEPDIR)/tcpreceiver-huffmanmodifieddecoder.Po
+include huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Po
 include huff/$(DEPDIR)/tcpreceiver-internalnode.Po
 include huff/$(DEPDIR)/tcpreceiver-leafnode.Po
 include huff/$(DEPDIR)/tcpreceiver-node.Po
@@ -5833,6 +5850,20 @@ huff/tcpreceiver-huffmanmodifieddecoder.obj: huff/huffmanmodifieddecoder.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffmanmodifieddecoder.obj `if test -f 'huff/huffmanmodifieddecoder.cpp'; then $(CYGPATH_W) 'huff/huffmanmodifieddecoder.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffmanmodifieddecoder.cpp'; fi`
 
+huff/tcpreceiver-huffmanmodifiedencoder.o: huff/huffmanmodifiedencoder.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-huffmanmodifiedencoder.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Tpo -c -o huff/tcpreceiver-huffmanmodifiedencoder.o `test -f 'huff/huffmanmodifiedencoder.cpp' || echo '$(srcdir)/'`huff/huffmanmodifiedencoder.cpp
+	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Tpo huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Po
+#	$(AM_V_CXX)source='huff/huffmanmodifiedencoder.cpp' object='huff/tcpreceiver-huffmanmodifiedencoder.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffmanmodifiedencoder.o `test -f 'huff/huffmanmodifiedencoder.cpp' || echo '$(srcdir)/'`huff/huffmanmodifiedencoder.cpp
+
+huff/tcpreceiver-huffmanmodifiedencoder.obj: huff/huffmanmodifiedencoder.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-huffmanmodifiedencoder.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Tpo -c -o huff/tcpreceiver-huffmanmodifiedencoder.obj `if test -f 'huff/huffmanmodifiedencoder.cpp'; then $(CYGPATH_W) 'huff/huffmanmodifiedencoder.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffmanmodifiedencoder.cpp'; fi`
+	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Tpo huff/$(DEPDIR)/tcpreceiver-huffmanmodifiedencoder.Po
+#	$(AM_V_CXX)source='huff/huffmanmodifiedencoder.cpp' object='huff/tcpreceiver-huffmanmodifiedencoder.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-huffmanmodifiedencoder.obj `if test -f 'huff/huffmanmodifiedencoder.cpp'; then $(CYGPATH_W) 'huff/huffmanmodifiedencoder.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/huffmanmodifiedencoder.cpp'; fi`
+
 huff/tcpreceiver-internalnode.o: huff/internalnode.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-internalnode.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-internalnode.Tpo -c -o huff/tcpreceiver-internalnode.o `test -f 'huff/internalnode.cpp' || echo '$(srcdir)/'`huff/internalnode.cpp
 	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-internalnode.Tpo huff/$(DEPDIR)/tcpreceiver-internalnode.Po
@@ -5875,19 +5906,19 @@ huff/tcpreceiver-node.obj: huff/node.cpp
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-node.obj `if test -f 'huff/node.cpp'; then $(CYGPATH_W) 'huff/node.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/node.cpp'; fi`
 
-huff/tcpreceiver-bitstream.o: huff/bitstream.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-bitstream.o -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-bitstream.Tpo -c -o huff/tcpreceiver-bitstream.o `test -f 'huff/bitstream.cpp' || echo '$(srcdir)/'`huff/bitstream.cpp
-	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-bitstream.Tpo huff/$(DEPDIR)/tcpreceiver-bitstream.Po
-#	$(AM_V_CXX)source='huff/bitstream.cpp' object='huff/tcpreceiver-bitstream.o' libtool=no \
+bitstream/tcpreceiver-bitstream.o: bitstream/bitstream.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bitstream/tcpreceiver-bitstream.o -MD -MP -MF bitstream/$(DEPDIR)/tcpreceiver-bitstream.Tpo -c -o bitstream/tcpreceiver-bitstream.o `test -f 'bitstream/bitstream.cpp' || echo '$(srcdir)/'`bitstream/bitstream.cpp
+	$(AM_V_at)$(am__mv) bitstream/$(DEPDIR)/tcpreceiver-bitstream.Tpo bitstream/$(DEPDIR)/tcpreceiver-bitstream.Po
+#	$(AM_V_CXX)source='bitstream/bitstream.cpp' object='bitstream/tcpreceiver-bitstream.o' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-bitstream.o `test -f 'huff/bitstream.cpp' || echo '$(srcdir)/'`huff/bitstream.cpp
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bitstream/tcpreceiver-bitstream.o `test -f 'bitstream/bitstream.cpp' || echo '$(srcdir)/'`bitstream/bitstream.cpp
 
-huff/tcpreceiver-bitstream.obj: huff/bitstream.cpp
-	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT huff/tcpreceiver-bitstream.obj -MD -MP -MF huff/$(DEPDIR)/tcpreceiver-bitstream.Tpo -c -o huff/tcpreceiver-bitstream.obj `if test -f 'huff/bitstream.cpp'; then $(CYGPATH_W) 'huff/bitstream.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/bitstream.cpp'; fi`
-	$(AM_V_at)$(am__mv) huff/$(DEPDIR)/tcpreceiver-bitstream.Tpo huff/$(DEPDIR)/tcpreceiver-bitstream.Po
-#	$(AM_V_CXX)source='huff/bitstream.cpp' object='huff/tcpreceiver-bitstream.obj' libtool=no \
+bitstream/tcpreceiver-bitstream.obj: bitstream/bitstream.cpp
+	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT bitstream/tcpreceiver-bitstream.obj -MD -MP -MF bitstream/$(DEPDIR)/tcpreceiver-bitstream.Tpo -c -o bitstream/tcpreceiver-bitstream.obj `if test -f 'bitstream/bitstream.cpp'; then $(CYGPATH_W) 'bitstream/bitstream.cpp'; else $(CYGPATH_W) '$(srcdir)/bitstream/bitstream.cpp'; fi`
+	$(AM_V_at)$(am__mv) bitstream/$(DEPDIR)/tcpreceiver-bitstream.Tpo bitstream/$(DEPDIR)/tcpreceiver-bitstream.Po
+#	$(AM_V_CXX)source='bitstream/bitstream.cpp' object='bitstream/tcpreceiver-bitstream.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
-#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o huff/tcpreceiver-bitstream.obj `if test -f 'huff/bitstream.cpp'; then $(CYGPATH_W) 'huff/bitstream.cpp'; else $(CYGPATH_W) '$(srcdir)/huff/bitstream.cpp'; fi`
+#	$(AM_V_CXX_no)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcpreceiver_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o bitstream/tcpreceiver-bitstream.obj `if test -f 'bitstream/bitstream.cpp'; then $(CYGPATH_W) 'bitstream/bitstream.cpp'; else $(CYGPATH_W) '$(srcdir)/bitstream/bitstream.cpp'; fi`
 
 tcptransmitter-tcptransmitter.o: tcptransmitter.cpp
 	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(tcptransmitter_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT tcptransmitter-tcptransmitter.o -MD -MP -MF $(DEPDIR)/tcptransmitter-tcptransmitter.Tpo -c -o tcptransmitter-tcptransmitter.o `test -f 'tcptransmitter.cpp' || echo '$(srcdir)/'`tcptransmitter.cpp
@@ -6560,6 +6591,8 @@ clean-generic:
 distclean-generic:
 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
 	-test . = "$(srcdir)" || test -z "$(CONFIG_CLEAN_VPATH_FILES)" || rm -f $(CONFIG_CLEAN_VPATH_FILES)
+	-rm -f bitstream/$(DEPDIR)/$(am__dirstamp)
+	-rm -f bitstream/$(am__dirstamp)
 	-rm -f duk/$(DEPDIR)/$(am__dirstamp)
 	-rm -f duk/$(am__dirstamp)
 	-rm -f example/$(DEPDIR)/$(am__dirstamp)
@@ -6577,7 +6610,7 @@ clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR) huff/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) bitstream/$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR) huff/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-libtool distclean-tags
@@ -6626,7 +6659,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR) huff/$(DEPDIR)
+	-rm -rf ./$(DEPDIR) bitstream/$(DEPDIR) duk/$(DEPDIR) example/$(DEPDIR) huff/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -6673,10 +6706,10 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dist_configDATA \
 .PRECIOUS: Makefile
 
 
-#	AM_CFLAGS = -g3 -O0
-#	AM_CXXFLAGS = -g3 -O0 -DDEBUG
-	AM_CFLAGS = -O2
-	AM_CXXFLAGS = -O2
+#	AM_CFLAGS = -g3 -O0 $(INCLUDES)
+#	AM_CXXFLAGS = -g3 -O0 -DDEBUG $(INCLUDES)
+	AM_CFLAGS = -O2 $(INCLUDES)
+	AM_CXXFLAGS = -O2 $(INCLUDES)
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
 	protoc -I proto --cpp_out=. proto/pkt2.proto
