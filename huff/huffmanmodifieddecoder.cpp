@@ -6,7 +6,7 @@
 #include "huffcode.h"
 
 HuffmanModifiedDecoder::HuffmanModifiedDecoder()
-:	mode(1), offset(0)
+	:	mode(1), offset(0)
 {
 	mRoot = defaultHuffmanCodeTree();
 }

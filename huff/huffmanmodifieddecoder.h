@@ -8,8 +8,8 @@
 class HuffmanModifiedDecoder
 {
 private:
-	int mode;													///< 0- no compression, 1- modified Huffman. Default 1
-	size_t offset;												///< offset where data compression begins
+ 	int mode;																		///< 0- no compression, 1- modified Huffman. Default 1
+	size_t offset;																	///< offset where data compression begins
 	std::vector<size_t> valid_packet_sizes;
 	Node *mRoot;
 	HuffCode mEscapeCode;
@@ -18,14 +18,14 @@ public:
 	HuffmanModifiedDecoder *setMode(int mode);										///< 0- no compression, 1- modified Huffman
 	HuffmanModifiedDecoder *setEscapeCode(const std::string &escape_code);			///< for mode 1
 	HuffmanModifiedDecoder *setOffset(size_t offset);								///< offset where data compression begins
-	HuffmanModifiedDecoder *setTreeFromFrequencies(size_t *frequencies, size_t len);		///< array
+	HuffmanModifiedDecoder *setTreeFromFrequencies(size_t *frequencies, size_t len);///< array
 	HuffmanModifiedDecoder *setTreeFromFrequenciesStream(std::istream *strm);		///< stream
-	HuffmanModifiedDecoder *setTreeFromCodesStream(std::istream *strm);			///< stream
+	HuffmanModifiedDecoder *setTreeFromCodesStream(std::istream *strm);				///< stream
 	HuffmanModifiedDecoder *setTreeFromFrequenciesFile(const std::string &value);	///< file name
-	HuffmanModifiedDecoder *setTreeFromCodesFile(const std::string &value);		///< file name
+	HuffmanModifiedDecoder *setTreeFromCodesFile(const std::string &value);			///< file name
 	HuffmanModifiedDecoder *setValidPacketSizes
 	(
-		const std::vector<size_t> &valid_packet_sizes			///< can be empty means do not validate
+		const std::vector<size_t> &valid_packet_sizes								///< can be empty means do not validate
 	);
 	
 	~HuffmanModifiedDecoder();
@@ -63,3 +63,4 @@ public:
 };
 
 #endif // HUFFMANMODIFIEDDECODER_H
+
