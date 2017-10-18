@@ -6,8 +6,9 @@
 #include "huffcode.h"
 
 HuffmanModifiedEncoder::HuffmanModifiedEncoder()
-	:	mode(1), offset(0)
+	:	mode(1)
 {
+	mCodeMap = defaultHuffmanCodeMap();
 }
 
 HuffmanModifiedEncoder *HuffmanModifiedEncoder::setMode
@@ -25,15 +26,6 @@ HuffmanModifiedEncoder *HuffmanModifiedEncoder::setEscapeCode
 )
 {
 	mEscapeCode = getHuffCode(escape_code); 
-	return this;
-}
-
-HuffmanModifiedEncoder *HuffmanModifiedEncoder::setOffset
-(
-	size_t value								///< offset where data compression begins
-)
-{
-	offset = value;
 	return this;
 }
 
@@ -89,7 +81,7 @@ HuffmanModifiedEncoder::~HuffmanModifiedEncoder()
 size_t HuffmanModifiedEncoder::pack
 (
 	std::ostream *retval,
-	void *src,
+	const void *src,
 	size_t size,
 	size_t offset
 )

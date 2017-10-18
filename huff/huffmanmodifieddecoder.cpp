@@ -6,7 +6,7 @@
 #include "huffcode.h"
 
 HuffmanModifiedDecoder::HuffmanModifiedDecoder()
-	:	mode(1), offset(0)
+	:	mode(1)
 {
 	mRoot = defaultHuffmanCodeTree();
 }
@@ -26,15 +26,6 @@ HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEscapeCode
 )
 {
 	mEscapeCode = getHuffCode(escape_code); 
-	return this;
-}
-
-HuffmanModifiedDecoder *HuffmanModifiedDecoder::setOffset
-(
-	size_t value								///< offset where data compression begins
-)
-{
-	offset = value;
 	return this;
 }
 
@@ -88,7 +79,7 @@ HuffmanModifiedDecoder::~HuffmanModifiedDecoder()
 size_t HuffmanModifiedDecoder::unpack
 (
 	std::ostream *retval,
-	void *src,
+	const void *src,
 	size_t size,
 	size_t offset
 )
@@ -151,7 +142,7 @@ size_t HuffmanModifiedDecoder::decode_buffer2buffer
 (
 	void *dest, 
 	size_t dest_size, 
-	void *data, 
+	const void *data, 
 	size_t size,
 	size_t offset
 )

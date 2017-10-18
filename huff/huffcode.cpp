@@ -976,6 +976,15 @@ Node* defaultHuffmanCodeTree
 	return r;
 }
 
+HuffCodeMap defaultHuffmanCodeMap()
+{
+	Node *n = defaultHuffmanCodeTree();
+	HuffCode hc;
+	HuffCodeMap r;
+	generateCodes(r, n, hc);
+	return r;
+}
+
 Node* loadHuffmanCodeTreeFromFrequencyStream
 (
 	std::istream *frequencies_stream	///< stream

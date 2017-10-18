@@ -9,14 +9,12 @@ class HuffmanModifiedEncoder
 {
 private:
  	int mode;																			///< 0- no compression, 1- modified Huffman. Default 1
-	size_t offset;																		///< offset where data compression begins
 	HuffCodeMap mCodeMap;
 	HuffCode mEscapeCode;
 public:
 	HuffmanModifiedEncoder();
 	HuffmanModifiedEncoder *setMode(int mode);											///< 0- no compression, 1- modified Huffman
 	HuffmanModifiedEncoder *setEscapeCode(const std::string &escape_code);				///< for mode 1
-	HuffmanModifiedEncoder *setOffset(size_t offset);									///< offset where data compression begins
 	HuffmanModifiedEncoder *setCodeMapFromFrequencies(size_t *frequencies, size_t len);	///< array
 	HuffmanModifiedEncoder *setCodeMapFromFrequenciesStream(std::istream *strm);		///< stream
 	HuffmanModifiedEncoder *setCodeMapFromFrequenciesFile(const std::string &value);	///< file name
@@ -32,7 +30,7 @@ public:
 	 * @param size Data size
 	 * @return size
 	 */
-	size_t pack(std::ostream *retval, void *src, size_t size, size_t offset);
+	size_t pack(std::ostream *retval, const void *src, size_t size, size_t offset);
 
 	/**
 	 * @brief Encode buffer to pre-allocated buffer or just return required size (if dest is NULL)

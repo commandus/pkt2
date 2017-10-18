@@ -9,7 +9,6 @@ class HuffmanModifiedDecoder
 {
 private:
  	int mode;																		///< 0- no compression, 1- modified Huffman. Default 1
-	size_t offset;																	///< offset where data compression begins
 	std::vector<size_t> valid_packet_sizes;
 	Node *mRoot;
 	HuffCode mEscapeCode;
@@ -17,7 +16,6 @@ public:
 	HuffmanModifiedDecoder();
 	HuffmanModifiedDecoder *setMode(int mode);										///< 0- no compression, 1- modified Huffman
 	HuffmanModifiedDecoder *setEscapeCode(const std::string &escape_code);			///< for mode 1
-	HuffmanModifiedDecoder *setOffset(size_t offset);								///< offset where data compression begins
 	HuffmanModifiedDecoder *setTreeFromFrequencies(size_t *frequencies, size_t len);///< array
 	HuffmanModifiedDecoder *setTreeFromFrequenciesStream(std::istream *strm);		///< stream
 	HuffmanModifiedDecoder *setTreeFromCodesStream(std::istream *strm);				///< stream
@@ -37,7 +35,7 @@ public:
 	 * @param size Data size
 	 * @return size
 	 */
-	size_t unpack(std::ostream *retval, void *src, size_t size, size_t offset);
+	size_t unpack(std::ostream *retval, const void *src, size_t size, size_t offset);
 
 	/**
 	 * @brief Decode buffer to pre-allocated buffer or just return required size (if dest is NULL)
@@ -47,7 +45,7 @@ public:
 	 * @param size Data size
 	 * @return size
 	 */
-	size_t decode_buffer2buffer(void *dest, size_t dest_size, void *value, size_t size, size_t offset);
+	size_t decode_buffer2buffer(void *dest, size_t dest_size, const void *value, size_t size, size_t offset);
 	
 	/**
 	 * @brief Decode buffer to string

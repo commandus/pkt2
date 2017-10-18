@@ -212,9 +212,9 @@ HuffCode getHuffCode
 	const std::string &t
 );
 
-Node* defaultHuffmanCodeTree
-(
-);
+Node* defaultHuffmanCodeTree();
+
+HuffCodeMap defaultHuffmanCodeMap();
 
 Node* loadHuffmanCodeTreeFromFrequencyStream
 (
