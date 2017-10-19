@@ -177,3 +177,8 @@ size_t HuffmanModifiedDecoder::decode_buffer2buffer
 		}
 	}
 }
+
+Node* HuffmanModifiedDecoder::getTree()
+{
+	return mRoot;
+}

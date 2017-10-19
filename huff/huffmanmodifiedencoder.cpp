@@ -32,6 +32,7 @@ HuffmanModifiedEncoder *HuffmanModifiedEncoder::setEscapeCode
 HuffmanModifiedEncoder *HuffmanModifiedEncoder::setCodeMapFromFrequencies(size_t *frequencies, size_t len)
 {
 	Node* root = buildTree(frequencies, len);
+	mCodeMap.clear();
 	generateCodes(mCodeMap, root, HuffCode());
 	delete root;
 	return this;
@@ -40,8 +41,8 @@ HuffmanModifiedEncoder *HuffmanModifiedEncoder::setCodeMapFromFrequencies(size_t
 HuffmanModifiedEncoder *HuffmanModifiedEncoder::setCodeMapFromFrequenciesStream(std::istream *strm)
 {
 	size_t frequencies[256];
-	size_t sz = loadFrequencies(frequencies, 256, strm);
-	setCodeMapFromFrequencies(frequencies, sz);
+	loadFrequencies(frequencies, 256, strm);
+	setCodeMapFromFrequencies(frequencies, 256);
 	return this;
 }
 
@@ -162,4 +163,9 @@ size_t HuffmanModifiedEncoder::encode_buffer2buffer
 			return sz + offset;
 		}
 	}
+}
+
+const HuffCodeMap& HuffmanModifiedEncoder::getCodeMap()
+{
+	return mCodeMap;
 }

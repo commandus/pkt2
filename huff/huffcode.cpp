@@ -159,6 +159,11 @@ Node* buildTreeFromCodes
 	return trees.top();
 }
 
+/**
+ * @param outCodes return value. Before do outCodes.clear();
+ * @param node Huffman code tree
+ * @param prefix First huffman code
+ */
 void generateCodes
 (
 	HuffCodeMap &outCodes,
@@ -353,7 +358,7 @@ std::vector<std::string> row_formatter(const display_rows &rows_disp)
 	for (display_rows::const_iterator it(rows_disp.begin()); it != rows_disp.end(); ++it) 
 	{
 		
-		for (std::vector<cell_display>::const_iterator itc(it->begin()); itc != it->end(); ++it) 
+		for (std::vector<cell_display>::const_iterator itc(it->begin()); itc != it->end(); ++itc) 
 		{
 			if (itc->present && itc->valstr.length() > cell_width) 
 			{
@@ -381,8 +386,13 @@ std::vector<std::string> row_formatter(const display_rows &rows_disp)
 
 	// Work from the level of maximum depth, up to the root
 	// ("formatted_rows" will need to be reversed when done) 
+std::cerr << "row_formatter " << row_count << std::endl;		
+
+	
 	for (s_t r = 0; r < row_count; ++r) 
 	{
+std::cerr << "row: " << r << " of " << row_count << " elements: " << row_elem_count << std::endl;		
+
 		const std::vector<cell_display > &cd_row = rows_disp[row_count - r - 1]; // r reverse-indexes the row
 		// "space" will be the number of rows of slashes needed to get
 		// from this row to the next.  It is also used to determine other
@@ -393,7 +403,6 @@ std::vector<std::string> row_formatter(const display_rows &rows_disp)
 		// iterate over each element in this row
 		for (s_t c = 0; c < row_elem_count; ++c) 
 		{
-
 			// add padding, more when this is not the leftmost element
 			ss << std::string(c ? left_pad * 2 + 1 : left_pad, ' ');
 			if ((c < cd_row.size()) && cd_row[c].present) 
@@ -539,25 +548,23 @@ void print_tree
 	std::stringstream ss;
 	if (const LeafNode* lf = dynamic_cast<const LeafNode*>(node))
 	{
-		strm << std::dec << level << ") ";
-		strm << "[ "
-		<< std::dec << std::setw(3) << std::left << std::setfill(' ') << (int) lf->c
-		<< " 0x"
-		<< std::hex << std::setw(2) << std::left << std::setfill(' ') << (int) lf->c
-		<< "]"
+		strm 
+			<< std::dec << std::setw(3) << std::left << std::setfill(' ') << (int) lf->c
+			<< " 0x"
+			<< std::hex << std::setw(2) << std::left << std::setfill(' ') << (int) lf->c
 		<< std::endl;
 	}
 	else
 	{
 		if (const InternalNode* in = dynamic_cast<const InternalNode*>(node))
 		{
-			strm << std::dec << level << ") Left" << std::endl;
+			// strm << std::dec << level << ") Left" << std::endl;
 			
 			HuffCode leftPrefix = prefix;
 			leftPrefix.push_back(false);
 			print_tree(level + 1, strm, in->left, leftPrefix);
 
-			strm << std::dec << level << ") Right" << std::endl;
+			// strm << std::dec << level << ") Right" << std::endl;
 
 			HuffCode rightPrefix = prefix;
 			rightPrefix.push_back(true);
@@ -605,6 +612,7 @@ size_t loadCodeMap
 	std::istream *strm
 )
 {
+	codes.clear();
 	size_t r = 0;
 	std::string line;
 	while (std::getline(*strm, line))
@@ -677,8 +685,18 @@ static size_t compress_buffer
 		}
 		else
 		{
-			strm.write(it->second);
-			r += it->second.size();
+			if (it->second == escape_code)
+			{
+				// write escape code & value itself
+				strm.write(escape_code);
+				strm.write((int)((unsigned char*) data)[i], 8);
+				r += escape_code.size() + 8;
+			}
+			else
+			{
+				strm.write(it->second);
+				r += it->second.size();
+			}
 		}
 	}
 	return r;
@@ -704,40 +722,58 @@ static size_t decompress_stream
 	size_t r = 0;
 	ibitstream strm(input_stream);
 	int bit;
+	
 	Node *n = (Node*) root;
+	int escape_bit = 0;
+	bool escape_match = true;
+	
 	while (true)
 	{
 		bit = strm.read();
-		switch (bit) {
-			case -1:
-				// EOF
-				break;
-			case 0:
-				// to left
-				if (const InternalNode* in = dynamic_cast<const InternalNode*>(n)) 
-				{
-					n = in->left;
-				}
-				break;
-			case 1:
-				// to right
-				if (const InternalNode* in = dynamic_cast<const InternalNode*>(n)) 
-				{
-					n = in->right;
-				}
-				break;
-			default:
-				break;
-		}
-
-		if (!n)
+		escape_match = escape_match && (escape_bit < escape_code.size()) && (escape_code[escape_bit] == (bit == 1));
+		escape_bit++;
+		if (escape_match && (escape_bit == escape_code.size()))
 		{
-			// TODO check is it escape_code. TODO check is enough bits
+			// reset, let read next code
+			n = (Node*) root;
+			escape_bit = 0;
 			// get next 8 bits entirely as escaped code
 			char escaped_byte = strm.read8();
 			// write byte
 			if (retval)
 				*retval << escaped_byte;
+		}
+		if (n)
+		{
+			switch (bit) {
+				case -1:
+					// EOF
+					break;
+				case 0:
+					// to left
+					if (const InternalNode* in = dynamic_cast<const InternalNode*>(n)) 
+					{
+						n = in->left;
+					}
+					break;
+				case 1:
+					// to right
+					if (const InternalNode* in = dynamic_cast<const InternalNode*>(n)) 
+					{
+						n = in->right;
+					}
+					break;
+				default:
+					break;
+			}
+		}
+		
+		if (!n)
+		{
+			if (escape_match)
+				continue;
+			// Fatal error
+			break;
 		} 
 		else 
 		{
@@ -755,30 +791,11 @@ static size_t decompress_stream
 				}
 				// reset, let read next code
 				n = (Node*) root;
+				escape_bit = 0;
+				escape_match = true;
 			}
 		}
 	}
-	/*
-	 * 
-	 * 
-	 * 				if (const LeafNode *lf = dynamic_cast<const LeafNode*>(node))
-				{
-					outCodes[lf->c] = prefix;
-				}
-
-	for (int i = 0; i < size; ++i)
-	{
-		std::map<HuffCode, unsigned char>::const_iterator it = codes2.find(((unsigned char*) data)[i]);
-		if (it == codes2.end())
-		{
-			std::cerr << "Fatal error: no code for " << (int)((unsigned char*) data)[i]
-				<< " 0x" << std::hex << std::setw(2) << (int)((unsigned char*) data)[i]
-				<< std::dec << std::endl;
-			return std::numeric_limits<uint64_t>::max();
-		}
-		r += it->second.size();
-	}
-	*/
 	return r;
 }
 
@@ -991,8 +1008,8 @@ Node* loadHuffmanCodeTreeFromFrequencyStream
 )
 {
 	size_t frequencies[256];
-	int UniqueSymbols = loadFrequencies(frequencies, 256, frequencies_stream);
-	Node* r = buildTree(frequencies, UniqueSymbols);
+	loadFrequencies(frequencies, 256, frequencies_stream);
+	Node* r = buildTree(frequencies, 256);
 	return r;
 }
 

@@ -56,6 +56,8 @@ public:
 	 * @return decoded value as string
 	 */
 	std::string encode_string2string(const std::string &value, size_t offset);
+	
+	const HuffCodeMap& getCodeMap();
 };
 
 #endif // HUFFMANMODIFIEDDECODER_H

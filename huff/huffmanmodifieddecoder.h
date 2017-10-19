@@ -61,6 +61,8 @@ public:
 	 * @return decoded value as string
 	 */
 	std::string decode_string2string(const std::string &value, size_t offset);
+	
+	Node *getTree();
 };
 
 #endif // HUFFMANMODIFIEDDECODER_H
