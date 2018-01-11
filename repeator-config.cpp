@@ -52,6 +52,7 @@ int Config::parseCmd
 {
 	struct arg_str *a_in_url = arg_str0("i", "in", "<url>", "Default " DEF_IN);
 	struct arg_str *a_out_url = arg_strn("o", "out", "<url>", 0, MAX_OUTS, "One or more output. Default " DEF_OUT);
+	struct arg_lit *a_bind = arg_lit0("s", "bind", "Bind socket. Default: connect to the socket.");
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
@@ -62,7 +63,7 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = {
-		a_in_url, a_out_url,
+		a_in_url, a_out_url, a_bind,
 		a_buffer_size,
 		a_retries, a_retry_delay,
 		a_daemonize, a_verbosity, a_help, a_end 
@@ -107,6 +108,8 @@ int Config::parseCmd
 		}
 	}
 	
+	bind = a_bind->count > 0;
+		 
 	if (a_buffer_size->count)
 		buffer_size = *a_buffer_size->ival;
 	else

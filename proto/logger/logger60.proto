@@ -144,7 +144,7 @@ message TemperatureNAngles
         measure_unit: "C"
         get: "field.ft1 + (field.ft1f / 256)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.t1.toFixed(4)"]
     }];
     double t2 = 2 [(pkt2.variable) = {
         name: "T"
@@ -153,7 +153,7 @@ message TemperatureNAngles
         measure_unit: "C"
         get: "field.ft2 + (field.ft2f / 256)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.t2.toFixed(8)"]
     }];
     double t3 = 3 [(pkt2.variable) = {
         name: "T"
@@ -162,7 +162,7 @@ message TemperatureNAngles
         measure_unit: "C"
         get: "field.ft3 + (field.ft3f / 256)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.t3.toFixed(8)"]
     }];
     double x1 = 4 [(pkt2.variable) = {
         name: "x1"
@@ -171,7 +171,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fx1 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.x1.toFixed(8)"]
     }];
     double y1 = 5 [(pkt2.variable) = {
         name: "y1"
@@ -180,7 +180,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fy1 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.y1.toFixed(8)"]
     }];
     double z1 = 6 [(pkt2.variable) = {
         name: "x1"
@@ -189,7 +189,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fz1 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.z1.toFixed(8)"]
     }];
     double x2 = 7 [(pkt2.variable) = {
         name: "x2"
@@ -198,7 +198,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fx2 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.x2.toFixed(8)"]
     }];
     double y2 = 8 [(pkt2.variable) = {
         name: "y2"
@@ -207,7 +207,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fy2 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.y2.toFixed(8)"]
     }];
     double z2 = 9 [(pkt2.variable) = {
         name: "x2"
@@ -216,7 +216,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fz2 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.z2.toFixed(8)"]
     }];
     double x3 = 10 [(pkt2.variable) = {
         name: "x3"
@@ -225,7 +225,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fx3 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.x3.toFixed(8)"]
     }];
     double y3 = 11 [(pkt2.variable) = {
         name: "y3"
@@ -234,7 +234,7 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fy3 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.y3.toFixed(8)"]
     }];
     double z3 = 12 [(pkt2.variable) = {
         name: "x3"
@@ -243,6 +243,6 @@ message TemperatureNAngles
         measure_unit: "°"
         get: "0.02197265625 * (field.fz3 >> 2)"
         priority: 0                                 // required
-        format: ["value.degrees_c.toFixed(4).replace('.', ',')"]
+        format: ["value.z3.toFixed(8)"]
     }];
 }

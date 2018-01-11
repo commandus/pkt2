@@ -103,21 +103,43 @@ int run
 	for (int i = 0; i < config->out_urls.size(); i++) 
 	{
 		out_sockets[i] = nn_socket(AF_SP, NN_BUS);
+		sleep(1); // wait for connections
 		if (out_sockets[i] < 0)
 		{
-			LOG(ERROR) << ERR_NN_SOCKET << config->out_urls[i] << " " << errno << " " << strerror(errno);
+			LOG(ERROR) << ERR_NN_SOCKET << config->out_urls[i] << " error " << errno << ": " << strerror(errno);
 			return ERRCODE_NN_SOCKET;
 		}
-		eids[i] = nn_bind(out_sockets[i], config->out_urls[i].c_str());
-		if (eids[i] < 0)
+
+		if (config->bind)
 		{
-			LOG(ERROR) << ERR_NN_BIND << out_sockets[i] << " " << errno << " " << strerror(errno);
-			return ERRCODE_NN_CONNECT;
+			eids[i] = nn_bind(out_sockets[i], config->out_urls[i].c_str());
+			if (eids[i] < 0)
+			{
+				LOG(ERROR) << ERR_NN_BIND << out_sockets[i] << " " << config->out_urls[i].c_str() << " error " << errno << ": " << strerror(errno);
+				return ERRCODE_NN_BIND;
+			}
+		}
+		else
+		{
+			int timeout = 100;
+			int r = nn_setsockopt(out_sockets[i], NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
+			if (r < 0)
+			{
+				LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->out_urls[i] << " " << errno << ": " << nn_strerror(errno);
+				return ERRCODE_NN_SET_SOCKET_OPTION;
+			}
+
+			eids[i] = nn_connect(out_sockets[i], config->out_urls[i].c_str());
+			if (eids[i] < 0)
+			{
+				LOG(ERROR) << ERR_NN_CONNECT << out_sockets[i] << " " << config->out_urls[i].c_str() << " error " << errno << ": " << strerror(errno);
+				return ERRCODE_NN_CONNECT;
+			}
 		}
 		
 		if (config->verbosity >= 2)
 		{
-			LOG(INFO) << "Bind socket " << out_sockets[i] << "/" << eid << " to " << config->out_urls[i];
+			LOG(INFO) << "Connect to output socket " << out_sockets[i] << "/" << eid << " to " << config->out_urls[i];
 		}
 	}	
 	

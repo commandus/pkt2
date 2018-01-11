@@ -29,10 +29,11 @@ public:
 	virtual ~Config();
 	int error();
 
-	std::string in_url;		 		///< nano message URL
+	std::string in_url;							///< nano message URL
 	std::vector<std::string> out_urls;	 		///< nano message URL
-	int retries;             		///< default 1
-	int retry_delay;         		///<
+	bool bind;									///< default false: connect (do not bind)
+	int retries;								///< default 1
+	int retry_delay;							///<
 
 	int buffer_size;
 	

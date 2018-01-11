@@ -5,7 +5,7 @@
 #include <stdint.h>
 
 #define PROGRAM_NAME				"freceiver"
-#define PROGRAM_DESCRIPTION			"PKT2 tcp packet file reader"
+#define PROGRAM_DESCRIPTION			"PKT2 file reader. Fixed packet size."
 
 #define FILE_MODE_BIN				0
 #define FILE_MODE_TEXT_HEX			1
