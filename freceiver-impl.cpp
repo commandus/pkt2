@@ -13,11 +13,12 @@
 
 #include <glog/logging.h>
 
-#include "freceiver-config.h"
 #include "freceiver-impl.h"
 #include "errorcodes.h"
 #include "input-packet.h"
 #include "helper_socket.h"
+
+#include "messageformat.h"
 
 static int char2int
 (
@@ -104,7 +105,7 @@ int readData
 *          3- buffer allocation error
 *          4- send error, re-open 
 */
-int file_receiever(Config *config)
+static int fileReceieve(Config *config)
 {
 START:	
 	config->stop_request = 0;
@@ -250,9 +251,14 @@ START:
 *          3- buffer allocation error
 *          4- send error, re-open 
 */
-int file_receiever1(Config *config)
+static int filePrint(Config *config)
 {
 	config->stop_request = 0;
+	
+	ProtobufDeclarations declarations(config->proto_path, config->verbosity);
+	Pkt2OptionsCache options_cache(&declarations);
+	Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
+
 	InputPacket packet('T', config->buffer_size);
 	std::istream *f;
 	if (config->filename_in.empty())
@@ -282,6 +288,15 @@ int file_receiever1(Config *config)
 			break;
 		std:: string s = ss.str();
 		size_t sz = s.size();
+		if (sz < config->packet_size)
+		{
+			break;
+		}
+		if (sz > config->buffer_size)
+		{
+			LOG(ERROR) << ERR_TOO_SMALL << config->buffer_size << " for " << sz << " bytes";
+			continue;
+		}
 		// Read
 		packet.setLength(sz);
 		memcpy(packet.data(), s.c_str(), sz);
@@ -290,27 +305,77 @@ int file_receiever1(Config *config)
 			LOG(ERROR) << ERR_SOCKET_READ << gai_strerror(errno);
 			continue;
 		}
-		else
+		if (packet.error() != 0)
 		{
-			if (config->verbosity >= 1)
-			{
-				if (config->verbosity >= 2)
-				{
-					std::cerr << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
-							inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " "
-							<< packet.size
-							<< std::endl;
-				}
-			}
+			LOG(ERROR) << ERR_PACKET_PARSE << packet.error();
+			continue;
 		}
-		// send message to the nano queue
-		// int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
+
+		// try to parse and print message
+		PacketParseEnvironment packet_env(
+			(sockaddr *) packet.get_sockaddr_src(),
+			(sockaddr *) packet.get_sockaddr_dst(),
+			std::string((const char *) packet.data(), (size_t) packet.length),
+			&options_cache,
+			""
+		);
+		google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
+		if (!m)
+		{
+			LOG(ERROR) << ERR_PACKET_PARSE;
+			continue;
+		}
+
+		MessageTypeNAddress messageTypeNAddress(m->GetTypeName());
+		switch (config->mode)
+		{
+			case MODE_JSON:
+				put_json(&std::cout, &options_cache, &messageTypeNAddress, m);
+				break;
+			case MODE_CSV:
+				put_csv(&std::cout, &options_cache, &messageTypeNAddress, m);
+				break;
+			case MODE_TAB:
+				put_tab(&std::cout, &options_cache, &messageTypeNAddress, m);
+				break;
+			case MODE_SQL:
+				put_sql(&std::cout, &options_cache, &messageTypeNAddress, m);
+				break;
+			case MODE_SQL2:
+				put_sql2(&std::cout, &options_cache, &messageTypeNAddress, m);
+				break;
+			case MODE_PB_TEXT:
+				put_protobuf_text(&std::cout, &options_cache, &messageTypeNAddress, m);
+				break;
+			case MODE_PRINT_DBG:
+				put_debug(&std::cout, &messageTypeNAddress, m);
+				break;
+			default:
+				put_debug(&std::cout, &messageTypeNAddress, m);
+		}
+
+		delete m;
 	}
 
 	if (!config->filename_in.empty())
 		delete f;
 
 	return ERR_OK;
+}
+
+/**
+* Return:  0- success
+*          1- can not listen port
+*          2- invalid nano socket URL
+*          3- buffer allocation error
+*          4- send error, re-open 
+*/
+int file_receiever(Config *config)
+{
+	if (config->mode >= 0)
+		filePrint(config);
+	else
+		fileReceieve(config);
 }
 
 /**

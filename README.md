@@ -787,7 +787,7 @@ pkt2receiver осуществляет поиск подходящего прот
 Назначение программ:
 
 - tcpreceiver			слушает TCP порт, передает полученное в шину пакетов
-- freceiver             читает файл или устройство в буфер заданного размера, и передает буферы в шину пакетов
+- freceiver             читает файл или устройство в буфер заданного размера, и передает буферы в шину пакетов или печатает в stdout в текстовом виде
 - mqtt-receiver			подписывается на указанные топики, передает полученные пакеты из брокера msqt в шину пакетов
 - pkt2receiver 			чтение пакетов из шины пакетов, нахождение протокола, отправка сообщения в шину сообщений
 - handlerline			помещение сообщений в stdout lля последующей обработки скриптами
@@ -1245,7 +1245,9 @@ Packet.MessageType:{"json-object-in-one-line"}
 
 ### Чтение данных из бинарных и текстовых файлов
 
-Программа freceiver получает данные из файла (устройства) и помещает их в шину данных (по умолчанию в ipc:///tmp/packet.pkt2).
+Программа freceiver получает данные из файла (устройства) и помещает их в шину данных (по умолчанию в ipc:///tmp/packet.pkt2) или печатает в stdout в текстовом виде.
+
+
 
 #### Формат данных
 
@@ -1275,6 +1277,47 @@ Packet.MessageType:{"json-object-in-one-line"}
 
 Аргумент -i, --input=<file>
 
+#### Дамп (текстовое представление пакета)
+
+Аргумент -m, --print==<mode>
+
+Выводит в stdout текстовое представление в заданном формате:
+
++---+-----------------------------------------------------------+
+| 0 | JSON                                                      |
++---+-----------------------------------------------------------+
+| 0 | CSV                                                       |
+| 1 | JSON                                                      |
+| 2 | Текст, разделенный символом табуляции                     |
+| 3 | SQL INSERT выражение для вставки в базу данных, вариант 1 |
+| 4 | SQL INSERT выражение для вставки в базу данных, вариант 2 |
+| 5 | Текстовый формат Protobuf                                 |
+| 6 | Отладочный формат Protobuf                                |
++---+-----------------------------------------------------------+
+
+Пример JSON формата:
+```
+"logger60.TemperatureNAngles": {
+	"logger60.TemperatureNAngles.t1": "21.2500",
+	"logger60.TemperatureNAngles.t2": "20.81250000",
+	"logger60.TemperatureNAngles.t3": "20.03125000",
+	"logger60.TemperatureNAngles.x1": "87.95654297",
+	"logger60.TemperatureNAngles.y1": "-9.03076172",
+	"logger60.TemperatureNAngles.z1": "9.86572266",
+	"logger60.TemperatureNAngles.x2": "87.16552734",
+	"logger60.TemperatureNAngles.y2": "16.21582031",
+	"logger60.TemperatureNAngles.z2": "-6.06445313",
+	"logger60.TemperatureNAngles.x3": "88.65966797",
+	"logger60.TemperatureNAngles.y3": "2.02148438",
+	"logger60.TemperatureNAngles.z3": "7.86621094"
+}
+...
+```
+
+Пример SQL(1) формата:
+```
+INSERT INTO "logger60_TemperatureNAngles"("logger60.TemperatureNAngles.t1", "logger60.TemperatureNAngles.t2", "logger60.TemperatureNAngles.t3", "logger60.TemperatureNAngles.x1", "logger60.TemperatureNAngles.y1", "logger60.TemperatureNAngles.z1", "logger60.TemperatureNAngles.x2", "logger60.TemperatureNAngles.y2", "logger60.TemperatureNAngles.z2", "logger60.TemperatureNAngles.x3", "logger60.TemperatureNAngles.y3", "logger60.TemperatureNAngles.z3") VALUES (22.0625, 21.37500000, 0.00000000, 87.20947266, 16.12792969, -5.73486328, 88.68164063, 1.47216797, 7.77832031, 12.96386719, 11.35986328, 0.08789063);
+```
 
 #### Пример 1: термокоса с инклинометром
 
@@ -1284,6 +1327,14 @@ Packet.MessageType:{"json-object-in-one-line"}
 scp andrei@84.237.104.57:/home/andrei/src/thermo-php/data/64x83-20170823100233.raw .
 ```
 Файл содержит 83 записи (бинарные данные) по 64 байта.
+
+Проверяем файл:
+
+```
+./freceiver -s 64 -i 64x83-20170823100233.raw -p proto -m 1
+"logger60.TemperatureNAngles",21.2500, 20.81250000, 20.03125000, 87.95654297, -9.03076172, 9.86572266, 87.16552734, 16.21582031, -6.06445313, 88.65966797, 2.02148438, 7.86621094
+...
+```
 
 Загружаем файл:
 

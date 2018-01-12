@@ -174,6 +174,8 @@
 #define ERR_CONFIG								"Load config file error "
 #define ERR_INTERRUPTED							"Interruped "
 
+#define ERR_TOO_SMALL							"Insufficient buffer space "
+
 std:: string getErrorDescription(int code);
 
 #endif /* ERRORCODES_H_ */

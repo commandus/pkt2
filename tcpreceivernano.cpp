@@ -99,7 +99,9 @@ START:
 	else
 		if (!config->codemap_file.empty())
 			decoder.setTreeFromCodesFile(config->codemap_file);
-	decoder.setEscapeCode(config->escape_code);
+	decoder.setEscapeCode(config->escape_code, 8);
+	if (!config->eof_code.empty())
+		decoder.setEOFCode(config->eof_code);
 	decoder.setValidPacketSizes(config->valid_sizes);
 
 	config->stop_request = 0;

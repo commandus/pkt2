@@ -48,6 +48,7 @@ public:
 	// decompression
 	int compression_type;				///< default 0- none, 1- modified Huffman, 2- Huffman
 	std::string escape_code;			///< Escape code(binary code). default none. If assigned, followed 8 bits is byte itself(not a Huffman code)
+	std::string eof_code;				///< EOF code(binary code). default none.
 	int compression_offset;				///< offset where data compression is started
 	std::string frequence_file;			///< huffman frequnces
 	std::string codemap_file;			///< huffman code dictionary

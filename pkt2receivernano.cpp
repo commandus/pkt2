@@ -135,9 +135,12 @@ int pkt2_receiever_nano(Config *config)
 		char *buf = NULL;
 		int bytes = nn_recv(socket_accept, &buf, NN_MSG, 0);
 
+		// calculate payload size (substract address headers)
 		int payload_size = InputPacket::getPayloadSize(bytes);
 		
+		// Notify CONTROL_TYP_RECEIVED
 		control_message(config, socket_control, CONTROL_TYP_RECEIVED_CODE, payload_size, CONTROL_TYP_RECEIVED, "");
+		
 		config->count_packet_in++;
 		
 		if (payload_size < 0)

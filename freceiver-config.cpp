@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <limits.h>
 #include <cstring>
+#include <stdlib.h>
 #include <argtable2.h>
 
 #define DEF_QUEUE                "ipc:///tmp/packet.pkt2"
@@ -39,6 +40,10 @@ int Config::parseCmd
 	struct arg_file *a_filename_in = arg_file0("i", "input", "<file>", "Default read stdin.");
 	struct arg_int *a_packet_size = arg_int0("s", "size", "<bytes>", "Packet size. Default 0- to EOL or EOF");
 	struct arg_str *a_message_url = arg_str0("o", "output", "<bus url>", "Default ipc:///tmp/packet.pkt2");
+	
+	struct arg_int *a_print_mode = arg_int0("m", "print", "<mode>", "Just print to stdout parsed packets. 0- JSON, CSV- 1, Tab delimited- 2, SQL- 3, SQL(2)- 4, Protobuf text- 5, Debug- 6");
+	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
+	
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
@@ -50,8 +55,9 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = { 
-			a_cmd_text, a_filename_in, a_packet_size, a_message_url, a_buffer_size, 
-			a_retries, a_retry_delay,
+			a_cmd_text, a_filename_in, a_packet_size, a_message_url, 
+			a_print_mode, a_proto_path,
+			a_buffer_size, a_retries, a_retry_delay,
 			a_daemonize, a_max_fd, a_verbosity,
 			a_help, a_end 
 	};
@@ -108,6 +114,20 @@ int Config::parseCmd
 		message_url = *a_message_url->sval;
 	else
 		message_url = DEF_QUEUE;
+
+	if (a_proto_path->count)
+		proto_path = *a_proto_path->sval;
+	else
+		proto_path = DEF_PROTO_PATH;
+
+	// get real path
+	char b[PATH_MAX];
+	proto_path = std::string(realpath(proto_path.c_str(), b));
+
+	if (a_print_mode->count)
+		mode = *a_print_mode->ival;
+	else
+		mode = 0;
 
 	if (a_buffer_size->count)
 		buffer_size = *a_buffer_size->ival;
