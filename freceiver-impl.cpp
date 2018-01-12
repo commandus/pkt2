@@ -244,6 +244,76 @@ START:
 }
 
 /**
+* Return:  0- success
+*          1- can not listen port
+*          2- invalid nano socket URL
+*          3- buffer allocation error
+*          4- send error, re-open 
+*/
+int file_receiever1(Config *config)
+{
+	config->stop_request = 0;
+	InputPacket packet('T', config->buffer_size);
+	std::istream *f;
+	if (config->filename_in.empty())
+		f = &std::cin;
+	else
+	{
+		if (config->file_mode == 0)
+			f = new std::fstream(config->filename_in.c_str(), std::ios::in | std::ios::binary);
+		else
+			f = new std::fstream(config->filename_in.c_str(), std::ios::in);
+	}
+
+	if (packet.error() != 0)
+	{
+		if (config->file_mode == 0)
+			delete f;
+		LOG(ERROR) << ERR_GET_ADDRINFO << config->message_url;
+		return ERRCODE_NN_CONNECT;
+	}
+
+	struct sockaddr_in *src = packet.get_sockaddr_src();
+
+	while (!config->stop_request)
+	{
+		std::stringstream ss;
+		if (readData(ss, config->file_mode, config->packet_size, f) == 0)
+			break;
+		std:: string s = ss.str();
+		size_t sz = s.size();
+		// Read
+		packet.setLength(sz);
+		memcpy(packet.data(), s.c_str(), sz);
+		if (packet.length <= 0)
+		{
+			LOG(ERROR) << ERR_SOCKET_READ << gai_strerror(errno);
+			continue;
+		}
+		else
+		{
+			if (config->verbosity >= 1)
+			{
+				if (config->verbosity >= 2)
+				{
+					std::cerr << inet_ntoa(src->sin_addr) << ":" << ntohs(src->sin_port) << "->" <<
+							inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << ":" << ntohs(packet.get_sockaddr_dst()->sin_port) << " "
+							<< packet.size
+							<< std::endl;
+				}
+			}
+		}
+		// send message to the nano queue
+		// int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
+	}
+
+	if (!config->filename_in.empty())
+		delete f;
+
+	return ERR_OK;
+}
+
+/**
 * @param config configuration
 * @return 0- success
 *        1- config is not initialized yet

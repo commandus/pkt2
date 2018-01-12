@@ -763,8 +763,9 @@ public:
 [
 	{
 		"in": "ipc:///tmp/control.pkt2",
+		"bind" false,
 		"outs": [
-			"tcp://0.0.0.0:50000"
+			"tcp://0.0.0.0:50000",
 		]
 	}
 ];
@@ -773,14 +774,19 @@ class CfgRepeator
 {
 public:
 	std::string url_in;
+	bool bind;
 	std::vector<std::string> url_outs;
-	CfgRepeator() : url_in("") {};
+	CfgRepeator() : url_in(""), bind(false) {};
 	std::vector<std::string> args(CfgCommon *common)
 	{
 		std::vector<std::string> r;
 		if (url_in != "ipc:///tmp/control.pkt2")
 		{
 			PUSH_BACK_ARG_STR(r, "-i", url_in);
+		}
+		if (bind)
+		{
+			PUSH_BACK_ARG_LIT(r, "-s");
 		}
 		if (!((url_outs.size() == 1) && (url_outs[0] == "tcp://0.0.0.0:50000")))
 		{
@@ -1271,6 +1277,10 @@ public:
 				{
 					if (duk_get_prop_string(context, -1, "in"))
 						cfg.url_in = duk_get_string(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "bind"))
+						cfg.bind = duk_get_boolean(context, -1);
 					duk_pop(context);
 
 					duk_get_prop_string(context, -1, "outs");
