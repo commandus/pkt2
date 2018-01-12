@@ -14,6 +14,7 @@
 #include "internalnode.h"
 #include "leafnode.h"
 
+#include "varint.h"
 #include "bitstream.h"
 #include "utilstring.h"
 
@@ -106,7 +107,7 @@ Node* buildTree
 	for (int i = 0; i < symbols_size; ++i)
 	{
 		if (frequencies[i] != 0)
-			trees.push(new LeafNode(frequencies[i], (char)i));
+			trees.push(new LeafNode(frequencies[i], (char)i, 0));
 	}
 	if (trees.size() == 0)
 		return NULL;
@@ -139,7 +140,7 @@ Node* buildTreeFromCodes
 	int f = codes.size() + 1;
 	for (std::map<unsigned char, HuffCode>::const_iterator it(codes.begin()); it != codes.end(); ++it)
 	{
-		trees.push(new LeafNode(f, it->first));
+		trees.push(new LeafNode(f, it->first, 0));
 		f--;
 	}
 	
@@ -641,10 +642,67 @@ size_t loadCodeMap
 	return r;
 }
 
+static unsigned char bitsRequired
+(
+	unsigned char *value
+)
+{
+	unsigned char r = 0;
+	while (*value >>= 1)
+		r++;
+	return r;
+}
+
+static const HuffCodeNSize *findHuffCodeNSize
+(
+	const HuffCodeNSizes &escape_code_sizes,
+	const HuffCode &value
+)
+{
+	const HuffCodeNSize *r = NULL;
+	for (int i = 0; i < escape_code_sizes.size(); i++)
+	{
+		if (escape_code_sizes.at(i).first == value)
+		{
+			r = &escape_code_sizes[i];
+			break;
+		}
+	}
+	return r;
+}
+
+static const HuffCodeNSize *findShortestHuffCodeNSize
+(
+	const HuffCodeNSizes &escape_code_sizes,
+	unsigned char *value
+)
+{
+	const HuffCodeNSize *r = NULL;
+	unsigned char sz = bitsRequired(value);
+	unsigned int dmin = sizeof(value);
+	int idx = -1;
+	
+	for (int i = 0; i < escape_code_sizes.size(); i++)
+	{
+		int d = escape_code_sizes[i].second - sz;
+		if (d < 0)
+			continue;
+		if (d < dmin)
+		{
+			idx = i;
+			dmin = d;
+		}
+	}
+	if (idx >= 0)
+		r = &escape_code_sizes[idx];
+	return r;
+}
+
 /**
  * @param retval compressed stream
  * @param codes Huffman codes
- * @param escape_code Huffman code
+ * @param escape_code_sizes Huffman code and size
+ * @param eof_code Huffman code (can be NULL- no write EOF)
  * @param data buffer
  * @param size buffer size 
  * @return bytes
@@ -652,8 +710,9 @@ size_t loadCodeMap
 static size_t compress_buffer
 (
 	std::ostream *retval,
-	HuffCodeMap& codes,
- 	const HuffCode &escape_code, 
+	const HuffCodeMap& codes,
+ 	const HuffCodeNSizes &escape_code_sizes,
+	const HuffCode *eof_code,  
 	const void *data, 
 	size_t size
 )
@@ -666,7 +725,8 @@ static size_t compress_buffer
 		std::map<unsigned char, HuffCode>::const_iterator it = codes.find(((unsigned char*) data)[i]);
 		if (it == codes.end())
 		{
-			if (escape_code.size() == 0)
+			const HuffCodeNSize *hcs = findShortestHuffCodeNSize(escape_code_sizes, ((unsigned char*) data) + i);
+			if (!hcs)
 			{
 				std::cerr << "Fatal error: no code for " << (int)((unsigned char*) data)[i] 
 					<< " 0x" << std::hex << std::setw(2) << (int)((unsigned char*) data)[i] 
@@ -678,19 +738,20 @@ static size_t compress_buffer
 			else
 			{
 				// write escape code & value itself
-				strm.write(escape_code);
-				strm.write((int)((unsigned char*) data)[i], 8);
-				r += escape_code.size() + 8;
+				strm.write(hcs->first);
+				strm.write((int)((unsigned char*) data)[i], hcs->second);
+				r += hcs->first.size() + hcs->second;
 			}
 		}
 		else
 		{
-			if (it->second == escape_code)
+			const HuffCodeNSize *hcs = findHuffCodeNSize(escape_code_sizes, it->second);
+			if (hcs)
 			{
 				// write escape code & value itself
-				strm.write(escape_code);
-				strm.write((int)((unsigned char*) data)[i], 8);
-				r += escape_code.size() + 8;
+				strm.write(hcs->first);
+				strm.write((int)((unsigned char*) data)[i], hcs->second);
+				r += hcs->first.size() + hcs->second;
 			}
 			else
 			{
@@ -699,13 +760,154 @@ static size_t compress_buffer
 			}
 		}
 	}
+	if (eof_code)
+	{
+		strm.write(*eof_code);
+		r += eof_code->size();
+	}
 	return r;
+}
+
+/**
+ * @param codes Huffman codes
+ * @param escape_code_sizes Huffman code
+ * @param eof_code Huffman code
+ * @param data buffer
+ * @param size buffer size 
+ * @return bytes
+ */
+static size_t compress_buffer_calc_only
+(
+	const HuffCodeMap& codes,
+ 	const HuffCodeNSizes &escape_code_sizes,
+	const HuffCode *eof_code,   
+	const void *data, 
+	size_t size
+)
+{
+	size_t r = 0;
+	
+	for (int i = 0; i < size; ++i)
+	{
+		std::map<unsigned char, HuffCode>::const_iterator it = codes.find(((unsigned char*) data)[i]);
+		if (it == codes.end())
+		{
+			const HuffCodeNSize *hcs = findShortestHuffCodeNSize(escape_code_sizes, ((unsigned char*) data) + i);
+			if (!hcs)
+			{
+				std::cerr << "Fatal error: no code for " << (int)((unsigned char*) data)[i] 
+					<< " 0x" << std::hex << std::setw(2) << (int)((unsigned char*) data)[i] 
+					<< std::dec 
+					<< " and no escape full byte Huffman code assigned"
+					<< std::endl;
+				return std::numeric_limits<uint64_t>::max();
+			}
+			else
+			{
+				// write escape code & value itself
+				r += hcs->first.size() + hcs->second;
+			}
+		}
+		else
+		{
+			const HuffCodeNSize *hcs = findHuffCodeNSize(escape_code_sizes, it->second);
+			if (hcs)
+			{
+				// write escape code & value itself
+				r += hcs->first.size() + 8;
+			}
+			else
+			{
+				r += it->second.size();
+			}
+		}
+	}
+	if (eof_code)
+	{
+		r += eof_code->size();
+	}
+	return r;
+}
+
+/**
+ * @brief Find out leaf node by the code
+ * @return NULL if not found
+ */
+static LeafNode *find_code
+(
+	const Node *root,
+	const HuffCode &code
+)
+{
+	Node *n = (Node*) root;
+	for (int i = 0; i < code.size(); i++)
+	{
+		if (!code.at(i))
+		{
+			// to right
+			if (const InternalNode* in = dynamic_cast<const InternalNode*>(n)) 
+			{
+				// n = in->right;
+				n = in->left;
+			}
+		}
+		else
+		{
+			// to left
+			if (const InternalNode* in = dynamic_cast<const InternalNode*>(n)) 
+			{
+				// n = in->left;
+				n = in->right;
+			}
+		}	
+	}
+		
+	if (LeafNode *lf = dynamic_cast<LeafNode*>(n))
+	{
+		return lf;
+	}
+	return NULL;
+}
+
+/**
+ * @brief Find out leaf node by the code and set flags
+ * @return NULL if not found
+ */
+static bool set_code_flag
+(
+	const Node *root,
+	const HuffCode &code,
+	uint8_t value
+)
+{
+	LeafNode *r = find_code(root, code);
+	if (!r)
+		return false;
+	r->flags |= value;
+	return true;
+}
+
+/**
+ * @brief Find out leaf node by the code and clear flags
+ * @return NULL if not found
+ */
+static bool clear_code_flag
+(
+	const Node *root,
+	const HuffCode &code
+)
+{
+	LeafNode *r = find_code(root, code);
+	if (!r)
+		return false;
+	r->flags = 0;
+	return true;
 }
 
 /**
  * @param retval decompressed output stream
  * @param root Huffman codes tree root node
- * @param escape_code Huffman code
+ * @param escape_code_size Huffman code and size
  * @param input_stream input stream
  * @param decompressed_size original size
  * @return bytes
@@ -714,40 +916,35 @@ static size_t decompress_stream
 (
 	std::ostream *retval,
 	const Node *root,
- 	const HuffCode &escape_code, 
+	const HuffCodeNSizes &escape_code_sizes, 
+	const HuffCode *eof_code, 
 	std::istream *input_stream, 
 	size_t decompressed_size
 )
 {
+	for (int i = 0; i < escape_code_sizes.size(); i++)
+	{
+		if (escape_code_sizes.at(i).first.size())
+			set_code_flag(root, escape_code_sizes.at(i).first, 2);
+	}
+	if (eof_code)
+		set_code_flag(root, *eof_code, 1);
+	
 	size_t r = 0;
 	ibitstream strm(input_stream);
 	int bit;
 	
 	Node *n = (Node*) root;
-	int escape_bit = 0;
-	bool escape_match = true;
 	
 	while (true)
 	{
 		bit = strm.read();
-		escape_match = escape_match && (escape_bit < escape_code.size()) && (escape_code[escape_bit] == (bit == 1));
-		escape_bit++;
-		if (escape_match && (escape_bit == escape_code.size()))
-		{
-			// reset, let read next code
-			n = (Node*) root;
-			escape_bit = 0;
-			// get next 8 bits entirely as escaped code
-			char escaped_byte = strm.read8();
-			// write byte
-			if (retval)
-				*retval << escaped_byte;
-		}
 		if (n)
 		{
 			switch (bit) {
 				case -1:
 					// EOF
+					n = NULL;
 					break;
 				case 0:
 					// to left
@@ -767,37 +964,45 @@ static size_t decompress_stream
 					break;
 			}
 		}
-		
-		if (!n)
+
+		// check is it time to append code
+		if (const LeafNode *lf = dynamic_cast<const LeafNode*>(n))
 		{
-			if (escape_match)
-				continue;
-			// Fatal error
-			break;
-		} 
-		else 
-		{
-			// check is it time to append code
-			if (const LeafNode *lf = dynamic_cast<const LeafNode*>(n))
+			r++;
+			// check size if provided
+			if (!n || ((eof_code == NULL) && (r >= decompressed_size)))
+			{
+				// all done, last bits are garbage!
+				break;
+			}
+			
+			if (lf->flags & 1)
+			{
+				// eof
+				break;
+			}
+			if (lf->flags & 2)
+			{
+				// get next 8 bits entirely as escaped code
+				char escaped_byte = strm.read8();
+				// write byte
+				if (retval)
+					*retval << escaped_byte;
+			}
+			else
 			{
 				// write byte
 				if (retval)
 					*retval << lf->c;
-				r++;
-				if (r >= decompressed_size)
-				{
-					// all done, last bits are garbage!
-					break;
-				}
-				// reset, let read next code
-				n = (Node*) root;
-				escape_bit = 0;
-				escape_match = true;
 			}
+			
+			// reset, let read next code
+			n = (Node*) root;
 		}
 	}
 	return r;
 }
+
 
 /**
  * @param retval decompressed output stream
@@ -812,14 +1017,15 @@ static size_t decompress_buffer
 (
 	std::ostream *retval,
 	const Node *root,
- 	const HuffCode &escape_code, 
+ 	const HuffCodeNSizes &escape_code_sizes, 
+	const HuffCode *eof_code, 
 	const void *data, 
 	size_t size,
 	size_t decompressed_size
 )
 {
 	std::stringstream ss(std::string((char *) data, size));
-	return decompress_stream(retval, root, escape_code, &ss, decompressed_size);
+	return decompress_stream(retval, root, escape_code_sizes, eof_code, &ss, decompressed_size);
 }
 
 /**
@@ -829,10 +1035,6 @@ static size_t decompress_buffer
 size_t write_header
 (
 	std::ostream *retval,
-	HuffCodeMap& codes,
- 	const HuffCode &escape_code, 
-	int compression_offset,
-	const void *data, 
 	size_t size
 )
 {
@@ -853,6 +1055,7 @@ size_t read_header(
  * @param retval compressed stream
  * @param codes Huffman codes
  * @param escape_code Huffman code
+ * @param eof_code NULL- write length descriptor, otherwise write EOF symbol
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -861,15 +1064,26 @@ size_t read_header(
 size_t compress
 (
 	std::ostream *retval,
-	HuffCodeMap& codes,
- 	const HuffCode &escape_code, 
+	const HuffCodeMap& codes,
+	const HuffCodeNSizes &escape_code_sizes, 
+	const HuffCode *eof_code,
 	int compression_offset,
 	const void *data, 
 	size_t size
 )
 {
-	if (retval)
-		write_header(retval, codes, escape_code, compression_offset, data, size);
+	size_t r = 0;
+	if (!eof_code)
+	{
+		if (retval)
+			r += write_header(retval, size);
+		else
+		{
+			// just cals size
+			uint8_t buf[4];
+			r += encodeVarint<uint64_t>(size, (uint8_t*) &buf);
+		}
+	}
 
 	if (compression_offset > 0)
 	{
@@ -878,16 +1092,26 @@ size_t compress
 		for (int i = 0; i < compression_offset; i++)
 			*retval << ((char *) data) [i];
 		}
-		return compression_offset + compress_buffer(retval, codes, escape_code, &((char *) data) [compression_offset], size - compression_offset);
+		if (retval)
+			r += compression_offset + compress_buffer(retval, codes, escape_code_sizes, eof_code, &((char *) data) [compression_offset], size - compression_offset);
+		else
+			r += compression_offset + compress_buffer_calc_only(codes, escape_code_sizes, eof_code, &((char *) data) [compression_offset], size - compression_offset);
 	}
 	else
-		return compress_buffer(retval, codes, escape_code, data, size);
+	{
+		if (retval)
+			r += compress_buffer(retval, codes, escape_code_sizes, eof_code, data, size);
+		else
+			r += compress_buffer_calc_only(codes, escape_code_sizes, eof_code, data, size);
+	}
+	return r;
 }
 
 /**
  * @param retval compressed stream
  * @param root Huffman codes tree root node
  * @param escape_code Huffman code
+ * @param eof_code Can be NULL
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -897,7 +1121,8 @@ size_t decompress
 (
 	std::ostream *retval,
 	const Node *root,
- 	const HuffCode &escape_code, 
+	const HuffCodeNSizes &escape_code_sizes, 
+	const HuffCode *eof_code, 
 	int compression_offset,
 	const void *data, 
 	size_t size
@@ -906,26 +1131,33 @@ size_t decompress
 	// bytes occupied by original size in bytes(variable length integer)
 	size_t hdr_sz;
 	// read original size in bytes
-	uint64_t sz = ibitstream::get_varint((uint8_t *) data, &hdr_sz);
+	uint64_t sz = 0;
+	if (eof_code)
+		hdr_sz = 0;
+	else
+		sz = ibitstream::get_varint((uint8_t *) data, &hdr_sz);
+	
 	// get data pointer
 	const void *p = (char *) data + hdr_sz;
 	if (compression_offset > 0)
 	{
 		if (retval)
 		{
-		for (int i = 0; i < compression_offset; i++)
-			*retval << ((char *) p) [i];
+			for (int i = 0; i < compression_offset; i++)
+			{
+				*retval << ((char *) p) [i];
+			}
 		}
-		return compression_offset + decompress_buffer(retval, root, escape_code, &((char *) p) [compression_offset], size - hdr_sz - compression_offset, sz);
+		return compression_offset + decompress_buffer(retval, root, escape_code_sizes, eof_code, &((char *) p) [compression_offset], size - hdr_sz - compression_offset, sz);
 	}
 	else
-		return decompress_buffer(retval, root, escape_code, p, size - hdr_sz, sz);
+		return decompress_buffer(retval, root, escape_code_sizes, eof_code, p, size - hdr_sz, sz);
 }
 
 /**
  * @param retval compressed stream
  * @param codes Huffman codes
- * @param escape_code Huffman code
+ * @param escape_code_size Huffman code
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -935,14 +1167,15 @@ size_t decompress2
 (
 	std::ostream *retval,
 	HuffCodeMap& codes,
- 	const HuffCode &escape_code, 
+	const HuffCodeNSizes &escape_code_sizes,
+	const HuffCode *eof_code,  
 	int compression_offset,
 	const void *data, 
 	size_t size
 )
 {
 	Node *root = buildTreeFromCodes(codes);
-	size_t sz = decompress(retval, root, escape_code, compression_offset, data, size);
+	size_t sz = decompress(retval, root, escape_code_sizes, eof_code, compression_offset, data, size);
 	delete root;
 	return sz;
 }

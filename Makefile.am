@@ -90,7 +90,8 @@ repeator-config.h  \
 freceiver-impl.h freceiver-impl.h freceiver-config.h \
 huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
 huff/internalnode.h  huff/leafnode.h  huff/node.h \
-bitstream/bitstream.h bitstream/varint.h
+bitstream/bitstream.h bitstream/varint.h \
+messageformat.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  \
@@ -167,10 +168,13 @@ freceiver_SOURCES = \
 	freceiver.cpp freceiver-config.cpp freceiver-impl.cpp input-packet.cpp \
 	daemonize.cpp snmpagentpkt2.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp \
+	messageformat.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	pbjson.cpp duk/duktape.c javascript-context.cpp packet2message.cpp utilfile.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp messagecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lprotobuf $(SNMPLIBS)
+freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 #	pkt2receiver
@@ -249,6 +253,7 @@ handlerline_SOURCES = \
 	utilfile.cpp utilstring.cpp utilinet.cpp duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pbjson.cpp \
+	messageformat.cpp \
 	$(common_src)
 
 handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)

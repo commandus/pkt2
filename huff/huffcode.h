@@ -14,22 +14,8 @@
 
 typedef std::vector<bool> HuffCode;
 typedef std::map<unsigned char, HuffCode> HuffCodeMap;
-
-/* typedef std::map<HuffCode, unsigned char> HuffCodeMap2;
-
-void swapHuffCodeMap
-(
-	HuffCodeMap2 &dest,
-	const HuffCodeMap &src
-);
-
-
-HuffCode searchHuffCode
-(
-	HuffCodeMap2 &dest,
-	const HuffCodeMap &src
-);
-*/
+typedef std::pair<HuffCode, int> HuffCodeNSize;
+typedef std::vector<HuffCodeNSize> HuffCodeNSizes;
 
 void buildFrequencies
 (
@@ -118,30 +104,9 @@ size_t loadCodeMap
 );
 
 /**
- * Read size as variable length integer
- */
-size_t read_header(
-	std::istream *retval
-);
-
-/**
- * Write size as variable length integer
- * Other options are optional
- */
-size_t write_header
-(
-	std::ostream *retval,
-	HuffCodeMap& codes,
-	const HuffCode &escape_code, 
-	int compression_offset,
-	const void *data, 
-	size_t size
-);
-
-/**
  * @param retval stream to be compressed
  * @param codes Huffman codes
- * @param escape_code Huffman code
+ * @param escape_code_size Huffman code and size
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -150,8 +115,9 @@ size_t write_header
 size_t compress
 (
 	std::ostream *retval,
-	HuffCodeMap& codes,
-	const HuffCode &escape_code, 
+	const HuffCodeMap& codes,
+	const HuffCodeNSizes &escape_code_sizes,
+	const HuffCode *eof_code,  
 	int compression_offset,
 	const void *data, 
 	size_t size
@@ -160,7 +126,8 @@ size_t compress
 /**
  * @param retval compressed stream
  * @param root Huffman codes tree root node
- * @param escape_code Huffman code
+ * @param escape_code_size Huffman code and size
+ * @param eof_code Can be NULL
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -170,8 +137,9 @@ size_t decompress
 (
 	std::ostream *retval,
 	const Node *root,
-	const HuffCode &escape_code, 
-	int compression_offset,
+	const HuffCodeNSizes &escape_code_sizes,
+	const HuffCode *eof_code,  
+ 	int compression_offset,
 	const void *data, 
 	size_t size
 );
@@ -179,7 +147,7 @@ size_t decompress
 /**
  * @param retval compressed stream
  * @param codes Huffman codes
- * @param escape_code Huffman code
+ * @param escape_code_size Huffman code and size
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -189,7 +157,7 @@ size_t decompress2
 (
 	std::ostream *retval,
 	HuffCodeMap& codes,
-	const HuffCode &escape_code, 
+	const HuffCodeNSizes &escape_code_sizes, 
 	int compression_offset,
 	const void *data, 
 	size_t size

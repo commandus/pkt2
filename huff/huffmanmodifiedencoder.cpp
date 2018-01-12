@@ -11,7 +11,7 @@ HuffmanModifiedEncoder::HuffmanModifiedEncoder()
 	mCodeMap = defaultHuffmanCodeMap();
 }
 
-HuffmanModifiedEncoder *HuffmanModifiedEncoder::setMode
+HuffmanModifiedEncoder *HuffmanModifiedEncoder::setCodeMapByMode
 (
 	int value		///< 0- no compression, 1- modified Huffman
 )
@@ -22,10 +22,26 @@ HuffmanModifiedEncoder *HuffmanModifiedEncoder::setMode
 
 HuffmanModifiedEncoder *HuffmanModifiedEncoder::setEscapeCode
 (
+	const std::string &escape_code,				///< for mode 1
+	int bits
+)
+{
+	mEscapeCodeSizes.push_back(HuffCodeNSize(getHuffCode(escape_code), bits)); 
+	return this;
+}
+
+HuffmanModifiedEncoder *HuffmanModifiedEncoder::setEOFCode
+(
 	const std::string &escape_code				///< for mode 1
 )
 {
-	mEscapeCode = getHuffCode(escape_code); 
+	if (escape_code.empty())
+		mEOFCode = NULL;
+	else
+	{
+		mEOFCodeData = getHuffCode(escape_code);
+		mEOFCode = &mEOFCodeData; 
+	}
 	return this;
 }
 
@@ -92,7 +108,7 @@ size_t HuffmanModifiedEncoder::pack
 		retval->write((const char *) src, size);
 		return size;
 	}
-	return compress(retval, mCodeMap, mEscapeCode, offset, src, size); 
+	return compress(retval, mCodeMap, mEscapeCodeSizes, mEOFCode, offset, src, size); 
 }
 
 /**

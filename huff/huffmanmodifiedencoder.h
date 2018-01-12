@@ -10,11 +10,18 @@ class HuffmanModifiedEncoder
 private:
  	int mode;																			///< 0- no compression, 1- modified Huffman. Default 1
 	HuffCodeMap mCodeMap;
-	HuffCode mEscapeCode;
+	HuffCodeNSizes mEscapeCodeSizes;
+	HuffCode *mEOFCode;																	///< I need pointer to pass code/decored to indicate is EOF code has been assigned 
+	HuffCode mEOFCodeData;
 public:
 	HuffmanModifiedEncoder();
 	HuffmanModifiedEncoder *setMode(int mode);											///< 0- no compression, 1- modified Huffman
-	HuffmanModifiedEncoder *setEscapeCode(const std::string &escape_code);				///< for mode 1
+	HuffmanModifiedEncoder *setEscapeCode(const std::string &escape_code, int bits);	///< for mode 1
+	HuffmanModifiedEncoder *setCodeMapByMode
+	(
+		int value		///< 0- no compression, 1- modified Huffman
+	);
+	HuffmanModifiedEncoder *setEOFCode(const std::string &escape_code);
 	HuffmanModifiedEncoder *setCodeMapFromFrequencies(size_t *frequencies, size_t len);	///< array
 	HuffmanModifiedEncoder *setCodeMapFromFrequenciesStream(std::istream *strm);		///< stream
 	HuffmanModifiedEncoder *setCodeMapFromFrequenciesFile(const std::string &value);	///< file name

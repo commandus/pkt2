@@ -22,10 +22,26 @@ HuffmanModifiedDecoder *HuffmanModifiedDecoder::setMode
 
 HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEscapeCode
 (
+	const std::string &escape_code,				///< for mode 1
+	int bits
+)
+{
+	mEscapeCodeSizes.push_back(HuffCodeNSize(getHuffCode(escape_code), bits)); 
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEOFCode
+(
 	const std::string &escape_code				///< for mode 1
 )
 {
-	mEscapeCode = getHuffCode(escape_code); 
+	if (escape_code.empty())
+		mEOFCode = NULL;
+	else
+	{
+		mEOFCodeData = getHuffCode(escape_code);
+		mEOFCode = &mEOFCodeData; 
+	}
 	return this;
 }
 
@@ -70,6 +86,14 @@ HuffmanModifiedDecoder *HuffmanModifiedDecoder::setValidPacketSizes
 	return this;
 }
 
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setTreeByType
+(
+	int mode
+)
+{
+	return this;
+}
+
 HuffmanModifiedDecoder::~HuffmanModifiedDecoder()
 {
 	if (mRoot)
@@ -90,7 +114,7 @@ size_t HuffmanModifiedDecoder::unpack
 		return size;
 	}
 	// huffman
-	size_t sz = decompress(retval, mRoot, mEscapeCode, offset, src, size); 
+	size_t sz = decompress(retval, mRoot, mEscapeCodeSizes, mEOFCode, offset, src, size); 
 	return sz;
 }
 
