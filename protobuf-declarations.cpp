@@ -362,7 +362,7 @@ size_t ProtobufDeclarations::parseProtoFiles
 
 /**
  * @brief Each protobuf3 file must have .proto file name suffix
- * @param path
+ * @param path Protobuf files directory path
  * @return successfully parsed files count
  */
 size_t ProtobufDeclarations::parseProtoPath
@@ -373,7 +373,7 @@ size_t ProtobufDeclarations::parseProtoPath
 	std::vector<std::string> protoFiles;
 	filesInPath(path, ".proto", 2, &protoFiles);
 
-	if (verbosity >= 2)
+	if (verbosity >= 3)	// max is 2. Add -vvv option if you want
 	{
 		LOG(INFO) << MSG_PROTO_FILES_HEADER;
 		for (std::vector<std::string>::iterator iter = protoFiles.begin(); iter != protoFiles.end(); ++iter)
@@ -382,7 +382,7 @@ size_t ProtobufDeclarations::parseProtoPath
 
 	size_t r = parseProtoFiles(protoFiles);
 
-	if (verbosity >= 2)
+	if (verbosity >= 3)	// max is 2. Add -vvv option if you want
 	{
 		LOG(INFO) << MSG_PARSE_PROTO_COUNT << r;
 		LOG(INFO) << MSG_MESSAGE_HEADER;

@@ -55,7 +55,7 @@ int Config::parseCmd
 	
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
-	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
+	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);

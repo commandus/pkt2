@@ -49,6 +49,8 @@ void sendMessage
 	int sent = nn_send(nnsocket, r.c_str(), r.size(), 0);
 	if (sent < 0)
 		LOG(ERROR) << ERR_NN_SEND << sent;
+	else // flush
+		sleep(0);
 }
 
 /**

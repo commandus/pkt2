@@ -73,7 +73,7 @@ int run
 	Config *config
 )
 {
-	START:
+START:
 	config->stop_request = 0;
 	int in_socket = nn_socket(AF_SP, NN_BUS);
 	if (in_socket < 0)
@@ -179,6 +179,8 @@ int run
 					LOG(INFO) << MSG_SENT << bytes << " to : " << config->out_urls[i];
 				}
 			}
+			// flush
+			sleep(0);
 		}
 	}
 	free(buffer);

@@ -57,6 +57,8 @@ void control_message
 		<< payload << std::endl; 
 	std::string s(ss.str());
 	nn_send(socket_control, s.c_str(), s.size(), 0);
+	// flush
+	sleep(0);
 }
 
 /**
@@ -140,7 +142,11 @@ int pkt2_receiever_nano(Config *config)
 		
 		// Notify CONTROL_TYP_RECEIVED
 		control_message(config, socket_control, CONTROL_TYP_RECEIVED_CODE, payload_size, CONTROL_TYP_RECEIVED, "");
-		
+		if ((bytes > 0) && (config->verbosity > 1))
+		{
+			LOG(INFO) << MSG_RECEIVED << bytes << " bytes, payload " << payload_size << " bytes" << std::endl;
+		}
+
 		config->count_packet_in++;
 		
 		if (payload_size < 0)
@@ -180,6 +186,9 @@ int pkt2_receiever_nano(Config *config)
 		if (buf)
 		{
 			InputPacket packet(buf, bytes);
+			
+			if (config->verbosity > 1)
+				LOG(INFO) << MSG_PACKET_HEX << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
 
 			if (packet.error() != 0)
 			{
@@ -207,6 +216,9 @@ int pkt2_receiever_nano(Config *config)
 			MessageTypeNAddress messageTypeNAddress(m->GetTypeName());
 			std::string outstr = stringDelimitedMessage(&messageTypeNAddress, *m);
 			int sent = nn_send(nn_sock_out, outstr.c_str(), outstr.size(), 0);
+			// flush
+			sleep(0);
+
 			if (sent < 0)
 			{
 				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");
@@ -219,14 +231,11 @@ int pkt2_receiever_nano(Config *config)
 				{
 					std::string s;
 					pbjson::pb2json(m, s);
-					LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr) << std::endl 
+					LOG(INFO) << MSG_SENT << sent << " " 
+						<< hexString(outstr) 
+						<< std::endl 
 						<< s;
 					control_message(config, socket_control, CONTROL_TYP_MSG_SENT_CODE, outstr.size(), CONTROL_TYP_MSG_SENT, s);	
-					if (config->verbosity >= 2)
-					{
-						std::cerr << MSG_SENT << sent << " " << hexString(outstr) << std::endl
-							<< s << std::endl;
-					}
 				}
 				else
 				{

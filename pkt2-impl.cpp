@@ -302,15 +302,10 @@ public:
 
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
-			}
-
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
 				PUSH_BACK_ARG_STR(r, "-o", common->bus_in);
@@ -363,13 +358,9 @@ public:
 		PUSH_BACK_ARG_NUM(r, "-q", qos);
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
@@ -409,13 +400,9 @@ public:
 		PUSH_BACK_ARG_NUM(r, "-t", mode);
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
@@ -462,13 +449,9 @@ public:
 		}
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_in != "ipc:///tmp/packet.pkt2")
 			{
@@ -537,13 +520,9 @@ public:
 		
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
@@ -591,13 +570,9 @@ public:
 		
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
@@ -661,13 +636,9 @@ public:
 		
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
@@ -729,13 +700,9 @@ public:
 		
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->bus_out != "ipc:///tmp/message.pkt2")
 			{
@@ -798,13 +765,9 @@ public:
 		
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->max_buffer_size != 4096)
 			{
@@ -856,13 +819,9 @@ public:
 		
 		if (common)
 		{
-			if (common->verbosity == 1)
+			if (common->verbosity > 0)
 			{
-				PUSH_BACK_ARG_LIT(r, "-v");
-			}
-			if (common->verbosity >= 2)
-			{
-				PUSH_BACK_ARG_LIT(r, "-vv");
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
 			}
 			if (common->max_buffer_size != 4096)
 			{

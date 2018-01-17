@@ -156,10 +156,6 @@ int main(int argc, char **argv)
 			if (config->verbosity >= 1)
 			{
 				LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
-				if (config->verbosity >= 2)
-				{
-					std::cerr << MSG_SENT << sent << " " << hexString(outstr);
-				}
 			}
 		}
 		sleep(config->retry_delay);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182

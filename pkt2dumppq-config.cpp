@@ -56,7 +56,7 @@ int Config::parseCmd
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
         struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
         struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
-        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
+        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
         // database connection
 		struct arg_str *a_conninfo = arg_str0(NULL, "conninfo", "<string>", "database connection");

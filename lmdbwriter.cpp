@@ -105,11 +105,12 @@ bool close_lmdb
 
 /**
  * @brief Store input packet to the LMDB
- * @param env
- * @param buffer
- * @param buffer_size
- * @param messageTypeNAddress
- * @param message
+ * @param env database env
+ * @param options   cache
+ * @param buffer buffer
+ * @param buffer_size buffer size
+ * @param messageTypeNAddress address
+ * @param message message
  * @return 0 - success
  */
 int put_db
@@ -128,7 +129,6 @@ int put_db
 	key.mv_size = options->getKey(messageTypeNAddress->message_type, keybuffer, sizeof(keybuffer), message);
 	if (key.mv_size == 0)
 		return 0;	// No key, no store
-return 0;
 	int r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
 	if (r)
 	{
@@ -167,7 +167,7 @@ int run
 	Config *config
 )
 {
-	START:
+START:
 	config->stop_request = 0;
 	int accept_socket = nn_socket(AF_SP, NN_SUB);
 	int r = nn_setsockopt(accept_socket, NN_SUB, NN_SUB_SUBSCRIBE, "", 0);

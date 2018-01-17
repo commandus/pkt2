@@ -89,6 +89,8 @@ int cb_message_arrived
 	
 	// send message to the nano queue
 	int bytes = nn_send(env->nano_socket, packet.get(), packet.size, 0);
+	// flush
+	sleep(0);
 	if (bytes != packet.size)
 	{
 		if (bytes < 0)
@@ -109,7 +111,7 @@ int cb_message_arrived
 			}
 		}
 	}
-	
+
 	MQTTClient_freeMessage(&message);
 	MQTTClient_free(topicName);
 	return 1;

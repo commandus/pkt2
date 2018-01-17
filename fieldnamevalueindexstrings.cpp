@@ -166,11 +166,11 @@ void FieldNameValueIndexStrings::toStringInsert2
 	std::string prefix(ssprefix.str());
 	prefix = prefix.substr(0, prefix.size() - 1); // remove last ","
 
-	std::stringstream ss;
+	
 	// each non-index field
 	for (int i = 0; i < values.size(); i++)
 	{
-		ss.clear();
+		std::stringstream ss;
 		if (std::find(index2values.begin(), index2values.end(), i) != index2values.end())
 			continue;
 

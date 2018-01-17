@@ -40,7 +40,7 @@ int Config::parseCmd
 	struct arg_file *a_path = arg_file0("p", "path", "<path>", "Working directory path. Default " DEF_PATH);
 	struct arg_lit *a_output = arg_lit0("o", "output", "Show status");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
-	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
+	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);

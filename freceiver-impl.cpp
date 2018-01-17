@@ -194,6 +194,8 @@ START:
 
 		// send message to the nano queue
 		int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
+		// flush
+		sleep(1);
 
 		if (bytes != packet.size)
 		{
@@ -228,7 +230,7 @@ START:
 		nano_socket = 0;
 	}
 
-	LOG(ERROR) << MSG_STOP;
+	LOG(INFO) << MSG_STOP;
 	if (config->stop_request == 2)
 		goto START;
 

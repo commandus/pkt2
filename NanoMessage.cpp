@@ -122,6 +122,8 @@ void NanoMessage::send(const void *buf, size_t bufsize)
     		mError = EMSGSIZE;
         else
         	mError = 0;
+    // flush
+    sleep(0);
 }
 
 void NanoMessage::send(const std::string &data)

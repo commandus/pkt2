@@ -45,7 +45,7 @@ int Config::parseCmd
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
-	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
+	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 	struct arg_str *a_db_path = arg_str0(NULL, "dbpath", "<path>", "Default db");
@@ -131,8 +131,7 @@ int Config::parseCmd
 		path = *a_db_path->sval;
 	else
 		path = DEF_DB_PATH;
-	realpath(path.c_str(), b);
-	path = std::string(b);
+	path = std::string(realpath(path.c_str(), b));
 
 	if (a_mode->count)
 		mode = *a_mode->ival;

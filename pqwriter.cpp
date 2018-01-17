@@ -41,11 +41,10 @@ int format_number;
  * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueIndexStrings class(see first parameter).
  * @param env accumulates field names and values in the InsertSQLStrings object
  * @param message_descriptor message
- * @param field_type type of the data
- * @param field_name field name
+ * @param field field descriptor
  * @param value pointer to the data
- * @param size  size occupied by data
- *
+ * @param size size occupied by data
+ * @param index index 
  * @see FieldNameValueIndexStrings
  */
 void addFieldValueString
@@ -100,7 +99,7 @@ int execSQL
 
 /**
  * @brief Write line loop
- * @param config
+ * @param config config
  * @return  0- success
  *          >0- error (see errorcodes.h)
  */
@@ -130,16 +129,22 @@ int run
 
 	ProtobufDeclarations pd(config->proto_path, config->verbosity);
 
-	// print out create statements
-	LOG(INFO) << "SQL CREATE TABLE statements";
-	LOG(INFO) << "===========================";
-	LOG(INFO) << "CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value NUMERIC(10, 2));";
-	LOG(INFO) << "CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));";
+	if (config->verbosity > 2)
+	{
+		// print out create statements
+		LOG(INFO) << "SQL CREATE TABLE statements";
+		LOG(INFO) << "===========================";
+		LOG(INFO) << "CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value NUMERIC(10, 2));";
+		LOG(INFO) << "CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));";
+	}
 
 	std::vector<std::string> clauses;
 	pd.getStatementSQLCreate(&clauses, 0);
-	for (std::vector<std::string>::const_iterator it(clauses.begin()); it != clauses.end(); ++it)
-		LOG(INFO) << *it;
+	if (config->verbosity > 2)
+	{
+		for (std::vector<std::string>::const_iterator it(clauses.begin()); it != clauses.end(); ++it)
+			LOG(INFO) << *it;
+	}
 
 	if (!pd.getMessageCount())
 	{
@@ -187,8 +192,11 @@ int run
 
 			FieldNameValueIndexStrings vals(&options, messageTypeNAddress.message_type);
 			
-			// MessageDecomposer md(&vals, &context, &options, m, addFieldValueString);
 			MessageDecomposer md(&vals, messageTypeNAddress.message_type, &options, m, addFieldValueString);
+			if (config->verbosity > 2)
+			{
+				LOG(INFO) << MSG_MESSAGE_JSON << vals.toStringJSON();
+			}
 			
 			stmts.clear();
 			switch (config->mode)
@@ -202,6 +210,17 @@ int run
 			default:
 				break;
 			}
+			if (config->verbosity > 2)
+			{
+				std::stringstream ss;
+				ss << std::endl;
+				for (std::vector<std::string>::const_iterator it (stmts.begin()); it != stmts.end(); ++it)
+				{
+					ss << *it << std::endl;
+				}
+				LOG(INFO) << MSG_SQL_LINES << ss.str();
+			}
+
 			execSQL(config, stmts);
     	}
 		else

@@ -47,36 +47,36 @@ int Config::error()
  **/
 int Config::parseCmd
 (
-        int argc,
-        char* argv[]
+	int argc,
+	char* argv[]
 )
 {
-        struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/message.pkt2");
-		struct arg_str *a_allowed_messages = arg_strn("a", "allow", "<packet.message>", 0, 128, "Allowed message packet.name. Default any.");
+	struct arg_str *a_message_url = arg_str0("i", "input", "<queue url>", "Default ipc:///tmp/message.pkt2");
+	struct arg_str *a_allowed_messages = arg_strn("a", "allow", "<packet.message>", 0, 128, "Allowed message packet.name. Default any.");
 
-        struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
-        struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
-        struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
-        struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 2, "Verbosity level");
+	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
+	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
+	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
+	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
-        struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
+	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 
-        // database connection
-		struct arg_str *a_conninfo = arg_str0(NULL, "conninfo", "<string>", "database connection");
-		struct arg_str *a_user = arg_str0(NULL, "user", "<login>", "database login");
-		struct arg_str *a_database = arg_str0(NULL, "database", "<scheme>", "database scheme");
-		struct arg_str *a_password = arg_str0(NULL, "password", "<password>", "database user password");
-		struct arg_str *a_host = arg_str0(NULL, "host", "<host>", "database host. Default localhost");
-		struct arg_str *a_dbport = arg_str0(NULL, "port", "<integer>", "database port. Default 5432");
-		struct arg_file *a_optionsfile = arg_file0(NULL, "options-file", "<file>", "database options file");
-		struct arg_str *a_dbsocket = arg_str0(NULL, "dbsocket", "<socket>", "database socket. Default none.");
-		struct arg_str *a_dbcharset = arg_str0(NULL, "dbcharset", "<charset>", "database client charset. Default utf8.");
-		struct arg_int *a_dbclientflags = arg_int0(NULL, "dbclientflags", "<number>", "database client flags. Default 0.");
+	// database connection
+	struct arg_str *a_conninfo = arg_str0(NULL, "conninfo", "<string>", "database connection");
+	struct arg_str *a_user = arg_str0(NULL, "user", "<login>", "database login");
+	struct arg_str *a_database = arg_str0(NULL, "database", "<scheme>", "database scheme");
+	struct arg_str *a_password = arg_str0(NULL, "password", "<password>", "database user password");
+	struct arg_str *a_host = arg_str0(NULL, "host", "<host>", "database host. Default localhost");
+	struct arg_str *a_dbport = arg_str0(NULL, "port", "<integer>", "database port. Default 5432");
+	struct arg_file *a_optionsfile = arg_file0(NULL, "options-file", "<file>", "database options file");
+	struct arg_str *a_dbsocket = arg_str0(NULL, "dbsocket", "<socket>", "database socket. Default none.");
+	struct arg_str *a_dbcharset = arg_str0(NULL, "dbcharset", "<charset>", "database client charset. Default utf8.");
+	struct arg_int *a_dbclientflags = arg_int0(NULL, "dbclientflags", "<number>", "database client flags. Default 0.");
 
-		struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "3- SQL(native), 4- SQL(dict). Default " DEF_SQL_MODE_S);
-		struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
+	struct arg_int *a_mode = arg_int0("m", "mode", "<number>", "3- SQL(native), 4- SQL(dict). Default " DEF_SQL_MODE_S);
+	struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
-		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096");
+	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096");
 
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);
