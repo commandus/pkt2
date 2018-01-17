@@ -44,7 +44,7 @@ bus_out = "ipc:///tmp/message.pkt2";
 /**
  * Set logging verbosity: 0- none, 1- error/warn, 2- info
  */
-verbosity = 0;
+verbosity = 2;
 
 //------------------------- Listeners -------------------------------
 
@@ -163,7 +163,7 @@ write_pq =
 		"port": 5432,
 		"messages":
 		[
-			"iridium.IE_Packet"
+//			"iridium.IE_Packet"
 		]
 	}
 ];
