@@ -116,16 +116,13 @@ START:
 	packet.set_socket_addr_dst(addr_dst);
 
 	int socket_accept = listen_port(addr_dst);
-	if (socket_accept < 0)
-	{
-		LOG(ERROR) << ERR_SOCKET_LISTEN;
-		return socket_accept;
-	}
 	// Free the res linked list after we are done with it	
 	freeaddrinfo(addr_dst);
-	if (socket_accept == -1)
+	if (socket_accept < 0)
 	{
-		LOG(ERROR) << ERR_SOCKET_LISTEN;
+		LOG(ERROR) << ERR_SOCKET_LISTEN 
+			<< ((struct sockaddr_in*) addr_dst)->sin_addr.s_addr
+			<< ":" << ((struct sockaddr_in*) addr_dst)->sin_port;
 		return ERRCODE_SOCKET_LISTEN;
 	}
 
@@ -137,8 +134,8 @@ START:
 	int r = nn_setsockopt(nano_socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
 	if (r < 0)
 	{
-		LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->message_url << " " << errno << ": " << nn_strerror(errno);
 		close(socket_accept);
+		LOG(ERROR) << ERR_NN_SET_SOCKET_OPTION << config->message_url << " " << errno << ": " << nn_strerror(errno);
 		return ERRCODE_NN_SET_SOCKET_OPTION;
 	}
 
@@ -146,6 +143,7 @@ START:
     if (eoid < 0)
     {
 		LOG(ERROR) << ERR_NN_CONNECT << config->message_url << " " << errno << ": " << nn_strerror(errno);
+		close(socket_accept);
 		return ERRCODE_NN_CONNECT;
     }
 
@@ -168,15 +166,13 @@ START:
 	{
 		// Wait now for a connection to accept, write source IP address into packet
 		if (config->verbosity > 1)
-		{
 			LOG(INFO) << "loop";
-		}
 
 		// Accept a new connection and return back the socket descriptor
 		int new_conn_fd = accept(socket_accept, (struct sockaddr *) src, &addr_size);
 		if (new_conn_fd < 0)
 		{
-			LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno) << ", continue.";
+			LOG(ERROR) << ERR_NN_ACCEPT << gai_strerror(errno) << " (interrupted?), continue.";
 			continue;
 		}
 		// Read
@@ -234,8 +230,10 @@ START:
 		}
 	}
 
-	if (socket_accept)
+	if (socket_accept >= 0)
 	{
+		if (config->verbosity > 1)
+			LOG(INFO) << "close accept socket";
 		close(socket_accept);	
 		socket_accept = 0;
 	}
@@ -243,6 +241,8 @@ START:
 	
 	if (nano_socket)
 	{
+		if (config->verbosity > 1)
+			LOG(INFO) << "close nano socket";
 		close(nano_socket);	
 		nano_socket = 0;
 	}

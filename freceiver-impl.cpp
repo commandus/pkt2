@@ -46,9 +46,9 @@ int readData
 	std::istream *istrm
 )
 {
-	int r = 0;
 	if (istrm->bad()) 
 		return -1;	// EOF or error
+	int r = 0;
 	switch(cmd)
 	{
 		case FILE_MODE_TEXT_HEX:
@@ -83,15 +83,12 @@ int readData
 		default:	// case FILE_MODE_BIN:
 		{
 			char v;
-			while (istrm->read((char *)&v, 1))
+			while (istrm->read(&v, 1))
 			{
+				ostrm.write(&v, 1);
 				r++;
-				if (packet_size > 0)
-				{
-					if (r > packet_size)
-						break;
-				}
-				ostrm.write((char *)&v, 1);
+				if ((packet_size > 0) && (r >= packet_size))
+					break;
 			}
 		}
 	}
@@ -162,15 +159,14 @@ START:
 	{
 		// Wait now for a connection to accept, write source IP address into packet
 		if (config->verbosity > 1)
-		{
 			LOG(INFO) << "loop";
-		}
 
 		std::stringstream ss;
 		if (readData(ss, config->file_mode, config->packet_size, f) == 0)
 			break;
 		std:: string s = ss.str();
 		size_t sz = s.size();
+		
 		// Read
 		packet.setLength(sz);
 		memcpy(packet.data(), s.c_str(), sz);
@@ -260,43 +256,44 @@ static int filePrint(Config *config)
 	Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
 
 	InputPacket packet('T', config->buffer_size);
-	std::istream *f;
-	if (config->filename_in.empty())
-		f = &std::cin;
-	else
-	{
-		if (config->file_mode == 0)
-			f = new std::fstream(config->filename_in.c_str(), std::ios::in | std::ios::binary);
-		else
-			f = new std::fstream(config->filename_in.c_str(), std::ios::in);
-	}
-
 	if (packet.error() != 0)
 	{
-		if (config->file_mode == 0)
-			delete f;
 		LOG(ERROR) << ERR_GET_ADDRINFO << config->message_url;
 		return ERRCODE_NN_CONNECT;
 	}
+	
+	std::istream *f;
+	if (config->filename_in.empty())
+	{
+		f = &std::cin;
+	}
+	else
+	{
+		if (config->file_mode == 0)
+			f = new std::ifstream(config->filename_in.c_str(), std::ifstream::in | std::ifstream::binary);
+		else
+			f = new std::ifstream(config->filename_in.c_str(), std::fstream::in);
+	}
+
 
 	struct sockaddr_in *src = packet.get_sockaddr_src();
 
 	while (!config->stop_request)
 	{
 		std::stringstream ss;
-		if (readData(ss, config->file_mode, config->packet_size, f) == 0)
+		if (readData(ss, config->file_mode, config->packet_size, f) <= 0)
 			break;
 		std:: string s = ss.str();
 		size_t sz = s.size();
+
 		if (sz < config->packet_size)
-		{
 			break;
-		}
 		if (sz > config->buffer_size)
 		{
 			LOG(ERROR) << ERR_TOO_SMALL << config->buffer_size << " for " << sz << " bytes";
 			continue;
 		}
+		
 		// Read
 		packet.setLength(sz);
 		memcpy(packet.data(), s.c_str(), sz);
