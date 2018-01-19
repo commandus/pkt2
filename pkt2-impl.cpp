@@ -184,7 +184,7 @@ public:
  * @param msg error message
  * 
  */
-void duk_fatal_handler(
+void duk_fatal_handler_process_descriptors(
 	void *env, 
 	const char *msg
 )
@@ -855,7 +855,7 @@ public:
 	
 	ProcessDescriptors()
 	{
-		context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler);
+		context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler_process_descriptors);
 	}
 
 	void load_config() 

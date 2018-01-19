@@ -159,6 +159,7 @@ bool oncomposefield (
 	std::string expr = v->var.get();
 	e->context->expression = &expr;
 
+	LOG(INFO) << ERR_MESSAGE_TYPE_NOT_FOUND << " trying compose message " << message_descriptor->full_name() << " fron the packet data, message not found.";
 	duk_eval_string(e->context->context, expr.c_str());
 	retval = duk_safe_to_string(e->context->context, -1);
 	return false;

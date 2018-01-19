@@ -46,8 +46,7 @@ public:
 	duk_context *context;
 };
 
-void duk_fatal_handler(void *udata, const char *msg);
-
+void duk_fatal_handler_javascript_context(void *udata, const char *msg);
 
 /**
  * @brief find field number. 

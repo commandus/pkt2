@@ -1580,6 +1580,16 @@ CREATE TABLE str
   value text NOT NULL,
   CONSTRAINT str_pkey PRIMARY KEY (id)
 );
+
+CREATE INDEX idx_num_time
+    ON public.num USING btree
+    ("time" ASC NULLS LAST)
+    TABLESPACE pg_default;
+CREATE INDEX idx_str_time
+    ON public.str USING btree
+    ("time" ASC NULLS LAST)
+    TABLESPACE pg_default;
+    
 ```
 
 ##### Создание представлений
@@ -1587,17 +1597,26 @@ CREATE TABLE str
 Пример создает представление для даннх logger60:
 
 ```
+--drop VIEW public.logger60;
 CREATE OR REPLACE VIEW public.logger60 AS
- SELECT date_part('epoch'::text, num."time") AS utc,
-    num.device AS dev,
-    substr(num.field, 29, 1) AS fld,
-    substr(num.field, 30, 1)::integer AS idx,
-    num.value AS v
-   FROM num
-  WHERE num.message = 6000;
+	SELECT trunc(date_part('epoch'::text, num."time"))::numeric AS utc,
+		num.device::integer AS dev,
+		substr(num.field, 29, 1) AS fld,
+		substr(num.field, 30, 1)::integer AS idx,
+		num.value AS v
+	FROM num
+	WHERE num.message = 6000;
 
-  ALTER TABLE public.logger60
-    OWNER TO <username>;
+	ALTER TABLE public.logger60
+	OWNER TO <username>;
+
+	select utc, idx, v 
+	from logger60
+	where fld = 't' 
+	and dev = 0
+	and utc >= 1516177820
+	and utc <= 1516177902
+	order by utc, idx
 ```
 
 ```

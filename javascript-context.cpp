@@ -33,7 +33,7 @@ void pushMessage
 JavascriptContext::JavascriptContext()
 	: expression(NULL)
 {
-	context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler);
+	context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler_javascript_context);
 	// current time
 	time_t t =  time(NULL);
 	duk_push_global_object(context);
@@ -65,7 +65,7 @@ JavascriptContext::~JavascriptContext()
 	const std::string &packet
 )
 {
-	context = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
+	context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler_javascript_context);
 
 	// current time
 	time_t t =  time(NULL);
@@ -98,7 +98,7 @@ JavascriptContext::~JavascriptContext()
 	const std::string &packet
 )
 {
-	context = duk_create_heap(NULL, NULL, NULL, (void *) &packet, duk_fatal_handler);
+	context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler_javascript_context);
 
 	// current time
 	time_t t =  time(NULL);
@@ -119,15 +119,15 @@ JavascriptContext::~JavascriptContext()
  * @param msg error message
  * 
  */
-void duk_fatal_handler(
+void duk_fatal_handler_javascript_context(
 	void *env, 
 	const char *msg
 )
 {
 	if (env && ((JavascriptContext *) env)->expression)
 	{
-		
-		fprintf(stderr, "Javascript error: %s in \n%s\n", (msg ? msg : ""), ((JavascriptContext *) env)->expression->c_str());
+		JavascriptContext *jenv = (JavascriptContext *) env;
+		fprintf(stderr, "Javascript error: %s in \n%s\n", (msg ? msg : ""), jenv->expression->c_str());
 	}
 	else
 		fprintf(stderr, "Javascript error: %s\n", (msg ? msg : ""));
