@@ -13,6 +13,7 @@
 
 #include <glog/logging.h>
 
+#include "platform.h"
 #include "pbjson.hpp"
 
 #include "pkt2receivernano.h"
@@ -58,7 +59,7 @@ void control_message
 	std::string s(ss.str());
 	nn_send(socket_control, s.c_str(), s.size(), 0);
 	// flush
-	sleep(0);
+	SEND_FLUSH(100);	// BUGBUG 0 - nn_send
 }
 
 /**
@@ -217,7 +218,7 @@ int pkt2_receiever_nano(Config *config)
 			std::string outstr = stringDelimitedMessage(&messageTypeNAddress, *m);
 			int sent = nn_send(nn_sock_out, outstr.c_str(), outstr.size(), 0);
 			// flush
-			sleep(0);
+			SEND_FLUSH(100);	// BUGBUG 0 - nn_send 
 
 			if (sent < 0)
 			{
@@ -247,7 +248,7 @@ int pkt2_receiever_nano(Config *config)
 			{
             	LOG(ERROR) << ERR_NN_FREE_MSG << " " << errno << ": " << nn_strerror(errno);
 			}
-			sleep(0);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
+			SEND_FLUSH(100);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
         }
 	}
 

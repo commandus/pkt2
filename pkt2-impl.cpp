@@ -21,6 +21,7 @@
 
 #include <glog/logging.h>
 
+#include "platform.h"
 #include "duk/duktape.h"
 
 #include "pkt2-impl.h"
@@ -1407,7 +1408,7 @@ START:
 	while (!config->stop_request)
 	{
 		processes.check();
-		sleep(1);
+		SLEEP(1);
 	}
 	processes.stop();
 	

@@ -103,7 +103,7 @@ START:
 	for (int i = 0; i < config->out_urls.size(); i++) 
 	{
 		out_sockets[i] = nn_socket(AF_SP, NN_BUS);
-		sleep(1); // wait for connections
+		WAIT_CONNECTION(1); // wait for connections
 		if (out_sockets[i] < 0)
 		{
 			LOG(ERROR) << ERR_NN_SOCKET << config->out_urls[i] << " error " << errno << ": " << strerror(errno);
@@ -180,7 +180,7 @@ START:
 				}
 			}
 			// flush
-			sleep(0);
+			SEND_FLUSH(100);	// BUGBUG 0 - nn_send 
 		}
 	}
 	free(buffer);
@@ -233,7 +233,7 @@ void runner()
 		LOG(INFO) << MSG_STOP;
 		if (n >= config->retries)
 			break;
-		sleep(config->retry_delay);
+		SLEEP(config->retry_delay);
 		n++;
 	}
 	LOG(INFO) << MSG_DONE;

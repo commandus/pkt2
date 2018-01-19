@@ -13,6 +13,7 @@
 #include <netdb.h>
 #include <argtable2.h>
 
+#include "platform.h"
 #include "errorcodes.h"
 #include "utilstring.h"
 #include "helper_socket.h"
@@ -154,7 +155,7 @@ int main(int argc, char **argv)
 				std::cerr << count << std::endl;
 			}
 			if (delay > 0)
-				sleep(delay);
+				SLEEP(delay);
 			count++;
 		}
 	}

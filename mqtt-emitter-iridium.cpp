@@ -13,6 +13,7 @@
 
 #include <MQTTClient.h>
 
+#include "platform.h"
 #include "errorcodes.h"
 #include "iridium.h"
 #include "helper_socket.h"
@@ -344,7 +345,7 @@ int main(int argc, char **argv)
 			}
 			std::cerr << std::endl;
 		}
-		sleep(delay);
+		SLEEP(delay);
 		count++;
 	}
 	

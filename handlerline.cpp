@@ -53,7 +53,7 @@ void runner()
 		reslt = run(config);
 		if (n >= config->retries)
 			break;
-		sleep(config->retry_delay);
+		SLEEP(config->retry_delay);
 		n++;
 	}
 }

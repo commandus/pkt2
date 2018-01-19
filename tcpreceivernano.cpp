@@ -11,6 +11,7 @@
 
 #include <glog/logging.h>
 
+#include "platform.h"
 #include "tcpreceivernano.h"
 #include "errorcodes.h"
 #include "input-packet.h"
@@ -129,7 +130,7 @@ START:
 	LOG(INFO) << MSG_START << " socket " << socket_accept;
 
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
-	sleep (1); // wait for connections
+	WAIT_CONNECTION(1); // wait for connections
 	int timeout = 100;
 	int r = nn_setsockopt(nano_socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
 	if (r < 0)
@@ -208,7 +209,7 @@ START:
 		// send message to the nano queue
 		int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
 		// flush
-		sleep(0);
+		SEND_FLUSH(1);	// BUGBUG 0 - nn_send 
 		
 		if (bytes != packet.size)
 		{

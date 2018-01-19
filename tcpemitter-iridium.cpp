@@ -15,6 +15,7 @@
 #include <netdb.h>
 #include <argtable2.h>
 
+#include "platform.h"
 #include "errorcodes.h"
 #include "iridium.h"
 #include "helper_socket.h"
@@ -250,7 +251,7 @@ int main(int argc, char **argv)
 		int r = open_socket(sock, intface, port);
 		if (r != ERR_OK)
 		{
-			sleep(delay);
+			SLEEP(delay);
 			count++;
 			continue;
 		}
@@ -269,7 +270,7 @@ int main(int argc, char **argv)
 			}
 			std::cerr << std::endl;
 		}
-		sleep(delay);
+		SLEEP(delay);
 		count++;
 	}
 }

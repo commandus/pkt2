@@ -39,7 +39,7 @@ void signalHandler(int signal)
 			while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) 
 			{
 				std::cerr << MSG_CHILD_WAITING << std::endl;
-				sleep(1);
+				SLEEP(1);
 			}
 			std::cerr << MSG_CHILD_TERMINATED << std::endl;
 			errno = saved_errno;
@@ -61,7 +61,7 @@ void signalHandler(int signal)
 			while (waitpid((pid_t)(-1), 0, WNOHANG) > 0) 
 			{
 				std::cerr << MSG_CHILD_WAITING << std::endl;
-				sleep(1);
+				SLEEP(1);
 			}
 			std::cerr << MSG_CHILD_TERMINATED << std::endl;
 			errno = saved_errno;

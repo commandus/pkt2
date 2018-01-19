@@ -57,7 +57,7 @@ void runner()
 		LOG(INFO) << MSG_STOP;
 		if (n >= config->retries)
 			break;
-		sleep(config->retry_delay);
+		SLEEP(config->retry_delay);
 		n++;
 	}
 	LOG(INFO) << MSG_DONE;

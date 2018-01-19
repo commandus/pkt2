@@ -6,6 +6,7 @@
 
 #include <glog/logging.h>
 
+#include "platform.h"
 #include "mqtt-receivernano.h"
 #include "errorcodes.h"
 #include "input-packet.h"
@@ -90,7 +91,7 @@ int cb_message_arrived
 	// send message to the nano queue
 	int bytes = nn_send(env->nano_socket, packet.get(), packet.size, 0);
 	// flush
-	sleep(0);
+	SEND_FLUSH(100);	// BUGBUG 0 - nn_send 
 	if (bytes != packet.size)
 	{
 		if (bytes < 0)
@@ -163,7 +164,7 @@ START:
 	config->stop_request = 0;
 
 	int nano_socket = nn_socket(AF_SP, NN_BUS);
-	sleep (1); // wait for connections
+	WAIT_CONNECTION(1); // wait for connections
 	int timeout = 100;
 	int r = nn_setsockopt(nano_socket, NN_SOL_SOCKET, NN_RCVTIMEO, &timeout, sizeof(timeout));
 	if (r < 0)
@@ -195,7 +196,7 @@ START:
 
 	while (!config->stop_request)
 	{
-		sleep(1);
+		SLEEP(1);
 	}
 	r = nn_shutdown(nano_socket, eoid);
 	

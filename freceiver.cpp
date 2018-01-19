@@ -37,7 +37,7 @@ void run()
 		reslt = file_receiever(config);
 		if (n >= config->retries)
 			break;
-		sleep(config->retry_delay);
+		SLEEP(config->retry_delay);
 		n++;
 	}
 }

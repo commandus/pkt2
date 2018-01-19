@@ -20,6 +20,7 @@
 
 #include <google/protobuf/message.h>
 
+#include "platform.h"
 #include "pkt2gateway-config.h"
 
 #include "errorcodes.h"
@@ -158,7 +159,7 @@ int main(int argc, char **argv)
 				LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
 			}
 		}
-		sleep(config->retry_delay);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
+		SLEEP(config->retry_delay);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
 	}
 
 	int r = nn_shutdown(nano_socket_out, eoutid);

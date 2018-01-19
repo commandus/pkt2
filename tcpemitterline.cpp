@@ -16,6 +16,7 @@
 
 #include <glog/logging.h>
 
+#include "platform.h"
 #include "tcpemitterline.h"
 #include "utilstring.h"
 #include "tcpemitter-config.h"
@@ -86,7 +87,7 @@ START:
 					LOG(ERROR) << ERR_SOCKET_SEND << config->intface << " " << n;
 				if (config->stop_request)
 					break;
-				sleep(config->delay);
+				SLEEP(config->delay);
 			}
 		}
 	}

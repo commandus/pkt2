@@ -8,12 +8,12 @@
 #include <sstream>
 #include <cstring>
 
-#include "glog/logging.h"
-
-#include "NanoMessage.h"
-
 #include <sys/socket.h>
 #include <arpa/inet.h>
+
+#include "glog/logging.h"
+#include "platform.h"
+#include "NanoMessage.h"
 
 
 #ifdef _MSC_VER
@@ -123,7 +123,7 @@ void NanoMessage::send(const void *buf, size_t bufsize)
         else
         	mError = 0;
     // flush
-    sleep(0);
+    SEND_FLUSH(100);	// BUGBUG 0 - nn_send 
 }
 
 void NanoMessage::send(const std::string &data)

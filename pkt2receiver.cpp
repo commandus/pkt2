@@ -38,7 +38,7 @@ void run()
 		reslt = pkt2_receiever_nano(config);
 		if (n >= config->retries)
 			break;
-		sleep(config->retry_delay);
+		SLEEP(config->retry_delay);
 		n++;
 	}
 }

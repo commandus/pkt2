@@ -22,6 +22,7 @@
 #include <google/protobuf/io/tokenizer.h>
 #include <google/protobuf/compiler/parser.h>
 
+#include "platform.h"
 #include "message2gateway-config.h"
 #include "input-packet.h"
 #include "output-message.h"
@@ -50,7 +51,7 @@ void sendMessage
 	if (sent < 0)
 		LOG(ERROR) << ERR_NN_SEND << sent;
 	else // flush
-		sleep(0);
+		SEND_FLUSH(100);
 }
 
 /**
@@ -69,6 +70,7 @@ int run_stream
 		strm = new std::ifstream(config->file_name.c_str());
 
 	int nano_socket_out = nn_socket(AF_SP, NN_BUS);
+	WAIT_CONNECTION(1);
 
 	int eoutid = nn_bind(nano_socket_out, config->message_out_url.c_str());
 	if (eoutid < 0)
@@ -98,7 +100,7 @@ int run_stream
 			{
 				sendMessage(nano_socket_out, &messageTypeNAddress, *m);
 				if (i < config->retries - 1)
-					sleep(config->retry_delay);
+					SLEEP(config->retry_delay);
 			}
 		}
 		else
@@ -107,7 +109,7 @@ int run_stream
 			break;
 		}
 		read_count++;
-		sleep(config->retry_delay);
+		SLEEP(config->retry_delay);
     }
 
     LOG(INFO) << MSG_LOOP_EXIT << read_count << " sent";
@@ -139,6 +141,7 @@ int run_socket
 	START:
 	config->stop_request = 0;
 	int accept_socket = nn_socket(AF_SP, NN_BUS);
+	WAIT_CONNECTION(1);
 	int einid = nn_connect(accept_socket, config->message_in_url.c_str());
 	if (einid < 0)
 	{
@@ -147,6 +150,7 @@ int run_socket
 	}
 
 	int nano_socket_out = nn_socket(AF_SP, NN_BUS);
+	WAIT_CONNECTION(1);
 	int eoutid = nn_bind(nano_socket_out, config->message_out_url.c_str());
 	if (eoutid < 0)
 	{
@@ -192,7 +196,7 @@ int run_socket
 		else
 			LOG(ERROR) << ERR_DECODE_MESSAGE;
 
-    	sleep(0);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
+    	SEND_FLUSH(100);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182
     }
 
 	free(buffer);
