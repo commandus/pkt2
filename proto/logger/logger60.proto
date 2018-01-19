@@ -228,7 +228,7 @@ message TemperatureNAngles
         format: ["value.x3.toFixed(8)"]
     }];
     double y3 = 11 [(pkt2.variable) = {
-        name: "y3"
+        name: "y[3]"
         short_name: "Y 3"
         full_name: "Угол Y 3"
         measure_unit: "°"

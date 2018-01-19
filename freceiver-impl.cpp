@@ -195,7 +195,7 @@ START:
 		// send message to the nano queue
 		int bytes = nn_send(nano_socket, packet.get(), packet.size, 0);
 		// flush
-		sleep(1);
+		sleep(1);	// BUGBUG 0 - nn_send 
 
 		if (bytes != packet.size)
 		{

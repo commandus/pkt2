@@ -132,7 +132,7 @@ const google::protobuf::Descriptor* ProtobufDeclarations::getMessageDescriptor
 
 /**
  * Get a new message
- * @param message_name
+ * @param message_name message name
  * @return NULL if not found
  */
 Message *ProtobufDeclarations::getMessage

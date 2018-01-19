@@ -1582,6 +1582,29 @@ CREATE TABLE str
 );
 ```
 
+##### Создание представлений
+
+Пример создает представление для даннх logger60:
+
+```
+CREATE OR REPLACE VIEW public.logger60 AS
+ SELECT date_part('epoch'::text, num."time") AS utc,
+    num.device AS dev,
+    substr(num.field, 29, 1) AS fld,
+    substr(num.field, 30, 1)::integer AS idx,
+    num.value AS v
+   FROM num
+  WHERE num.message = 6000;
+
+  ALTER TABLE public.logger60
+    OWNER TO <username>;
+```
+
+```
+utc					dev		fld		idx		v
+1516177820.37942	0		t		1		21.2500
+```
+
 ##### Пример записей
 
 Числовые даннные
