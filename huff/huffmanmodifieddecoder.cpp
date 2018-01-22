@@ -6,7 +6,7 @@
 #include "huffcode.h"
 
 HuffmanModifiedDecoder::HuffmanModifiedDecoder()
-	:	mode(1)
+	:	mode(1), mForceSize(0)
 {
 	mRoot = defaultHuffmanCodeTree();
 }
@@ -27,6 +27,15 @@ HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEscapeCode
 )
 {
 	mEscapeCodeSizes.push_back(HuffCodeNSize(getHuffCode(escape_code), bits)); 
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setForceSize
+(
+	int value
+)
+{
+	mForceSize = value;
 	return this;
 }
 

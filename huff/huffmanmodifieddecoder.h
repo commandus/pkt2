@@ -14,12 +14,14 @@ private:
 	HuffCodeNSizes mEscapeCodeSizes;
 	HuffCode *mEOFCode;																///< I need pointer to pass code/decored to indicate is EOF code has been assigned 
 	HuffCode mEOFCodeData;
+	int mForceSize;																		///< 0- no force
 
 public:
 	HuffmanModifiedDecoder();
 	HuffmanModifiedDecoder *setMode(int mode);											///< 0- no compression, 1- modified Huffman
 	HuffmanModifiedDecoder *setEscapeCode(const std::string &escape_code, int bits);	///< for mode 1
 	HuffmanModifiedDecoder *setEOFCode(const std::string &escape_code);					///< for mode 1
+	HuffmanModifiedDecoder *HuffmanModifiedDecoder::setForceSize(int value);
 	HuffmanModifiedDecoder *setTreeFromFrequencies(size_t *frequencies, size_t len);	///< array
 	HuffmanModifiedDecoder *setTreeFromFrequenciesStream(std::istream *strm);			///< stream
 	HuffmanModifiedDecoder *setTreeFromCodesStream(std::istream *strm);					///< stream
