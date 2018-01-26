@@ -11,6 +11,15 @@ HuffmanModifiedEncoder::HuffmanModifiedEncoder()
 	mCodeMap = defaultHuffmanCodeMap();
 }
 
+HuffmanModifiedEncoder *HuffmanModifiedEncoder::setMode
+(
+	int value		///< 0- no compression, 1- modified Huffman, 2- experimental Huffman
+)
+{
+	mode = value;
+	return this;
+}
+
 HuffmanModifiedEncoder *HuffmanModifiedEncoder::setCodeMapByMode
 (
 	int value		///< 0- no compression, 1- modified Huffman

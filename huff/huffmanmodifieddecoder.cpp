@@ -6,14 +6,14 @@
 #include "huffcode.h"
 
 HuffmanModifiedDecoder::HuffmanModifiedDecoder()
-	:	mode(1), mForceSize(0)
+	:	mode(1)
 {
 	mRoot = defaultHuffmanCodeTree();
 }
 
 HuffmanModifiedDecoder *HuffmanModifiedDecoder::setMode
 (
-	int value		///< 0- no compression, 1- modified Huffman
+	int value		///< 0- no compression, 1- modified Huffman, 2- experimental Huffman
 )
 {
 	mode = value;
@@ -22,11 +22,28 @@ HuffmanModifiedDecoder *HuffmanModifiedDecoder::setMode
 
 HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEscapeCode
 (
-	const std::string &escape_code,				///< for mode 1
+	const std::string &escape_code,				///< for modes 1, 2
 	int bits
 )
 {
 	mEscapeCodeSizes.push_back(HuffCodeNSize(getHuffCode(escape_code), bits)); 
+	return this;
+}
+
+HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEOFCode
+(
+	const std::string &escape_code				///< for modes 1, 2
+)
+{
+	if (escape_code.empty())
+		mEOFCode = NULL;
+	else
+	{
+		// storage
+		mEOFCodeData = getHuffCode(escape_code);
+		// pointer to tje storage
+		mEOFCode = &mEOFCodeData; 
+	}
 	return this;
 }
 
@@ -36,21 +53,6 @@ HuffmanModifiedDecoder *HuffmanModifiedDecoder::setForceSize
 )
 {
 	mForceSize = value;
-	return this;
-}
-
-HuffmanModifiedDecoder *HuffmanModifiedDecoder::setEOFCode
-(
-	const std::string &escape_code				///< for mode 1
-)
-{
-	if (escape_code.empty())
-		mEOFCode = NULL;
-	else
-	{
-		mEOFCodeData = getHuffCode(escape_code);
-		mEOFCode = &mEOFCodeData; 
-	}
 	return this;
 }
 
@@ -117,13 +119,13 @@ size_t HuffmanModifiedDecoder::unpack
 	size_t offset
 )
 {
-	if (mode != 1) 
+	if (mode == 0) 
 	{
 		retval->write((const char *) src, size);
 		return size;
 	}
 	// huffman
-	size_t sz = decompress(retval, mRoot, mEscapeCodeSizes, mEOFCode, offset, src, size); 
+	size_t sz = decompress(mode, retval, mRoot, mEscapeCodeSizes, mEOFCode, mForceSize, offset, src, size); 
 	return sz;
 }
 

@@ -17,6 +17,7 @@
 #include "varint.h"
 #include "bitstream.h"
 #include "utilstring.h"
+#include "devdecoder.h"
 
 struct NodeCmp
 {
@@ -67,7 +68,7 @@ size_t loadFrequencies
 			}
 			else
 			{
-				std::cerr << "First column is symbol number " << inputs[0] << " is not between 0 and " << symbols_size<< " in line: " << line << std::endl;
+				std::cerr << "frequencies file column is symbol number " << inputs[0] << " is not between 0 and " << symbols_size<< " in line: " << line << std::endl;
 				return r;
 			}
 			r++;
@@ -623,18 +624,16 @@ size_t loadCodeMap
 		line.erase(new_end, line.end());
 
 		std::vector<std::string> t = split(line, ' ');
-		int c = 0;
-		
 		if (t.size() < 2)
 			continue;
 		uint64_t symbol = strtod(t[0].c_str(), NULL);
-		if (symbol < 255)
+		if (symbol <= 255)
 		{
 			codes[symbol] = getHuffCode(t[1]);
 		}
 		else
 		{
-			std::cerr << "First column is symbol number " << symbol << " is not between 0 and " << 255 << " in line: " << line << std::endl;
+			std::cerr << "Map file first column is symbol number " << symbol << " is not between 0 and " << 255 << " in line " << r + 1 << ": " << line << std::endl;
 			return r;
 		}
 		r++;
@@ -905,15 +904,17 @@ static bool clear_code_flag
 }
 
 /**
+ * @param mode 0- never used, 1- slower, 2- faster
  * @param retval decompressed output stream
  * @param root Huffman codes tree root node
- * @param escape_code_size Huffman code and size
+ * @param escape_code_sizes Huffman code and size
  * @param input_stream input stream
  * @param decompressed_size original size
  * @return bytes
  */
 static size_t decompress_stream
 (
+	int mode, 
 	std::ostream *retval,
 	const Node *root,
 	const HuffCodeNSizes &escape_code_sizes, 
@@ -922,6 +923,19 @@ static size_t decompress_stream
 	size_t decompressed_size
 )
 {
+	if (mode == 2)
+	{
+		char b_out[80];
+		std::istreambuf_iterator<char> eos;
+		std::string s(std::istreambuf_iterator<char>(*input_stream), eos);
+		std::string ss = "12" + s;
+		size_t sz = dec_hafman(b_out, (unsigned char *) ss.c_str(), decompressed_size + 2);
+		if (sz > 2) 
+		{
+			retval->write(b_out, sz - 2);
+		}
+	}
+
 	for (int i = 0; i < escape_code_sizes.size(); i++)
 	{
 		if (escape_code_sizes.at(i).first.size())
@@ -1005,9 +1019,10 @@ static size_t decompress_stream
 
 
 /**
+ * @param mode 0- never used, 1- slower, 2- faster
  * @param retval decompressed output stream
  * @param root Huffman codes tree root node
- * @param escape_code Huffman code
+ * @param escape_code_sizes Huffman code
  * @param data buffer
  * @param size buffer size 
  * @param decompressed_size original size
@@ -1015,6 +1030,7 @@ static size_t decompress_stream
  */
 static size_t decompress_buffer
 (
+	int mode,
 	std::ostream *retval,
 	const Node *root,
  	const HuffCodeNSizes &escape_code_sizes, 
@@ -1025,7 +1041,7 @@ static size_t decompress_buffer
 )
 {
 	std::stringstream ss(std::string((char *) data, size));
-	return decompress_stream(retval, root, escape_code_sizes, eof_code, &ss, decompressed_size);
+	return decompress_stream(mode, retval, root, escape_code_sizes, eof_code, &ss, decompressed_size);
 }
 
 /**
@@ -1108,10 +1124,12 @@ size_t compress
 }
 
 /**
+ * @param mode 0- never used, 1- slower, 2- faster
  * @param retval compressed stream
  * @param root Huffman codes tree root node
- * @param escape_code Huffman code
+ * @param escape_code_sizes Huffman code and size vector
  * @param eof_code Can be NULL
+ * @param force_size >0 do not use length descriptor or EOF code (force size)
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -1119,26 +1137,39 @@ size_t compress
  */
 size_t decompress
 (
+	int mode,
 	std::ostream *retval,
 	const Node *root,
 	const HuffCodeNSizes &escape_code_sizes, 
 	const HuffCode *eof_code, 
+	int force_size,
 	int compression_offset,
 	const void *data, 
 	size_t size
 )
 {
-	// bytes occupied by original size in bytes(variable length integer)
-	size_t hdr_sz;
-	// read original size in bytes
-	uint64_t sz = 0;
-	if (eof_code)
-		hdr_sz = 0;
+	// get sz: original size in bytes and
+	// get length_descriptor_size: bytes occupied by length descriptor size in bytes(variable length integer)
+	uint64_t sz;
+	size_t length_descriptor_size;
+	if (force_size > 0) 
+	{
+		length_descriptor_size = 0;
+		sz = force_size;
+	}
 	else
-		sz = ibitstream::get_varint((uint8_t *) data, &hdr_sz);
+	{
+		if (eof_code)
+		{
+			length_descriptor_size = 0;
+			sz = 0;
+		}
+		else
+			sz = ibitstream::get_varint((uint8_t *) data, &length_descriptor_size);
+	}
 	
 	// get data pointer
-	const void *p = (char *) data + hdr_sz;
+	const void *p = (char *) data + length_descriptor_size;
 	if (compression_offset > 0)
 	{
 		if (retval)
@@ -1148,16 +1179,18 @@ size_t decompress
 				*retval << ((char *) p) [i];
 			}
 		}
-		return compression_offset + decompress_buffer(retval, root, escape_code_sizes, eof_code, &((char *) p) [compression_offset], size - hdr_sz - compression_offset, sz);
+		return compression_offset + decompress_buffer(mode, retval, root, escape_code_sizes, eof_code, &((char *) p) [compression_offset], size - length_descriptor_size - compression_offset, sz);
 	}
 	else
-		return decompress_buffer(retval, root, escape_code_sizes, eof_code, p, size - hdr_sz, sz);
+		return decompress_buffer(mode, retval, root, escape_code_sizes, eof_code, p, size - length_descriptor_size, sz);
 }
 
 /**
+ * @param mode 0- never used, 1- slower, 2- faster
  * @param retval compressed stream
  * @param codes Huffman codes
- * @param escape_code_size Huffman code
+ * @param escape_code_sizes Huffman code
+ * @param force_size 0
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -1165,17 +1198,19 @@ size_t decompress
  */
 size_t decompress2
 (
+	int mode,
 	std::ostream *retval,
 	HuffCodeMap& codes,
 	const HuffCodeNSizes &escape_code_sizes,
 	const HuffCode *eof_code,  
+	int force_size,
 	int compression_offset,
 	const void *data, 
 	size_t size
 )
 {
 	Node *root = buildTreeFromCodes(codes);
-	size_t sz = decompress(retval, root, escape_code_sizes, eof_code, compression_offset, data, size);
+	size_t sz = decompress(mode, retval, root, escape_code_sizes, eof_code, force_size, compression_offset, data, size);
 	delete root;
 	return sz;
 }
@@ -1277,4 +1312,25 @@ Node* loadHuffmanCodeTreeFromCodeFile
 	Node* r = loadHuffmanCodeTreeFromCodeStream(strm);
 	delete strm;
 	return r;
+}
+
+bool checkTags
+(
+	const void *data, 
+	size_t size, 
+	const std::vector<std::pair<int, int> > &tags)
+{
+	for (int i = 0; i < tags.size(); i++) 
+	{
+		int idx = tags[i].first;
+		if ((idx < 0) || (idx >= size))
+		{
+			return false;
+		}
+		if (tags[i].second != ((uint8_t*) data)[idx])
+		{
+			return false;
+		}
+	}
+	return true;
 }

@@ -89,12 +89,12 @@ pkt2receiver-check-config.h \
 repeator-config.h  \
 freceiver-impl.h freceiver-impl.h freceiver-config.h \
 huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
-huff/internalnode.h  huff/leafnode.h  huff/node.h \
+huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 bitstream/bitstream.h bitstream/varint.h \
 messageformat.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
-	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  \
+	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
 	bitstream/bitstream.cpp
 
 common_src =

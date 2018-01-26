@@ -106,7 +106,7 @@ size_t loadCodeMap
 /**
  * @param retval stream to be compressed
  * @param codes Huffman codes
- * @param escape_code_size Huffman code and size
+ * @param escape_code_sizes Huffman code and size
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -124,10 +124,12 @@ size_t compress
 );
 
 /**
+ * @param mode 0- default, 1- faster
  * @param retval compressed stream
  * @param root Huffman codes tree root node
- * @param escape_code_size Huffman code and size
+ * @param escape_code_sizes Huffman code and size vector
  * @param eof_code Can be NULL
+ * @param force_size >0 do not use length descriptor or EOF code (force size)
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
@@ -135,11 +137,13 @@ size_t compress
  */
 size_t decompress
 (
+	int mode,
 	std::ostream *retval,
 	const Node *root,
 	const HuffCodeNSizes &escape_code_sizes,
 	const HuffCode *eof_code,  
- 	int compression_offset,
+	int force_size,
+	int compression_offset,
 	const void *data, 
 	size_t size
 );
@@ -147,17 +151,20 @@ size_t decompress
 /**
  * @param retval compressed stream
  * @param codes Huffman codes
- * @param escape_code_size Huffman code and size
+ * @param escape_code_sizes Huffman code
+ * @param force_size 0
  * @param compression_offset offset in data buffer
  * @param data buffer
  * @param size buffer size 
  * @return bytes
- */
+*/
 size_t decompress2
 (
 	std::ostream *retval,
 	HuffCodeMap& codes,
 	const HuffCodeNSizes &escape_code_sizes, 
+ 	const HuffCode *eof_code,  
+	int force_size,
 	int compression_offset,
 	const void *data, 
 	size_t size
@@ -203,3 +210,5 @@ Node* loadHuffmanCodeTreeFromCodeFile
 (
 	const std::string &codes_file	///< file name
 );
+
+bool checkTags(const void *data, size_t size, const std::vector<std::pair<int, int> > &tags);
