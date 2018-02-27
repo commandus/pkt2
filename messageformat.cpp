@@ -1,6 +1,5 @@
 #include "messageformat.h"
 
-#include "messagedecomposer.h"
 #include "fieldnamevalueindexstrings.h"
 
 static int format_number;

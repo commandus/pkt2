@@ -127,6 +127,16 @@ public:
 	 * @return String
 	 */
 	std::string toStringJSON();
+	
+	/**
+	* @brief return value
+	* @return String
+	*/
+	std::string findByLastName
+	(
+		const std::string &name_suffix
+	);
+
 
 };
 

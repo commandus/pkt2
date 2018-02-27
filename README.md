@@ -771,7 +771,7 @@ pkt2receiver осуществляет поиск подходящего прот
                         +-----------+ |  +--------------+    +-------+                  
                                       |                                                  
                                       |  +---------+                                     +----+
-			                          +->|  Дампер |------------------------------------>| БД |
+			                          +->| Дамперы |------------------------------------>| БД |
 			                             +---------+                                     +----+
 Программы
 [tcpemitter-iridium]
@@ -781,7 +781,10 @@ pkt2receiver осуществляет поиск подходящего прот
               mqtt-receiver                                                [message2gateway] handler-google-sheets  
               freceiver                                                    [example1message] handlerline
                                                                                              handlerlmdb
-```                                                                                             
+                                                                                             handlerfcm
+Дамперы
+                                         pqdumppq
+```
 В квадратных скобках ([]) тестирующие программы
 
 Назначение программ:
@@ -794,6 +797,7 @@ pkt2receiver осуществляет поиск подходящего прот
 - handlerlmdb			помещение сообщений в базу данных LMDB
 - handlerpq				помещение сообщений в базу данных PostgreSQL
 - handler-google-sheets	помещение сообщений в электронную таблицу Google Sheets
+- handlerfcm			отправка уведомлений в FireBase Cloud Messaging
 
 #### Сокеты по отношению к шине
 
@@ -829,6 +833,7 @@ pkt2receiver- единственный слушатель на каждой из
 | handlerlmdb            |                         | connect                 |
 | handlerpq              |                         | connect                 |
 | handler-google-sheets  |                         | connect                 |
+| handlerfcm             |                         | connect                 |
 +------------------------+-------------------------+-------------------------+
 
 ### Контроль прохождения пакетов pkt2receiver
@@ -1243,10 +1248,75 @@ Packet.MessageType:{"json-object-in-one-line"}
 - Record#
 - PK
 
+
+### handlerfcm
+
+Требуется указать параметры соединения с базой данных.
+
+В базе данных должна быть доступны таблицы 
+
+- dev ()
+- device_description (name) 
+- devices (IMEI)
+
+```
+CREATE TABLE dev (
+	id bigserial NOT NULL,
+	userid int8 NOT NULL,
+	"instance" text NOT NULL DEFAULT ''::text,
+	state int4 NOT NULL DEFAULT 1,
+	created int4 NOT NULL DEFAULT date_part('epoch'::text, now()),
+	updated int4 NOT NULL DEFAULT date_part('epoch'::text, now()),
+	"name" text NOT NULL DEFAULT ''::text,
+	notes text NOT NULL DEFAULT ''::text,
+	send int4 NOT NULL DEFAULT 0,
+	recv int4 NOT NULL DEFAULT 0,
+	CONSTRAINT dev_pkey PRIMARY KEY (id),
+	CONSTRAINT fk_dev_usrid FOREIGN KEY (userid) REFERENCES users(u_id) ON UPDATE CASCADE ON DELETE CASCADE
+);
+CREATE UNIQUE INDEX idx_dev_instance ON dev USING btree (instance);
+
+CREATE TABLE device_description (
+	id bigserial NOT NULL,
+	imei int4 NOT NULL,
+	device_name varchar NULL,
+	device_serial_number varchar NULL,
+	device_description varchar NULL,
+	legend varchar NULL,
+	owner int4 NOT NULL,
+	color varchar NULL,
+	"current" bool NOT NULL DEFAULT true,
+	edit_time timestamp NOT NULL DEFAULT (now() + '10:00:00'::interval),
+	CONSTRAINT pk_dd PRIMARY KEY (id),
+	CONSTRAINT fk2_dd FOREIGN KEY (owner) REFERENCES users(u_id),
+	CONSTRAINT fk_dd FOREIGN KEY (imei) REFERENCES devices(id)
+);
+
+CREATE TABLE devices (
+	id bigserial NOT NULL,
+	imei varchar NOT NULL,
+	created_time timestamp NOT NULL DEFAULT (now() + '10:00:00'::interval),
+	CONSTRAINT pk_d PRIMARY KEY (id),
+	CONSTRAINT uni_d UNIQUE (imei)
+);
+
+```
+
+Поле dev.instance содержит токен FireBase устройства, 
+связанный с IMEI devices.imei куда отправлять сообщения.
+Пакет должен содержать IMEI устройства (15 байт) начиная с байта 10.
+
+```
+	SELECT dev.instance, device_description.device_name
+	FROM device_description, devices, dev
+	WHERE device_description.imei = devices.id and dev.userid = device_description.owner 
+	AND device_description.current = 't'
+	AND devices.imei = $imei;
+```
+
 ### Чтение данных из бинарных и текстовых файлов
 
 Программа freceiver получает данные из файла (устройства) и помещает их в шину данных (по умолчанию в ipc:///tmp/packet.pkt2) или печатает в stdout в текстовом виде.
-
 
 
 #### Формат данных

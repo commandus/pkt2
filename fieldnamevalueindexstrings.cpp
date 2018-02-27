@@ -245,3 +245,25 @@ std::string FieldNameValueIndexStrings::toStringJSON() {
 	ss << "}" << std::endl;
 	return ss.str();
 }
+
+/**
+ * @brief return value
+ * @return String
+ */
+std::string FieldNameValueIndexStrings::findByLastName
+(
+	const std::string &name_suffix
+) 
+{
+	int sz = values.size();
+	int len = name_suffix.length();
+	for (int i = 0; i < sz; i++)
+	{
+		int l = values[i].value.length();
+		if (l < len)
+			continue;
+		if (values[i].field.substr(l - len, l) == name_suffix )
+			return values[i].value;
+	}
+	return "";
+}

@@ -109,6 +109,9 @@
 #define ERRCODE_EXEC							-58
 #define ERRCODE_CONFIG							-59
 
+#define ERRCODE_NO_NOBILE_SUBSCRIBERS			-60
+#define ERRCODE_FIREBASE_WRITE					-61
+
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
 #define ERR_LMDB_TXN_BEGIN						"Can not begin LMDB transaction "
@@ -177,6 +180,9 @@
 #define ERR_INTERRUPTED							"Interruped "
 
 #define ERR_TOO_SMALL							"Insufficient buffer space "
+
+#define ERR_NO_NOBILE_SUBSCRIBERS				"No mobile users found to receive notification"
+#define ERR_FIREBASE_WRITE						"Error send to FireBase Cloud Messaging(FCM)" 
 
 std:: string getErrorDescription(int code);
 

@@ -1,5 +1,6 @@
 #include "packet2message.h"
 #include "utilprotobuf.h"
+#include "messagedecomposer.h"
 
 // output modes
 #define MODE_JSON			0
@@ -107,4 +108,25 @@ int put_protobuf_text
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message
+);
+
+/**
+ * @brief MessageDecomposer callback. Use in conjunction with FieldNameValueIndexStrings class(see first parameter).
+ * @param env accumulates field names and values in the InsertSQLStrings object
+ * @param message_descriptor message
+ * @param field field descriptor
+ * @param value pointer to the data
+ * @param size  size occupied by data
+ *
+ * @see FieldNameValueIndexStrings
+ */
+void addFieldValueString
+(
+	MessageDecomposer *decomposer,
+	void *env,
+	const google::protobuf::Descriptor *message_descriptor,
+	const google::protobuf::FieldDescriptor *field,
+	void* value,
+	int size,
+	int index
 );
