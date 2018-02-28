@@ -53,9 +53,9 @@ bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransm
 	protoc-gen-pkt2 \
 	message2gateway example1message example1message1 \
 	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
-	handlerpq handlerline handlerlmdb handler-google-sheets \
+	handlerpq handlerline handlerlmdb handler-google-sheets handler-fcm \
 	pkt2receiver-check \
-	pkt2dumppq repeator freceiver
+	pkt2dumppq pkt2dumpfcm repeator freceiver
 
 #
 #	Headers
@@ -91,7 +91,9 @@ freceiver-impl.h freceiver-impl.h freceiver-config.h \
 huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
 huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 bitstream/bitstream.h bitstream/varint.h \
-messageformat.h
+messageformat.h \
+handler-fcm-config.h fcm-writer.h \
+fcmdumper.h pkt2dumpfcm-config.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -273,6 +275,36 @@ handler_google_sheets_SOURCES = \
 
 handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS)
 handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+
+#
+#	handler-fcm
+#
+handler_fcm_SOURCES = \
+	handler-fcm.cpp fcm-writer.cpp handler-fcm-config.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
+	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
+	messageformat.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	$(common_src)
+
+handler_fcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -L/home/andrei/lib/firebase_cpp_sdk/libs/linux -lmessaging $(SNMPLIBS)
+handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON
+
+#
+# pkt2dumppq
+#
+pkt2dumpfcm_SOURCES = \
+	pkt2dumpfcm.cpp fcmdumper.cpp pkt2dumpfcm-config.cpp \
+	daemonize.cpp input-packet.cpp errorcodes.cpp \
+	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
+	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
+	$(common_src)
+
+pkt2dumpfcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -L/home/andrei/lib/firebase_cpp_sdk/libs/linux -lmessaging $(SNMPLIBS)
+pkt2dumpfcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql
+
 
 #
 #	protoc-gen-pkt2
