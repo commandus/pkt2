@@ -7,11 +7,10 @@
 #include <libpq-fe.h>
 
 #define PROGRAM_NAME             "pkt2dumpfcm"
-#define PROGRAM_DESCRIPTION      "Send notifocation to the FireBase Cloud Messaging"
+#define PROGRAM_DESCRIPTION      "Send notification to registered mobile devices over FireBase Cloud Messaging"
 
 /**
-  * @brief  
-  * @see
+  * @brief  configuration
   */
 class Config
 {
@@ -37,6 +36,12 @@ public:
 	int retry_delay;         ///<
 
 	uint32_t verbosity;
+
+	// FireBase server key
+	std::string server_key;
+	int imei_field_offset;
+	int imei_field_size;
+	int packet_size;
 
 	// PostgreSQL
 	std::string dbconn;

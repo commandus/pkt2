@@ -21,7 +21,15 @@
 #define DEF_DATABASECLIENTFLAGS		0
 
 #define DEF_BUFFER_SIZE				4096
-#define DEF_SQL_MODE				4
+
+#define	DEF_SERVER_KEY				"AAAAITL4VBA:APA91bGQwuvaQTt8klgebh8QO1eSU7o5itF0QGnp7kCWJNgMwe8WM3bMh6eGDkeyMbvUAmE2MqtB1My3f0-mHM6MQE1gOjMB0eiAW1Xaqds0hYETRNzqAe0iRh5v-PcxmxrHQeJh6Nuj"
+
+#define DEF_IMEI_FIELD_OFFSET		10
+#define DEF_IMEI_FIELD_OFFSET_S		"10"
+#define DEF_IMEI_FIELD_SIZE			15
+#define DEF_IMEI_FIELD_SIZE_S		"15"
+#define DEF_PACKET_SIZE				0
+#define DEF_PACKET_SIZE_S			"0- any"
 
 Config::Config
 (
@@ -58,6 +66,12 @@ int Config::parseCmd
         struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
+		// FireBase server key
+		struct arg_str *a_server_key = arg_str0("k", "key", "<key>", "FireBase server token");
+		struct arg_int *a_imei_field_offset = arg_int0(NULL, "imei-offset", "<IMEI>", "IMEI offset. Default " DEF_IMEI_FIELD_OFFSET_S);
+		struct arg_int *a_imei_field_size = arg_int0(NULL, "imei-size", "<number>", "IMEI size. Default " DEF_IMEI_FIELD_SIZE_S);
+		struct arg_int *a_packet_size = arg_int0(NULL, "packet-size", "<number>", "IMEI size. Default " DEF_PACKET_SIZE_S);
+	
         // database connection
 		struct arg_str *a_conninfo = arg_str0(NULL, "conninfo", "<string>", "database connection");
 		struct arg_str *a_user = arg_str0(NULL, "user", "<login>", "database login");
@@ -81,6 +95,7 @@ int Config::parseCmd
 			a_packet_url, 
 			a_retries, a_retry_delay,
 			a_daemonize, a_max_fd, a_verbosity,
+			a_server_key, a_imei_field_offset, a_imei_field_size, a_packet_size,
 			a_conninfo, a_user, a_database, a_password, a_host, a_dbport, a_optionsfile, a_dbsocket, a_dbcharset, a_dbclientflags,
 			a_buffer_size,
 			a_createtable,
@@ -135,6 +150,26 @@ int Config::parseCmd
 	else
 		max_fd = 0;
 
+	if (a_server_key->count)
+		server_key = *a_server_key->sval;
+	else
+		server_key = DEF_SERVER_KEY;
+	
+	if (a_imei_field_offset->count)
+		imei_field_offset = *a_imei_field_offset->ival;
+	else
+		imei_field_offset = DEF_IMEI_FIELD_OFFSET;
+
+	if (a_imei_field_size->count)
+		imei_field_size = *a_imei_field_size->ival;
+	else
+		imei_field_size = DEF_IMEI_FIELD_SIZE;
+
+	if (a_packet_size->count)
+		packet_size = *a_packet_size->ival;
+	else
+		packet_size = DEF_PACKET_SIZE;
+	
 	dbconn = *a_conninfo->sval;
 	if (a_host->count)
 		dbhost = *a_host->sval;
