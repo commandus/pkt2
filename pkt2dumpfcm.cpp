@@ -84,7 +84,8 @@ void setSignalHandler(int signal)
 }
 
 /**
- * @returns @see errorcodes.h
+ * @return 0
+ * @see errorcodes.h
  */
 int main
 (

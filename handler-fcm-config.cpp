@@ -65,7 +65,7 @@ int Config::parseCmd
 
 	// FireBase server key
 	struct arg_str *a_server_key = arg_str0("k", "key", "<key>", "FireBase server token");
-	struct arg_str *a_imei_field_name = arg_str0(NULL, "imei", "<IMEI>", "Field name contains IMEI. Default " DEF_IMEI_FIELD);
+	struct arg_str *a_imei_field_name = arg_str0("m", "imei", "<IMEI>", "Field name contains IMEI. Default " DEF_IMEI_FIELD);
 	
 	// database connection
 	struct arg_str *a_conninfo = arg_str0(NULL, "conninfo", "<string>", "database connection");

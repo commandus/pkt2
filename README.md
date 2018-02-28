@@ -996,6 +996,23 @@ write_pq =
 	}
 ];
 
+write_fcm =
+[
+	{
+		"key": "AAAAITL4VBA:APA91bGQwuvaQTt8klgebh8QO1eSU7o5itF0QGnp7kCWJNgMwe8WM3bMh6eGDkeyMbvUAmE2MqtB1My3f0-mHM6MQE1gOjMB0eiAW1Xaqds0hYETRNzqAe0iRh5v-PcxmxrHQeJh6Nuj",
+		"imei": "imei",
+		"user": "pkt2",
+		"password": "123456",
+		"scheme": "pkt2",
+		"host": "localhost",
+		"port": 5432,
+		"messages":
+		[
+			"iridium.IE_Packet"
+		]
+	}
+];
+
 write_google_sheets = 
 [
 	{
@@ -1011,6 +1028,11 @@ write_google_sheets =
 	}
 ];
 ```
+
+Параметры write_fcm:
+
+- key Токен FireBase Cloud Messaging, по умолчанию "AAAAITL4VBA:APA91bGQwuvaQTt8klgebh8QO1eSU7o5itF0QGnp7kCWJNgMwe8WM3bMh6eGDkeyMbvUAmE2MqtB1My3f0-mHM6MQE1gOjMB0eiAW1Xaqds0hYETRNzqAe0iRh5v-PcxmxrHQeJh6Nuj"
+- imei	имя поля (окончание полного имени поля), где записан IMEI. По умолчанию "imei"
 
 ### Повторители
 

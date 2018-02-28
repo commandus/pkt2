@@ -38,13 +38,74 @@
 using namespace google::protobuf;
 
 #define CHECK_STMT(error_message) \
-		if (PQresultStatus(res) != PGRES_COMMAND_OK) \
-		{ \
-			LOG(ERROR) << ERR_DATABASE_STATEMENT_FAIL << error_message; \
-			PQclear(res); \
-			PQfinish(conn); \
-			return ERRCODE_DATABASE_STATEMENT_FAIL; \
+	if (PQresultStatus(res) != PGRES_COMMAND_OK) \
+	{ \
+		LOG(ERROR) << ERR_DATABASE_STATEMENT_FAIL << error_message; \
+		PQclear(res); \
+		PQfinish(conn); \
+		return ERRCODE_DATABASE_STATEMENT_FAIL; \
+	}
+
+typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
+
+static int getTokenNNameList(
+	TokenNNameList &retval,
+	const std::string &data,
+	Config *config
+) 
+{
+	if (config->packet_size > 0) 
+	{
+		// check size
+		if (data.size() < config->packet_size) 
+		{
+			return ERRCODE_DECOMPOSE_FATAL;
 		}
+	}
+
+	if (config->imei_field_offset + config->imei_field_size >= data.size())
+	{
+		return ERRCODE_DECOMPOSE_FATAL;
+	}
+	
+	// get IMEI from the message
+	std::string imei = data.substr(config->imei_field_offset, config->imei_field_offset + config->imei_field_size);
+	
+	// read FireBase tokens from the database
+	std::string q = "SELECT dev.instance, device_description.device_name FROM device_description, dev WHERE dev.userid = device_description.owner \
+	AND device_description.current = 't' AND device_description.imei = '" +  imei + "'";
+
+	PGconn *conn = dbconnect(config);
+	if (PQstatus(conn) != CONNECTION_OK)
+	{
+		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
+		return ERRCODE_DATABASE_NO_CONNECTION;
+	}
+	PGresult *res;
+	res = PQexec(conn, "BEGIN");
+	CHECK_STMT("start transaction")
+	res = PQexec(conn, q.c_str());
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+			PQclear(res);
+			PQfinish(conn);
+			return ERRCODE_DATABASE_STATEMENT_FAIL;
+	}
+
+    int nrows = PQntuples(res);
+    for(int row = 0; row < nrows; row++)
+    {
+		std::pair<std::string, std::string> p;
+		p.first = std::string(PQgetvalue(res, row, 0));
+		p.second = std::string(PQgetvalue(res, row, 1));
+		retval.push_back(p);
+    }
+
+    res = PQexec(conn, "END");
+	CHECK_STMT("commit transaction")
+	PQclear(res); \
+	PQfinish(conn);
+}
 
 int execSQL
 (

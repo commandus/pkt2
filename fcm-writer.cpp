@@ -25,6 +25,7 @@
 #include <postgresql/libpq-fe.h>
 
 #include "fcm-writer.h"
+#include "helper_fcm.h"
 #include "output-message.h"
 
 #include "errorcodes.h"
@@ -43,15 +44,6 @@
 
 using namespace google::protobuf;
 
-/**
-  * @brief CURL write callback
-  */
-static size_t write_string(void *contents, size_t size, size_t nmemb, void *userp)
-{
-	((std::string*)userp)->append((char*)contents, size * nmemb);
-    return size * nmemb;
-}
-
 typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
 
 #define CHECK_STMT(error_message) \
@@ -61,7 +53,6 @@ typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
 			PQfinish(conn); \
 			return ERRCODE_DATABASE_STATEMENT_FAIL; \
 		}
-
 
 int getTokenNNameList(
 	TokenNNameList &retval,
@@ -91,8 +82,7 @@ int getTokenNNameList(
 	res = PQexec(conn, "BEGIN");
 	CHECK_STMT("start transaction")
 	res = PQexec(conn, q.c_str());
-	
-	
+
 	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
 			PQclear(res);
 			PQfinish(conn);
@@ -112,7 +102,6 @@ int getTokenNNameList(
 	CHECK_STMT("commit transaction")
 	PQclear(res); \
 	PQfinish(conn);
-
 }
 
 /**

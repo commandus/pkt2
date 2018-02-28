@@ -28,6 +28,8 @@
 #include "utilstring.h"
 #include "errorcodes.h"
 
+#define	DEF_SERVER_KEY	"AAAAITL4VBA:APA91bGQwuvaQTt8klgebh8QO1eSU7o5itF0QGnp7kCWJNgMwe8WM3bMh6eGDkeyMbvUAmE2MqtB1My3f0-mHM6MQE1gOjMB0eiAW1Xaqds0hYETRNzqAe0iRh5v-PcxmxrHQeJh6Nuj"
+
 /**
  * @brief start program
  * @param cmd program path
@@ -664,6 +666,82 @@ public:
 };
 
 /**
+ * write_fcm = 
+[
+	{
+		"key": "FCM token",
+		"imei": "IMEI",
+		"user": "pkt2",
+		"password": "pkt2",
+		"scheme": "pkt2",
+		"host": "localhost",
+		"port": 5432
+	}
+];
+*/
+
+class CfgWriteFcm
+{
+public:
+	std::string user;
+	std::string password;
+	std::string scheme;
+	std::string host;
+	int port;
+	std::vector <std::string> messages;
+	std::string imei;
+	std::string key;
+	CfgWriteFcm() : user(""), password(""), scheme(""), host("localhost"), port(5432), imei(""), key("") {};
+	std::vector<std::string> args(CfgCommon *common)
+	{
+		std::vector<std::string> r;
+		if ((!key.empty()) && (key != DEF_SERVER_KEY))
+			PUSH_BACK_ARG_STR(r, "--key", key);
+		if ((!imei.empty()) && (imei == "imei"))
+			PUSH_BACK_ARG_STR(r, "--imei", imei);
+		PUSH_BACK_ARG_STR(r, "--user", user);
+		PUSH_BACK_ARG_STR(r, "--password", password);
+		PUSH_BACK_ARG_STR(r, "--database", scheme);
+		PUSH_BACK_ARG_STR(r, "--host", host);
+		if (port != 5432)
+		{
+			PUSH_BACK_ARG_NUM(r, "--port", port);
+		}
+
+		for (std::vector<std::string>::const_iterator it(messages.begin()); it != messages.end(); ++it)
+		{
+			PUSH_BACK_ARG_STR(r, "-a", *it);
+		}
+		
+		if (common)
+		{
+			if (common->verbosity > 0)
+			{
+				PUSH_BACK_ARG_LIT(r, "-" + std::string(common->verbosity, 'v'));
+			}
+			if (common->bus_out != "ipc:///tmp/message.pkt2")
+			{
+				PUSH_BACK_ARG_STR(r, "-i", common->bus_out);
+			}
+
+			if (!common->proto_path.empty())
+			{
+				if (common->proto_path != "proto")
+				{
+					PUSH_BACK_ARG_STR(r, "-p", common->proto_path);
+				}
+			}
+			if (common->max_buffer_size != 4096)
+			{
+				PUSH_BACK_ARG_NUM(r, "-b", common->max_buffer_size);
+			}
+
+		}
+		return r;
+	};
+};
+
+/**
  * write_google_sheets = 
 [
 	{
@@ -847,6 +925,7 @@ public:
 	std::vector<CfgWriteFile> cfgWriteFile;
 	std::vector<CfgWriteLmdb> cfgWriteLmdb;
 	std::vector<CfgWritePq> cfgWritePq;
+	std::vector<CfgWriteFcm> cfgWriteFcm;
 	std::vector<CfgWriteGoogleSheets> cfgWriteGoogleSheets;
 	std::vector<CfgRepeator> cfgRepeators;
 	std::vector<CfgScript> CfgScripts;
@@ -1174,6 +1253,66 @@ public:
 		}
 		duk_pop(context); // duk_get_prop_string
 
+		// write FCM
+		duk_get_prop_string(context, -1, "write_fcm");
+		if (duk_is_array(context, -1)) 
+		{
+			duk_size_t n = duk_get_length(context, -1);
+			for (duk_size_t i = 0; i < n; i++) 
+			{
+				CfgWriteFcm cfg;
+				if (duk_get_prop_index(context, -1, i)) 
+				{
+					// FireBase token
+					if (duk_get_prop_string(context, -1, "key"))
+						cfg.key = duk_get_string(context, -1);
+					duk_pop(context);
+					// IMEI
+					if (duk_get_prop_string(context, -1, "imei"))
+						cfg.imei = duk_get_string(context, -1);
+					duk_pop(context);
+					
+					if (duk_get_prop_string(context, -1, "user"))
+						cfg.user = duk_get_string(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "password"))
+						cfg.password = duk_get_string(context, -1);
+					duk_pop(context);
+					
+					if (duk_get_prop_string(context, -1, "scheme"))
+						cfg.scheme = duk_get_string(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "host"))
+						cfg.host = duk_get_string(context, -1);
+					duk_pop(context);
+
+					if (duk_get_prop_string(context, -1, "port"))
+						cfg.port = duk_get_number(context, -1);
+					duk_pop(context);
+
+					duk_get_prop_string(context, -1, "messages");
+					if (duk_is_array(context, -1)) 
+					{
+						duk_size_t sn = duk_get_length(context, -1);
+						for (duk_size_t s = 0; s < sn; s++) 
+						{
+							if (duk_get_prop_index(context, -1, s)) 
+							{
+								cfg.messages.push_back(duk_get_string(context, -1));
+							}
+							duk_pop(context);
+						}
+					}
+					duk_pop(context);
+				} 
+				duk_pop(context);
+				cfgWriteFcm.push_back(cfg);
+			}
+		}
+		duk_pop(context); // duk_get_prop_string
+
 		// write Google Sheets
 		duk_get_prop_string(context, -1, "write_google_sheets");
 		if (duk_is_array(context, -1)) 
@@ -1289,6 +1428,7 @@ public:
 		cfgWriteFile.clear();
 		cfgWriteLmdb.clear();
 		cfgWritePq.clear();
+		cfgWriteFcm.clear();
 		cfgWriteGoogleSheets.clear();
 		cfgRepeators.clear();
 		CfgScripts.clear();
@@ -1334,6 +1474,11 @@ public:
 		for (std::vector<CfgWritePq>::iterator it(cfgWritePq.begin()); it != cfgWritePq.end(); ++it)
 		{
 			descriptors.push_back(ProcessDescriptor(path, "handlerpq", it->args(&cfgCommon)));
+		}
+
+		for (std::vector<CfgWriteFcm>::iterator it(cfgWriteFcm.begin()); it != cfgWriteFcm.end(); ++it)
+		{
+			descriptors.push_back(ProcessDescriptor(path, "handlerfcm", it->args(&cfgCommon)));
 		}
 
 		for (std::vector<CfgWriteGoogleSheets>::iterator it(cfgWriteGoogleSheets.begin()); it != cfgWriteGoogleSheets.end(); ++it)
