@@ -93,7 +93,7 @@ huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 bitstream/bitstream.h bitstream/varint.h \
 messageformat.h \
 handler-fcm-config.h fcm-writer.h \
-fcmdumper.h pkt2dumpfcm-config.h
+fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -285,6 +285,7 @@ handler_fcm_SOURCES = \
 	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
 	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
 	messageformat.cpp \
+	helper_fcm.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
@@ -300,6 +301,7 @@ pkt2dumpfcm_SOURCES = \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
+	helper_fcm.cpp \
 	$(common_src)
 
 pkt2dumpfcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -L/home/andrei/lib/firebase_cpp_sdk/libs/linux -lmessaging $(SNMPLIBS)

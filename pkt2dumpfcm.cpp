@@ -3,7 +3,7 @@
  *   Send notification to the FireBase Cloud Messaging
  *
  *   Usage (default values):
- *   	pkt2dumpfcm -q ipc:///tmp/packet.pkt2 --token <token>
+ *   	pkt2dumpfcm -q ipc:///tmp/packet.pkt2 -k <token>
  *
  *
  */
@@ -14,6 +14,8 @@
 
 #include <glog/logging.h>
 #include <libpq-fe.h>
+
+#include <curl/curl.h>
 
 #include "platform.h"
 #include "daemonize.h"
@@ -32,6 +34,7 @@ void stopNWait()
 
 void done()
 {
+	curl_global_cleanup();
 }
 
 int reslt;
@@ -114,6 +117,9 @@ int main
 		exit(ERRCODE_DATABASE_NO_CONNECTION);
 	}
 	PQfinish(conn);
+
+	// In windows, this will init the winsock stuff
+	curl_global_init(CURL_GLOBAL_ALL);
 
 	if (config->daemonize)
 	{
