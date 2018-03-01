@@ -22,6 +22,7 @@
 
 #define DEF_BUFFER_SIZE				4096
 
+#define FCM_SEND					"https://fcm.googleapis.com/fcm/send"
 #define	DEF_SERVER_KEY				"AAAAITL4VBA:APA91bGQwuvaQTt8klgebh8QO1eSU7o5itF0QGnp7kCWJNgMwe8WM3bMh6eGDkeyMbvUAmE2MqtB1My3f0-mHM6MQE1gOjMB0eiAW1Xaqds0hYETRNzqAe0iRh5v-PcxmxrHQeJh6Nuj"
 
 #define DEF_IMEI_FIELD_OFFSET		10
@@ -72,6 +73,10 @@ int Config::parseCmd
 		struct arg_int *a_imei_field_size = arg_int0(NULL, "imei-size", "<number>", "IMEI size. Default " DEF_IMEI_FIELD_SIZE_S);
 		struct arg_int *a_packet_size = arg_int0(NULL, "packet-size", "<number>", "IMEI size. Default " DEF_PACKET_SIZE_S);
 	
+		// for testing purposes only
+		struct arg_str *a_test_data_hex = arg_str0("x", "hex", "<packet>", "Send notification of packet and exit");
+
+
         // database connection
 		struct arg_str *a_conninfo = arg_str0(NULL, "conninfo", "<string>", "database connection");
 		struct arg_str *a_user = arg_str0(NULL, "user", "<login>", "database login");
@@ -83,8 +88,6 @@ int Config::parseCmd
 		struct arg_str *a_dbsocket = arg_str0(NULL, "dbsocket", "<socket>", "database socket. Default none.");
 		struct arg_str *a_dbcharset = arg_str0(NULL, "dbcharset", "<charset>", "database client charset. Default utf8.");
 		struct arg_int *a_dbclientflags = arg_int0(NULL, "dbclientflags", "<number>", "database client flags. Default 0.");
-
-		struct arg_lit *a_createtable = arg_lit0(NULL, "createtable", "create a new empty table \"packet\" in database and exit.");
 		
 		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096. 0- dymanic.");
 
@@ -96,9 +99,9 @@ int Config::parseCmd
 			a_retries, a_retry_delay,
 			a_daemonize, a_max_fd, a_verbosity,
 			a_server_key, a_imei_field_offset, a_imei_field_size, a_packet_size,
+			a_test_data_hex,
 			a_conninfo, a_user, a_database, a_password, a_host, a_dbport, a_optionsfile, a_dbsocket, a_dbcharset, a_dbclientflags,
 			a_buffer_size,
-			a_createtable,
 			a_help, a_end
 	};
 
@@ -142,7 +145,6 @@ int Config::parseCmd
 		retry_delay = 60;
 
 	verbosity = a_verbosity->count;
-	create_table = a_createtable->count > 0;
 
 	daemonize = a_daemonize->count > 0;
 	if (a_max_fd > 0)
@@ -154,6 +156,8 @@ int Config::parseCmd
 		server_key = *a_server_key->sval;
 	else
 		server_key = DEF_SERVER_KEY;
+	
+	fburl = FCM_SEND;
 	
 	if (a_imei_field_offset->count)
 		imei_field_offset = *a_imei_field_offset->ival;
@@ -170,6 +174,12 @@ int Config::parseCmd
 	else
 		packet_size = DEF_PACKET_SIZE;
 	
+	if (a_test_data_hex->count)
+		test_data_hex = *a_test_data_hex->sval;
+	else
+		test_data_hex = "";
+	
+
 	dbconn = *a_conninfo->sval;
 	if (a_host->count)
 		dbhost = *a_host->sval;

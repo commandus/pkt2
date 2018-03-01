@@ -22,11 +22,12 @@
 #include <google/protobuf/message.h>
 
 #include "fcmdumper.h"
-
 #include "errorcodes.h"
 #include "utilstring.h"
 #include "utilprotobuf.h"
 #include "input-packet.h"
+
+#include "helper_fcm.h"
 
 #define SQL_POSTGRESQL_DROP "DROP TABLE IF EXISTS packet CASCADE;";
 #define SQL_POSTGRESQL_CREATE "CREATE TABLE packet (id BIGSERIAL PRIMARY KEY, tag INTEGER NOT NULL, \
@@ -46,30 +47,39 @@ using namespace google::protobuf;
 		return ERRCODE_DATABASE_STATEMENT_FAIL; \
 	}
 
+//  Keep FireBase token and name of device
 typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
 
+/**
+ * @brief Return FireBase token and name of device
+ * @param retval Returns FireBase token and name of device
+ * @param data binary packet data
+ * @param config configuration
+ * @return 0
+ */
 static int getTokenNNameList(
 	TokenNNameList &retval,
-	const std::string &data,
+	const void *data,
+	size_t size,
 	Config *config
 ) 
 {
 	if (config->packet_size > 0) 
 	{
 		// check size
-		if (data.size() < config->packet_size) 
+		if (size < config->packet_size) 
 		{
 			return ERRCODE_DECOMPOSE_FATAL;
 		}
 	}
 
-	if (config->imei_field_offset + config->imei_field_size >= data.size())
+	if (config->imei_field_offset + config->imei_field_size >= size)
 	{
 		return ERRCODE_DECOMPOSE_FATAL;
 	}
 	
 	// get IMEI from the message
-	std::string imei = data.substr(config->imei_field_offset, config->imei_field_offset + config->imei_field_size);
+	std::string imei((const char*) data + config->imei_field_offset, config->imei_field_size);
 	
 	// read FireBase tokens from the database
 	std::string q = "SELECT dev.instance, device_description.device_name FROM device_description, dev WHERE dev.userid = device_description.owner \
@@ -103,31 +113,61 @@ static int getTokenNNameList(
 
     res = PQexec(conn, "END");
 	CHECK_STMT("commit transaction")
-	PQclear(res); \
+	PQclear(res);
 	PQfinish(conn);
 }
 
-int execSQL
+/**
+ * @brief Send notification to the mobile device
+ * @param hex hex string
+ * @param config Configuration
+ */
+int sendNotifications
 (
-	Config *config,
-	const std::string &stmt
+	const std::string hex, 
+	Config *config
 )
 {
-	PGconn *conn = dbconnect(config);
-	if (PQstatus(conn) != CONNECTION_OK)
+	int c = 200;
+	TokenNNameList tokens;
+	
+	getTokenNNameList(tokens, hex.c_str(), hex.size(), config);
+	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
 	{
-		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
-		return ERRCODE_DATABASE_NO_CONNECTION;
+		std::string r;
+		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, hex);
+		if ((c > 299) || (c < 200))
+			break;
 	}
-	PGresult *res;
-	res = PQexec(conn, "BEGIN");
-	CHECK_STMT("start transaction")
-	res = PQexec(conn, stmt.c_str());
-	CHECK_STMT(stmt)
-	res = PQexec(conn, "END");
-	CHECK_STMT("commit transaction")
+	return ((c < 300) && (c >199)) ? ERR_OK : ERRCODE_FIREBASE_WRITE;
+}
 
-	PQfinish(conn);
+/**
+ * @brief Send notification to the mobile device
+ * @param buffer data to send as hex string
+ * @param bytes size
+ * @param config Configuration
+ */
+int sendNotifications
+(
+	void *buffer, 
+	size_t bytes, 
+	Config *config
+)
+{
+	int c = 200;
+	TokenNNameList tokens;
+	
+	std::string s(hexString(buffer, bytes)); 
+	getTokenNNameList(tokens, buffer, bytes, config);
+	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
+	{
+		std::string r;
+		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, s);
+		if ((c > 299) || (c < 200))
+			break;
+	}
+	return ((c < 300) && (c >199)) ? ERR_OK : ERRCODE_FIREBASE_WRITE;
 }
 
 /**
@@ -141,12 +181,6 @@ int run
 	Config *config
 )
 {
-	if (config->create_table)
-	{
-		execSQL(config, SQL_POSTGRESQL_CREATE);
-		return  ERR_OK;
-	}
-	
 	START:
 	config->stop_request = 0;
 
@@ -164,11 +198,6 @@ int run
 		return ERRCODE_NN_CONNECT;
 	}
 
-	// print out create statements
-	LOG(INFO) << "SQL CREATE TABLE statements";
-	LOG(INFO) << "===========================";
-	LOG(INFO) << SQL_POSTGRESQL_DROP;
-	LOG(INFO) << SQL_POSTGRESQL_CREATE;
 	std::vector<std::string> clauses;
 	
 	void *buffer;
@@ -206,11 +235,8 @@ int run
 			continue;
 		}
 
-		std::stringstream ss;
-		ss << SQL_POSTGRESQL_INSERT_PREFIX << "'" << hexString(packet.data(), packet.length) << "', '" 
-			<< inet_ntoa(packet.get_sockaddr_src()->sin_addr) << "', " << ntohs(packet.get_sockaddr_src()->sin_port) << ", '" 
-			<< inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << "', " << ntohs(packet.get_sockaddr_dst()->sin_port) << ");";
-		execSQL(config, ss.str());
+		sendNotifications(buffer, bytes, config);
+
 		if (config->buffer_size <= 0)
 			nn_freemsg(buffer);
 	}

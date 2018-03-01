@@ -128,7 +128,7 @@ int put
 		return ERRCODE_NO_NOBILE_SUBSCRIBERS;
 	std::string s;
 	pbjson::pb2json(message, s);
-	int c;
+	int c = 200;
 	for (TokenNNameList::const_iterator it(tokenNames.begin()); it != tokenNames.end(); ++it)
 	{
 		std::string r;

@@ -29,7 +29,6 @@ private:
 	);
 public:
 	Config(int argc, char* argv[]);
-	bool create_table;
 	int error();
 
 	int retries;             ///< default 1
@@ -37,11 +36,15 @@ public:
 
 	uint32_t verbosity;
 
+	// FireBase service
+	std::string fburl;
 	// FireBase server key
 	std::string server_key;
 	int imei_field_offset;
 	int imei_field_size;
 	int packet_size;
+
+	std::string test_data_hex;
 
 	// PostgreSQL
 	std::string dbconn;

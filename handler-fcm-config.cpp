@@ -62,7 +62,7 @@ int Config::parseCmd
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
-
+	
 	// FireBase server key
 	struct arg_str *a_server_key = arg_str0("k", "key", "<key>", "FireBase server token");
 	struct arg_str *a_imei_field_name = arg_str0("m", "imei", "<IMEI>", "Field name contains IMEI. Default " DEF_IMEI_FIELD);

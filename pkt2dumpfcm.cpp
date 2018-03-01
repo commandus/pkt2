@@ -121,6 +121,10 @@ int main
 
 	// In windows, this will init the winsock stuff
 	curl_global_init(CURL_GLOBAL_ALL);
+	
+	if (!config->test_data_hex.empty()) {
+		sendNotifications(config->test_data_hex, config);
+	}
 
 	if (config->daemonize)
 	{
