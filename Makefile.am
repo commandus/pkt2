@@ -91,7 +91,7 @@ freceiver-impl.h freceiver-impl.h freceiver-config.h \
 huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
 huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 bitstream/bitstream.h bitstream/varint.h \
-messageformat.h \
+messageformat.h messageemitterline.h pkt2receiver-check.h \
 handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h
 
