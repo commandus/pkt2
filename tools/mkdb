@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+#	Build database objects from scratch
+#	Parameters: [<destination> [<db host name/address>]]
+#	Default database server name is localhost.
+#
+#
+DEST=$1
+if [ -z "$DEST" ] ; then
+    DEST=.
+fi
+SQL=$DEST/postgresql.sql
+HOST=$2
+if [ -z "$HOST" ] ; then
+    HOST=localhost
+fi
+if [ -x `which psql` ] ; then
+    psql -h $HOST onewayticket onewayticket -w -f $SQL
+else
+    echo PostgreSQL client is not installed, building database from generated script $SQL skipped.
+fi
+exit 0
