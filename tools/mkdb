@@ -19,4 +19,13 @@ if [ -x `which psql` ] ; then
 else
     echo PostgreSQL client is not installed, building database from generated script $SQL skipped.
 fi
+
+POSTGRES_VERSION=9.5
+POSTGRES_SCHEMA=iridium
+POSTGRES_PORT=5432
+POSTGRES_USER_NAME=imz
+POSTGRES_USER_PASSWORD=LC50vbHc
+
+psql -h localhost iridium imz -w -c "CREATE DATABASE iridium WITH OWNER = imz ENCODING = 'UTF8';"
+
 exit 0

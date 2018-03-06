@@ -9,6 +9,7 @@
 #define DEF_IN_QUEUE				"ipc:///tmp/packet.pkt2"
 #define DEF_OUT_QUEUE				"ipc:///tmp/message.pkt2"
 #define DEF_CONTROL_QUEUE			"ipc:///tmp/control.pkt2"
+#define DEF_DUMP_QUEUE				"ipc:///tmp/dump.pkt2"
 #define DEF_BUFFER_SIZE 	         4096
 
 /**
@@ -51,6 +52,7 @@ int Config::parseCmd
 	struct arg_str *a_in_url = arg_str0("i", "input", "<queue url>", "Default " DEF_IN_QUEUE);
 	struct arg_str *a_out_url = arg_str0("o", "output", "<queue url>", "Default " DEF_OUT_QUEUE);
 	struct arg_str *a_control_url = arg_str0(NULL, "control", "<queue url>", "Default " DEF_CONTROL_QUEUE);
+	struct arg_str *a_dump_url = arg_str0(NULL, "dump", "<dump url>", "Default " DEF_DUMP_QUEUE);
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 	struct arg_str *a_force_message = arg_str0(NULL, "message", "<packet.message>", "force message");
@@ -67,7 +69,7 @@ int Config::parseCmd
 	struct arg_end *a_end = arg_end(20);
 
 	void* argtable[] = { 
-		a_in_url, a_out_url, a_control_url,
+		a_in_url, a_out_url, a_control_url, a_dump_url,
 		a_proto_path, a_force_message, a_allowed_packet_sizes,
 		a_buffer_size,
 		a_retries, a_retry_delay, a_max_fd, 
@@ -112,6 +114,10 @@ int Config::parseCmd
 		control_url = *a_control_url->sval;
 	else
 		control_url = DEF_CONTROL_QUEUE;
+	if (a_dump_url->count)
+		dump_url = *a_dump_url->sval;
+	else
+		dump_url = DEF_DUMP_QUEUE;
 
 	if (a_proto_path->count)
 		proto_path = *a_proto_path->sval;

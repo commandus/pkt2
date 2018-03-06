@@ -59,7 +59,7 @@ typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
  */
 static int getTokenNNameList(
 	TokenNNameList &retval,
-	const void *data,
+	const std::string &imei,
 	size_t size,
 	Config *config
 ) 
@@ -78,12 +78,12 @@ static int getTokenNNameList(
 		return ERRCODE_DECOMPOSE_FATAL;
 	}
 	
-	// get IMEI from the message
-	std::string imei((const char*) data + config->imei_field_offset, config->imei_field_size);
-	
 	// read FireBase tokens from the database
-	std::string q = "SELECT dev.instance, device_description.device_name FROM device_description, dev WHERE dev.userid = device_description.owner \
-	AND device_description.current = 't' AND device_description.imei = '" +  imei + "'";
+	std::string q = "SELECT dev.instance, device_description.device_name \
+	FROM device_description, dev, devices \
+	WHERE dev.userid = device_description.owner \
+	AND device_description.imei = devices.id \
+	AND device_description.current = 't' AND devices.imei = '" +  imei + "'";
 
 	PGconn *conn = dbconnect(config);
 	if (PQstatus(conn) != CONNECTION_OK)
@@ -97,9 +97,9 @@ static int getTokenNNameList(
 	res = PQexec(conn, q.c_str());
 
 	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
-			PQclear(res);
-			PQfinish(conn);
-			return ERRCODE_DATABASE_STATEMENT_FAIL;
+		PQclear(res);
+		PQfinish(conn);
+		return ERRCODE_DATABASE_STATEMENT_FAIL;
 	}
 
     int nrows = PQntuples(res);
@@ -119,23 +119,33 @@ static int getTokenNNameList(
 
 /**
  * @brief Send notification to the mobile device
- * @param hex hex string
+ * @param buffer data to send as hex string
+ * @param bytes size
  * @param config Configuration
  */
-int sendNotifications
+static int sendNotifications
 (
-	const std::string hex, 
+	const void *buffer, 
+	size_t bytes, 
 	Config *config
 )
 {
 	int c = 200;
+	if ((!buffer) || (bytes <= 0)
+		|| (bytes <= (config->imei_field_offset + config->imei_field_size)))
+		return c;
+	
 	TokenNNameList tokens;
 	
-	getTokenNNameList(tokens, hex.c_str(), hex.size(), config);
+	// get IMEI from the message
+	std::string imei((const char*) buffer + config->imei_field_offset, config->imei_field_size);
+		
+	getTokenNNameList(tokens, imei, bytes, config);
 	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
 	{
 		std::string r;
-		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, hex);
+		std::string payload = hexString(buffer, bytes);
+		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, payload);
 		if ((c > 299) || (c < 200))
 			break;
 	}
@@ -144,30 +154,17 @@ int sendNotifications
 
 /**
  * @brief Send notification to the mobile device
- * @param buffer data to send as hex string
- * @param bytes size
+ * @param hex hex string
  * @param config Configuration
  */
-int sendNotifications
+int sendNotificationsHex
 (
-	void *buffer, 
-	size_t bytes, 
+	const std::string &hex, 
 	Config *config
 )
 {
-	int c = 200;
-	TokenNNameList tokens;
-	
-	std::string s(hexString(buffer, bytes)); 
-	getTokenNNameList(tokens, buffer, bytes, config);
-	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
-	{
-		std::string r;
-		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, s);
-		if ((c > 299) || (c < 200))
-			break;
-	}
-	return ((c < 300) && (c >199)) ? ERR_OK : ERRCODE_FIREBASE_WRITE;
+	std::string bin = stringFromHex(hex);
+	return sendNotifications(bin.c_str(), bin.size(), config);
 }
 
 /**
@@ -213,6 +210,10 @@ int run
 	else
 		buffer = NULL;
 	
+	if (config->verbosity > 2) {
+		LOG(INFO) << MSG_CONNECTED_TO << config->packet_url << ", buffer size: " << config->buffer_size;
+	}
+	
 	while (!config->stop_request)
     {
 		int bytes;
@@ -220,7 +221,7 @@ int run
     		bytes = nn_recv(accept_socket, buffer, config->buffer_size, 0);
     	else
     		bytes = nn_recv(accept_socket, &buffer, NN_MSG, 0);
-		
+
 		int payload_size = InputPacket::getPayloadSize(bytes);
         if (payload_size < 0)
         {
@@ -234,14 +235,12 @@ int run
 			LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
 			continue;
 		}
-
-		sendNotifications(buffer, bytes, config);
+		
+		sendNotifications(packet.data(), packet.length, config);
 
 		if (config->buffer_size <= 0)
 			nn_freemsg(buffer);
 	}
-
-	free(buffer);
 
 	int r = nn_shutdown(accept_socket, eid);
 	if (r)
@@ -252,6 +251,9 @@ int run
 
 	close(accept_socket);
 	accept_socket = 0;
+
+	free(buffer);
+	buffer = NULL;
 
 	if (config->stop_request == 2)
 		goto START;

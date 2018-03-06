@@ -64,7 +64,14 @@ std::string spaces(char ch, int count);
  * @param size buffer size
  * @return hex string
  */
-std::string hexString(void *buffer, size_t size);
+std::string hexString(const void *buffer, size_t size);
+
+/**
+ * @brief Return binary data string
+ * @param hex hex string
+ * @return binary data string
+ */
+std::string stringFromHex(const std::string &hex);
 
 /**
  * @brief Return hex string

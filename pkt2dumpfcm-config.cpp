@@ -11,7 +11,7 @@
 #define DEF_DB_PATH					"db"
 #define DEF_MODE					0664
 #define DEF_FLAGS					0
-#define DEF_QUEUE					"ipc:///tmp/packet.pkt2"
+#define DEF_QUEUE					"ipc:///tmp/dump.pkt2"
 
 // PostgreSQL
 #define DEF_DB_HOST					"localhost"
@@ -89,7 +89,7 @@ int Config::parseCmd
 		struct arg_str *a_dbcharset = arg_str0(NULL, "dbcharset", "<charset>", "database client charset. Default utf8.");
 		struct arg_int *a_dbclientflags = arg_int0(NULL, "dbclientflags", "<number>", "database client flags. Default 0.");
 		
-		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096. 0- dymanic.");
+		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096. 0- dynamic.");
 
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);

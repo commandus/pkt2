@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <argtable2.h>
 #include <strings.h>
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #include "errorcodes.h"
 

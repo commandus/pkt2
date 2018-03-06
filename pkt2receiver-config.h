@@ -50,6 +50,7 @@ public:
 	std::string in_url;
 	std::string out_url;
 	std::string control_url;
+	std::string dump_url;
 	std::string proto_path;			///< proto files directory path
 	std::string force_message;
 

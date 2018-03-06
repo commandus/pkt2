@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #define PROGRAM_NAME             	"handlerfcm"
 #define PROGRAM_DESCRIPTION			"FireBase Cloud messaging printer"

@@ -32,7 +32,7 @@
 #define SQL_POSTGRESQL_CREATE "CREATE TABLE packet (id BIGSERIAL PRIMARY KEY, tag INTEGER NOT NULL, \
 	time TIMESTAMP WITH TIME ZONE NOT NULL, value TEXT NOT NULL, \
 	src VARCHAR(16), srcport INTEGER, dst VARCHAR(16), dstport INTEGER);"
-#define SQL_POSTGRESQL_INSERT_PREFIX "INSERT INTO packet (tag, time, \
+#define SQL_POSTGRESQL_INSERT_PREFIX "INSERT INTO \"packet\" (tag, time, \
 	value, src, srcport, dst, dstport) VALUES(0, now(), "
 
 using namespace google::protobuf;
@@ -40,7 +40,7 @@ using namespace google::protobuf;
 #define CHECK_STMT(error_message) \
 		if (PQresultStatus(res) != PGRES_COMMAND_OK) \
 		{ \
-			LOG(ERROR) << ERR_DATABASE_STATEMENT_FAIL << error_message; \
+			LOG(ERROR) << ERR_DATABASE_STATEMENT_FAIL << error_message << ": " << PQerrorMessage(conn); \
 			PQclear(res); \
 			PQfinish(conn); \
 			return ERRCODE_DATABASE_STATEMENT_FAIL; \
@@ -59,13 +59,12 @@ int execSQL
 		return ERRCODE_DATABASE_NO_CONNECTION;
 	}
 	PGresult *res;
-	res = PQexec(conn, "BEGIN");
-	CHECK_STMT("start transaction")
+	// res = PQexec(conn, "BEGIN");
+	// CHECK_STMT("start transaction")
 	res = PQexec(conn, stmt.c_str());
 	CHECK_STMT(stmt)
-	res = PQexec(conn, "END");
-	CHECK_STMT("commit transaction")
-
+	// res = PQexec(conn, "END");
+	// CHECK_STMT("commit transaction")
 	PQfinish(conn);
 }
 
@@ -85,6 +84,12 @@ int run
 		execSQL(config, SQL_POSTGRESQL_CREATE);
 		return  ERR_OK;
 	}
+	if (config->verbosity > 2)
+	{
+		std::cerr << "Database host: " << config->dbhost 
+			<< " port: " << config->dbport 
+			<< " user: " << config->dbuser << " db: " << config->dbname << std::endl;
+	}
 	
 	START:
 	config->stop_request = 0;
@@ -101,6 +106,10 @@ int run
 	{
 		LOG(ERROR) << ERR_NN_CONNECT << config->packet_url << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_CONNECT;
+	}
+
+	if (config->verbosity > 2) {
+		LOG(INFO) << MSG_CONNECTED_TO << config->packet_url << ", buffer size: " << config->buffer_size;
 	}
 
 	// print out create statements
@@ -145,6 +154,12 @@ int run
 			continue;
 		}
 
+/*		
+		if (config->verbosity > 2) 
+		{
+			std::cerr << "Recieve: " << hexString(packet.data(), packet.length) << ", size " << payload_size;
+		}
+*/
 		std::stringstream ss;
 		ss << SQL_POSTGRESQL_INSERT_PREFIX << "'" << hexString(packet.data(), packet.length) << "', '" 
 			<< inet_ntoa(packet.get_sockaddr_src()->sin_addr) << "', " << ntohs(packet.get_sockaddr_src()->sin_port) << ", '" 

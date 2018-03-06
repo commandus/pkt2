@@ -36,6 +36,25 @@ using namespace google::protobuf::io;
 #define CONTROL_TYP_EMPTY				"packet is empty"
 
 /**
+ * @brief Send message to the dumpers NN_BUS
+ */
+void dump_message
+(
+	int socket_dump,
+	void *data,
+	int sz
+)
+{
+	if (data && (sz > 0)) 
+	{
+//		std::cerr << "dump_message: " << sz << " " << data << std::endl;
+		nn_send(socket_dump, data, sz, 0);
+		// flush
+		SEND_FLUSH(100);	// BUGBUG 0 - nn_send
+	}
+}
+
+/**
  * @brief Send message to the control NN_BUS
  */
 void control_message
@@ -90,10 +109,22 @@ int pkt2_receiever_nano(Config *config)
         LOG(ERROR) << ERR_NN_BIND << config->control_url << " " << errno << ": " << nn_strerror(errno);;
 		return ERRCODE_NN_BIND;
     }
+    LOG(INFO) << "Control bind " << socket_control << "/" << ecid << " url " << config->control_url;
 
-    LOG(INFO) << "Control bind " 
-		<< socket_control << "/" << ecid << " url "
-		<< config->control_url;
+	// Dump socket
+    int socket_dump = nn_socket(AF_SP, NN_BUS);
+	if (socket_dump < 0)
+	{
+		LOG(ERROR) << ERR_NN_SOCKET << config->dump_url << " " << errno << " " << strerror(errno);
+		return ERRCODE_NN_SOCKET;
+	}
+	int edid = nn_bind(socket_dump, config->dump_url.c_str());
+    if (edid < 0)
+    {
+        LOG(ERROR) << ERR_NN_BIND << config->dump_url << " " << errno << ": " << nn_strerror(errno);;
+		return ERRCODE_NN_BIND;
+    }
+    LOG(INFO) << "Dump bind " << socket_dump << "/" << edid << " url " << config->dump_url;
 
 	// IN socket
     int socket_accept = nn_socket(AF_SP, NN_BUS); // was NN_SUB
@@ -143,6 +174,8 @@ int pkt2_receiever_nano(Config *config)
 		
 		// Notify CONTROL_TYP_RECEIVED
 		control_message(config, socket_control, CONTROL_TYP_RECEIVED_CODE, payload_size, CONTROL_TYP_RECEIVED, "");
+		// Dump message
+		dump_message(socket_dump, buf, bytes);
 		if ((bytes > 0) && (config->verbosity > 1))
 		{
 			LOG(INFO) << MSG_RECEIVED << bytes << " bytes, payload " << payload_size << " bytes" << std::endl;
@@ -258,10 +291,17 @@ int pkt2_receiever_nano(Config *config)
     r = nn_shutdown(socket_accept, eid);
     if (r)
     	LOG(ERROR) << ERR_NN_SHUTDOWN << " in " << errno << ": " << nn_strerror(errno);
-    r = nn_shutdown(socket_control, ecid);
+    
+	r = nn_shutdown(socket_control, ecid);
     if (r)
     	LOG(ERROR) << ERR_NN_SHUTDOWN << " control " 
 		<< socket_control << "/" << ecid << " error "
+		<< errno << ": " << nn_strerror(errno);
+
+	r = nn_shutdown(socket_dump, edid);
+    if (r)
+    	LOG(ERROR) << ERR_NN_SHUTDOWN << " dump " 
+		<< socket_dump << "/" << edid << " error "
 		<< errno << ": " << nn_strerror(errno);
 
 	if (nn_sock_out)
@@ -280,6 +320,12 @@ int pkt2_receiever_nano(Config *config)
 	{
 		close(socket_control);
 		socket_control = 0;
+	}
+
+	if (socket_dump)
+	{
+		close(socket_dump);
+		socket_dump = 0;
 	}
 
 	if (config->stop_request == 2)

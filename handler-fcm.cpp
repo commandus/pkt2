@@ -21,6 +21,7 @@
 #include <glog/logging.h>
 
 #include <curl/curl.h>
+#include <libpq-fe.h>
 
 #include "platform.h"
 #include "daemonize.h"

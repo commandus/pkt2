@@ -5,9 +5,9 @@
  * @param hex hex string
  * @param config Configuration
  */
-int sendNotifications
+int sendNotificationsHex
 (
-	const std::string hex, 
+	const std::string &hex, 
 	Config *config
 );
 

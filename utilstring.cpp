@@ -171,23 +171,23 @@ inline HexCharStruct hex(unsigned char c)
         return HexCharStruct(c);
 }
 
-void bufferPrintHex(std::ostream &sout, void* value, size_t size)
+void bufferPrintHex(std::ostream &sout, const void* value, size_t size)
 {
-        if (value == NULL)
-                return;
-        unsigned char *p = (unsigned char*) value;
-        for (size_t i = 0; i < size; i++)
-        {
-                sout << hex(*p);
-                p++;
-        }
+	if (value == NULL)
+		return;
+	unsigned char *p = (unsigned char*) value;
+	for (size_t i = 0; i < size; i++)
+	{
+		sout << hex(*p);
+		p++;
+	}
 }
 
-std::string hexString(void *buffer, size_t size)
+std::string hexString(const void *buffer, size_t size)
 {
-        std::stringstream r;
-        bufferPrintHex(r, buffer, size);
-        return r.str();
+	std::stringstream r;
+	bufferPrintHex(r, buffer, size);
+	return r.str();
 }
 
 /**
@@ -219,6 +219,28 @@ std::string hex2string(const std::string &hex)
 {
 	std::stringstream ss(hex);
     return readHex(ss);
+}
+
+/**
+ * @brief Return binary data string
+ * @param hex hex string
+ * @return binary data string
+ */
+std::string stringFromHex(const std::string &hex)
+{
+	std::string r(hex.length() / 2, '\0');
+	std::stringstream ss(hex);
+	ss >> std::noskipws;
+	char c[3] = {0, 0, 0};
+	int i = 0;
+	while (ss >> c[0]) {
+		if (!(ss >> c[1]))
+			break;
+		unsigned char x = (unsigned char) strtol(c, NULL, 16);
+		r[i] = x;
+		i++;
+	}
+	return r;
 }
 
 std::string arg2String(

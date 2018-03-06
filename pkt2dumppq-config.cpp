@@ -11,7 +11,7 @@
 #define DEF_DB_PATH					"db"
 #define DEF_MODE					0664
 #define DEF_FLAGS					0
-#define DEF_QUEUE					"ipc:///tmp/packet.pkt2"
+#define DEF_QUEUE					"ipc:///tmp/dump.pkt2"
 
 // PostgreSQL
 #define DEF_DB_HOST					"localhost"

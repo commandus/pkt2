@@ -123,7 +123,9 @@ int main
 	curl_global_init(CURL_GLOBAL_ALL);
 	
 	if (!config->test_data_hex.empty()) {
-		sendNotifications(config->test_data_hex, config);
+		sendNotificationsHex(config->test_data_hex, config);
+		done();
+		return 0;
 	}
 
 	if (config->daemonize)

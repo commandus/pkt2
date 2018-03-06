@@ -22,7 +22,7 @@
 #include <google/protobuf/message.h>
 
 #include <curl/curl.h>
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #include "fcm-writer.h"
 #include "helper_fcm.h"
