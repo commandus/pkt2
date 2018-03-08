@@ -69,7 +69,7 @@ bool parseProtoFile2
 	if (f == NULL)
 		return false;
 
-	vector<const FileDescriptor*> parsed_files;
+	std::vector<const FileDescriptor*> parsed_files;
 
 	// Set up the source tree.
 	google::protobuf::compiler::DiskSourceTree source_tree;

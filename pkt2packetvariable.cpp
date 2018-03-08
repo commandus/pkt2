@@ -87,7 +87,7 @@ Pkt2PacketVariable::Pkt2PacketVariable
 		pkt2::Variable variable = foptions.GetExtension(pkt2::variable);
 		fieldname_variables.push_back(FieldNameVariable(md->field(f)->name(), variable));
 		// keep field number to the vector index
-		fieldNumbers.insert(pair<int, int>(md->field(f)->number(), f));
+		fieldNumbers.insert(std::pair<int, int>(md->field(f)->number(), f));
 
 		// prepare index
 		int index = variable.index();

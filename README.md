@@ -2123,3 +2123,48 @@ extend google.protobuf.FieldOptions {
 }
 
 ```
+
+## Установка среды
+
+```
+sudo apt install autoconf libtool make g++ unzip cmake git curl wget
+sudo apt install kdevelop code mc 
+
+curl https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+sudo mv microsoft.gpg /etc/apt/trusted.gpg.d/microsoft.gpg
+sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" > /etc/apt/sources.list.d/vscode.list'
+sudo apt-get install oracle-java9-installer
+oracle-java9-installer
+sudo apt install oracle-java9-set-default
+sudo update-alternatives --config java
+```
+
+## Зависимости
+
+Большинство библиотек устанавливается последовательностью:
+```
+./autogen.sh
+autoreconf -fi
+automake --add-missing
+./configure --enable-static --enable-shared
+make
+sudo make install
+make clean
+sudo ldconfig
+```
+
+OpenSSL рекомендуется устанавливать весрии 1.0.2g (из protobuf удалена, но есть в mqtt и curl)
+```
+sudo apt install libcurl4-openssl-dev libpq-dev
+git clone git://git.sv.gnu.org/libunwind.git
+git clone git@github.com:google/glog.git
+git clone git@github.com:jedisct1/libsodium.git
+git clone git@github.com:google/protobuf.git
+git clone https://github.com/jonathanmarvens/argtable2.git
+git clone git@github.com:TokTok/c-toxcore.git
+wget -c https://netix.dl.sourceforge.net/project/net-snmp/net-snmp/5.8-pre-releases/net-snmp-5.8.pre2.tar.gz
+wget -c https://github.com/openssl/openssl/archive/OpenSSL_1_0_2g.tar.gz 
+-or-  sudo apt install libssl-dev (Ubuntu 1.0.2g)
+git clone git@github.com:eclipse/paho.mqtt.c.git
+git clone git@github.com:LMDB/lmdb.git
+```

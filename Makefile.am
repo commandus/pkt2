@@ -218,7 +218,7 @@ handlerpq_SOURCES= \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
+handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS) -lpq
 handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
 
 #
@@ -258,7 +258,7 @@ handlerline_SOURCES = \
 	messageformat.cpp \
 	$(common_src)
 
-handlerline_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+handlerline_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg $(SNMPLIBS)
 handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
@@ -289,11 +289,11 @@ handler_fcm_SOURCES = \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_fcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -L/home/andrei/lib/firebase_cpp_sdk/libs/linux -lmessaging $(SNMPLIBS)
-handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON
+handler_fcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
+handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON -I/usr/include/postgresql
 
 #
-# pkt2dumppq
+# pkt2dumpfcm
 #
 pkt2dumpfcm_SOURCES = \
 	pkt2dumpfcm.cpp fcmdumper.cpp pkt2dumpfcm-config.cpp \
@@ -304,9 +304,8 @@ pkt2dumpfcm_SOURCES = \
 	helper_fcm.cpp \
 	$(common_src)
 
-pkt2dumpfcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -L/home/andrei/lib/firebase_cpp_sdk/libs/linux -lmessaging $(SNMPLIBS)
+pkt2dumpfcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS) -lpq
 pkt2dumpfcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql
-
 
 #
 #	protoc-gen-pkt2
@@ -395,7 +394,7 @@ pkt2dumppq_SOURCES = \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
-pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
+pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS) -lpq
 pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
 
 #
