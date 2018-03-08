@@ -214,12 +214,12 @@ AR = ar
 AUTOCONF = ${SHELL} /home/andrei/src/pkt2/missing autoconf
 AUTOHEADER = ${SHELL} /home/andrei/src/pkt2/missing autoheader
 AUTOMAKE = ${SHELL} /home/andrei/src/pkt2/missing automake-1.15
-AWK = gawk
+AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
 CFLAGS = -g -O2
 CPP = gcc -E
-CPPFLAGS =  -Icppcodec -I/usr/include/postgresql
+CPPFLAGS = 
 CXX = g++
 CXXCPP = g++ -E
 CXXDEPMODE = depmode=gcc3
@@ -245,7 +245,7 @@ INSTALL_STRIP_PROGRAM = $(install_sh) -c -s
 LD = /usr/bin/ld -m elf_x86_64
 LDFLAGS = 
 LIBOBJS = 
-LIBS = -largtable2 -lpq -lcurl 
+LIBS = -largtable2 -lcurl 
 LIBTOOL = $(SHELL) $(top_builddir)/libtool
 LIPO = 
 LN_S = ln -s
