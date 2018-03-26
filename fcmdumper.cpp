@@ -79,11 +79,13 @@ static int getTokenNNameList(
 	}
 	
 	// read FireBase tokens from the database
-	std::string q = "SELECT dev.instance, device_description.device_name \
-	FROM device_description, dev, devices \
-	WHERE dev.userid = device_description.owner \
-	AND device_description.imei = devices.id \
-	AND device_description.current = 't' AND devices.imei = '" +  imei + "'";
+	
+	std::string q;
+	q = "SELECT dev.instance, device_description.device_name \
+		FROM device_description, dev, devices \
+		WHERE dev.userid = device_description.owner \
+		AND device_description.imei = devices.id \
+		AND device_description.current = 't' AND devices.imei = '" +  imei + "'";
 
 	PGconn *conn = dbconnect(config);
 	if (PQstatus(conn) != CONNECTION_OK)
