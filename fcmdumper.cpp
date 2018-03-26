@@ -141,11 +141,24 @@ static int sendNotifications
 	std::string imei((const char*) buffer + config->imei_field_offset, config->imei_field_size);
 		
 	getTokenNNameList(tokens, imei, bytes, config);
+	if (config->verbosity > 1) 
+	{
+		std::cerr << "Send to: " << imei << ", key: " << config->server_key << std::endl
+		 << "tokens: " << tokens.size() << " total" << std::endl;
+	}
+
+	std::string payload = hexString(buffer, bytes);
 	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
 	{
 		std::string r;
-		std::string payload = hexString(buffer, bytes);
 		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, payload);
+
+		if (config->verbosity > 2) 
+		{
+
+			std::cerr << it->first << " " << it->second << " code: " << c << std::endl;
+		}
+
 		if ((c > 299) || (c < 200))
 			break;
 	}

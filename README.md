@@ -757,6 +757,10 @@ handlerfcm, в отличие от дампера, отправляет разо
 
 Если нужно использовать только отправку пакетов мобильным пользователям, достаточно запустить tcpreceiver, pkt2receiver и pkt2dumpfcm.
 
+```
+./pkt2dumpfcm --user imz --database iridium --password LC50vbHc --host pgsql.ysn.ru
+```
+
 #### Ручная отправка пакета в дамп 
 
 Обычно pkt2dumpfcm получает пакеты из шины с выхода ресиверов tcpreceiver и udpreceiver.
@@ -765,7 +769,12 @@ handlerfcm, в отличие от дампера, отправляет разо
 Пакет должен быть передан в этой опции в виде строки шестнадцатиричных чисел, как примере:
 
 ```
-pkt2dumpfcm -x 01004e01001c83c9145933303032333430313031353731333000000800005a822ce403000b003e08f68195cb0000000202001e0890003e01cf12000031812b70160000450002208a0086d04d244d000a00
+./pkt2dumpfcm -vvv --user imz --database iridium --password LC50vbHc --host pgsql.ysn.ru -x 01004e01001c83c9145933303032333430363931303530363000000800005a822ce403000b003e08f68195cb0000000202001e0890003e01cf12000031812b70160000450002208a0086d04d244d000a00
+
+Send to: 300234069105060, key: AAAAITL4VBA:APA91bGQwuvaQTt8klgebh8QO1eSU7o5itF0QGnp7kCWJNgMwe8WM3bMh6eGDkeyMbvUAmE2MqtB1My3f0-mHM6MQE1gOjMB0eiAW1Xaqds0hYETRNzqAe0iRh5v-PcxmxrHQeJh6Nuj
+tokens: 1 total
+dnTVve-KAxg:APA91bEzNLT62cYeYYGot8bpumY9iMMEUavG8LGjbrbnE50F55h3A8owZ3snYQa8ns1XcfztmLQPpxDmPh2a5VKDvH4WHaCvdmvb7z-PpROsqxK4WBXtlq6GUK_N2wvHvvvAbwYRTke5 1806 code: 200
+
 ```
 
 Запустить со значениями по умолчанию 
