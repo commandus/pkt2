@@ -45,7 +45,7 @@ int push2instance
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, &write_string);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &retval);
 	CURLcode res = curl_easy_perform(curl);
-	int http_code;
+	long http_code;
     if (res != CURLE_OK)
 	{
 		retval = curl_easy_strerror(res);
