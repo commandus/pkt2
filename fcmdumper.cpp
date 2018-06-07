@@ -78,40 +78,66 @@ static int getTokenNNameList(
 		return ERRCODE_DECOMPOSE_FATAL;
 	}
 	
-	// read FireBase tokens from the database
-	
-	std::string q;
-	q = "SELECT dev.instance, device_description.device_name \
-		FROM device_description, dev, devices \
-		WHERE dev.userid = device_description.owner \
-		AND device_description.imei = devices.id \
-		AND device_description.current = 't' AND devices.imei = '" +  imei + "'";
-
 	PGconn *conn = dbconnect(config);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
 		return ERRCODE_DATABASE_NO_CONNECTION;
 	}
-	PGresult *res;
-	res = PQexec(conn, "BEGIN");
+	PGresult *res = PQexec(conn, "BEGIN");
 	CHECK_STMT("start transaction")
+	
+	// get name
+	std::string q = "SELECT device_description.device_name \
+		FROM device_description, devices \
+		WHERE device_description.imei = devices.id \
+		AND device_description.current = 't' AND devices.imei = '" +  imei + "'";
 	res = PQexec(conn, q.c_str());
-
-	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+	if ((PQresultStatus(res) != PGRES_TUPLES_OK) || (PQntuples(res) <= 0))
+	{
 		PQclear(res);
 		PQfinish(conn);
 		return ERRCODE_DATABASE_STATEMENT_FAIL;
 	}
+	std::string name = std::string(PQgetvalue(res, 0, 0));
+	PQclear(res);
+	
+	// get root tokens
+	q = "SELECT dev.instance FROM dev where dev.userid = 1";
+	res = PQexec(conn, q.c_str());
+	if (PQresultStatus(res) == PGRES_TUPLES_OK) 
+	{
+		int nrows = PQntuples(res);
+		for (int row = 0; row < nrows; row++)
+		{
+			std::pair<std::string, std::string> p;
+			p.first = std::string(PQgetvalue(res, row, 0));
+			p.second = name;
+			retval.push_back(p);
+		}
+		PQclear(res);
+	}
+	
+	// get owner tokens
+	q = "SELECT dev.instance \
+		FROM device_description, dev, devices \
+		WHERE dev.userid = device_description.owner \
+		AND device_description.imei = devices.id \
+		AND device_description.current = 't' AND devices.imei = '" +  imei + "'";
+	res = PQexec(conn, q.c_str());
 
-    int nrows = PQntuples(res);
-    for(int row = 0; row < nrows; row++)
-    {
-		std::pair<std::string, std::string> p;
-		p.first = std::string(PQgetvalue(res, row, 0));
-		p.second = std::string(PQgetvalue(res, row, 1));
-		retval.push_back(p);
-    }
+	if (PQresultStatus(res) == PGRES_TUPLES_OK) 
+	{
+		int nrows = PQntuples(res);
+		for(int row = 0; row < nrows; row++)
+		{
+			std::pair<std::string, std::string> p;
+			p.first = std::string(PQgetvalue(res, row, 0));
+			p.second = name;
+			retval.push_back(p);
+		}
+		PQclear(res);
+	}
 
     res = PQexec(conn, "END");
 	CHECK_STMT("commit transaction")

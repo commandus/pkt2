@@ -26,10 +26,10 @@
 #define HAVE_LIBCURL 1
 
 /* Define to 1 if you have the `pq' library (-lpq). */
-/* #undef HAVE_LIBPQ */
+#define HAVE_LIBPQ 1
 
 /* Define to 1 if you have the <libpq-fe.h> header file. */
-/* #undef HAVE_LIBPQ_FE_H */
+#define HAVE_LIBPQ_FE_H 1
 
 /* Define to 1 if you have the <limits.h> header file. */
 #define HAVE_LIMITS_H 1
