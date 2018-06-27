@@ -1,3 +1,4 @@
+#include <sstream>
 #include <curl/curl.h>
 
 #include "helper_fcm.h"
@@ -21,16 +22,20 @@ int push2instance
 	const std::string &serverkey,
 	const std::string &client_token,
 	const std::string &name,
+	const int tz,
 	const std::string &data
 )
 {
 	CURL *curl = curl_easy_init();
 	if (!curl)
 		return CURLE_FAILED_INIT; 
+	std::ostringstream stz;
+	stz << tz;
 	std::string request_body = 
 		"{\"to\": \"" + client_token + "\",\"data\":{" 
 			+ "\"hex\": \"" + data
-			+ "\", \"name\":\"" + name + "\"}}";
+			+ "\"tz\": " + stz.str()
+			+ ", \"name\":\"" + name + "\"}}";
 	
 	struct curl_slist *chunk = NULL;
     chunk = curl_slist_append(chunk, "Content-Type: application/json");

@@ -1,6 +1,7 @@
 /**
  * @file fcm-writer.cpp
  */
+#include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -44,6 +45,8 @@
 
 using namespace google::protobuf;
 
+#define DEF_TIME_ZONE_SECS		9 * 3600
+
 typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
 
 #define CHECK_STMT(error_message) \
@@ -54,7 +57,65 @@ typedef std::vector<std::pair<std::string, std::string> > TokenNNameList;
 			return ERRCODE_DATABASE_STATEMENT_FAIL; \
 		}
 
-int getTokenNNameList(
+/**
+ * @return in seconds
+ */
+static int getDeviceTimeZone
+(
+	Config *config,
+	const std::string &imei,
+	const int defaultTimeZoneSecs = 0
+)
+{
+	if (imei.empty())
+		return defaultTimeZoneSecs;
+
+	PGconn *conn = dbconnect(config);
+	if (PQstatus(conn) != CONNECTION_OK)
+	{
+		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
+		return defaultTimeZoneSecs;
+	}
+	PGresult *res;
+	res = PQexec(conn, "BEGIN");
+	CHECK_STMT("start transaction")
+
+	std::string q = "SELECT tz FROM device WHERE d_imei = '" +  imei + "'";
+	res = PQexec(conn, q.c_str());
+
+	long t = defaultTimeZoneSecs;
+
+	if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+			PQclear(res);
+			PQfinish(conn);
+			return t;
+	}
+    int nrows = PQntuples(res);
+    if (nrows > 0)
+    {
+		t  = strtoull(PQgetvalue(res, 0, 0), NULL, 10);
+		long ta = labs(t);
+		if (ta < 23)
+		{
+			// hours
+			t = t * 3600;
+		} else {
+			if (ta < 1400)
+			{
+				// minutes
+				t = t * 60;
+			}
+		}
+    }
+
+    res = PQexec(conn, "END");
+	CHECK_STMT("commit transaction")
+	PQclear(res); \
+	PQfinish(conn);
+	return t;
+}
+
+static int getTokenNNameList(
 	TokenNNameList &retval,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -132,7 +193,8 @@ int put
 	for (TokenNNameList::const_iterator it(tokenNames.begin()); it != tokenNames.end(); ++it)
 	{
 		std::string r;
-		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, s);
+		int tz = getDeviceTimeZone(config, it->first, DEF_TIME_ZONE_SECS);
+		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, tz, s);
 		if ((c > 299) || (c < 200))
 			break;
 	}

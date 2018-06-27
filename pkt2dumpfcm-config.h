@@ -31,8 +31,9 @@ public:
 	Config(int argc, char* argv[]);
 	int error();
 
-	int retries;             ///< default 1
-	int retry_delay;         ///<
+	int retries;			///< default 1
+	int retry_delay;		///<
+	int timezone;			///< seconds, default 9*3600
 
 	uint32_t verbosity;
 

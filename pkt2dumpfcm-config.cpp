@@ -8,6 +8,8 @@
 
 #include "errorcodes.h"
 
+#define DEF_TIME_ZONE_S				"9"
+#define DEF_TIME_ZONE				9 * 3600
 #define DEF_DB_PATH					"db"
 #define DEF_MODE					0664
 #define DEF_FLAGS					0
@@ -72,6 +74,7 @@ int Config::parseCmd
 		struct arg_int *a_imei_field_offset = arg_int0(NULL, "imei-offset", "<IMEI>", "IMEI offset. Default " DEF_IMEI_FIELD_OFFSET_S);
 		struct arg_int *a_imei_field_size = arg_int0(NULL, "imei-size", "<number>", "IMEI size. Default " DEF_IMEI_FIELD_SIZE_S);
 		struct arg_int *a_packet_size = arg_int0(NULL, "packet-size", "<number>", "IMEI size. Default " DEF_PACKET_SIZE_S);
+		struct arg_int *a_time_zone = arg_int0(NULL, "timezone", "<number>", "Time zone offset in hours or minutes or seconds. Default " DEF_TIME_ZONE_S);
 	
 		// for testing purposes only
 		struct arg_str *a_test_data_hex = arg_str0("x", "hex", "<packet>", "Send notification of packet and exit");
@@ -98,7 +101,7 @@ int Config::parseCmd
 			a_packet_url, 
 			a_retries, a_retry_delay,
 			a_daemonize, a_max_fd, a_verbosity,
-			a_server_key, a_imei_field_offset, a_imei_field_size, a_packet_size,
+			a_server_key, a_imei_field_offset, a_imei_field_size, a_packet_size, a_time_zone,
 			a_test_data_hex,
 			a_conninfo, a_user, a_database, a_password, a_host, a_dbport, a_optionsfile, a_dbsocket, a_dbcharset, a_dbclientflags,
 			a_buffer_size,
@@ -174,11 +177,16 @@ int Config::parseCmd
 	else
 		packet_size = DEF_PACKET_SIZE;
 	
+	
+	if (a_time_zone->count)
+		timezone = *a_time_zone->ival;
+	else
+		timezone = DEF_TIME_ZONE;
+	
 	if (a_test_data_hex->count)
 		test_data_hex = *a_test_data_hex->sval;
 	else
 		test_data_hex = "";
-	
 
 	dbconn = *a_conninfo->sval;
 	if (a_host->count)

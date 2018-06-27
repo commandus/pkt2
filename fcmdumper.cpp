@@ -179,7 +179,7 @@ static int sendNotifications
 	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
 	{
 		std::string r;
-		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, payload);
+		c = push2instance(r, config->fburl, config->server_key, it->first, it->second, config->timezone, payload);
 
 		if (config->verbosity > 2) 
 		{
