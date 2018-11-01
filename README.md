@@ -17,7 +17,6 @@ pkt2
 - pkt2					репозиторий pkt2
 - collarie-0.1			Сервис ошейников(ретранслирует TCP пакеты в pkt2)
 - thermo-php			Веб интерфейс для термодатчиков на PHP
-- thermo-php			Веб интерфейс для термодатчиков на PHP
 - data.pl, serv_upd.pl	Веб интерфейс для термодатчиков на Perl (в письме от Ивана)
 - huffcode-test			Утилиты для проверки сжатия, тестовые
 
@@ -30,7 +29,7 @@ pkt2
 
 Каждому пакету необходимо его описание (протокол).
 
-Протокол содержит 
+Протокол содержит:
 
 - описание входящих данных(входящего пакета), опционально- адреса источника данных и адреса назначения.
 - описание извлекаемых(выходных) данных, опционально- формат для представления в виде строки.
@@ -1738,12 +1737,12 @@ protoc -I proto --decode_raw  < 1
 
 ### handlerpq
 
-Для записи значений в базу данных Postgresql 
+Для записи значений в базу данных Postgresql.
 
 Два режима записи:
 
 - 3 SQL "нативный"
-- 4 SQL(2) c использованием view.
+- 4 SQL(2) c использованием view
 
 #### Режим 4(dict)
 
@@ -1780,6 +1779,7 @@ CREATE TABLE num
   "device" text NOT NULL SET DEFAULT 0,
   "field" text NOT NULL,
   value NUMERIC NOT NULL,
+  batch integer NOT NULL DEFAULT 0,
   CONSTRAINT num_pkey PRIMARY KEY (id)
 );
 
@@ -1791,6 +1791,7 @@ CREATE TABLE str
   "device" text NOT NULL SET DEFAULT 0,
   "field" text NOT NULL,
   value text NOT NULL,
+  batch integer NOT NULL DEFAULT 0,
   CONSTRAINT str_pkey PRIMARY KEY (id)
 );
 
@@ -1802,7 +1803,6 @@ CREATE INDEX idx_str_time
     ON public.str USING btree
     ("time" ASC NULLS LAST)
     TABLESPACE pg_default;
-    
 ```
 
 ##### Создание представлений
@@ -1883,7 +1883,7 @@ id,message,time.device,field,value
 ```
 
 #### Режим 3(native)
-Предварительно для режима SQL нужно создать таблицы, для которых будуту поступать данные.
+Предварительно для режима SQL нужно создать таблицы, куда будут вставляться данные.
 
 Запустите с опцией -vv и остановите (Ctrl+C) программу.  
 ```
@@ -1892,7 +1892,7 @@ Press Ctrl+C
 cat handlerpq.INFO
 ```
 
-В файле журнала handlerpq.INFO будут записи следующего вида:
+В файле журнала handlerpq.INFO вначале пишутся SQL выражения для создания таблиц следующего вида:
 
 ```
 SQL CREATE TABLE statements
@@ -1904,12 +1904,12 @@ CREATE TABLE "iridium_IE_Location"(FLOAT iridium_latitude, FLOAT iridium_longitu
 CREATE TABLE "iridium_IE_Packet"(INTEGER iridium_version, INTEGER size, id bigint);
 CREATE TABLE "iridium_Packet8"(INTEGER coordinates, INTEGER measure_time, INTEGER gpsolddata, INTEGER gpsencoded, INTEGER gpsfrommemory, INTEGER gpsnoformat, INTEGER gpsnosats, INTEGER gpsbadhdop, INTEGER gpstime, INTEGER gpsnavdata, INTEGER satellite_visible_count, FLOAT battery_voltage, INTEGER battery_low, INTEGER battery_high, INTEGER temperature_c, INTEGER reserved_2, INTEGER failurepower, INTEGER failureeep, INTEGER failureclock, INTEGER failurecable, INTEGER failureint0, INTEGER software_failure, INTEGER failurewatchdog, INTEGER failurenoise, INTEGER failureworking, INTEGER key, id bigint);
 CREATE TABLE "iridium_Time5"(INTEGER date_time, id bigint);
-``` 
+```
 
 Предварительно для режима SQL(2) нужно создать как минимум две таблицы:
 ```
-CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value NUMERIC(10, 2));
-CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255));
+CREATE TABLE num (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value NUMERIC(10, 2), batch integer NOT NULL DEFAULT 0);
+CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARCHAR(255), value VARCHAR(255), batch integer NOT NULL DEFAULT 0);
 ```
 
 ### Пример данных
@@ -1939,7 +1939,7 @@ CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARC
 "3328";"3008";"2017-06-26 09:46:00+09";"300234060235340";"iridium.IE_IOHeader.recvtime";"26.06.2017 09:46"
 ```
 
-### handler-goole-sheets
+### handler-google-sheets
 
 #### Удаление (смена) пароля сертификата с приватным ключом сервиса Google Sheets
 
@@ -2032,6 +2032,7 @@ cd pkt2-0.1
 ./configure
 make
 ```
+
 #### Сборка в docker для nova.ysn.ru
 
 Предварительно нужно развернуть образ centos:nova с необходимыми инструментами и библиотеками.
@@ -2062,9 +2063,11 @@ scp tcpreceiver tcpemitter tcpemitter-example1 tcptransmitter example1message1 e
 
 scp pkt2.js cert/pkt2-sheets.json andrei@nova.ysn.ru:/home/andrei/pkt2/bin
 exit
+```
 
+##### закоммитить образ 
 
-# закоммитить образ 
+```
 docker ps -a
 docker commit stoic_ramanujan
 docker images
@@ -2188,4 +2191,108 @@ wget -c https://github.com/openssl/openssl/archive/OpenSSL_1_0_2g.tar.gz
 -or-  sudo apt install libssl-dev (Ubuntu 1.0.2g)
 git clone git@github.com:eclipse/paho.mqtt.c.git
 git clone git@github.com:LMDB/lmdb.git
+```
+
+## Вспомогательные объекты PostgreSQL
+
+### Число дублей
+Представление num_duplicate показывает число дублей для записей num
+```
+CREATE OR REPLACE VIEW public.num_duplicate
+AS SELECT n.field,
+    n."time",
+    n.value,
+    count(n.value) as cnt
+   FROM num n
+  GROUP BY n.field, n."time", n.value
+ HAVING count(n.value) > 1;
+
+-- Permissions
+
+ALTER TABLE public.num_duplicate OWNER TO imz;
+GRANT ALL ON TABLE public.num_duplicate TO imz;
+```
+
+Представление str_duplicate показывает число дублей для записей num
+
+### Дубли num
+Функция num_duplicated_ids() возвращает продублированные записи num кроме первой запист(с меньшим значением атрибута id)
+```
+CREATE OR REPLACE FUNCTION public.num_duplicated_ids()
+RETURNS setof num
+LANGUAGE plpgsql
+AS $function$
+declare
+  newr num%rowtype;
+  oldr num%rowtype;
+  begin
+	oldr.field := '';
+	oldr."time" := NULL;
+	oldr.value := NULL;
+	FOR newr in
+		select n1.* 
+		from num n1, num_duplicate d1 
+		where
+		n1.field = d1.field
+		and n1."time" = d1."time"
+		and n1.value = d1.value
+		order by n1."time", n1.field, n1.value, id
+    loop
+    	if not ((newr.field = oldr.field) and (newr."time" = oldr."time") and (newr.value = oldr.value)) then
+       		oldr := newr;
+       	else
+       		RETURN NEXT newr;
+		end if;
+    END LOOP;
+    RETURN;
+end
+ $function$
+```
+
+Функция str_duplicated_ids тоже для строковых значений
+
+### Удаление дублей записей
+
+Запист дублируются, если запущено несколько одиноаковых обработчиков одновременно.
+
+Чтобы удалить продублированные записи, выполните SQL выражение:
+```
+delete from num where num.id in (select id from num_duplicated_ids())
+delete from str where str.id in (select id from str_duplicated_ids())
+```
+
+Чтобы просмотреть число продублированных записей, выполните SQL выражение:
+```
+select count(*) from num_duplicated_ids()
+```
+
+### Ошейники
+
+```
+CREATE OR REPLACE VIEW public.collar_num
+AS SELECT r.value AS cddref,
+    n.device,
+    imei2name(n.device) "name",
+    n."time",
+    lat.value AS latitude,
+    lon.value AS longitude,
+    n.value AS temperature,
+    u.value AS voltage,
+    s.value AS satelittes,
+    h.value AS hdop,
+    p.value AS pdop
+   FROM num n,
+    num lat,
+    num lon,
+    num u,
+    num s,
+    num r,
+    num h,
+    num p
+  WHERE n.field = 'iridium.Packet8.temperature_c'::text AND lat.field = 'iridium.GPS_Coordinates.latitude'::text AND lon.field = 'iridium.GPS_Coordinates.longitude'::text AND u.field = 'iridium.Packet8.battery_voltage'::text AND s.field = 'iridium.Packet8.satellite_visible_count'::text AND r.field = 'iridium.IE_IOHeader.cdrref'::text AND h.field = 'iridium.GPS_Coordinates.hdop'::text AND p.field = 'iridium.GPS_Coordinates.pdop'::text AND n."time" = lat."time" AND n."time" = lon."time" AND n."time" = u."time" AND n."time" = s."time" AND n."time" = r."time" AND n."time" = h."time" AND n."time" = p."time";
+
+-- Permissions
+
+ALTER TABLE public.collar_num OWNER TO imz;
+GRANT ALL ON TABLE public.collar_num TO imz;
 ```

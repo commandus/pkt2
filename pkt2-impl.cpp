@@ -44,7 +44,6 @@ int start_program
 	pid_t *retval
 )
 {
-	LOG(INFO) << "Start program " << " PID: " << getpid();
 	*retval = fork(); // create child process
 	switch (*retval)
 	{
@@ -64,7 +63,6 @@ int start_program
 				argv[i + 1] = (char*) args[i].c_str();					// strdup()?
 			}
 			argv[args.size() + 1] = (char *) 0;
-			
 			// if (execve(fp.c_str(), argv, env) == -1)
 			if (execv(fp.c_str(), argv) == -1)
 			{
@@ -636,7 +634,7 @@ public:
 		{
 			PUSH_BACK_ARG_STR(r, "-a", *it);
 		}
-		
+
 		if (common)
 		{
 			if (common->verbosity > 0)
@@ -1498,11 +1496,17 @@ public:
 
 		return 0;
 	}
-	
+
 	int start()
 	{
 		for (int i = 0; i < descriptors.size(); i++)
 		{
+			std::stringstream ss;
+			for (int j = 0; j < descriptors[i].args.size(); j++)
+			{
+				ss << " " << descriptors[i].args[j];
+			}
+			LOG(INFO) << descriptors[i].cmd << ss.str();
 			descriptors[i].start();
 		}
 		return 0;
