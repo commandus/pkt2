@@ -2,7 +2,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <argtable2.h>
+#include <argtable3.h>
 #include <strings.h>
 #include <libpq-fe.h>
 

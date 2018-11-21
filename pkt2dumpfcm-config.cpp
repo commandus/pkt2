@@ -1,6 +1,6 @@
 #include "pkt2dumpfcm-config.h"
 
-#include <argtable2.h>
+#include <argtable3.h>
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>

@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS = -I m4
 
 TESTS = tests/p1.sh tests/t1 
 
-INCLUDES = -I/usr/local/include
+INCLUDES = -I/usr/local/include -Ithird_party/argtable3
 
 HUFF_CPP_FLAGS = -Ibitstream -Ihuff
 
@@ -93,15 +93,16 @@ huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 bitstream/bitstream.h bitstream/varint.h \
 messageformat.h messageemitterline.h pkt2receiver-check.h \
 handler-fcm-config.h fcm-writer.h \
-fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h
+fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h \
+third_party/argtable3/argtable3.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
 	bitstream/bitstream.cpp
 
-common_src =
+common_src = third_party/argtable3/argtable3.c
 
-commonlibs = -L/usr/local/lib/ -lpthread -ldl -largtable2 -L/usr/local/lib
+commonlibs = -L/usr/local/lib/ -lpthread -ldl -L/usr/local/lib
 
 #
 #	pkt2
@@ -243,7 +244,7 @@ handlerlmdb_SOURCES = \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
 	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
 	$(common_src)
-handlerlmdb_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg $(SNMPLIBS)
+handlerlmdb_LDADD = -lprotobuf -lglog -llmdb -lnanomsg $(SNMPLIBS)
 handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
@@ -258,7 +259,7 @@ handlerline_SOURCES = \
 	messageformat.cpp \
 	$(common_src)
 
-handlerline_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg $(SNMPLIBS)
+handlerline_LDADD = -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
 handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
@@ -273,7 +274,7 @@ handler_google_sheets_SOURCES = \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_google_sheets_LDADD = -lprotobuf -largtable2 -lglog -llmdb -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS)
+handler_google_sheets_LDADD = -lprotobuf -lglog -llmdb -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS)
 handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
@@ -289,7 +290,7 @@ handler_fcm_SOURCES = \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_fcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
+handler_fcm_LDADD = -lprotobuf -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
 handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON -I/usr/include/postgresql
 
 #
@@ -304,7 +305,7 @@ pkt2dumpfcm_SOURCES = \
 	helper_fcm.cpp \
 	$(common_src)
 
-pkt2dumpfcm_LDADD = -lprotobuf -largtable2 -lglog -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS) -lpq
+pkt2dumpfcm_LDADD = -lprotobuf -lglog -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS) -lpq
 pkt2dumpfcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql
 
 #

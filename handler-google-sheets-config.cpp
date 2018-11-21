@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <argtable2.h>
+#include <argtable3.h>
 #include "utilstring.h"
 #include "errorcodes.h"
 

@@ -2,7 +2,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <argtable2.h>
+#include <argtable3.h>
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_QUEUE_IN                "ipc:///tmp/packet.pkt2"

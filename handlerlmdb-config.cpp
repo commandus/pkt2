@@ -1,7 +1,7 @@
 #include "handlerlmdb-config.h"
 #include <limits.h>
 #include <stdlib.h>
-#include <argtable2.h>
+#include <argtable3.h>
 
 #include "errorcodes.h"
 

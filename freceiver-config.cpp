@@ -3,7 +3,7 @@
 #include <limits.h>
 #include <cstring>
 #include <stdlib.h>
-#include <argtable2.h>
+#include <argtable3.h>
 
 #define DEF_QUEUE                "ipc:///tmp/packet.pkt2"
 #define DEF_BUFFER_SIZE          4096

@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <argtable2.h>
+#include <argtable3.h>
 
 #include <nanomsg/nn.h>
 #include <nanomsg/bus.h>

@@ -1,7 +1,7 @@
 #include "pkt2gateway-config.h"
 #include <limits.h>
 #include <stdlib.h>
-#include <argtable2.h>
+#include <argtable3.h>
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_MODE                                "raw"
