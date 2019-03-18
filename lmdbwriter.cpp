@@ -36,7 +36,28 @@ typedef struct dbenv {
 	MDB_dbi dbi;
 	MDB_txn *txn;
 	MDB_cursor *cursor;
+
+	// for re-init
+	std::string path;
+	int flags;
+	int mode;
+	int queue;
 } dbenv;
+
+/**
+ * @brief Close LMDB database file
+ * @param config pass path, flags, file open mode
+ * @return true- success
+ */
+bool close_lmdb
+(
+	struct dbenv *env
+)
+{
+	mdb_close(env->env, env->dbi);
+	mdb_env_close(env->env);
+	return true;
+}
 
 /**
  * @brief Opens LMDB database file
@@ -46,8 +67,7 @@ typedef struct dbenv {
  */
 bool open_lmdb
 (
-	struct dbenv *env,
-	Config *config
+	struct dbenv *env
 )
 {
 	int rc = mdb_env_create(&env->env);
@@ -58,10 +78,10 @@ bool open_lmdb
 		return false;
 	}
 
-	rc = mdb_env_open(env->env, config->path.c_str(), config->flags, config->mode);
+	rc = mdb_env_open(env->env, env->path.c_str(), env->flags, env->mode);
 	if (rc)
 	{
-		LOG(ERROR) << "mdb_env_open path: " << config->path.c_str() << " error " << rc << " " << mdb_strerror(rc);
+		LOG(ERROR) << "mdb_env_open path: " << env->path.c_str() << " error " << rc << " " << mdb_strerror(rc);
 		env->env = NULL;
 		return false;
 	}
@@ -88,19 +108,51 @@ bool open_lmdb
 	return rc == 0;
 }
 
-/**
- * @brief Close LMDB database file
- * @param config pass path, flags, file open mode
- * @return true- success
- */
-bool close_lmdb
+static int processMapFull
 (
-	struct dbenv *env
+	dbenv *env
 )
 {
-	mdb_close(env->env, env->dbi);
+	mdb_txn_abort(env->txn);
+	struct MDB_envinfo current_info;
+	int r = mdb_env_info(env->env, &current_info);
+	if (r)
+	{
+		LOG(ERROR) << "map full, mdb_env_info error " << r << ": " << mdb_strerror(r) << std::endl;
+		return r;
+	}
+	if (!close_lmdb(env))
+	{
+		LOG(ERROR) << "map full, error close database " << std::endl;
+		return ERRCODE_LMDB_CLOSE;
+	}
+	size_t new_size = current_info.me_mapsize * 2;
+	LOG(INFO) << "map full, doubling map size from " << current_info.me_mapsize << " to " << new_size << " bytes" << std::endl;
+
+	r = mdb_env_create(&env->env);
+	if (r)
+	{
+		LOG(ERROR) << "map full, mdb_env_create error " << r << ": " << mdb_strerror(r) << std::endl;
+		env->env = NULL;
+		return ERRCODE_LMDB_OPEN;
+	}
+	r = mdb_env_set_mapsize(env->env, new_size);
+	if (r)
+		LOG(ERROR) << "map full, mdb_env_set_mapsize error " << r << ": " << mdb_strerror(r) << std::endl;
+	r = mdb_env_open(env->env, env->path.c_str(), env->flags, env->mode);
 	mdb_env_close(env->env);
-	return true;
+	
+	if (!open_lmdb(env))
+	{
+		LOG(ERROR) << "map full, error re-open database" << std::endl;
+		return r;
+	}
+
+	// start transaction
+	r = mdb_txn_begin(env->env, NULL, 0, &env->txn);
+	if (r)
+		LOG(ERROR) << "map full, begin transaction error " << r << ": " << mdb_strerror(r) << std::endl;
+	return r;
 }
 
 /**
@@ -141,17 +193,37 @@ int put_db
 	data.mv_data = buffer;
 
 	r = mdb_put(env->txn, env->dbi, &key, &data, 0);
+	
+	if (r)
 	{
-		LOG(ERROR) << ERR_LMDB_PUT << r;
-		return ERRCODE_LMDB_PUT;
+		if (r == MDB_MAP_FULL) 
+		{
+			r = processMapFull(env);
+			if (r == 0)
+				r = mdb_put(env->txn, env->dbi, &key, &data, 0);
+		}
+		if (r)
+		{
+			mdb_txn_abort(env->txn);
+			LOG(ERROR) << ERR_LMDB_PUT << r << ": " << mdb_strerror(r) << std::endl;
+			return ERRCODE_LMDB_PUT;
+		}
 	}
 
 	r = mdb_txn_commit(env->txn);
 	if (r)
 	{
-		LOG(ERROR) << ERR_LMDB_TXN_COMMIT << r;
-		return ERRCODE_LMDB_TXN_COMMIT;
+		if (r == MDB_MAP_FULL) 
+		{
+			r = processMapFull(env);
+		}
+		if (r)
+		{
+			LOG(ERROR) << ERR_LMDB_TXN_COMMIT << r << ": " << mdb_strerror(r) << std::endl;
+			return ERRCODE_LMDB_TXN_COMMIT;
+		}
 	}
+	
 	return r;
 }
 
@@ -186,8 +258,12 @@ START:
 	}
 
 	struct dbenv env;
+	env.path = config->path;
+	env.flags = config->flags;
+	env.mode = config->mode;
+	env.queue = 0;
 
-	if (!open_lmdb(&env, config))
+	if (!open_lmdb(&env))
 	{
 		LOG(ERROR) << ERR_LMDB_OPEN << config->path;
 		return ERRCODE_LMDB_OPEN;
