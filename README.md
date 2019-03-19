@@ -2072,7 +2072,8 @@ docker ps -a
 docker commit stoic_ramanujan
 docker images
 docker tag c30cb68a6443 centos:nova
-
+# удалить закрытье контейнеры
+docker rm $(docker ps -qa --no-trunc --filter "status=exited")
 ```
 
 ### Запуск в nova.ysn.ru
