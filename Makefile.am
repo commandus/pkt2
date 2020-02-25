@@ -55,7 +55,8 @@ bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransm
 	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
 	handlerpq handlerline handlerlmdb handler-google-sheets handler-fcm \
 	pkt2receiver-check \
-	pkt2dumppq pkt2dumpfcm repeator freceiver
+	pkt2dumppq pkt2dumpfcm repeator freceiver \
+	pkt2js
 
 #
 #	Headers
@@ -94,7 +95,8 @@ bitstream/bitstream.h bitstream/varint.h \
 messageformat.h messageemitterline.h pkt2receiver-check.h \
 handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h \
-third_party/argtable3/argtable3.h
+third_party/argtable3/argtable3.h \
+pkt2js-config.h pkt2js-impl.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -274,7 +276,7 @@ handler_google_sheets_SOURCES = \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_google_sheets_LDADD = -lprotobuf -lglog -llmdb -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS)
+handler_google_sheets_LDADD = -lprotobuf -lglog -llmdb -lnanomsg -lcurl $(SNMPLIBS) -L/usr/local/lib -lssl -lcrypto 
 handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
@@ -419,6 +421,21 @@ repeator_SOURCES = \
 
 repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
+
+#
+# pkt2js
+#
+pkt2js_SOURCES = \
+	pkt2js.cpp  pkt2js-config.cpp pkt2js-impl.cpp input-packet.cpp \
+	daemonize.cpp pbjson.cpp utilfile.cpp errorcodes.cpp \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
+	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
+	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
+	javascript-context.cpp \
+	$(common_src)
+
+pkt2js_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
+pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 
 #
 # Configs, readme, CMake etc.

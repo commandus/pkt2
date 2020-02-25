@@ -13,6 +13,7 @@
 #include <google/protobuf/io/printer.h>
 #include <google/protobuf/stubs/stl_util.h>
 
+#include "platform.h"
 #include "utilstring.h"
 
 #include "pkt2.pb.h"
@@ -453,7 +454,7 @@ bool Pkt2CodeGenerator::generateSQL(
 	std::string* error
 ) const
 {
-	google::protobuf::scoped_ptr<google::protobuf::io::ZeroCopyOutputStream> output(context->Open(file->name() + ".sql"));
+	google::protobuf::scoped_ptr <google::protobuf::io::ZeroCopyOutputStream> output(context->Open(file->name() + ".sql"));
 	google::protobuf::io::Printer printer(output.get(), '$');
 
 	std::map<const google::protobuf::Descriptor*, messagetypes*> repeatedmessages;
@@ -600,7 +601,6 @@ bool Pkt2CodeGenerator::generateOptions(
 	}
 	return true;
 }
-
 
 bool Pkt2CodeGenerator::Generate(
 		const google::protobuf::FileDescriptor* file,
