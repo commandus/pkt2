@@ -60,33 +60,33 @@ int pkt2js(Config *config)
 	config->session_id = 0;
 	config->count_packet_in = 0;
 	config->count_packet_out = 0;
-	START:
+START:
 	config->stop_request = 0;
 
 	// IN socket
 	FILE *fin;
-	if (config->in_url.empty()) {
+	if (config->filenameInput.empty()) {
 		fin = stdin;
 	} else {
-		fin = fopen(config->in_url.c_str(), "r");
+		fin = fopen(config->filenameInput.c_str(), "r");
 	}
-    int eid = fileno(fin);
-    if (eid < 0)
+    int fdin = fileno(fin);
+    if (fdin < 0)
     {
-        LOG(ERROR) << ERR_NN_BIND << config->in_url << " " << errno << ": " << strerror(errno);;
+        LOG(ERROR) << ERR_NN_BIND << config->filenameInput << " " << errno << ": " << strerror(errno);;
 		return ERRCODE_NN_BIND;
     }
 
 	// OUT socket
 	FILE *fout;
-	if (config->out_url.empty()) {
+	if (config->filenameOutput.empty()) {
 		fout = stdout;
 	} else {
-		fout = fopen(config->in_url.c_str(), "r");
+		fout = fopen(config->filenameInput.c_str(), "r");
 	}
-    int eoid = fileno(fout);
-    if (eoid < 0) {
-		LOG(ERROR) << ERR_NN_SOCKET << config->out_url << " " << errno << " " << strerror(errno);
+    int fdout = fileno(fout);
+    if (fdout < 0) {
+		LOG(ERROR) << ERR_NN_SOCKET << config->filenameOutput << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_BIND;
     }
 
@@ -94,115 +94,113 @@ int pkt2js(Config *config)
 	Pkt2OptionsCache options_cache(&declarations);
 	Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
 
-	char *buf = (char *) malloc(config->buffer_size);
+	InputPacket packet('F', config->buffer_size);
+
 	while (!config->stop_request)
 	{
 		config->session_id++;
-		int bytes = read(eid, buf, config->buffer_size);
+		packet.length = read(fdin, packet.data(), config->buffer_size);
+		if (packet.length == 0)
+			break;
+		switch (config->input_mode) {
+		case 1:	// hex
+			if (packet.length) {
+				std::string t((char *) packet.data(), packet.length);
+				t = hex2string(t);
+				packet.length = t.size();
+				memmove(packet.data(), t.c_str(), packet.length);
+			}
+			break;
+		default:	// hex
+			break;
+		}
 
-		// calculate payload size (substract address headers)
-		int payload_size = InputPacket::getPayloadSize(bytes);
-		
 		config->count_packet_in++;
 		
-		if (payload_size < 0) {
+		if (packet.length == 0) {
 			if (errno == EINTR) {
 				LOG(ERROR) << ERR_INTERRUPTED;
 				config->stop_request = true;
 				break;
-			}
-			else
+			} else
 				LOG(ERROR) << ERR_NN_RECV << errno << " " << strerror(errno);
 			continue;
-		}
-		else
-		{
-			if (payload_size == 0) {
-				config->count_packet_out++;
-				LOG(INFO) << MSG_EMPTY_PACKET;
-				continue;
-			}
 		}
 		
 		if (config->allowed_packet_sizes.size())
 		{
-			if (std::find(config->allowed_packet_sizes.begin(), config->allowed_packet_sizes.end(), payload_size) == config->allowed_packet_sizes.end()) {
-				LOG(INFO) << MSG_PACKET_REJECTED << payload_size;
+			if (std::find(config->allowed_packet_sizes.begin(), config->allowed_packet_sizes.end(), packet.length) == config->allowed_packet_sizes.end()) {
+				LOG(INFO) << MSG_PACKET_REJECTED << packet.length;
 				continue;
 			}
 		}
-		if (buf) {
-			InputPacket packet(buf, bytes);
-			
-			if (config->verbosity > 1)
-				LOG(INFO) << MSG_PACKET_HEX << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
 
-			if (packet.error() != 0) {
-				LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
-				continue;
-			}
+		if (config->verbosity > 1)
+			LOG(INFO) << MSG_PACKET_HEX << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
 
-			// packet -> message
-			PacketParseEnvironment packet_env(
-            		(sockaddr *) packet.get_sockaddr_src(),
-					(sockaddr *) packet.get_sockaddr_dst(),
-					std::string((const char *) packet.data(), (size_t) packet.length),
-					&options_cache,
-					config->force_message
-			);
-			google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
-			if (m == NULL)
-			{
-				LOG(ERROR) << ERR_PARSE_PACKET << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
-        		continue;
-			}
-			// send message
-			MessageTypeNAddress messageTypeNAddress(m->GetTypeName());
+		if (packet.error() != 0) {
+			LOG(ERROR) << ERRCODE_PACKET_PARSE << packet.error();
+			continue;
+		}
 
-			std::string outstr;
-			switch (config->mode) {
-				case 1:	// hex
-					outstr = hexString(stringDelimitedMessage(&messageTypeNAddress, *m));
-					break;
-				case 2:	// binary
-					outstr = stringDelimitedMessage(&messageTypeNAddress, *m);
-					break;
-				default:	// hex
-					pbjson::pb2json(m, outstr);
-					break;
-			}
-			
-			int sent = write(eoid, outstr.c_str(), outstr.size());
+		// packet -> message
+		PacketParseEnvironment packet_env(
+				(sockaddr *) packet.get_sockaddr_src(),
+				(sockaddr *) packet.get_sockaddr_dst(),
+				std::string((const char *) packet.data(), (size_t) packet.length),
+				&options_cache,
+				config->force_message
+		);
+		google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
+		if (m == NULL)
+		{
+			LOG(ERROR) << ERR_PARSE_PACKET << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
+			continue;
+		}
+		// send message
+		MessageTypeNAddress messageTypeNAddress(m->GetTypeName());
 
-			if (sent < 0) {
-				LOG(ERROR) << ERR_NN_SEND << sent;
+		std::string outstr;
+		switch (config->output_mode) {
+			case 1:	// hex
+				outstr = hexString(stringDelimitedMessage(&messageTypeNAddress, *m));
+				break;
+			case 2:	// binary
+				outstr = stringDelimitedMessage(&messageTypeNAddress, *m);
+				break;
+			default:	// hex
+				pbjson::pb2json(m, outstr);
+				break;
+		}
+		
+		int sent = write(fdout, outstr.c_str(), outstr.size());
+
+		if (sent < 0) {
+			LOG(ERROR) << ERR_NN_SEND << sent;
+		}
+		else {
+			config->count_packet_out++;
+			if (config->verbosity >= 1) {
+				std::string s;
+				pbjson::pb2json(m, s);
+				LOG(INFO) << MSG_SENT << sent << " " 
+					<< hexString(outstr) 
+					<< std::endl 
+					<< s;
 			}
-			else {
-				config->count_packet_out++;
-				if (config->verbosity >= 1) {
-					std::string s;
-					pbjson::pb2json(m, s);
-					LOG(INFO) << MSG_SENT << sent << " " 
-						<< hexString(outstr) 
-						<< std::endl 
-						<< s;
-				}
-			}
-        }
+		}
 	}
 
-	free(buf);
-
-	if (eoid) {
+	if (fdout) {
 		fclose(fout);
 		fout = NULL;
-		eoid = 0;
+		fdout = 0;
 	}
 
-	if (eid) {
+	if (fdin) {
 		fclose(fin);
 		fin = NULL;
-		eid = 0;
+		fdin = 0;
 	}
 
 	if (config->stop_request == 2)

@@ -6,9 +6,6 @@
 #include "errorcodes.h"
 
 #define DEF_PROTO_PATH				"proto"
-#define DEF_IN_QUEUE				"ipc:///tmp/packet.pkt2"
-#define DEF_OUT_QUEUE				"ipc:///tmp/message.pkt2"
-#define DEF_DUMP_QUEUE				"ipc:///tmp/dump.pkt2"
 #define DEF_BUFFER_SIZE 	         4096
 
 /**
@@ -48,14 +45,15 @@ int Config::parseCmd
 	char* argv[]
 )
 {
-	struct arg_str *a_in_url = arg_str0("i", "input", "<queue url>", "Default " DEF_IN_QUEUE);
-	struct arg_str *a_out_url = arg_str0("o", "output", "<queue url>", "Default " DEF_OUT_QUEUE);
-	struct arg_str *a_mode = arg_str0(NULL, "mode", "<json|hex|bin>", "Default json");
+	struct arg_str *a_in_url = arg_str0("i", "input", "<file>", "Default stdin" );
+	struct arg_str *a_out_url = arg_str0("o", "output", "<file>", "Default stdout");
+	struct arg_str *a_mode = arg_str0("m", "output_mode", "<mode>", "Output mode: json(default), hex, bin.");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
-	struct arg_str *a_force_message = arg_str0(NULL, "message", "<packet.message>", "force message");
+	struct arg_str *a_force_message = arg_str0("f", "message", "<name>", "force packet.message");
 	struct arg_int *a_allowed_packet_sizes = arg_intn("a", "allow", "<size>", 0, 128, "Allowed payload packet size. Default any.");
 
+	struct arg_lit *a_input_hex = arg_lit0("x", "hex", "Input hex string, Default binary.");
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Default 4096 bytes");
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
@@ -69,7 +67,7 @@ int Config::parseCmd
 	void* argtable[] = { 
 		a_in_url, a_out_url, a_mode,
 		a_proto_path, a_force_message, a_allowed_packet_sizes,
-		a_buffer_size,
+		a_input_hex, a_buffer_size,
 		a_retries, a_retry_delay, a_max_fd, 
 		a_daemonize, a_verbosity,
 		a_help, a_end 
@@ -96,30 +94,36 @@ int Config::parseCmd
 		printf("%s\n", PROGRAM_DESCRIPTION);
 		arg_print_glossary(stdout, argtable, "  %-25s %s\n");
 		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-		return ERRCODE_COMMAND;
+		if (a_help->count)
+			return ERRCODE_HELP_REQUESTED;
+		else
+			return ERRCODE_COMMAND;
 	}
 
 	if (a_in_url->count)
-		in_url = *a_in_url->sval;
+		filenameInput = *a_in_url->sval;
 	else
-		in_url = DEF_IN_QUEUE;
+		filenameInput = "";	// means stdin
 	if (a_out_url->count)
-		out_url = *a_out_url->sval;
+		filenameOutput = *a_out_url->sval;
 	else
-		out_url = DEF_OUT_QUEUE;
-	mode = 0;
+		filenameOutput = "";	// means stdout
+	output_mode = 0;
 	if (a_mode->count) {
 		char m = **a_mode->sval;
 		switch (m) {
 		case 'h': // hex
-			mode = 1;
+			output_mode = 1;
 			break;
 		case 'b': // binary
-			mode = 2;
+			output_mode = 2;
 			break;
 		case 'j': // json
 			break;
 		} 
+	}
+	if (a_input_hex->count) {
+		input_mode = 1;
 	}
 
 	if (a_proto_path->count)
@@ -151,8 +155,7 @@ int Config::parseCmd
 	else
 			retry_delay = 60;
 
-	for (int i = 0; i < a_allowed_packet_sizes->count; i++)
-	{
+	for (int i = 0; i < a_allowed_packet_sizes->count; i++) {
 		allowed_packet_sizes.push_back(a_allowed_packet_sizes->ival[i]);
 	}
 	

@@ -47,3 +47,53 @@
 	sleep(timeout); // wait for connections
 
 #endif
+
+
+// A macro to disallow operator=
+// This should be used in the private: declarations for a class.
+#define GTEST_DISALLOW_ASSIGN_(type)\
+  void operator=(type const &)
+
+// A macro to disallow copy constructor and operator=
+// This should be used in the private: declarations for a class.
+#define GTEST_DISALLOW_COPY_AND_ASSIGN_(type)\
+  type(type const &);\
+  GTEST_DISALLOW_ASSIGN_(type)
+
+namespace google::protobuf {
+	template <typename T>
+	class scoped_ptr {
+	public:
+	typedef T element_type;
+
+	explicit scoped_ptr(T* p = NULL) : ptr_(p) {}
+	~scoped_ptr() { reset(); }
+
+	T& operator*() const { return *ptr_; }
+	T* operator->() const { return ptr_; }
+	T* get() const { return ptr_; }
+
+	T* release() {
+		T* const ptr = ptr_;
+		ptr_ = NULL;
+		return ptr;
+	}
+
+	void reset(T* p = NULL) {
+		if (p != ptr_) {
+		delete ptr_;
+		ptr_ = p;
+		}
+	}
+
+	friend void swap(scoped_ptr& a, scoped_ptr& b) {
+		using std::swap;
+		swap(a.ptr_, b.ptr_);
+	}
+
+	private:
+	T* ptr_;
+
+	GTEST_DISALLOW_COPY_AND_ASSIGN_(scoped_ptr);
+	};
+}

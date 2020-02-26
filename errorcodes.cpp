@@ -110,6 +110,8 @@ std:: string getErrorDescription(int code)
 			return ERR_EXEC;
 		case ERRCODE_CONFIG:
 			return ERR_CONFIG;
+		case ERRCODE_HELP_REQUESTED:
+			return ERR_HELP_REQUESTED;
 		default:
 			return "";
 	}

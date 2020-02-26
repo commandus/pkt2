@@ -48,16 +48,16 @@ void signalHandler(int signal)
 	switch(signal)
 	{
 	case SIGINT:
-		std::cerr << MSG_INTERRUPTED;
+		std::cerr << MSG_INTERRUPTED << std::endl;
 		stopNWait();
 		done();
 		break;
 	case SIGHUP:
-		std::cerr << MSG_RELOAD_CONFIG_REQUEST;
+		std::cerr << MSG_RELOAD_CONFIG_REQUEST << std::endl;
 		reload(config);
 		break;
 	default:
-		std::cerr << MSG_SIGNAL << signal;
+		std::cerr << MSG_SIGNAL << signal << std::endl;
 	}
 }
 
@@ -78,19 +78,21 @@ int main
     // Signal handler
     setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
+
     reslt = 0;
 
 	config = new Config(argc, argv);
 	if (!config)
 		exit(ERRCODE_PARSE_COMMAND);
-    if (config->error() != 0)
-	{
-		LOG(ERROR) << ERR_COMMAND;
-		exit(ERRCODE_COMMAND);
-	}
 
     INIT_LOGGING(PROGRAM_NAME)
 
+    if (config->error() != 0)
+	{
+		if (config->error() != ERRCODE_HELP_REQUESTED)
+			LOG(ERROR) << ERR_COMMAND;
+		exit(ERRCODE_COMMAND);
+	}
 	if (config->daemonize)
 	{
 		LOG(INFO) << MSG_DAEMONIZE;
