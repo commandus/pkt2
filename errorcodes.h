@@ -111,6 +111,7 @@
 
 #define ERRCODE_NO_NOBILE_SUBSCRIBERS			-60
 #define ERRCODE_FIREBASE_WRITE					-61
+#define ERRCODE_HELP_REQUESTED					-62
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -183,6 +184,7 @@
 
 #define ERR_NO_NOBILE_SUBSCRIBERS				"No mobile users found to receive notification"
 #define ERR_FIREBASE_WRITE						"Error send to FireBase Cloud Messaging(FCM)" 
+#define ERR_HELP_REQUESTED						"Help requested " 
 
 std:: string getErrorDescription(int code);
 
