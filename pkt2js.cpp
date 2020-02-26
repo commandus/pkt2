@@ -75,8 +75,14 @@ int main
     char *argv[]
 )
 {
+	// TODO
     // Signal handler
-    setSignalHandler(SIGINT);
+	// terminate called after throwing an instance of 'std::length_error'
+	// what():  basic_string::_M_create
+	// *** Aborted at 1582687385 (unix time) try "date -d @1582687385" if you are using GNU date ***
+	// PC: @     0x7f77a1ff6428 gsignal
+	// *** SIGABRT (@0x3e80000183c) received by PID 6204 (TID 0x7f77a3521740) from PID 6204; stack trace: ***
+    // setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
 
     reslt = 0;

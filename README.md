@@ -3,6 +3,7 @@ pkt2
 
 # История изменений
 
+2020/02/26 добавлена утилита pkt2js
 2018/03/06 добавлены дампер pkt2dumpfcm и обработчик handler-fcm
 2018/01/10 добавлены пример записываемых данных в PostgreSQL, опция --bind для repeator
 2017/10/03 добавлено описание опций сжатия tcpreceiver
@@ -780,6 +781,25 @@ dnTVve-KAxg:APA91bEzNLT62cYeYYGot8bpumY9iMMEUavG8LGjbrbnE50F55h3A8owZ3snYQa8ns1X
 nohup ./pkt2dumpfcm --user imz --database iridium --password LC50vbHc --host pgsql.ysn.ru &
 ```
 
+### pkt2js
+
+Программа pkt2js читает входной файл(по умолчанию stdin), пытается найти описание пакета в папке файлов описаний (по умолчанию proto)
+и записывает JSON файл (по уvолчанию в stdout)
+
+Опции
+
+- -x входные данные не бинарные, а в виде шестнадцатиричной строки
+- -m json, hex, bin - выъодной формат (JSON, Protobuf- binary, hex string)
+- -p каталог proto
+
+Пример:
+
+```
+cat si13.hex 
+01ff0c000000001e00000034000000120000000000000000
+cat si13.hex | ./pkt2js  -x
+{"temperature":30,"counter1":872415232,"counter2":301989888}
+```
 
 ## Диаграмма обработки
 
@@ -865,6 +885,7 @@ pkt2receiver делает bind() сокетов шины контроля(лог
 - handlerpq				помещение сообщений в базу данных PostgreSQL
 - handler-google-sheets	помещение сообщений в электронную таблицу Google Sheets
 - handlerfcm			отправка уведомлений в FireBase Cloud Messaging
+- pkt2js                читает пакет из файла, находит proto описание и выдает JSON файл или protobuf данные(бинарные или в шестнадцатиричном виде)
 
 #### Сокеты по отношению к шине
 
