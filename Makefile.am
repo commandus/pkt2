@@ -96,7 +96,7 @@ messageformat.h messageemitterline.h pkt2receiver-check.h \
 handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h \
 third_party/argtable3/argtable3.h \
-pkt2js-config.h pkt2js-impl.h
+pkt2js-config.h pkt2js-impl.h str-pkt2.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -422,20 +422,42 @@ repeator_SOURCES = \
 repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
-#
-# pkt2js
-#
-pkt2js_SOURCES = \
-	pkt2js.cpp  pkt2js-config.cpp pkt2js-impl.cpp input-packet.cpp \
-	daemonize.cpp pbjson.cpp utilfile.cpp errorcodes.cpp \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
+PKT2LIBSRC = \
+	input-packet.cpp \
+	pbjson.cpp utilfile.cpp errorcodes.cpp \
+	utilpriority.cpp  utilstring.cpp utilinet.cpp error-printer.cpp \
 	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
 	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
 	javascript-context.cpp \
 	$(common_src)
 
+#
+# pkt2js
+#
+pkt2js_SOURCES = \
+	pkt2js.cpp  pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp str-pkt2.cpp \
+	messageformat.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp $(PKT2LIBSRC)
+
 pkt2js_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+
+#
+#	Static library
+#
+lib_LIBRARIES = libpkt2.a
+libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
+libpkt2_a_CPPFLAGS = -D LIB_PBJSON
+
+#libpkt2_a_LDFLAGS = libpkt2.a
+#libpkt2_a_CPPFLAGS = -I.
+
+#
+#	Shared library
+#
+#lib_LTLIBRARIES = libpkt2.la
+#libpkt2_la_SOURCES = $(common_src)
+#libpkt2_la_LDFLAGS = libpkt2.a
+#libpkt2_la_CPPFLAGS = -I.
 
 #
 # Configs, readme, CMake etc.

@@ -47,7 +47,7 @@ int Config::parseCmd
 {
 	struct arg_str *a_in_url = arg_str0("i", "input", "<file>", "Default stdin" );
 	struct arg_str *a_out_url = arg_str0("o", "output", "<file>", "Default stdout");
-	struct arg_str *a_mode = arg_str0("m", "output_mode", "<mode>", "Output mode: json(default), hex, bin.");
+	struct arg_str *a_mode = arg_str0("m", "output_mode", "<mode>", "Output mode: json(default), csv, tab, sql, Sql, pbtext, dbg, hex, bin");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 	struct arg_str *a_force_message = arg_str0("f", "message", "<name>", "force packet.message");
@@ -112,13 +112,32 @@ int Config::parseCmd
 	if (a_mode->count) {
 		char m = **a_mode->sval;
 		switch (m) {
-		case 'h': // hex
+		case 'j': // json
+			output_mode = 0;
+			break;
+		case 'c': // csv
 			output_mode = 1;
 			break;
-		case 'b': // binary
+		case 't': // tab
 			output_mode = 2;
 			break;
-		case 'j': // json
+		case 's': // sql
+			output_mode = 3;
+			break;
+		case 'S': // sql2
+			output_mode = 4;
+			break;
+		case 'p': // pbtext
+			output_mode = 5;
+			break;
+		case 'd': // dbg
+			output_mode = 6;
+			break;
+		case 'h': // hex
+			output_mode = 7;
+			break;
+		case 'b': // bin
+			output_mode = 8;
 			break;
 		} 
 	}

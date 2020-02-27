@@ -53,7 +53,7 @@ void addFieldValueString
 }
 
 /**
- * @brief Print packet to the stdout as CSV
+ * @brief Print packet to the stdout as JSON
  * @return 0
  */
 int put_json

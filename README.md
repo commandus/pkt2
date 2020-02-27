@@ -789,7 +789,7 @@ nohup ./pkt2dumpfcm --user imz --database iridium --password LC50vbHc --host pgs
 Опции
 
 - -x входные данные не бинарные, а в виде шестнадцатиричной строки
-- -m json, hex, bin - выъодной формат (JSON, Protobuf- binary, hex string)
+- -m FMT - выходной формат FMT: json(по умолчанию), csv, tab, sql, Sql, pbtext, dbg, hex, bin)
 - -p каталог proto
 
 Пример:
