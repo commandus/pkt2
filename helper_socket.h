@@ -34,7 +34,7 @@ int get_addr_info
 	hints.ai_flags = AI_PASSIVE;
 
 	// Fill the res data structure and make sure that the results make sense.
-	int status = getaddrinfo(host.c_str(), toString(port).c_str(), &hints, res);
+	int status = getaddrinfo(host.c_str(), pkt2utilstring::toString(port).c_str(), &hints, res);
 	if (status != 0)
 	{
 		std::cerr << ERR_GET_ADDRINFO << gai_strerror(status);

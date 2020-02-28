@@ -623,7 +623,7 @@ size_t loadCodeMap
 		std::string::iterator new_end = std::unique(line.begin(), line.end(), BothAreSpaces);
 		line.erase(new_end, line.end());
 
-		std::vector<std::string> t = split(line, ' ');
+		std::vector<std::string> t = pkt2utilstring::split(line, ' ');
 		if (t.size() < 2)
 			continue;
 		uint64_t symbol = strtod(t[0].c_str(), NULL);

@@ -8,6 +8,8 @@
 #include <stdint.h>
 #include <sys/socket.h>
 
+namespace pkt2utilstring {
+
 // trim from start
 std::string &ltrim(std::string &s);
 
@@ -83,5 +85,6 @@ std::string hexString(const std::string &data);
 std::string hex2string(const std::string &hex);
 
 std::string arg2String(int argc, char *argv[]);
+}
 
 #endif

@@ -2,7 +2,10 @@
   *	utilpriority.h
   *	\sa	V:\_Шал\Program_заготовки\shm_splc2s_sec\shm_splc2s_sec.c main.c
   */
+#ifndef UTIL_PRIORITY_H
+#define UTIL_PRIORITY_H     1
 
+namespace pkt2utilpriority {
 /**
   *	Set current process priority
   *	\param [in]	priority	-20..20, maximum- -20
@@ -20,3 +23,6 @@ int setPriority(
 );
 
 int setMaxPriority(int dive);
+
+}
+#endif

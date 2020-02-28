@@ -16,9 +16,12 @@ enum IPADDRRANGE
 	IR_IPV4 = 0,
 	IR_IPV4_BROADCAST = 1
 };
+
+namespace pkt2utilinet {
 /**
  * Return list of interface IPv4 addresses
  */
 std::map<std::string, std::string> getIP4Addresses(enum IPADDRRANGE range);
+}
 
 #endif /* UTILINET_H_ */
