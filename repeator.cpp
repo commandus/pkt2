@@ -162,7 +162,7 @@ START:
 		}
 		if (config->verbosity >= 2)
 		{
-			LOG(INFO) << MSG_RECEIVED << bytes << ": " << hexString(buffer, bytes) ;
+			LOG(INFO) << MSG_RECEIVED << bytes << ": " << pkt2utilstring::hexString(buffer, bytes) ;
 		}
 		for (int i = 0; i < eids.size(); i++)
 		{

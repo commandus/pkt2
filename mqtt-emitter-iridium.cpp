@@ -341,7 +341,7 @@ int main(int argc, char **argv)
 			std::cerr << std::setw(6) << count;
 			if (verbosity >= 2)
 			{
-				std::cerr << " " << hexString(&pkt, sizeof(IRIDIUM_PAYLOAD_8));
+				std::cerr << " " << pkt2utilstring::hexString(&pkt, sizeof(IRIDIUM_PAYLOAD_8));
 			}
 			std::cerr << std::endl;
 		}

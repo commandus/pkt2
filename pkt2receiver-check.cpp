@@ -181,11 +181,11 @@ int run
     	}
 		if (config->verbosity >= 2)
 		{
-			LOG(INFO) << MSG_RECEIVED << bytes << ": " << hexString(buffer, bytes) ;
+			LOG(INFO) << MSG_RECEIVED << bytes << ": " << pkt2utilstring::hexString(buffer, bytes) ;
 		}
 		std::string s((char *)buffer, bytes);
 
-		std::vector<std::string> r = split(s, '\t');
+		std::vector<std::string> r = pkt2utilstring::split(s, '\t');
 		if (r.size() >= 5)
 		{
 			uint64_t session_id = atoll(r[0].c_str());

@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-std::string ipv4ToString(struct in_addr value)
+static std::string ipv4ToString(struct in_addr value)
 {
     char address[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &value, address, INET_ADDRSTRLEN);
@@ -17,7 +17,7 @@ std::string ipv4ToString(struct in_addr value)
 /**
  * Return list of interface IPv4 addresses
  */
-std::map<std::string, std::string> getIP4Addresses(enum IPADDRRANGE range)
+std::map<std::string, std::string> pkt2utilinet::getIP4Addresses(enum IPADDRRANGE range)
 {
 	std::map<std::string, std::string> r;
 	struct ifaddrs *ifAddrStruct;

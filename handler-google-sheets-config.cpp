@@ -32,7 +32,7 @@ void ontokenbearer
 	Config *config = (Config *) env;
 	if (status == 0)
 	{
-		string2file(config->token_file, value);
+		pkt2utilstring::string2file(config->token_file, value);
 		std::cerr << "New token bearer: " << value << " saved in " << config->token_file << std::endl;
 	}
 	else
@@ -55,7 +55,7 @@ Config::Config
 		return;
 	}
 	
-	std::string json_google_service = file2string(json);
+	std::string json_google_service = pkt2utilstring::file2string(json);
 
 	std::string pub_email;
 	readGoogleTokenJSON(json_google_service, service_account, pemkey, pub_email);
@@ -69,7 +69,7 @@ Config::Config
 	if (subject_email.empty())
 		subject_email = pub_email;
 
-	std::string last_token = file2string(token_file);
+	std::string last_token = pkt2utilstring::file2string(token_file);
 	google_sheets = new GoogleSheets(
 		spreadsheet,
 		last_token,

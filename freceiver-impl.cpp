@@ -209,11 +209,11 @@ START:
 		{
 			if (config->verbosity >= 1)
 			{
-				LOG(INFO) << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size);
+				LOG(INFO) << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << pkt2utilstring::hexString(packet.get(), packet.size);
 				if (config->verbosity >= 2)
 				{
-					std::cerr << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << hexString(packet.get(), packet.size)
-					<< " payload: " << hexString(packet.data(), packet.length) << " bytes: " << packet.length
+					std::cerr << MSG_NN_SENT_SUCCESS << config->message_url << " data: " << bytes << " bytes: " << pkt2utilstring::hexString(packet.get(), packet.size)
+					<< " payload: " << pkt2utilstring::hexString(packet.data(), packet.length) << " bytes: " << packet.length
 					<< std::endl;
 				}
 			}

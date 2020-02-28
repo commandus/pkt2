@@ -50,14 +50,10 @@ CLEANFILES = $(gengrpcs)
 #
 #	Binaries
 #
-bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter \
-	tcpemitter messageemitter \
-	protoc-gen-pkt2 \
-	message2gateway example1message example1message1 \
-	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium \
-	handlerpq handlerline handlerlmdb handler-google-sheets handler-fcm \
-	pkt2receiver-check \
-	pkt2dumppq pkt2dumpfcm repeator freceiver \
+
+bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter protoc-gen-pkt2 \
+	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq \
+	handlerline handlerlmdb handler-google-sheets handler-fcm pkt2receiver-check pkt2dumppq pkt2dumpfcm repeator freceiver \
 	pkt2js
 
 #

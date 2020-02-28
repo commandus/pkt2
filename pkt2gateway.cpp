@@ -72,12 +72,12 @@ std::string readPacket
 		if (config->file_name.empty())
 		{
 			// read from stdin
-			packet = file2string(std::cin);
+			packet = pkt2utilstring::file2string(std::cin);
 		}
 		else
 		{
 			// read from file
-			packet = file2string(config->file_name);
+			packet = pkt2utilstring::file2string(config->file_name);
 		}
 	}
 	else
@@ -86,7 +86,7 @@ std::string readPacket
 		packet = config->packet;
 	}
 	if (config->mode == MODE_HEX)
-		packet = hex2string(packet);
+		packet = pkt2utilstring::hex2string(packet);
 	return packet;
 }
 
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
 
     if (config->verbosity >= 2)
     {
-    	std::cerr << MSG_PACKET_HEX << hexString(packet) << std::endl;
+    	std::cerr << MSG_PACKET_HEX << pkt2utilstring::hexString(packet) << std::endl;
     }
 
 	// open socket to write
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 		{
 			if (config->verbosity >= 1)
 			{
-				LOG(INFO) << MSG_SENT << sent << " " << hexString(outstr);
+				LOG(INFO) << MSG_SENT << sent << " " << pkt2utilstring::hexString(outstr);
 			}
 		}
 		SLEEP(config->retry_delay);	// BUGBUG Pass 0 for https://github.com/nanomsg/nanomsg/issues/182

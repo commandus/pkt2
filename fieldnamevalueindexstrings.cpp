@@ -111,7 +111,7 @@ void FieldNameValueIndexStrings::toStringInsert
 ) {
 	std::stringstream ss;
 	int sz = values.size();
-	ss << "INSERT INTO " << quote << replace(table, ".", "_") << quote << "(";
+	ss << "INSERT INTO " << quote << pkt2utilstring::replace(table, ".", "_") << quote << "(";
 	for (int i = 0; i < sz; i++)
 	{
 		ss << quote << values[i].field << quote;

@@ -21,7 +21,7 @@
   *			2	error set priority
   *			3	error set RR sheduling
   */
-int setPriority(
+int pkt2utilpriority::setPriority(
 	int priority,
 	int shedulepolicy,
 	int dive
@@ -61,7 +61,7 @@ int setPriority(
 	return 0;
 }
 
-int setMaxPriority(int dive)
+int pkt2utilpriority::setMaxPriority(int dive)
 {
-	return setPriority(dive, -20, SCHED_FIFO);
+	return pkt2utilpriority::setPriority(dive, -20, SCHED_FIFO);
 }

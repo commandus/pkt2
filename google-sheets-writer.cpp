@@ -168,7 +168,7 @@ int run
 		Message *m = readDelimitedMessage(&pd, buffer, bytes, &messageTypeNAddress);
 		if (config->verbosity >= 2)
 		{
-			LOG(INFO) << MSG_RECEIVED << bytes << ": " << hexString(buffer, bytes) ;
+			LOG(INFO) << MSG_RECEIVED << bytes << ": " << pkt2utilstring::hexString(buffer, bytes) ;
 		}
 
 		if (m)
@@ -190,7 +190,7 @@ int run
 			}
     	}
 		else
-			LOG(ERROR) << ERR_DECODE_MESSAGE << " " << hexString(buffer, bytes);
+			LOG(ERROR) << ERR_DECODE_MESSAGE << " " << pkt2utilstring::hexString(buffer, bytes);
     }
 
     free(buffer);

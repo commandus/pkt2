@@ -93,7 +93,7 @@ std::string parsePacket(
 	switch (inputFormat) {
 	case 1:	// hex
 		if (packet.length()) {
-			bdata = hex2string(packet);
+			bdata = pkt2utilstring::hex2string(packet);
 			data = &bdata;
 		}
 		break;
@@ -137,7 +137,7 @@ std::string parsePacket(
 	case 7:	
 		{
 		std::string s(stringDelimitedMessage(&messageTypeNAddress, *m));
-		ss << hexString(s.c_str(), s.size());
+		ss << pkt2utilstring::hexString(s.c_str(), s.size());
 		}
 		break;			
 	case 8:	

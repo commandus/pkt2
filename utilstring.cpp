@@ -16,26 +16,26 @@
 
 /// http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start
-std::string &ltrim(std::string &s) 
+std::string &pkt2utilstring::ltrim(std::string &s) 
 {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
 	return s;
 }
 
 // trim from end
-std::string &rtrim(std::string &s) 
+std::string &pkt2utilstring::rtrim(std::string &s) 
 {
 	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
 	return s;
 }
 
 // trim from both ends
-std::string &trim(std::string &s) 
+std::string &pkt2utilstring::trim(std::string &s) 
 {
 	return ltrim(rtrim(s));
 }
 
-std::string replace(const std::string &str, const std::string &from, const std::string &to)
+std::string pkt2utilstring::replace(const std::string &str, const std::string &from, const std::string &to)
 {
     size_t start_pos = str.find(from);
     if (start_pos == std::string::npos)
@@ -45,14 +45,14 @@ std::string replace(const std::string &str, const std::string &from, const std::
 	return ret;
 }
 
-std::string file2string(std::istream &strm)
+std::string pkt2utilstring::file2string(std::istream &strm)
 {
 	if (!strm)
 		return "";
 	return std::string((std::istreambuf_iterator<char>(strm)), std::istreambuf_iterator<char>());
 }
 
-std::string file2string(const char *filename)
+std::string pkt2utilstring::file2string(const char *filename)
 {
 	if (!filename)
 		return "";
@@ -60,17 +60,17 @@ std::string file2string(const char *filename)
 	return file2string(t);
 }
 
-std::string file2string(const std::string &filename)
+std::string pkt2utilstring::file2string(const std::string &filename)
 {
 	return file2string(filename.c_str());
 }
 
-bool string2file(const std::string &filename, const std::string &value)
+bool pkt2utilstring::string2file(const std::string &filename, const std::string &value)
 {
 	return string2file(filename.c_str(), value);
 }
 
-bool string2file(const char *filename, const std::string &value)
+bool pkt2utilstring::string2file(const char *filename, const std::string &value)
 {
 	if (!filename)
 		return "";
@@ -87,7 +87,7 @@ bool string2file(const char *filename, const std::string &value)
  * Split
  * http://stackoverflow.com/questions/236129/split-a-string-in-c
  */
-void split(const std::string &s, char delim, std::vector<std::string> &elems) {
+static void split3(const std::string &s, char delim, std::vector<std::string> &elems) {
     std::stringstream ss;
     ss.str(s);
     std::string item;
@@ -96,9 +96,9 @@ void split(const std::string &s, char delim, std::vector<std::string> &elems) {
     }
 }
 
-std::vector<std::string> split(const std::string &s, char delim) {
+std::vector<std::string> pkt2utilstring::split(const std::string &s, char delim) {
     std::vector<std::string> elems;
-    split(s, delim, elems);
+    split3(s, delim, elems);
     return elems;
 }
 
@@ -107,7 +107,7 @@ inline bool predicate_num(char c)
 	return !isdigit(c);
 };
 
-std::string doubleToString(const double value)
+std::string pkt2utilstring::doubleToString(const double value)
 {
 	std::stringstream idss;
 	idss.precision(std::numeric_limits<double>::digits10 + 1);
@@ -115,7 +115,7 @@ std::string doubleToString(const double value)
 	return idss.str();
 }
 
-void *get_in_addr
+void *pkt2utilstring::get_in_addr
 (
     struct sockaddr *sa
 )
@@ -125,17 +125,17 @@ void *get_in_addr
 	return &(((struct sockaddr_in6 *)sa)->sin6_addr); 
 }
 
-std::string sockaddrToString
+std::string pkt2utilstring::sockaddrToString
 (
 	struct sockaddr_storage *value
 )
 {
 	char s[INET6_ADDRSTRLEN]; // an empty string 
-	inet_ntop(value->ss_family, get_in_addr((struct sockaddr *) value), s, sizeof(s)); 
+	inet_ntop(value->ss_family, pkt2utilstring::get_in_addr((struct sockaddr *) value), s, sizeof(s)); 
 	return s;
 }
 
-std::string timeToString(time_t value)
+std::string pkt2utilstring::timeToString(time_t value)
 {
 	if (!value)
 		value = std::time(NULL);
@@ -145,7 +145,7 @@ std::string timeToString(time_t value)
 	return std::string(buffer);
 }
 
-std::string spaces(char ch, int count)
+std::string pkt2utilstring::spaces(char ch, int count)
 {
     std::stringstream ss;
     for (int i = 0; i < count; i++) {
@@ -171,7 +171,7 @@ inline HexCharStruct hex(unsigned char c)
         return HexCharStruct(c);
 }
 
-void bufferPrintHex(std::ostream &sout, const void* value, size_t size)
+static void bufferPrintHex(std::ostream &sout, const void* value, size_t size)
 {
 	if (value == NULL)
 		return;
@@ -183,7 +183,7 @@ void bufferPrintHex(std::ostream &sout, const void* value, size_t size)
 	}
 }
 
-std::string hexString(const void *buffer, size_t size)
+std::string pkt2utilstring::hexString(const void *buffer, size_t size)
 {
 	std::stringstream r;
 	bufferPrintHex(r, buffer, size);
@@ -195,12 +195,12 @@ std::string hexString(const void *buffer, size_t size)
  * @param data
  * @return
  */
-std::string hexString(const std::string &data)
+std::string pkt2utilstring::hexString(const std::string &data)
 {
-	return hexString((void *) data.c_str(), data.size());
+	return pkt2utilstring::hexString((void *) data.c_str(), data.size());
 }
 
-std::string readHex(std::istream &s)
+static std::string readHex(std::istream &s)
 {
 	std::stringstream r;
 	s >> std::noskipws;
@@ -215,7 +215,7 @@ std::string readHex(std::istream &s)
 	return r.str();
 }
 
-std::string hex2string(const std::string &hex)
+std::string pkt2utilstring::hex2string(const std::string &hex)
 {
 	std::stringstream ss(hex);
     return readHex(ss);
@@ -226,7 +226,7 @@ std::string hex2string(const std::string &hex)
  * @param hex hex string
  * @return binary data string
  */
-std::string stringFromHex(const std::string &hex)
+std::string pkt2utilstring::stringFromHex(const std::string &hex)
 {
 	std::string r(hex.length() / 2, '\0');
 	std::stringstream ss(hex);
@@ -243,7 +243,7 @@ std::string stringFromHex(const std::string &hex)
 	return r;
 }
 
-std::string arg2String(
+std::string pkt2utilstring::arg2String(
 	int argc, 
 	char *argv[]
 )

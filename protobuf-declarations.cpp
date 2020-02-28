@@ -383,7 +383,7 @@ size_t ProtobufDeclarations::parseProtoPath
 )
 {
 	std::vector<std::string> protoFiles;
-	filesInPath(path, ".proto", 2, &protoFiles);
+	pkt2utilfile::filesInPath(path, ".proto", 2, &protoFiles);
 
 	if (verbosity >= 3)	// max is 2. Add -vvv option if you want
 	{
@@ -470,7 +470,7 @@ int ProtobufDeclarations::getStatementSQLCreate
 
 	size_t count = message_descriptor->field_count();
 	std::stringstream ss;
-	ss << "CREATE TABLE \"" << replace(message_descriptor->full_name(), ".", "_") << "\"(";
+	ss << "CREATE TABLE \"" << pkt2utilstring::replace(message_descriptor->full_name(), ".", "_") << "\"(";
 	for (size_t i = 0; i != count; ++i)
 	{
 		const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);

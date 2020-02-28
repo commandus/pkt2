@@ -126,11 +126,11 @@ std::string getPacketInputTypeString(enum pkt2::InputType inputtype, int size) {
 		}
 		break;
 	case pkt2::INPUT_BYTES:
-		return "unsigned char[" + toString(size) + "]";
+		return "unsigned char[" + pkt2utilstring::toString(size) + "]";
 	case pkt2::INPUT_CHAR:
-		return "char[" + toString(size) + "]";
+		return "char[" + pkt2utilstring::toString(size) + "]";
 	case pkt2::INPUT_STRING:
-		return "char[" + toString(size) + "]";
+		return "char[" + pkt2utilstring::toString(size) + "]";
 	default:
 		return "-";
 	}
@@ -340,14 +340,14 @@ void messageOptionsToInputPacketStructDeclaration(
 	strm << "Packet fields:" << std::endl;
 	const std::vector<int> idxs = sortPacketFieldsIndex(packet.fields());
 
-	strm << spaces(' ', 41) << "Offset   Bytes Type                 Name" << std::endl;
+	strm << pkt2utilstring::spaces(' ', 41) << "Offset   Bytes Type                 Name" << std::endl;
 	int ofs = 0;
 	for (int f = 0; f < packet.fields_size(); f++)
 	{
 		pkt2::Field field = packet.fields(idxs[f]);
 		int sz = field.size();
 		strm
-			<< spaces(' ', field.offset()) << spaces('|', sz) << spaces(' ', 40 - field.offset() - sz)
+			<< pkt2utilstring::spaces(' ', field.offset()) << pkt2utilstring::spaces('|', sz) << pkt2utilstring::spaces(' ', 40 - field.offset() - sz)
 			<< std::right
 			<< std::setw(7) << field.offset() << " "
 			<< std::setw(7) << field.size() << " "
@@ -566,7 +566,7 @@ bool Pkt2CodeGenerator::generateOptions(
 	std::stringstream ss;
 	ss << "/*"	<< std::endl << " * This is an automatically generated file, do not edit." << std::endl
 			<< " * " << file->name() << ".options, source file: " << file->name() << std::endl
-			<< " * " << timeToString(0) << std::endl
+			<< " * " << pkt2utilstring::timeToString(0) << std::endl
 			<< " * " << file->dependency_count() << " dependencies: " << std::endl;
 
 	for (int i = 0; i < file->dependency_count(); i++)

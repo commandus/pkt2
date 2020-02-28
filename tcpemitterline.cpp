@@ -62,7 +62,7 @@ START:
 		// send message to the nano queue
 		std::string line;
 		*strm >> line;
-		line = hex2string(line);
+		line = pkt2utilstring::hex2string(line);
 		if (line.size())
 		{
 			for (int c = 0; c < config->count; c++)

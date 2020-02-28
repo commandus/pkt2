@@ -161,7 +161,7 @@ int run
 		}
 */
 		std::stringstream ss;
-		ss << SQL_POSTGRESQL_INSERT_PREFIX << "'" << hexString(packet.data(), packet.length) << "', '" 
+		ss << SQL_POSTGRESQL_INSERT_PREFIX << "'" << pkt2utilstring::hexString(packet.data(), packet.length) << "', '" 
 			<< inet_ntoa(packet.get_sockaddr_src()->sin_addr) << "', " << ntohs(packet.get_sockaddr_src()->sin_port) << ", '" 
 			<< inet_ntoa(packet.get_sockaddr_dst()->sin_addr) << "', " << ntohs(packet.get_sockaddr_dst()->sin_port) << ");";
 		execSQL(config, ss.str());

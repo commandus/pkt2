@@ -212,7 +212,7 @@ namespace utilProto
 	)
 	{
 		std::vector<std::string> protoFiles;
-		filesInPath(path, ".proto", 2, &protoFiles);
+		pkt2utilfile::filesInPath(path, ".proto", 2, &protoFiles);
 		return parseProtoFiles(path, protoFiles, messages, error_output);
 	}
 
@@ -242,7 +242,7 @@ int writeDelimitedMessage
 	output->WriteVarint32(messageTypeNAddress->message_type.size());
 	output->WriteString(messageTypeNAddress->message_type);
 	// Write the size.
-	const int size = message.ByteSize();
+	const int size = message.ByteSizeLong();	// ByteSize() deprecated
 	output->WriteVarint32(size);
 	uint8_t* buffer = output->GetDirectBufferForNBytesAndAdvance(size);
 
@@ -366,7 +366,7 @@ google::protobuf::Message *readDelimitedMessage
 {
 	google::protobuf::io::ArrayInputStream isistream(buffer, size);
 	google::protobuf::io::CodedInputStream input(&isistream);
-	input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
+	input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT); //  SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1); deprecated
 	return readDelimitedMessage(pd, &input, messageTypeNAddress);
 }
 

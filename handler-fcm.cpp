@@ -131,7 +131,7 @@ int main
 
 	if (config->verbosity >= 2)
 	{
-		LOG(INFO) << "arguments: " << arg2String(argc, argv);
+		LOG(INFO) << "arguments: " << pkt2utilstring::arg2String(argc, argv);
 	}
 
 	if (config->daemonize)

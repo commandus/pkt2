@@ -109,12 +109,12 @@ bool is_process_running
 	if (pid == 0)
 		return true;
 	DIR *dir;
-	if (!(dir = opendir(("/proc/" + toString(pid)).c_str()))) 
+	if (!(dir = opendir(("/proc/" + pkt2utilstring::toString(pid)).c_str()))) 
         return false;
 	closedir(dir);
 	
 	// open the cmdline file
-	std::string fn("/proc/" + toString(pid) + "/cmdline");
+	std::string fn("/proc/" + pkt2utilstring::toString(pid) + "/cmdline");
 	FILE* fp = fopen(fn.c_str(), "r");
 	bool ok = false;
 	if (fp) 
@@ -211,7 +211,7 @@ public:
 
 #define PUSH_BACK_ARG_LIT(r, a) 		r.push_back(a)
 #define PUSH_BACK_ARG_STR(r, a, s) 		r.push_back(a); r.push_back(s)
-#define PUSH_BACK_ARG_NUM(r, a, v) 		r.push_back(a); r.push_back(toString(v))
+#define PUSH_BACK_ARG_NUM(r, a, v) 		r.push_back(a); r.push_back(pkt2utilstring::toString(v))
 /**
  * 
  * - compression_type	По умолчанию 0. 1- сжатие (Huffman). Для сжатия нудно указать или файл частот для построения таблицы кодов или готовую таблицу кодов 
@@ -1415,7 +1415,7 @@ public:
 	{
 		path = a_path;
 
-		std::string v = file2string(config_file_name);
+		std::string v = pkt2utilstring::file2string(config_file_name);
 		duk_eval_string(context, v.c_str());
 		duk_pop(context);  // ignore result
 		

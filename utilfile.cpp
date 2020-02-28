@@ -33,7 +33,7 @@
 #include "utilfile.h"
 
 #ifdef _MSC_VER
-bool rmAllDir(const char *path)
+bool pkt2utilfile::rmAllDir(const char *path)
 {
 	if (&path == NULL)
 		return false;
@@ -57,7 +57,7 @@ bool rmAllDir(const char *path)
 	SHFileOperationA(&shfo);
 }
 
-bool rmDir(const std::string &path)
+bool pkt2utilfile::rmDir(const std::string &path)
 {
 	if (&path == NULL)
 		return false;
@@ -92,7 +92,7 @@ bool rmDir(const std::string &path)
  * @param retval can be NULL
  * @return count files
  */
-size_t filesInPath
+size_t pkt2utilfile::filesInPath
 (
 	const std::string &path,
 	const std::string &suffix,
@@ -135,7 +135,7 @@ static int rmnode
 	return 0;
 }
 
-bool rmDir(const std::string &path)
+bool pkt2utilfile::rmDir(const std::string &path)
 {
 	if (&path == NULL)
 		return false;
@@ -144,7 +144,7 @@ bool rmDir(const std::string &path)
 	return nftw(path.c_str(), rmnode,  64, FTW_DEPTH) == 0;
 }
 
-int compareFile
+static int compareFile
 (
 		const FTSENT **a,
 		const FTSENT **b
@@ -161,7 +161,7 @@ int compareFile
  * @return count files
  * FreeBSD fts.h fts_*()
  */
-size_t filesInPath
+size_t pkt2utilfile::filesInPath
 (
 	const std::string &path,
 	const std::string &suffix,
@@ -232,7 +232,7 @@ size_t filesInPath
 
 #endif
 
-bool rmFile(const std::string &fn)
+bool pkt2utilfile::rmFile(const std::string &fn)
 {
 	return std::remove((const char*) fn.c_str()) == 0;
 }
@@ -240,7 +240,7 @@ bool rmFile(const std::string &fn)
 /**
  * Does not work
  */
-std::string getFilePathFromDescriptor(int fd)
+std::string pkt2utilfile::getFilePathFromDescriptor(int fd)
 {
 	char filePath[MAXPATHLEN];
 	if (fcntl(fd, F_GETPATH, filePath) != -1)
@@ -248,4 +248,3 @@ std::string getFilePathFromDescriptor(int fd)
 	else
 		return "";
 }
-

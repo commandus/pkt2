@@ -175,7 +175,7 @@ static int sendNotifications
 		 << "tokens: " << tokens.size() << " total" << std::endl;
 	}
 
-	std::string payload = hexString(buffer, bytes);
+	std::string payload = pkt2utilstring::hexString(buffer, bytes);
 	for (TokenNNameList::const_iterator it(tokens.begin()); it != tokens.end(); ++it)
 	{
 		std::string r;
@@ -204,7 +204,7 @@ int sendNotificationsHex
 	Config *config
 )
 {
-	std::string bin = stringFromHex(hex);
+	std::string bin = pkt2utilstring::stringFromHex(hex);
 	return sendNotifications(bin.c_str(), bin.size(), config);
 }
 

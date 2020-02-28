@@ -222,7 +222,7 @@ int pkt2_receiever_nano(Config *config)
 			InputPacket packet(buf, bytes);
 			
 			if (config->verbosity > 1)
-				LOG(INFO) << MSG_PACKET_HEX << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
+				LOG(INFO) << MSG_PACKET_HEX << pkt2utilstring::hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
 
 			if (packet.error() != 0)
 			{
@@ -243,7 +243,7 @@ int pkt2_receiever_nano(Config *config)
 			if (m == NULL)
 			{
 				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");
-				LOG(ERROR) << ERR_PARSE_PACKET << hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
+				LOG(ERROR) << ERR_PARSE_PACKET << pkt2utilstring::hexString(std::string((const char *) packet.data(), (size_t) packet.length)) << std::endl;
         		continue;
 			}
 			// send message
@@ -266,7 +266,7 @@ int pkt2_receiever_nano(Config *config)
 					std::string s;
 					pbjson::pb2json(m, s);
 					LOG(INFO) << MSG_SENT << sent << " " 
-						<< hexString(outstr) 
+						<< pkt2utilstring::hexString(outstr) 
 						<< std::endl 
 						<< s;
 					control_message(config, socket_control, CONTROL_TYP_MSG_SENT_CODE, outstr.size(), CONTROL_TYP_MSG_SENT, s);	
