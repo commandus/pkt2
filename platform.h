@@ -47,7 +47,6 @@
 
 #define WAIT_CONNECTION(timeout) \
 	sleep(timeout); // wait for connections
-
 #endif
 
 
