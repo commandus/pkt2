@@ -4,7 +4,9 @@
  */
 #include <functional>
 #include <iomanip>
+#ifdef ENABLE_LOG
 #include <glog/logging.h>
+#endif
 
 #include "pkt2.pb.h"
 #include "pkt2packetvariable.h"
@@ -54,7 +56,9 @@ Pkt2PacketVariable::Pkt2PacketVariable
 	const google::protobuf::Descriptor* md = pd->getMessageDescriptor(message_type);
 	if (!md)
 	{
+#ifdef ENABLE_LOG		
 		LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << message_type;
+#endif		
 		status = ERRCODE_MESSAGE_TYPE_NOT_FOUND;
 	}
 
@@ -171,7 +175,9 @@ bool Pkt2PacketVariable::validTags
 			uint64_t f = extractFieldUInt(data, packet.fields(i));
 			if (f != t)
 			{
+#ifdef ENABLE_LOG		
 				LOG(ERROR) << "tag " << packet.fields(i).name() << " not found . Request: " << t << ", value: " << f;
+#endif				
 				return false;
 			}
 		}

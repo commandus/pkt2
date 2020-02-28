@@ -31,7 +31,9 @@
 #include <google/protobuf/io/tokenizer.h>
 #include <google/protobuf/compiler/parser.h>
 
+#ifdef ENABLE_LOG
 #include <glog/logging.h>
+#endif
 
 #include "errorcodes.h"
 
@@ -257,7 +259,9 @@ google::protobuf::Message *ProtobufDeclarations::decode
 		std::string err;
 		if (pbjson::json2pb(json, message, err))
 		{
+#ifdef ENABLE_LOG
 			LOG(ERROR) << ERR_INVALID_JSON << " " << err << ": " << json;
+#endif				
 			return NULL;
 		}
 	}
@@ -293,7 +297,9 @@ bool ProtobufDeclarations::parseProtoFile
 	importer->ClearUnusedImportTrackFiles();
 	if (parsed_file == NULL)
 	{
+#ifdef ENABLE_LOG
 		LOG(ERROR) << ERR_LOAD_PROTO << fn;
+#endif		
 		return false;
 	}
 	parsed_files.push_back(parsed_file);
@@ -301,7 +307,9 @@ bool ProtobufDeclarations::parseProtoFile
 	FILE *f = openProto(fn);
 	if (f == NULL)
 	{
+#ifdef ENABLE_LOG		
 		LOG(ERROR) << ERR_OPEN_PROTO << fn;
+#endif		
 		return false;
 	}
 	FileInputStream proto_stream(fileno(f));
@@ -314,7 +322,9 @@ bool ProtobufDeclarations::parseProtoFile
 	bool ok = parser.Parse(&input_proto, &file_desc_proto);
 	if (!ok)
 	{
+#ifdef ENABLE_LOG		
 		LOG(ERROR) << ERR_PARSE_PROTO << fn;
+#endif		
 		return false;
 	}
 
@@ -323,7 +333,9 @@ bool ProtobufDeclarations::parseProtoFile
 
 	if (file_desc == NULL)
 	{
+#ifdef ENABLE_LOG		
 		LOG(ERROR) << ERR_PROTO_GET_DESCRIPTOR << fn;
+#endif		
 		fclose(f);
 		return false;
 	}
@@ -375,19 +387,29 @@ size_t ProtobufDeclarations::parseProtoPath
 
 	if (verbosity >= 3)	// max is 2. Add -vvv option if you want
 	{
+#ifdef ENABLE_LOG		
 		LOG(INFO) << MSG_PROTO_FILES_HEADER;
-		for (std::vector<std::string>::iterator iter = protoFiles.begin(); iter != protoFiles.end(); ++iter)
+#endif
+		for (std::vector<std::string>::iterator iter = protoFiles.begin(); iter != protoFiles.end(); ++iter) {
+#ifdef ENABLE_LOG			
 			LOG(INFO) << *iter;
+#endif			
+		}
 	}
 
 	size_t r = parseProtoFiles(protoFiles);
 
 	if (verbosity >= 3)	// max is 2. Add -vvv option if you want
 	{
+#ifdef ENABLE_LOG		
 		LOG(INFO) << MSG_PARSE_PROTO_COUNT << r;
 		LOG(INFO) << MSG_MESSAGE_HEADER;
-		for (std::map<std::string, const google::protobuf::Descriptor*>::iterator iter = internalMessages.begin(); iter != internalMessages.end(); ++iter)
+#endif		
+		for (std::map<std::string, const google::protobuf::Descriptor*>::iterator iter = internalMessages.begin(); iter != internalMessages.end(); ++iter) {
+#ifdef ENABLE_LOG			
 			LOG(INFO) << iter->first;
+#endif			
+		}
 	}
 	return r;
 }

@@ -3,7 +3,9 @@
  */
 #include <vector>
 #include <stdlib.h>
+#ifdef ENABLE_LOG
 #include <glog/logging.h>
+#endif
 #include "pkt2optionscache.h"
 #include "bin2ascii.h"
 
@@ -115,7 +117,9 @@ const Pkt2PacketVariable &Pkt2OptionsCache::find1
 			message_type = m->first;
 			if (found)
 				*found = true;
+#ifdef ENABLE_LOG		
 			LOG(INFO) << "Found " << message_type;
+#endif				
 			break;
 		}
 	}

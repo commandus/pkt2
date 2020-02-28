@@ -17,9 +17,11 @@ endif
 
 # ----------------- REMOVE IT!!!! ------------------
 # -std=c++11
-AM_CXXFLAGS =  -O0 -DDEBUG $(INCLUDES)
+#AM_CXXFLAGS =  -O0 -DDEBUG $(INCLUDES)
 #COMMON_CPP_FLAGS = 
 # ----------------- REMOVE IT!!!! ------------------
+COMMON_CPP_FLAGS = -DENABLE_LOG
+
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
@@ -422,13 +424,12 @@ repeator_SOURCES = \
 repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
 
+# input-packet.cpp errorcodes.cpp 
 PKT2LIBSRC = \
-	input-packet.cpp \
-	pbjson.cpp utilfile.cpp errorcodes.cpp \
-	utilpriority.cpp  utilstring.cpp utilinet.cpp error-printer.cpp \
-	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
-	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
-	javascript-context.cpp \
+	pbjson.cpp packet2message.cpp pkt2packetvariable.cpp javascript-context.cpp error-printer.cpp \
+	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cpp \
+	utilfile.cpp utilstring.cpp utilprotobuf.cpp duk/duktape.c \
 	$(common_src)
 
 #
@@ -436,7 +437,7 @@ PKT2LIBSRC = \
 #
 pkt2js_SOURCES = \
 	pkt2js.cpp  pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp str-pkt2.cpp \
-	messageformat.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp $(PKT2LIBSRC)
+	$(PKT2LIBSRC)
 
 pkt2js_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
 pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON

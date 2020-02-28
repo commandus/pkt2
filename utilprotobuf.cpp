@@ -1,6 +1,7 @@
 #include <string>
 #include <string.h>
 #include <iostream>
+#include <sstream>
 #include <algorithm>
 
 #ifdef _MSC_VER
@@ -21,7 +22,9 @@
 #include <google/protobuf/compiler/parser.h>
 #include <google/protobuf/compiler/importer.h>
 
+#ifdef ENABLE_LOG
 #include <glog/logging.h>
+#endif
 
 #include "platform.h"
 #include "error-printer.h"
@@ -382,8 +385,10 @@ std::string extractField
 	int sz = packet.size();
 	if (sz < field.offset() + field.size())
 	{
+#ifdef ENABLE_LOG
 		LOG(ERROR) << ERR_PACKET_TOO_SMALL << field.name() << " offset: " << field.offset() << ", size : " << field.size() 
 			<< ". Packet (size: " << sz << ") lacks " << (field.offset() + field.size() - sz) << " bytes";
+#endif				
 		std::string r = "";
 		r.resize(field.size());
 		return r;

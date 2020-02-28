@@ -2,12 +2,13 @@
 
 #include <netinet/in.h>
 #include <sstream>
+#include <iomanip>
 
 #include "platform.h"
 #include "pbjson.hpp"
 
-#include "utilprotobuf.h"
 #include "utilstring.h"
+#include "utilprotobuf.h"
 #include "packet2message.h"
 #include "messageformat.h"
 
@@ -134,7 +135,10 @@ std::string parsePacket(
 		put_debug(&ss, &messageTypeNAddress, m);
 		break;
 	case 7:	
-		ss << hexString(stringDelimitedMessage(&messageTypeNAddress, *m));
+		{
+		std::string s(stringDelimitedMessage(&messageTypeNAddress, *m));
+		ss << hexString(s.c_str(), s.size());
+		}
 		break;			
 	case 8:	
 		ss << stringDelimitedMessage(&messageTypeNAddress, *m);

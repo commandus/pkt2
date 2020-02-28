@@ -27,8 +27,11 @@
 #include <iostream>
 #include <string.h>
 #include <algorithm>
+#include <sstream>
 
+#ifdef ENABLE_LOG
 #include <glog/logging.h>
+#endif
 
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -150,7 +153,9 @@ bool oncomposefield (
     const Pkt2PacketVariable &pv = e->options_cache->getPacketVariable(message_descriptor->full_name(), &found);
     if (!found)
     {
+#ifdef ENABLE_LOG
         LOG(ERROR) << ERR_MESSAGE_TYPE_NOT_FOUND << " trying compose message " << message_descriptor->full_name() << " fron the packet data, message not found.";
+#endif
         return false;
     }
    
@@ -158,8 +163,9 @@ bool oncomposefield (
 	
 	std::string expr = v->var.get();
 	e->context->expression = &expr;
-
+#ifdef ENABLE_LOG
 	LOG(INFO) << ERR_MESSAGE_TYPE_NOT_FOUND << " trying compose message " << message_descriptor->full_name() << " fron the packet data, message not found.";
+#endif
 	duk_eval_string(e->context->context, expr.c_str());
 	retval = duk_safe_to_string(e->context->context, -1);
 	return false;
