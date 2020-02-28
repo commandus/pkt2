@@ -130,3 +130,14 @@ void addFieldValueString
 	int size,
 	int index
 );
+
+/**
+ * @brief return field names
+ * @return message type
+ */
+std::string getFieldNames
+(
+	std::vector <std::string> &retval,
+	Pkt2OptionsCache *options,
+	const std::string &messageTypeName
+);
