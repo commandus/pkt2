@@ -175,3 +175,23 @@ int put_tab
 	return ERR_OK;
 }
 
+/**
+ * @brief return field names
+ * @return 0 if message type is unknown
+ */
+std::string getFieldNames
+(
+	std::vector <std::string> &retval,
+	Pkt2OptionsCache *options,
+	const std::string &messageTypeName
+)
+{
+	bool found;
+	Pkt2PacketVariable v = options->getPacketVariable(messageTypeName, &found);
+	if (!found)
+		return 0;
+	for (std::vector<FieldNameVariable>::const_iterator it = v.fieldname_variables.begin(); it != v.fieldname_variables.end(); it++) {
+		retval.push_back(it->field_name);
+	}
+	return v.message_type;
+}

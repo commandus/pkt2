@@ -47,7 +47,7 @@ int Config::parseCmd
 {
 	struct arg_str *a_in_url = arg_str0("i", "input", "<file>", "Default stdin" );
 	struct arg_str *a_out_url = arg_str0("o", "output", "<file>", "Default stdout");
-	struct arg_str *a_mode = arg_str0("m", "output_mode", "<mode>", "Output mode: json(default), csv, tab, sql, Sql, pbtext, dbg, hex, bin");
+	struct arg_str *a_mode = arg_str0("m", "output_mode", "<mode>", "Output mode: json(default), csv, tab, sql, Sql, pbtext, dbg, hex, bin, CSV, TAB- with headers");
 
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 	struct arg_str *a_force_message = arg_str0("f", "message", "<name>", "force packet.message");
@@ -120,6 +120,12 @@ int Config::parseCmd
 			break;
 		case 't': // tab
 			output_mode = 2;
+			break;
+		case 'C': // csv with header
+			output_mode = 11;
+			break;
+		case 'T': // tab with header
+			output_mode = 12;
 			break;
 		case 's': // sql
 			output_mode = 3;

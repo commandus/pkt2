@@ -67,10 +67,34 @@ void donePkt2(void *env)
 }
 
 /**
+ * Return field name list string
+ * @param env contains options_cache
+ * @param message_type
+ * @param delimiter "\t" or ", "
+ * @return field name list
+ */
+std::string headerFields(
+	void *env, 
+	const std::string &message_type,
+	const std::string &delimiter
+)
+{
+	EnvPkt2* e = (EnvPkt2*) env; 
+	std::stringstream ss;
+	std::vector <std::string> fldnames;
+	std::string t = getFieldNames(fldnames, e->options_cache, message_type);
+	ss << t;
+	for (std::vector <std::string>::const_iterator it = fldnames.begin(); it != fldnames.end(); it++) {
+		ss << delimiter << *it;
+	}
+	return ss.str();
+}
+
+/**
  * Parse packet by declaration
  * @param env packet declaratuions
  * @param inputFormat 0- binary, 1- hex string
- * @param outputFormat 0- json(default), 1- csv, 2- tab, 3- sql, 4- Sql, 5- pbtext, 6- dbg, 7- hex, 8- bin 
+ * @param outputFormat 0- json(default), 1- csv, 2- tab, 3- sql, 4- Sql, 5- pbtext, 6- dbg, 7- hex, 8- bin, 11- csv header, 12- tab header
  * @param packet data
  * @param forceMessage "" If specifed, try only message type
  * @return empty string if fails
@@ -142,6 +166,16 @@ std::string parsePacket(
 		break;			
 	case 8:	
 		ss << stringDelimitedMessage(&messageTypeNAddress, *m);
+		break;			
+	case 11:	
+		ss << headerFields(e, messageTypeNAddress.message_type, ", ")
+			<< std::endl;
+		put_csv(&ss, e->options_cache, &messageTypeNAddress, m);
+		break;			
+	case 12:	
+		ss << headerFields(e, messageTypeNAddress.message_type, "\t")
+			<< std::endl;
+		put_tab(&ss, e->options_cache, &messageTypeNAddress, m);
 		break;			
 	}
 	return ss.str();
