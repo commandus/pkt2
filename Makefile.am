@@ -3,21 +3,23 @@ ACLOCAL_AMFLAGS = -I m4
 
 TESTS = tests/p1.sh tests/t1 
 
-INCLUDES = -I/usr/local/include -Ithird_party/argtable3
+INCS = -I/usr/local/include -Ithird_party/argtable3
 
 HUFF_CPP_FLAGS = -Ibitstream -Ihuff
 
+GRPC_CPP_FLAGS = -std=c++11
+
 if DEBUG
-	AM_CFLAGS = -g3 -O0 $(INCLUDES)
-	AM_CXXFLAGS = -g3 -O0 -DDEBUG $(INCLUDES)
+	AM_CFLAGS = -g3 -O0 $(INCS)
+	AM_CXXFLAGS = -g3 -O0 -DDEBUG $(INCS)
 else
-	AM_CFLAGS = -O2 $(INCLUDES)
-	AM_CXXFLAGS = -O2 $(INCLUDES)
+	AM_CFLAGS = -O2 $(INCS)
+	AM_CXXFLAGS = -O2 $(INCS)
 endif
 
 # ----------------- REMOVE IT!!!! ------------------
 # -std=c++11
-#AM_CXXFLAGS =  -O0 -DDEBUG $(INCLUDES)
+#AM_CXXFLAGS =  -O0 -DDEBUG $(INCS)
 #COMMON_CPP_FLAGS = 
 # ----------------- REMOVE IT!!!! ------------------
 COMMON_CPP_FLAGS = -DENABLE_LOG
@@ -51,10 +53,10 @@ CLEANFILES = $(gengrpcs)
 #	Binaries
 #
 
-bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter protoc-gen-pkt2 \
-	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq \
-	handlerline handlerlmdb handler-google-sheets handler-fcm pkt2receiver-check pkt2dumppq pkt2dumpfcm repeator freceiver \
-	pkt2js
+#bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter protoc-gen-pkt2 \
+#	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq \
+#	handlerline handlerlmdb handler-google-sheets handler-fcm pkt2receiver-check pkt2dumppq pkt2dumpfcm repeator freceiver \
+#	pkt2js
 
 #
 #	Headers
@@ -443,7 +445,7 @@ pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 #
 lib_LIBRARIES = libpkt2.a
 libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
-libpkt2_a_CPPFLAGS = -D LIB_PBJSON
+libpkt2_a_CPPFLAGS = -D LIB_PBJSON $(GRPC_CPP_FLAGS)
 
 #libpkt2_a_LDFLAGS = libpkt2.a
 #libpkt2_a_CPPFLAGS = -I.
