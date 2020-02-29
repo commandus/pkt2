@@ -4,6 +4,7 @@
  */
 #include <functional>
 #include <iomanip>
+#include <sstream>
 #ifdef ENABLE_LOG
 #include <glog/logging.h>
 #endif

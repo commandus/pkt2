@@ -3,11 +3,11 @@ ACLOCAL_AMFLAGS = -I m4
 
 TESTS = tests/p1.sh tests/t1 
 
-INCS = -I/usr/local/include -Ithird_party/argtable3
+INCS = -I/usr/local/include -Ithird_party
 
-HUFF_CPP_FLAGS = -Ibitstream -Ihuff
+HUFF_CPP_FLAGS = -Ihuff
 
-GRPC_CPP_FLAGS = -std=c++11
+PROTO_CPPFLAGS = -std=c++11
 
 if DEBUG
 	AM_CFLAGS = -g3 -O0 $(INCS)
@@ -22,8 +22,9 @@ endif
 #AM_CXXFLAGS =  -O0 -DDEBUG $(INCS)
 #COMMON_CPP_FLAGS = 
 # ----------------- REMOVE IT!!!! ------------------
-COMMON_CPP_FLAGS = -DENABLE_LOG
+COMMON_CPP_FLAGS = -DENABLE_LOG $(INCS)
 
+LIB_PROTOBUF = -L/usr/local/lib -lprotobuf
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
@@ -39,6 +40,7 @@ $(gengrpcs): Makefile
 	mv pkt2.pb.cc pkt2.pb.cpp
 	protoc -I proto --cpp_out=. proto/example/example1.proto
 	mv example/example1.pb.cc example/example1.pb.cpp
+	rm -rf google/
 
 #
 #	Exclude generated sources from distribution
@@ -52,11 +54,11 @@ CLEANFILES = $(gengrpcs)
 #
 #	Binaries
 #
-
-#bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter protoc-gen-pkt2 \
-#	message2gateway example1message example1message1 tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq \
-#	handlerline handlerlmdb handler-google-sheets handler-fcm pkt2receiver-check pkt2dumppq pkt2dumpfcm repeator freceiver \
-#	pkt2js
+bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter \
+	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq \
+	pkt2receiver-check repeator freceiver \
+	pkt2js \
+	message2gateway protoc-gen-pkt2 example1message example1message1 handlerline handlerlmdb handler-google-sheets handler-fcm pkt2dumppq pkt2dumpfcm
 
 #
 #	Headers
@@ -74,14 +76,14 @@ linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnam
 sslhelper.h iridium.h \
 pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
 google-sheets.h \
-rapidjson/allocators.h           rapidjson/encodings.h        rapidjson/fwd.h             rapidjson/memorystream.h    rapidjson/prettywriter.h  rapidjson/schema.h        rapidjson/writer.h \
-rapidjson/document.h             rapidjson/filereadstream.h   rapidjson/istreamwrapper.h  rapidjson/ostreamwrapper.h  rapidjson/rapidjson.h     rapidjson/stream.h \
-rapidjson/encodedstream.h        rapidjson/filewritestream.h  rapidjson/memorybuffer.h    rapidjson/pointer.h         rapidjson/reader.h        rapidjson/stringbuffer.h \
-rapidjson/error/en.h             rapidjson/error/error.h \
-rapidjson/internal/biginteger.h  rapidjson/internal/dtoa.h     rapidjson/internal/itoa.h  rapidjson/internal/pow10.h  rapidjson/internal/stack.h    rapidjson/internal/strtod.h \
-rapidjson/internal/diyfp.h       rapidjson/internal/ieee754.h  rapidjson/internal/meta.h  rapidjson/internal/regex.h  rapidjson/internal/strfunc.h  rapidjson/internal/swap.h \
-rapidjson/msinttypes/inttypes.h  rapidjson/msinttypes/stdint.h \
-duk/duk_config.h  duk/duktape.h  javascript-context.h \
+third_party/rapidjson/allocators.h           third_party/rapidjson/encodings.h        third_party/rapidjson/fwd.h             third_party/rapidjson/memorystream.h    third_party/rapidjson/prettywriter.h  third_party/rapidjson/schema.h        third_party/rapidjson/writer.h \
+third_party/rapidjson/document.h             third_party/rapidjson/filereadstream.h   third_party/rapidjson/istreamwrapper.h  third_party/rapidjson/ostreamwrapper.h  third_party/rapidjson/rapidjson.h     third_party/rapidjson/stream.h \
+third_party/rapidjson/encodedstream.h        third_party/rapidjson/filewritestream.h  third_party/rapidjson/memorybuffer.h    third_party/rapidjson/pointer.h         third_party/rapidjson/reader.h        third_party/rapidjson/stringbuffer.h \
+third_party/rapidjson/error/en.h             third_party/rapidjson/error/error.h \
+third_party/rapidjson/internal/biginteger.h  third_party/rapidjson/internal/dtoa.h     third_party/rapidjson/internal/itoa.h  third_party/rapidjson/internal/pow10.h  third_party/rapidjson/internal/stack.h    third_party/rapidjson/internal/strtod.h \
+third_party/rapidjson/internal/diyfp.h       third_party/rapidjson/internal/ieee754.h  third_party/rapidjson/internal/meta.h  third_party/rapidjson/internal/regex.h  third_party/rapidjson/internal/strfunc.h  third_party/rapidjson/internal/swap.h \
+third_party/rapidjson/msinttypes/inttypes.h  third_party/rapidjson/msinttypes/stdint.h \
+third_party/duk/duk_config.h  third_party/duk/duktape.h  javascript-context.h \
 handler-google-sheets-config.h google-sheets-writer.h \
 pqdumper.h pkt2dumppq-config.h \
 mqtt-receivernano.h mqtt-receiver-config.h \
@@ -91,7 +93,7 @@ repeator-config.h  \
 freceiver-impl.h freceiver-impl.h freceiver-config.h \
 huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
 huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
-bitstream/bitstream.h bitstream/varint.h \
+third_party/bitstream/bitstream.h third_party/bitstream/varint.h \
 messageformat.h messageemitterline.h pkt2receiver-check.h \
 handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h \
@@ -100,7 +102,7 @@ pkt2js-config.h pkt2js-impl.h str-pkt2.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
-	bitstream/bitstream.cpp
+	third_party/bitstream/bitstream.cpp
 
 common_src = third_party/argtable3/argtable3.c
 
@@ -111,7 +113,7 @@ commonlibs = -L/usr/local/lib/ -lpthread -ldl -L/usr/local/lib
 #
 pkt2_SOURCES = \
 	pkt2.cpp pkt2-config.cpp pkt2-impl.cpp errorcodes.cpp \
-	utilstring.cpp daemonize.cpp duk/duktape.c \
+	utilstring.cpp daemonize.cpp third_party/duk/duktape.c \
 	$(common_src)
 
 pkt2_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
@@ -136,11 +138,11 @@ messageemitter_SOURCES = \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
 	messageemitterline.cpp daemonize.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	pkt2.pb.cpp utilfile.cpp duk/duktape.c javascript-context.cpp pbjson.cpp \
+	pkt2.pb.cpp utilfile.cpp third_party/duk/duktape.c javascript-context.cpp pbjson.cpp \
 	$(common_src)
 
-messageemitter_LDADD = $(commonlibs) -lglog -lprotobuf -lunwind -lnanomsg $(SNMPLIBS)
-messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+messageemitter_LDADD = $(commonlibs) -lglog $(LIB_PROTOBUF) -lunwind -lnanomsg $(SNMPLIBS)
+messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	tcpreceiver
@@ -153,7 +155,7 @@ tcpreceiver_SOURCES = \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(HUFF_CPP_FLAGS) 
+tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(HUFF_CPP_FLAGS) $(PROTO_CPPFLAGS)
 
 #
 #	mqtt-receiver
@@ -164,7 +166,7 @@ mqtt_receiver_SOURCES = \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 mqtt_receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lpaho-mqtt3c $(SNMPLIBS)
-mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS)
+mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CPPFLAGS)
 	
 #
 #	freceiver
@@ -174,12 +176,12 @@ freceiver_SOURCES = \
 	daemonize.cpp snmpagentpkt2.c errorcodes.cpp \
 	utilpriority.cpp utilstring.cpp utilinet.cpp \
 	messageformat.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	pbjson.cpp duk/duktape.c javascript-context.cpp packet2message.cpp utilfile.cpp \
+	pbjson.cpp third_party/duk/duktape.c javascript-context.cpp packet2message.cpp utilfile.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp messagecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lprotobuf $(SNMPLIBS)
-freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(LIB_PROTOBUF) $(SNMPLIBS)
+freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	pkt2receiver
@@ -188,13 +190,13 @@ pkt2receiver_SOURCES= \
 	pkt2receiver.cpp  pkt2receiver-config.cpp pkt2receivernano.cpp input-packet.cpp \
 	daemonize.cpp pbjson.cpp utilfile.cpp errorcodes.cpp \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp error-printer.cpp \
-	packet2message.cpp messagecomposer.cpp duk/duktape.c pkt2packetvariable.cpp \
+	packet2message.cpp messagecomposer.cpp third_party/duk/duktape.c pkt2packetvariable.cpp \
 	pkt2optionscache.cpp utilprotobuf.cpp protobuf-declarations.cpp pkt2.pb.cpp \
 	javascript-context.cpp \
 	$(common_src)
 
-pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind $(LIB_PROTOBUF) -lnanomsg $(SNMPLIBS)
+pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	pkt2gateway
@@ -205,11 +207,11 @@ pkt2gateway_SOURCES= \
 	utilpriority.cpp  utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2packetvariable.cpp pkt2.pb.cpp utilprotobuf.cpp error-printer.cpp utilfile.cpp pbjson.cpp \
 	messagecomposer.cpp \
-	duk/duktape.c javascript-context.cpp \
+	third_party/duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
-pkt2gateway_LDADD = $(commonlibs) -lprotobuf -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+pkt2gateway_LDADD = $(commonlibs) $(LIB_PROTOBUF) -lglog -lunwind -lnanomsg $(SNMPLIBS)
+pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	handlerpq
@@ -218,11 +220,11 @@ handlerpq_SOURCES= \
 	handlerpq.cpp  handlerpq-config.cpp daemonize.cpp pqwriter.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp third_party/duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
-handlerpq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS) -lpq
-handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
+handlerpq_LDADD = $(commonlibs) -lglog -lunwind $(LIB_PROTOBUF) -lnanomsg $(SNMPLIBS) -lpq
+handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
 
 #
 #	tcptransmitter
@@ -234,7 +236,7 @@ tcptransmitter_SOURCES = \
 	$(common_src)
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
 #	handlerlmdb
@@ -244,10 +246,10 @@ handlerlmdb_SOURCES = \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp \
-	messagedecomposer.cpp fieldnamevalueindexstrings.cpp duk/duktape.c javascript-context.cpp \
+	messagedecomposer.cpp fieldnamevalueindexstrings.cpp third_party/duk/duktape.c javascript-context.cpp \
 	$(common_src)
-handlerlmdb_LDADD = -lprotobuf -lglog -llmdb -lnanomsg $(SNMPLIBS)
-handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+handlerlmdb_LDADD = $(LIB_PROTOBUF) -lglog -llmdb -lnanomsg $(SNMPLIBS)
+handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	handlerline
@@ -255,14 +257,14 @@ handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
 handlerline_SOURCES = \
 	handlerline.cpp linewriter.cpp handlerline-config.cpp errorcodes.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
-	utilfile.cpp utilstring.cpp utilinet.cpp duk/duktape.c javascript-context.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp third_party/duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pbjson.cpp \
 	messageformat.cpp \
 	$(common_src)
 
-handlerline_LDADD = -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
-handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+handlerline_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg $(SNMPLIBS)
+handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	handler-google-sheets
@@ -271,13 +273,13 @@ handler_google_sheets_SOURCES = \
 	handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
-	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
+	jsoncpp.cpp pbjson.cpp third_party/duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_google_sheets_LDADD = -lprotobuf -lglog -llmdb -lnanomsg -lcurl $(SNMPLIBS) -L/usr/local/lib -lssl -lcrypto 
-handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+handler_google_sheets_LDADD = $(LIB_PROTOBUF) -lglog -llmdb -lnanomsg -lcurl $(SNMPLIBS) -L/usr/local/lib -lssl -lcrypto 
+handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	handler-fcm
@@ -286,14 +288,14 @@ handler_fcm_SOURCES = \
 	handler-fcm.cpp fcm-writer.cpp handler-fcm-config.cpp \
 	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
 	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp \
-	jsoncpp.cpp pbjson.cpp duk/duktape.c javascript-context.cpp \
+	jsoncpp.cpp pbjson.cpp third_party/duk/duktape.c javascript-context.cpp \
 	messageformat.cpp \
 	helper_fcm.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_fcm_LDADD = -lprotobuf -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
-handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON -I/usr/include/postgresql
+handler_fcm_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
+handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
 
 #
 # pkt2dumpfcm
@@ -303,12 +305,12 @@ pkt2dumpfcm_SOURCES = \
 	daemonize.cpp input-packet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp third_party/duk/duktape.c javascript-context.cpp \
 	helper_fcm.cpp \
 	$(common_src)
 
-pkt2dumpfcm_LDADD = -lprotobuf -lglog -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS) -lpq
-pkt2dumpfcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql
+pkt2dumpfcm_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS) -lpq
+pkt2dumpfcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
 
 #
 #	protoc-gen-pkt2
@@ -318,8 +320,8 @@ protoc_gen_pkt2_SOURCES = \
 	utilstring.cpp utilinet.cpp pkt2.pb.cpp errorcodes.cpp \
 	$(common_src)
 
-protoc_gen_pkt2_LDADD = -lprotoc -lprotobuf $(SNMPLIBS)
-protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
+protoc_gen_pkt2_LDADD = $(LIB_PROTOBUF) -lprotoc $(SNMPLIBS)
+protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CPPFLAGS)
 
 #
 #	message2gateway
@@ -328,24 +330,24 @@ message2gateway_SOURCES = \
 	message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp error-printer.cpp \
 	daemonize.cpp utilstring.cpp utilinet.cpp utilfile.cpp protobuf-declarations.cpp \
 	utilprotobuf.cpp packet2message.cpp errorcodes.cpp \
-	pbjson.cpp pkt2.pb.cpp duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
+	pbjson.cpp pkt2.pb.cpp third_party/duk/duktape.c pkt2packetvariable.cpp pkt2optionscache.cpp messagecomposer.cpp \
 	javascript-context.cpp \
 	$(common_src)
 
-message2gateway_LDADD = -lprotoc -lprotobuf -lglog -lnanomsg $(SNMPLIBS)
-message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+message2gateway_LDADD = $(LIB_PROTOBUF) -lprotoc -lglog -lnanomsg $(SNMPLIBS)
+message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	example1message
 #
 example1message_SOURCES = \
 	example1message.cpp utilprotobuf.cpp error-printer.cpp \
-	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp utilstring.cpp protobuf-declarations.cpp \
-	pbjson.cpp errorcodes.cpp \
+	example/example1.pb.cpp pkt2.pb.cpp utilfile.cpp utilstring.cpp protobuf-declarations.cp~/Android/p \
+	pbjson.cpp errorcodes.cpp protobuf-declarations.cpp \
 	$(common_src)
 
-example1message_LDADD = -lprotobuf -lglog $(SNMPLIBS)
-example1message_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+example1message_LDADD = $(LIB_PROTOBUF) -lglog $(SNMPLIBS)
+example1message_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	example1message1
@@ -354,8 +356,8 @@ example1message1_SOURCES = \
 	example1message1.cpp example/example1.pb.cpp pkt2.pb.cpp utilsnmp.cpp errorcodes.cpp \
 	$(common_src)
 
-example1message1_LDADD = -lprotobuf $(SNMPLIBS)
-example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS)
+example1message1_LDADD = $(LIB_PROTOBUF) $(SNMPLIBS)
+example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CPPFLAGS)
 
 #
 #	tcpemitter-example1
@@ -394,11 +396,11 @@ pkt2dumppq_SOURCES = \
 	pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp daemonize.cpp input-packet.cpp errorcodes.cpp \
 	pbjson.cpp pkt2.pb.cpp pkt2packetvariable.cpp pkt2optionscache.cpp fieldnamevalueindexstrings.cpp \
 	messagedecomposer.cpp utilprotobuf.cpp error-printer.cpp protobuf-declarations.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp duk/duktape.c javascript-context.cpp \
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp third_party/duk/duktape.c javascript-context.cpp \
 	$(common_src)
 
-pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS) -lpq
-pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql
+pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind $(LIB_PROTOBUF) -lnanomsg $(SNMPLIBS) -lpq
+pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
 
 #
 # pkt2receiver-check
@@ -416,8 +418,7 @@ pkt2receiver_check_CPPFLAGS = $(COMMON_CPP_FLAGS)
 #
 repeator_SOURCES = \
 	repeator.cpp repeator-config.cpp daemonize.cpp errorcodes.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
-	$(common_src)
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \~/Android/
 
 repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
@@ -427,7 +428,7 @@ PKT2LIBSRC = \
 	pbjson.cpp packet2message.cpp pkt2packetvariable.cpp javascript-context.cpp error-printer.cpp \
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cpp \
-	utilfile.cpp utilstring.cpp utilprotobuf.cpp duk/duktape.c \
+	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c \
 	$(common_src)
 
 #
@@ -437,16 +438,15 @@ pkt2js_SOURCES = \
 	pkt2js.cpp  pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp str-pkt2.cpp \
 	$(PKT2LIBSRC)
 
-pkt2js_LDADD = $(commonlibs) -lglog -lunwind -lprotobuf -lnanomsg $(SNMPLIBS)
-pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON
+pkt2js_LDADD = -lglog -lunwind $(LIB_PROTOBUF)
+pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON=1 $(PROTO_CPPFLAGS) -Ithird_party/protobuf
 
 #
 #	Static library
 #
 lib_LIBRARIES = libpkt2.a
 libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
-libpkt2_a_CPPFLAGS = -D LIB_PBJSON $(GRPC_CPP_FLAGS)
-
+libpkt2_a_CPPFLAGS = -D LIB_PBJSON $(PROTO_CPPFLAGS) -I$(INCS)
 #libpkt2_a_LDFLAGS = libpkt2.a
 #libpkt2_a_CPPFLAGS = -I.
 

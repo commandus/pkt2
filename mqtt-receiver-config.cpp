@@ -1,7 +1,7 @@
 #include <sstream>
 #include <limits.h>
 #include <unistd.h>
-#include <argtable3.h>
+#include "argtable3/argtable3.h"
 
 #include "mqtt-receiver-config.h"
 

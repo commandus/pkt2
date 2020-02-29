@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <argtable3.h>
+#include "argtable3/argtable3.h"
 
 #include "platform.h"
 #include "errorcodes.h"

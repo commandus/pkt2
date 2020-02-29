@@ -1,7 +1,7 @@
 #include "tcpreceiver-config.h"
 #include <unistd.h>
 #include <limits.h>
-#include <argtable3.h>
+#include "argtable3/argtable3.h"
 
 #define DEF_PORT                 50052
 #define DEF_ADDRESS              "0.0.0.0"

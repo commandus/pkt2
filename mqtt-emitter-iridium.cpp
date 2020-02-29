@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 #include <unistd.h>
-#include <argtable3.h>
+#include "argtable3/argtable3.h"
 
 #include <MQTTClient.h>
 
