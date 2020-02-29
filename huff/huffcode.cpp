@@ -14,8 +14,8 @@
 #include "internalnode.h"
 #include "leafnode.h"
 
-#include "varint.h"
-#include "bitstream.h"
+#include "bitstream/varint.h"
+#include "bitstream/bitstream.h"
 #include "utilstring.h"
 #include "devdecoder.h"
 

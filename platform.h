@@ -61,7 +61,8 @@
   type(type const &);\
   GTEST_DISALLOW_ASSIGN_(type)
 
-namespace google::protobuf {
+namespace google {
+namespace protobuf {
 	template <typename T>
 	class scoped_ptr {
 	public:
@@ -97,4 +98,5 @@ namespace google::protobuf {
 
 	GTEST_DISALLOW_COPY_AND_ASSIGN_(scoped_ptr);
 	};
+}
 }
