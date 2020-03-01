@@ -11,10 +11,13 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-set (PROTOBUF_ROOT third_party/protobuf)
-
-include_directories(. ${PROTOBUF_ROOT} third_party )
 set(LIBS ${LIBS})
+
+add_custom_command(
+	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pkt2.pb.cc ${CMAKE_CURRENT_SOURCE_DIR}/pkt2.pb.h
+	COMMAND protoc -I proto --cpp_out=. proto/pkt2.proto
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 # set(CC /usr/bin/clang)
 # set(CXX /usr/bin/clang+)
@@ -23,6 +26,10 @@ set(LIBS ${LIBS})
 # make link to /home/andrei/lib/grpc/third_party/protobuf/src
 # ln -s /home/andrei/lib/grpc/third_party/protobuf/src protobuf
 #
+#set (PROTOBUF_ROOT third_party/protobuf)
+set (PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+
+include_directories(. ${PROTOBUF_ROOT} third_party )
 
 set(PROTO_LITE_SRC
   ${PROTOBUF_ROOT}/google/protobuf/stubs/bytestream.cc                          
@@ -152,7 +159,7 @@ set(PROTO_SRC
 set(PKT2LIBSRC
 	str-pkt2.cpp pbjson.cpp packet2message.cpp pkt2packetvariable.cpp javascript-context.cpp error-printer.cpp
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp pkt2optionscache.cpp
-  protobuf-declarations.cpp pkt2.pb.cpp utilfile.cpp utilstring.cpp utilprotobuf.cpp duk/duktape.c
+  protobuf-declarations.cpp pkt2.pb.cc utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c
 )
 
 set(cpp_pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp 
