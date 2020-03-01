@@ -7,7 +7,6 @@
 
 #include "fieldnamevalueindexstrings.h"
 #include <algorithm>
-#include <glog/logging.h>
 #include "utilstring.h"
 
 static const std::string sql2tableNumeric = "num";
