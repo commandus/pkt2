@@ -215,7 +215,6 @@ namespace utilProto
 		pkt2utilfile::filesInPath(path, ".proto", 2, &protoFiles);
 		return parseProtoFiles(path, protoFiles, messages, error_output);
 	}
-
 }
 
 /**

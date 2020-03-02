@@ -12,7 +12,9 @@
 #else
 #include <sys/param.h>
 #include <fcntl.h>
+
 #include <ftw.h>
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -31,6 +33,18 @@
 #endif
 
 #include "utilfile.h"
+
+
+#ifdef __ANDROID__
+#if __ANDROID_API__ < 17
+#error Android API must be 17 or more for ftw()
+#endif
+
+#if __ANDROID_API__ < 21
+#error Android API must be 17 or more for fts_open()
+#endif
+
+#endif
 
 #ifdef _MSC_VER
 bool pkt2utilfile::rmAllDir(const char *path)
