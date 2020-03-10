@@ -55,7 +55,7 @@ CLEANFILES = $(gengrpcs)
 #	Binaries
 #
 bin_PROGRAMS = \
-	pkt2sheet pkt2js
+	js2sheet
 #	pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter \
 #	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq pkt2receiver-check repeator \
 #	freceiver pkt2js message2gateway protoc-gen-pkt2 example1message example1message1 handlerline \
@@ -90,7 +90,7 @@ huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 third_party/bitstream/bitstream.h third_party/bitstream/varint.h \
 messageformat.h messageemitterline.h pkt2receiver-check.h handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h third_party/argtable3/argtable3.h \
-pkt2js-config.h pkt2js-impl.h str-pkt2.h pkt2sheet-config.h 
+pkt2js-config.h pkt2js-impl.h str-pkt2.h pkt2sheet-config.h js2sheet-config.h google-sheets-writer-from-js.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -447,6 +447,17 @@ pkt2sheet_SOURCES = \
 
 pkt2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
 pkt2sheet_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+
+#
+#	js2sheet
+#
+js2sheet_SOURCES = \
+	js2sheet.cpp js2sheet-config.cpp daemonize.cpp utilfile.cpp utilstring.cpp utilinet.cpp \
+  errorcodes.cpp jsoncpp.cpp google-sheets.cpp sslhelper.cpp google-sheets-writer-from-js.cpp \
+	$(common_src)
+
+js2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
+js2sheet_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	Static library
