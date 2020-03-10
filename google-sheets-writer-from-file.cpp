@@ -65,7 +65,7 @@ void addFieldValueString2
 }
 
 /**
- * @brief Print packet to the stdout as CSV
+ * @brief Print packet to the Google Sheet
  * @param messageTypeNAddress message type
  * @param message message
  * @return 0 success
@@ -80,7 +80,8 @@ int put
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString2);
-	std::cout << vals.toStringTab();
+	if (config->verbosity > 1)
+		std::cerr << vals.toStringTab();
 	
 	int count = vals.values.size();
 	ValueRange newcells;
@@ -94,9 +95,7 @@ int put
 	newcells.values.push_back(row);
 
 	if (!config->google_sheets->append(newcells))
-	{
-		std::cerr << "Error append data";
-	}
+		return ERRCODE_GOOGLE_SHEET_WRITE;	
 
 	return ERR_OK;
 }
