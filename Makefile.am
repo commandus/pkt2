@@ -54,11 +54,12 @@ CLEANFILES = $(gengrpcs)
 #
 #	Binaries
 #
-bin_PROGRAMS = pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter \
-	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq \
-	pkt2receiver-check repeator freceiver \
-	pkt2js \
-	message2gateway protoc-gen-pkt2 example1message example1message1 handlerline handlerlmdb handler-google-sheets handler-fcm pkt2dumppq pkt2dumpfcm
+bin_PROGRAMS = \
+	pkt2sheet pkt2js
+#	pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter \
+#	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq pkt2receiver-check repeator \
+#	freceiver pkt2js message2gateway protoc-gen-pkt2 example1message example1message1 handlerline \
+#	handlerlmdb handler-google-sheets handler-fcm pkt2dumppq pkt2dumpfcm pkt2sheet
 
 #
 #	Headers
@@ -68,14 +69,11 @@ NanoMessage.h        cpp-syslog.h    daemonize.h   ieee754.h    platform.h  pack
 utilpriority.h       utilstring.h    utilinet.h    bin2ascii.h  utilprotobuf.h utilfile.h \
 protoc-gen-pkt2.h    pkt2_code_generator.h snmpagentpkt2.h get_rss.h protobuf-declarations.h \
 tcpreceiver-config.h pkt2receiver-config.h pkt2gateway-config.h handlerpq-config.h tcptransmitter-config.h \
-message2gateway-config.h helper_socket.h \
-handlerlmdb-config.h lmdbwriter.h error-printer.h pkt2receivernano.h output-message.h \
-tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h pkt2packetvariable.h \
-messageemitter-config.h \
-linewriter.h handlerline-config.h messagedecomposer.h messagecomposer.h fieldnamevalueindexstrings.h \
-sslhelper.h iridium.h \
-pbjson.hpp errorcodes.h pkt2optionscache.h pqwriter.h tcpemitterline.h \
-google-sheets.h \
+message2gateway-config.h helper_socket.h handlerlmdb-config.h lmdbwriter.h error-printer.h \
+pkt2receivernano.h output-message.h tcpemitter-config.h tcpreceivernano.h input-packet.h utilsnmp.h \
+pkt2packetvariable.h messageemitter-config.h linewriter.h handlerline-config.h messagedecomposer.h \
+messagecomposer.h fieldnamevalueindexstrings.h sslhelper.h iridium.h pbjson.hpp errorcodes.h \
+pkt2optionscache.h pqwriter.h tcpemitterline.h google-sheets.h \
 third_party/rapidjson/allocators.h           third_party/rapidjson/encodings.h        third_party/rapidjson/fwd.h             third_party/rapidjson/memorystream.h    third_party/rapidjson/prettywriter.h  third_party/rapidjson/schema.h        third_party/rapidjson/writer.h \
 third_party/rapidjson/document.h             third_party/rapidjson/filereadstream.h   third_party/rapidjson/istreamwrapper.h  third_party/rapidjson/ostreamwrapper.h  third_party/rapidjson/rapidjson.h     third_party/rapidjson/stream.h \
 third_party/rapidjson/encodedstream.h        third_party/rapidjson/filewritestream.h  third_party/rapidjson/memorybuffer.h    third_party/rapidjson/pointer.h         third_party/rapidjson/reader.h        third_party/rapidjson/stringbuffer.h \
@@ -84,21 +82,15 @@ third_party/rapidjson/internal/biginteger.h  third_party/rapidjson/internal/dtoa
 third_party/rapidjson/internal/diyfp.h       third_party/rapidjson/internal/ieee754.h  third_party/rapidjson/internal/meta.h  third_party/rapidjson/internal/regex.h  third_party/rapidjson/internal/strfunc.h  third_party/rapidjson/internal/swap.h \
 third_party/rapidjson/msinttypes/inttypes.h  third_party/rapidjson/msinttypes/stdint.h \
 third_party/duk/duk_config.h  third_party/duk/duktape.h  javascript-context.h \
-handler-google-sheets-config.h google-sheets-writer.h \
-pqdumper.h pkt2dumppq-config.h \
-mqtt-receivernano.h mqtt-receiver-config.h \
-pkt2-config.h pkt2-impl.h \
-pkt2receiver-check-config.h \
-repeator-config.h  \
-freceiver-impl.h freceiver-impl.h freceiver-config.h \
+handler-google-sheets-config.h google-sheets-writer.h google-sheets-writer-from-file.h pqdumper.h pkt2dumppq-config.h \
+mqtt-receivernano.h mqtt-receiver-config.h pkt2-config.h pkt2-impl.h \
+pkt2receiver-check-config.h repeator-config.h freceiver-impl.h freceiver-impl.h freceiver-config.h \
 huff/huffcode.h  huff/huffmanmodifieddecoder.h huff/huffmanmodifiedencoder.h \
 huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 third_party/bitstream/bitstream.h third_party/bitstream/varint.h \
-messageformat.h messageemitterline.h pkt2receiver-check.h \
-handler-fcm-config.h fcm-writer.h \
-fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h \
-third_party/argtable3/argtable3.h \
-pkt2js-config.h pkt2js-impl.h str-pkt2.h
+messageformat.h messageemitterline.h pkt2receiver-check.h handler-fcm-config.h fcm-writer.h \
+fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h third_party/argtable3/argtable3.h \
+pkt2js-config.h pkt2js-impl.h str-pkt2.h pkt2sheet-config.h 
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -440,6 +432,21 @@ pkt2js_SOURCES = \
 
 pkt2js_LDADD = -lglog -lunwind $(LIB_PROTOBUF)
 pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON=1 $(PROTO_CPPFLAGS) -Ithird_party/protobuf
+
+#
+#	pkt2sheet
+#
+pkt2sheet_SOURCES = \
+	pkt2sheet.cpp pkt2sheet-config.cpp str-pkt2.cpp packet2message.cpp messageformat.cpp \
+	daemonize.cpp protobuf-declarations.cpp utilprotobuf.cpp error-printer.cpp \
+	utilfile.cpp utilstring.cpp utilinet.cpp errorcodes.cpp messagecomposer.cpp \
+	jsoncpp.cpp pbjson.cpp third_party/duk/duktape.c javascript-context.cpp \
+	google-sheets.cpp sslhelper.cpp google-sheets-writer-from-file.cpp \
+	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	$(common_src)
+
+pkt2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
+pkt2sheet_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
 
 #
 #	Static library

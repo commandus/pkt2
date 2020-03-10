@@ -112,6 +112,8 @@ std:: string getErrorDescription(int code)
 			return ERR_CONFIG;
 		case ERRCODE_HELP_REQUESTED:
 			return ERR_HELP_REQUESTED;
+		case ERRCODE_GOOGLE_SHEET_WRITE:
+			return ERR_GOOGLE_SHEET_WRITE;
 		default:
 			return "";
 	}

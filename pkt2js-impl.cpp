@@ -29,8 +29,7 @@ int pkt2js(Config *config)
 	config->count_packet_out = 0;
 START:
 	config->stop_request = 0;
-
-	// IN socket
+	// IN file
 	FILE *fin;
 	if (config->filenameInput.empty()) {
 		fin = stdin;
@@ -78,7 +77,6 @@ START:
 		std::string outstr = parsePacket(strpkt2env, config->input_mode, config->output_mode, s, config->force_message);
 		if (!outstr.empty()) {
 			int sent = write(fdout, outstr.c_str(), outstr.size());
-
 			if (sent < 0) {
 				LOG(ERROR) << ERR_NN_SEND << sent;
 			}
