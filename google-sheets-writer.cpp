@@ -200,7 +200,6 @@ int run
 	{
 		LOG(ERROR) << ERR_NN_SHUTDOWN << config->message_url << " " << errno << " " << strerror(errno);
 		r = ERRCODE_NN_SHUTDOWN;
-
 	}
 
 	close(accept_socket);

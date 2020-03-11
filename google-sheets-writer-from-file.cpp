@@ -120,7 +120,9 @@ START:
 	} else {
 		fin = fopen(config->filename_input.c_str(), "r");
 	}
-    int fdin = fileno(fin);
+	int fdin = 0;
+	if (fin)
+		fdin = fileno(fin);
     if (fdin < 0)
     {
         LOG(ERROR) << ERR_NN_BIND << config->filename_input << " " << errno << ": " << strerror(errno);;

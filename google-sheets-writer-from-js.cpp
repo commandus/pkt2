@@ -1,5 +1,5 @@
 /**
- * google-sheets-writer-from-file.cpp
+ * google-sheets-writer-from-js.cpp
  */
 #include <string.h>
 #include <stdio.h>
@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <iostream>
 #include <string>
+#include <ostream>
 #include <sstream>
 #include <vector>
 #include <algorithm>
@@ -17,8 +18,97 @@
 
 #include "google-sheets-writer-from-js.h"
 #include "errorcodes.h"
-#include "json/json.h"
+
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/document.h"
+
 #include "utilstring.h"
+
+class JsonHandler : public rapidjson::BaseReaderHandler<rapidjson::UTF8<>, JsonHandler> {
+public:
+	std::vector<std::string> &row;
+	std::vector<std::string> &keys;
+	JsonHandler(
+		std::vector<std::string> &arow,
+		std::vector<std::string> &akeys
+	) 
+		: row(arow), keys(akeys)
+	{
+
+	}
+
+    bool Null() { 
+		row.push_back("");
+		return true; 
+	}
+
+    bool Bool(bool b) {
+		std::stringstream ss;
+		ss << std::boolalpha << b;
+		row.push_back(ss.str());
+		return true; 
+	}
+
+    bool Int(int i) {
+		std::stringstream ss;
+		ss << i;
+		row.push_back(ss.str());
+		return true; 
+	}
+
+	bool Uint(unsigned u) {
+ 		std::stringstream ss;
+		ss << u;
+		row.push_back(ss.str());
+		return true; 
+	}
+
+    bool Int64(int64_t i) {
+		std::stringstream ss;
+		ss << i;
+		row.push_back(ss.str());
+		return true; 
+	}
+
+    bool Uint64(uint64_t u) {
+		std::stringstream ss;
+		ss << u;
+		row.push_back(ss.str());
+		return true; 
+	}
+
+    bool Double(double d) {
+		std::stringstream ss;
+		ss << d;
+		row.push_back(ss.str());
+		return true; 
+	}
+
+    bool String(const char* str, rapidjson::SizeType length, bool copy) { 
+		row.push_back(std::string(str, length));
+		return true; 
+    }
+
+    bool StartObject() {
+		return true; 
+	}
+
+    bool Key(const char* str, rapidjson::SizeType length, bool copy) {
+		keys.push_back(std::string(str, length));
+        return true;
+    }
+
+    bool EndObject(rapidjson::SizeType memberCount) {
+		return true; 
+	}
+    bool StartArray() {
+		return true; 
+	}
+    bool EndArray(rapidjson::SizeType elementCount) {
+		return true; 
+	}
+};
 
 int format_number;
 
@@ -36,16 +126,25 @@ int put
 {
 	if (config->verbosity > 1)
 		std::cerr << value;
+
+	rapidjson::Reader reader;
+    rapidjson::StringStream ss(value.c_str());
+	std::vector<std::string> row, keys;
+	JsonHandler handler(row, keys);
+    reader.Parse(ss, handler);
+	if (reader.HasParseError()) {
+    	return ERRCODE_PACKET_PARSE;
+	}
 	
-	int columns = 1;
+	int columns = row.size();
 	ValueRange newcells;
 	newcells.range = GoogleSheets::A1(config->sheet, 0, 0, columns - 1, 0);
 	
-	std::vector<std::string> row;
-  std::string val(value);
-	for (int i = 0; i < columns; i++)
-	{
-		row.push_back(val);
+	if (config->verbosity) {
+		for (int i = 0; i < keys.size(); i++)
+		{
+			std::cerr << keys[i] << " ";
+		}
 	}
 	newcells.values.push_back(row);
 
@@ -54,7 +153,6 @@ int put
 
 	return ERR_OK;
 }
-
 
 /**
  * @brief Write line loop
@@ -75,7 +173,9 @@ START:
 	} else {
 		fin = fopen(config->filename_input.c_str(), "r");
 	}
-    int fdin = fileno(fin);
+    int fdin = -1;
+	if (fin)
+		fdin = fileno(fin);
     if (fdin < 0)
     {
         LOG(ERROR) << ERR_NN_BIND << config->filename_input << " " << errno << ": " << strerror(errno);;

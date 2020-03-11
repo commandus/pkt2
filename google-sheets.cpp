@@ -900,7 +900,6 @@ bool GoogleSheets::token_post
 	return r == 200;
 }
 
-
 /**
  * @brief get values in a range
  * @param range Sheet1!A1:D5

@@ -36,7 +36,9 @@ START:
 	} else {
 		fin = fopen(config->filenameInput.c_str(), "r");
 	}
-    int fdin = fileno(fin);
+    int fdin = -1;
+	if (fin)
+		fdin = fileno(fin);
     if (fdin < 0)
     {
         LOG(ERROR) << ERR_NN_BIND << config->filenameInput << " " << errno << ": " << strerror(errno);;
@@ -50,8 +52,10 @@ START:
 	} else {
 		fout = fopen(config->filenameInput.c_str(), "r");
 	}
-    int fdout = fileno(fout);
-    if (fdout < 0) {
+    int fdout = 0;
+	if (fout)
+		fdout = fileno(fout);
+    if (fdout <= 0) {
 		LOG(ERROR) << ERR_NN_SOCKET << config->filenameOutput << " " << errno << " " << strerror(errno);
 		return ERRCODE_NN_BIND;
     }

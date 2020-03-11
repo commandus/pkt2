@@ -6,7 +6,7 @@
 #include "google-sheets.h"
 
 #define PROGRAM_NAME				"js2sheet"
-#define PROGRAM_DESCRIPTION			"Add record to the Google sheet"
+#define PROGRAM_DESCRIPTION			"Add JSON to the Google sheet"
 
 void ontokenbearer
 (
@@ -16,8 +16,8 @@ void ontokenbearer
 );
 
 /**
-  * @brief google-sheets-writer command line options
-  * @see google-sheets-writer.cpp
+  * @brief js2sheet command line options
+  * @see js2sheet-writer.cpp
   */
 class Config
 {

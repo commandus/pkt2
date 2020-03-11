@@ -97,13 +97,13 @@ int Config::error()
  **/
 int Config::parseCmd
 (
-        int argc,
-        char* argv[]
+	int argc,
+	char* argv[]
 )
 {
 	struct arg_str *a_proto_path = arg_str0("p", "protos", "<path>", "proto file directory. Default " DEF_PROTO_PATH);
 	struct arg_str *a_filename_input = arg_str0("i", "input", "<file name>", "Default stdin");
-  struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
+  	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
@@ -143,17 +143,17 @@ int Config::parseCmd
 	// special case: '--help' takes precedence over error reporting
 	if ((a_help->count) || nerrors)
 	{
-			if (nerrors)
-					arg_print_errors(stderr, a_end, PROGRAM_NAME);
-			printf("Usage: %s\n", PROGRAM_NAME);
-			arg_print_syntax(stdout, argtable, "\n");
-			printf("%s\n", PROGRAM_DESCRIPTION);
-			arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-			arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-			if (a_help->count)
-				return ERRCODE_HELP_REQUESTED;
-			else
-				return ERRCODE_PARSE_COMMAND;
+		if (nerrors)
+				arg_print_errors(stderr, a_end, PROGRAM_NAME);
+		printf("Usage: %s\n", PROGRAM_NAME);
+		arg_print_syntax(stdout, argtable, "\n");
+		printf("%s\n", PROGRAM_DESCRIPTION);
+		arg_print_glossary(stdout, argtable, "  %-25s %s\n");
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		if (a_help->count)
+			return ERRCODE_HELP_REQUESTED;
+		else
+			return ERRCODE_PARSE_COMMAND;
 	}
 
 	
@@ -163,9 +163,9 @@ int Config::parseCmd
 		filename_input = "";
 
 	if (a_buffer_size->count)
-			buffer_size = *a_buffer_size->ival;
+		buffer_size = *a_buffer_size->ival;
 	else
-			buffer_size = DEF_BUFFER_SIZE;
+		buffer_size = DEF_BUFFER_SIZE;
 
 	if (a_retries->count)
 		retries = *a_retries->ival;
