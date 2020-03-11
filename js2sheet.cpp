@@ -96,8 +96,8 @@ int main
     char *argv[]
 )
 {
-  // Signal handler
-  setSignalHandler(SIGINT);
+	// Signal handler
+  	setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
     reslt = 0;
 
