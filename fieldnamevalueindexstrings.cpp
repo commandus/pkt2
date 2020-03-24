@@ -234,14 +234,14 @@ std::string FieldNameValueIndexStrings::toStringTab() {
 std::string FieldNameValueIndexStrings::toStringJSON() {
 	std::stringstream ss;
 	int sz = values.size();
-	ss << "\"" << table << "\":{";
+	ss << "{\"" << table << "\":{";
 	for (int i = 0; i < sz; i++)
 	{
 		ss << "\""<< values[i].field << "\": \"" << values[i].value << "\"";
 		if (i < sz - 1)
 			ss << ",";
 	}
-	ss << "}" << std::endl;
+	ss << "}}" << std::endl;
 	return ss.str();
 }
 
