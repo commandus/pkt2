@@ -30,7 +30,6 @@ CPPFLAGS="$CPPFLAGS -Icppcodec"
 
 # Checks for header files.
 AC_CHECK_HEADERS([fcntl.h limits.h stdint.h string.h sys/time.h termios.h unistd.h])
-AC_CHECK_HEADERS([argtable2.h], [], AC_MSG_ERROR([Could not find argtable2.h. Try $ ./configure CFLAGS='-Iyour-argtable2-include-path]))
 
 AC_CHECK_HEADERS([curl/curl.h], [], AC_MSG_ERROR([Could not find curl/curl.h. Try $ ./configure CFLAGS='-Iyour-curl-include-path]))
 AC_CHECK_LIB(curl, curl_easy_init, [], AC_MSG_ERROR([Could not find libcurl. Try $ ./configure LDFLAGS='-Lyour-curl-lib-path']))
@@ -123,8 +122,6 @@ if test "$POSTGRES" = "yes"; then
       echo "******************************************************"
   fi
 fi
-
-AC_CHECK_LIB(argtable2, arg_parse, [], AC_MSG_ERROR([Could not find libargtable2. Try $ ./configure LDFLAGS='-Lyour-argtable2-lib-path']))
 
 # Checks for typedefs, structures, and compiler characteristics.
 # AC_CHECK_HEADER_STDBOOL
