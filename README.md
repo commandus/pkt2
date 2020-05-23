@@ -2163,6 +2163,8 @@ extend google.protobuf.FieldOptions {
 
 ## Установка среды
 
+cmake нужен для сбрки nanomsg
+
 ```
 sudo apt install autoconf libtool make g++ unzip cmake git curl wget
 sudo apt install kdevelop code mc 
@@ -2204,6 +2206,15 @@ wget -c https://github.com/openssl/openssl/archive/OpenSSL_1_0_2g.tar.gz
 -or-  sudo apt install libssl-dev (Ubuntu 1.0.2g)
 git clone git@github.com:eclipse/paho.mqtt.c.git
 git clone git@github.com:LMDB/lmdb.git
+```
+
+### Сборка nanomsg и protobuf
+
+Скрипты сборки
+
+```
+tools/install-nanomsg-1.1.5.sh
+tools/install-protobuf-3.12.1.sh
 ```
 
 ## Вспомогательные объекты PostgreSQL
