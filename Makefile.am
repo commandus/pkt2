@@ -29,6 +29,8 @@ LIB_PROTOBUF = -L/usr/local/lib -lprotobuf
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
 
+#PROTOBUF_OLD_GCC_COMPAT = -D_GLIBCXX_USE_CXX11_ABI=0
+
 gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 $(gengrpcs): Makefile
 	protoc -I proto --cpp_out=. proto/google/protobuf/descriptor.proto
@@ -463,7 +465,7 @@ js2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 #
 lib_LIBRARIES = libpkt2.a
 libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
-libpkt2_a_CXXFLAGS = -D LIB_PBJSON $(PROTO_CXXFLAGS) -I$(INCS) -fPIC
+libpkt2_a_CXXFLAGS = -D LIB_PBJSON $(PROTO_CXXFLAGS) -I$(INCS) -fPIC $(PROTOBUF_OLD_GCC_COMPAT)
 libpkt2_a_LDFLAGS = -static
 
 #
