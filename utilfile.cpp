@@ -151,8 +151,6 @@ static int rmnode
 
 bool pkt2utilfile::rmDir(const std::string &path)
 {
-	if (&path == NULL)
-		return false;
 	if (path.size() <= 1)
 		return false;	// prevent "rm -r /"
 	return nftw(path.c_str(), rmnode,  64, FTW_DEPTH) == 0;
@@ -183,8 +181,6 @@ size_t pkt2utilfile::filesInPath
 	std::vector<std::string> *retval
 )
 {
-	if (&path == NULL)
-		return 0;
 	char *pathlist[2];
 	pathlist[1] = NULL;
 	if (flags & 1)

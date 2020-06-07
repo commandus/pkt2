@@ -7,7 +7,7 @@ INCS = -I/usr/local/include -Ithird_party
 
 HUFF_CPP_FLAGS = -Ihuff
 
-PROTO_CPPFLAGS = -std=c++11
+PROTO_CXXFLAGS = -std=c++11
 
 if DEBUG
 	AM_CFLAGS = -g3 -O0 $(INCS)
@@ -109,7 +109,7 @@ pkt2_SOURCES = \
 	$(common_src)
 
 pkt2_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
-pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS)
+pkt2_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	tcpemitter
@@ -120,7 +120,7 @@ tcpemitter_SOURCES = \
 	$(common_src)
 
 tcpemitter_LDADD = $(commonlibs) -lglog $(SNMPLIBS)
-tcpemitter_CPPFLAGS = $(COMMON_CPP_FLAGS)
+tcpemitter_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	messageemitter
@@ -134,7 +134,7 @@ messageemitter_SOURCES = \
 	$(common_src)
 
 messageemitter_LDADD = $(commonlibs) -lglog $(LIB_PROTOBUF) -lunwind -lnanomsg $(SNMPLIBS)
-messageemitter_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+messageemitter_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	tcpreceiver
@@ -147,7 +147,7 @@ tcpreceiver_SOURCES = \
 	$(common_src)
 
 tcpreceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcpreceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(HUFF_CPP_FLAGS) $(PROTO_CPPFLAGS)
+tcpreceiver_CXXFLAGS = $(COMMON_CPP_FLAGS) $(HUFF_CPP_FLAGS) $(PROTO_CXXFLAGS)
 
 #
 #	mqtt-receiver
@@ -158,7 +158,7 @@ mqtt_receiver_SOURCES = \
 	utilpriority.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
 	$(common_src)
 mqtt_receiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg -lpaho-mqtt3c $(SNMPLIBS)
-mqtt_receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CPPFLAGS)
+mqtt_receiver_CXXFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CXXFLAGS)
 	
 #
 #	freceiver
@@ -173,7 +173,7 @@ freceiver_SOURCES = \
 	$(common_src)
 
 freceiver_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(LIB_PROTOBUF) $(SNMPLIBS)
-freceiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+freceiver_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	pkt2receiver
@@ -188,7 +188,7 @@ pkt2receiver_SOURCES= \
 	$(common_src)
 
 pkt2receiver_LDADD = $(commonlibs) -lglog -lunwind $(LIB_PROTOBUF) -lnanomsg $(SNMPLIBS)
-pkt2receiver_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+pkt2receiver_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	pkt2gateway
@@ -203,7 +203,7 @@ pkt2gateway_SOURCES= \
 	$(common_src)
 
 pkt2gateway_LDADD = $(commonlibs) $(LIB_PROTOBUF) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+pkt2gateway_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	handlerpq
@@ -216,7 +216,7 @@ handlerpq_SOURCES= \
 	$(common_src)
 
 handlerpq_LDADD = $(commonlibs) -lglog -lunwind $(LIB_PROTOBUF) -lnanomsg $(SNMPLIBS) -lpq
-handlerpq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
+handlerpq_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CXXFLAGS)
 
 #
 #	tcptransmitter
@@ -228,7 +228,7 @@ tcptransmitter_SOURCES = \
 	$(common_src)
 
 tcptransmitter_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-tcptransmitter_CPPFLAGS = $(COMMON_CPP_FLAGS) 
+tcptransmitter_CXXFLAGS = $(COMMON_CPP_FLAGS) 
 
 #
 #	handlerlmdb
@@ -241,7 +241,7 @@ handlerlmdb_SOURCES = \
 	messagedecomposer.cpp fieldnamevalueindexstrings.cpp third_party/duk/duktape.c javascript-context.cpp \
 	$(common_src)
 handlerlmdb_LDADD = $(LIB_PROTOBUF) -lglog -llmdb -lnanomsg $(SNMPLIBS)
-handlerlmdb_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+handlerlmdb_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	handlerline
@@ -256,7 +256,7 @@ handlerline_SOURCES = \
 	$(common_src)
 
 handlerline_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg $(SNMPLIBS)
-handlerline_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+handlerline_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	handler-google-sheets
@@ -271,7 +271,7 @@ handler_google_sheets_SOURCES = \
 	$(common_src)
 
 handler_google_sheets_LDADD = $(LIB_PROTOBUF) -lglog -llmdb -lnanomsg -lcurl $(SNMPLIBS) -L/usr/local/lib -lssl -lcrypto 
-handler_google_sheets_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+handler_google_sheets_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	handler-fcm
@@ -287,7 +287,7 @@ handler_fcm_SOURCES = \
 	$(common_src)
 
 handler_fcm_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
-handler_fcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
+handler_fcm_CXXFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CXXFLAGS)
 
 #
 # pkt2dumpfcm
@@ -302,7 +302,7 @@ pkt2dumpfcm_SOURCES = \
 	$(common_src)
 
 pkt2dumpfcm_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg -lssl -lcrypto -lcurl $(SNMPLIBS) -lpq
-pkt2dumpfcm_CPPFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
+pkt2dumpfcm_CXXFLAGS = $(COMMON_CPP_FLAGS) -I /home/andrei/lib/firebase_cpp_sdk/include  -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CXXFLAGS)
 
 #
 #	protoc-gen-pkt2
@@ -313,7 +313,7 @@ protoc_gen_pkt2_SOURCES = \
 	$(common_src)
 
 protoc_gen_pkt2_LDADD = $(LIB_PROTOBUF) -lprotoc $(SNMPLIBS)
-protoc_gen_pkt2_CPPFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CPPFLAGS)
+protoc_gen_pkt2_CXXFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CXXFLAGS)
 
 #
 #	message2gateway
@@ -327,7 +327,7 @@ message2gateway_SOURCES = \
 	$(common_src)
 
 message2gateway_LDADD = $(LIB_PROTOBUF) -lprotoc -lglog -lnanomsg $(SNMPLIBS)
-message2gateway_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+message2gateway_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	example1message
@@ -339,7 +339,7 @@ example1message_SOURCES = \
 	$(common_src)
 
 example1message_LDADD = $(LIB_PROTOBUF) -lglog $(SNMPLIBS)
-example1message_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+example1message_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	example1message1
@@ -349,7 +349,7 @@ example1message1_SOURCES = \
 	$(common_src)
 
 example1message1_LDADD = $(LIB_PROTOBUF) $(SNMPLIBS)
-example1message1_CPPFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CPPFLAGS)
+example1message1_CXXFLAGS = $(COMMON_CPP_FLAGS) $(PROTO_CXXFLAGS)
 
 #
 #	tcpemitter-example1
@@ -359,7 +359,7 @@ tcpemitter_example1_SOURCES = \
 	$(common_src)
 
 tcpemitter_example1_LDADD = 
-tcpemitter_example1_CPPFLAGS = $(COMMON_CPP_FLAGS)
+tcpemitter_example1_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	tcpemitter-iridium
@@ -369,7 +369,7 @@ tcpemitter_iridium_SOURCES = \
 	$(common_src)
 
 tcpemitter_iridium_LDADD = 
-tcpemitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
+tcpemitter_iridium_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 #	mqtt-emitter-iridium
@@ -379,7 +379,7 @@ mqtt_emitter_iridium_SOURCES = \
 	$(common_src)
 
 mqtt_emitter_iridium_LDADD = -lpaho-mqtt3c 
-mqtt_emitter_iridium_CPPFLAGS = $(COMMON_CPP_FLAGS)
+mqtt_emitter_iridium_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # pkt2dumppq
@@ -392,7 +392,7 @@ pkt2dumppq_SOURCES = \
 	$(common_src)
 
 pkt2dumppq_LDADD = $(commonlibs) -lglog -lunwind $(LIB_PROTOBUF) -lnanomsg $(SNMPLIBS) -lpq
-pkt2dumppq_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CPPFLAGS)
+pkt2dumppq_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON -I/usr/include/postgresql $(PROTO_CXXFLAGS)
 
 #
 # pkt2receiver-check
@@ -403,7 +403,7 @@ pkt2receiver_check_SOURCES = \
 	$(common_src)
 
 pkt2receiver_check_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-pkt2receiver_check_CPPFLAGS = $(COMMON_CPP_FLAGS)
+pkt2receiver_check_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 #
 # repeator
@@ -413,15 +413,14 @@ repeator_SOURCES = \
 	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \~/Android/
 
 repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
-repeator_CPPFLAGS = $(COMMON_CPP_FLAGS)
+repeator_CXXFLAGS = $(COMMON_CPP_FLAGS)
 
 # input-packet.cpp errorcodes.cpp 
 PKT2LIBSRC = \
 	pbjson.cpp packet2message.cpp pkt2packetvariable.cpp javascript-context.cpp error-printer.cpp \
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cpp \
-	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c \
-	$(common_src)
+	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c
 
 #
 # pkt2js
@@ -431,7 +430,7 @@ pkt2js_SOURCES = \
 	$(PKT2LIBSRC)
 
 pkt2js_LDADD = -lglog -lunwind $(LIB_PROTOBUF)
-pkt2js_CPPFLAGS = $(COMMON_CPP_FLAGS) -DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON=1 $(PROTO_CPPFLAGS) -Ithird_party/protobuf
+pkt2js_CXXFLAGS = $(COMMON_CPP_FLAGS) -DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON=1 $(PROTO_CXXFLAGS) -Ithird_party/protobuf
 
 #
 #	pkt2sheet
@@ -446,7 +445,7 @@ pkt2sheet_SOURCES = \
 	$(common_src)
 
 pkt2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
-pkt2sheet_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+pkt2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	js2sheet
@@ -457,16 +456,15 @@ js2sheet_SOURCES = \
 	$(common_src)
 
 js2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
-js2sheet_CPPFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CPPFLAGS)
+js2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
 #	Static library
 #
 lib_LIBRARIES = libpkt2.a
 libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
-libpkt2_a_CPPFLAGS = -D LIB_PBJSON $(PROTO_CPPFLAGS) -I$(INCS)
-#libpkt2_a_LDFLAGS = libpkt2.a
-#libpkt2_a_CPPFLAGS = -I.
+libpkt2_a_CXXFLAGS = -D LIB_PBJSON $(PROTO_CXXFLAGS) -I$(INCS) -fPIC
+libpkt2_a_LDFLAGS = -static
 
 #
 #	Shared library
@@ -474,7 +472,7 @@ libpkt2_a_CPPFLAGS = -D LIB_PBJSON $(PROTO_CPPFLAGS) -I$(INCS)
 #lib_LTLIBRARIES = libpkt2.la
 #libpkt2_la_SOURCES = $(common_src)
 #libpkt2_la_LDFLAGS = libpkt2.a
-#libpkt2_la_CPPFLAGS = -I.
+#libpkt2_la_CXXFLAGS = -I.
 
 #
 # Configs, readme, CMake etc.

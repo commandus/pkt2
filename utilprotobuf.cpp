@@ -35,8 +35,8 @@
 MessageTypeNAddress::MessageTypeNAddress()
 	: message_type(""), message_size(0)
 {
-    memset(&socket_address_src, sizeof(struct sockaddr), 0);
-    memset(&socket_address_dst, sizeof(struct sockaddr), 0);
+    memset(&socket_address_src, 0, sizeof(struct sockaddr));
+    memset(&socket_address_dst, 0, sizeof(struct sockaddr));
 }
 
 MessageTypeNAddress::MessageTypeNAddress
@@ -45,8 +45,8 @@ MessageTypeNAddress::MessageTypeNAddress
 )
 	: message_type(messagetype), message_size(0)
 {
-    memset(&socket_address_src, sizeof(struct sockaddr), 0);
-    memset(&socket_address_dst, sizeof(struct sockaddr), 0);
+    memset(&socket_address_src, 0, sizeof(struct sockaddr));
+    memset(&socket_address_dst, 0, sizeof(struct sockaddr));
 }
 
 /**
