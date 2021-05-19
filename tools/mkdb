@@ -5,6 +5,10 @@
 #	Default database server name is localhost.
 #
 #
+
+POSTGRES_USER_NAME=
+POSTGRES_USER_PASSWORD=
+
 DEST=$1
 if [ -z "$DEST" ] ; then
     DEST=.
@@ -23,8 +27,6 @@ fi
 POSTGRES_VERSION=9.5
 POSTGRES_SCHEMA=iridium
 POSTGRES_PORT=5432
-POSTGRES_USER_NAME=imz
-POSTGRES_USER_PASSWORD=LC50vbHc
 
 psql -h localhost iridium imz -w -c "CREATE DATABASE iridium WITH OWNER = imz ENCODING = 'UTF8';"
 
