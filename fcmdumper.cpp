@@ -143,6 +143,7 @@ static int getTokenNNameList(
 	CHECK_STMT("commit transaction")
 	PQclear(res);
 	PQfinish(conn);
+	return 0;
 }
 
 /**

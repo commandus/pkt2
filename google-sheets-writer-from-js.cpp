@@ -19,9 +19,12 @@
 #include "google-sheets-writer-from-js.h"
 #include "errorcodes.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexpansion-to-defined"
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/reader.h"
 #include "rapidjson/document.h"
+#pragma clang diagnostic pop
 
 #include "utilstring.h"
 

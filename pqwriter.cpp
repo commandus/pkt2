@@ -95,6 +95,7 @@ int execSQL
 	CHECK_STMT("commit transaction")
 
 	PQfinish(conn);
+	return 0;
 }
 
 /**

@@ -133,7 +133,7 @@ bool InputPacket::parse()
 		return false;
 
 	// 2. key
-	memset(&key, sizeof(key), 0);
+	memset(&key, 0, sizeof(key));
 
 	return true;
 }

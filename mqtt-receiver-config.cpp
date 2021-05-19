@@ -160,7 +160,7 @@ int Config::parseCmd
 	
 	daemonize = a_daemonize->count > 0;
 
-	if (a_max_fd > 0)
+	if (a_max_fd->count)
 		max_fd = *a_max_fd->ival;
 	else
 		max_fd = 0;

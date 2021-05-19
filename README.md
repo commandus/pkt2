@@ -2208,6 +2208,18 @@ git clone git@github.com:eclipse/paho.mqtt.c.git
 git clone git@github.com:LMDB/lmdb.git
 ```
 
+
+curl может зависеть от другой версии libcrypto.a
+
+Для libprotobuf.a, скомпилированным gcc версии до 5.1, нужно в Makefile.am добавить -D_GLIBCXX_USE_CXX11_ABI=0 (если используется gcc 5.1 и выше).
+
+```
+# PROTOBUF_OLD_GCC_COMPAT = -D_GLIBCXX_USE_CXX11_ABI=0
+PROTOBUF_OLD_GCC_COMPAT =
+```
+[In the GCC 5.1 release libstdc++ introduced a new library ABI that includes new implementations of std::string and std::list](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
+
+
 ### Сборка nanomsg и protobuf
 
 Скрипты сборки

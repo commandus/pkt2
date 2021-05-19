@@ -15,7 +15,7 @@ bool writeTo(
 	// We create a new coded stream for each message.  Don't worry, this is fast.
 	google::protobuf::io::CodedOutputStream output(rawOutput);
 
-	const int size = message.ByteSize();
+	const size_t size = message.ByteSizeLong();
 
 	uint8_t* buffer = output.GetDirectBufferForNBytesAndAdvance(size);
 	if (buffer != NULL)

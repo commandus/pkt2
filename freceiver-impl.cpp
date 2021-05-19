@@ -373,9 +373,9 @@ static int filePrint(Config *config)
 int file_receiever(Config *config)
 {
 	if (config->mode >= 0)
-		filePrint(config);
+		return filePrint(config);
 	else
-		fileReceieve(config);
+		return fileReceieve(config);
 }
 
 /**

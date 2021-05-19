@@ -29,10 +29,14 @@
 
 #include "pbjson.hpp"
 #include "bin2ascii.h"
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexpansion-to-defined"
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/error/en.h"
+#pragma clang diagnostic pop
 
 #define RETURN_ERR(id, cause)  do{\
                                   err = cause; \

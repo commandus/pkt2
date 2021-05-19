@@ -66,6 +66,7 @@ int execSQL
 	// res = PQexec(conn, "END");
 	// CHECK_STMT("commit transaction")
 	PQfinish(conn);
+	return 0;
 }
 
 /**

@@ -34,6 +34,8 @@
 #include "fieldnamevalueindexstrings.h"
 
 #include "str-pkt2.h"
+#include "env-pkt2.h"
+#include "packet-protobuf-message.h"
 
 using namespace google::protobuf;
 
