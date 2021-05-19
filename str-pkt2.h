@@ -2,20 +2,6 @@
 #define STR_PKT2_H     1
 
 #include <string>
-#include "packet2message.h"
-
-class EnvPkt2 {
-public:
-	ProtobufDeclarations *declarations;
-	Pkt2OptionsCache *options_cache;
-	Packet2Message *packet2Message;
-	explicit EnvPkt2(
-		const std::string &proto_path,
-		int verbosity
-	);
-
-	~EnvPkt2();
-};
 
 /**
  * Initialize packet declarations
@@ -47,23 +33,6 @@ std::string parsePacket(
 	void *env, 
 	int inputFormat,
 	int outputFormat,
-	const std::string &packet,
-	const std::string &forceMessage
-);
-
-/**
- * Parse packet by declaration
- * @param retMessage return message
- * @param env packet declaratuions
- * @param inputFormat 0- binary, 1- hex string
- * @param packet data
- * @param forceMessage "" If specifed, try only message type
- * @return empty string if fails
- */
-bool parsePacket2Message(
-	google::protobuf::Message **retMessage,
-	void *env, 
-	int inputFormat,
 	const std::string &packet,
 	const std::string &forceMessage
 );

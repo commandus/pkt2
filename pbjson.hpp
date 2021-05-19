@@ -33,7 +33,11 @@
 #include <string>
 #include <google/protobuf/descriptor.h>
 #include <google/protobuf/message.h>
+
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wexpansion-to-defined"
 #include "rapidjson/document.h"
+#pragma clang diagnostic pop
 
 #define ERR_INVALID_ARG -1
 #define ERR_INVALID_PB -2

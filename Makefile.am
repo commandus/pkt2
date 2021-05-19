@@ -22,14 +22,17 @@ endif
 #AM_CXXFLAGS =  -O0 -DDEBUG $(INCS)
 #COMMON_CPP_FLAGS = 
 # ----------------- REMOVE IT!!!! ------------------
-COMMON_CPP_FLAGS = -DENABLE_LOG $(INCS)
 
-LIB_PROTOBUF = -L/usr/local/lib -lprotobuf
+# PROTOBUF_OLD_GCC_COMPAT = -D_GLIBCXX_USE_CXX11_ABI=0
+PROTOBUF_OLD_GCC_COMPAT =
+# OSX_COMPAT_LIB = -L/usr/local/lib
+OSX_COMPAT_LIB =
+COMMON_CPP_FLAGS = -DENABLE_LOG $(INCS) $(PROTOBUF_OLD_GCC_COMPAT)
+
+LIB_PROTOBUF = $(OSX_COMPAT_LIB) -lprotobuf
 
 # SNMPLIBS = `net-snmp-config --agent-libs`
 SNMPLIBS = -lnetsnmpagent -lnetsnmp -lnetsnmphelpers -lnetsnmpmibs -lpthread
-
-#PROTOBUF_OLD_GCC_COMPAT = -D_GLIBCXX_USE_CXX11_ABI=0
 
 gengrpcs = pkt2.pb.h pkt2.pb.cpp example/example1.pb.cpp
 $(gengrpcs): Makefile
@@ -57,11 +60,12 @@ CLEANFILES = $(gengrpcs)
 #	Binaries
 #
 bin_PROGRAMS = \
-	js2sheet
-#	pkt2 mqtt-receiver tcpreceiver pkt2receiver pkt2gateway tcptransmitter tcpemitter messageemitter \
-#	tcpemitter-example1 tcpemitter-iridium mqtt-emitter-iridium handlerpq pkt2receiver-check repeator \
-#	freceiver pkt2js message2gateway protoc-gen-pkt2 example1message example1message1 handlerline \
-#	handlerlmdb handler-google-sheets handler-fcm pkt2dumppq pkt2dumpfcm pkt2sheet
+	pkt2 mqtt-receiver tcpreceiver tcptransmitter tcpemitter tcpemitter-example1 \
+	tcpemitter-iridium mqtt-emitter-iridium pkt2receiver-check repeator \
+	handlerline handlerlmdb handler-fcm pkt2dumppq pkt2dumpfcm \
+	messageemitter pkt2gateway pkt2receiver handlerpq freceiver pkt2js \
+	message2gateway protoc-gen-pkt2 example1message example1message1 \
+	js2sheet handler-google-sheets pkt2sheet
 
 #
 #	Headers
@@ -92,7 +96,8 @@ huff/internalnode.h  huff/leafnode.h  huff/node.h huff/devdecoder.h \
 third_party/bitstream/bitstream.h third_party/bitstream/varint.h \
 messageformat.h messageemitterline.h pkt2receiver-check.h handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h third_party/argtable3/argtable3.h \
-pkt2js-config.h pkt2js-impl.h str-pkt2.h pkt2sheet-config.h js2sheet-config.h google-sheets-writer-from-js.h
+pkt2js-config.h pkt2js-impl.h str-pkt2.h pkt2sheet-config.h js2sheet-config.h google-sheets-writer-from-js.h \
+env-pkt2.h packet-protobuf-message.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -272,7 +277,7 @@ handler_google_sheets_SOURCES = \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	$(common_src)
 
-handler_google_sheets_LDADD = $(LIB_PROTOBUF) -lglog -llmdb -lnanomsg -lcurl $(SNMPLIBS) -L/usr/local/lib -lssl -lcrypto 
+handler_google_sheets_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg -lcurl -lssl -lcrypto 
 handler_google_sheets_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
@@ -412,7 +417,8 @@ pkt2receiver_check_CXXFLAGS = $(COMMON_CPP_FLAGS)
 #
 repeator_SOURCES = \
 	repeator.cpp repeator-config.cpp daemonize.cpp errorcodes.cpp \
-	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \~/Android/
+	utilpriority.cpp utilfile.cpp utilstring.cpp utilinet.cpp NanoMessage.cpp \
+	$(common_src)
 
 repeator_LDADD = $(commonlibs) -lglog -lunwind -lnanomsg $(SNMPLIBS)
 repeator_CXXFLAGS = $(COMMON_CPP_FLAGS)
@@ -422,14 +428,15 @@ PKT2LIBSRC = \
 	pbjson.cpp packet2message.cpp pkt2packetvariable.cpp javascript-context.cpp error-printer.cpp \
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cpp \
-	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c
+	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c \
+	env-pkt2.cpp packet-protobuf-message.cpp
 
 #
 # pkt2js
 #
 pkt2js_SOURCES = \
-	pkt2js.cpp  pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp str-pkt2.cpp \
-	$(PKT2LIBSRC)
+	pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp str-pkt2.cpp \
+	$(PKT2LIBSRC) $(common_src)
 
 pkt2js_LDADD = -lglog -lunwind $(LIB_PROTOBUF)
 pkt2js_CXXFLAGS = $(COMMON_CPP_FLAGS) -DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON=1 $(PROTO_CXXFLAGS) -Ithird_party/protobuf
@@ -444,9 +451,10 @@ pkt2sheet_SOURCES = \
 	jsoncpp.cpp pbjson.cpp third_party/duk/duktape.c javascript-context.cpp \
 	google-sheets.cpp sslhelper.cpp google-sheets-writer-from-file.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	packet-protobuf-message.cpp env-pkt2.cpp \
 	$(common_src)
 
-pkt2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
+pkt2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -lssl -lcrypto 
 pkt2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
@@ -457,7 +465,7 @@ js2sheet_SOURCES = \
   	errorcodes.cpp jsoncpp.cpp google-sheets.cpp sslhelper.cpp google-sheets-writer-from-js.cpp \
 	$(common_src)
 
-js2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -L/usr/local/lib -lssl -lcrypto 
+js2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) -lcurl -lcrypto 
 js2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
