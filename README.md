@@ -1621,6 +1621,127 @@ protoc --plugin=protoc-gen-pkt2="protoc-gen-pkt2" --proto_path=proto --pkt2_out=
 - pkt2_out каталог, где будут сохранены сгенерированные файлы 
 - plugin имя плагина и путь к его исполнимому файлу
 
+## Библиотека libpkt2.a
+
+Необходим заголовочный файл str-pkt2.h, библиотека libpkt2.a.
+
+Также необходимо, чтобы была доступна разделяемая библиотека libprotobuf.so
+
+версии, использованной при сборке библиотеки libpkt2.a.
+
+Разделяемая бибиотека (libpkt2.so) собирается, если раскоментировать строки в Makefile.am:
+
+```
+#lib_LTLIBRARIES = libpkt2.la
+#libpkt2_la_SOURCES = $(common_src)
+#libpkt2_la_LDFLAGS = libpkt2.a
+#libpkt2_la_CXXFLAGS = -I.
+```
+
+Сначала нужно прочитать объявления в файлах .proto:
+
+```
+void* env = initPkt2("proto", 0);
+```
+Полученный дескриптор env нужно перелавать в функции:
+
+- parsePacket() - разбирает пакет и возвращает значения в строке заданного формата
+- parsePacket2ProtobufMessage() - разбирает пакет и возвращает сообщение protobuf
+- headerFields() - вспомогательная функция, возвращает имена полей для пакета (по имени типа сообщения)
+
+В примере выше файлы объявлений находятся в папке proto текущего каталога.
+
+По завершении нужно закрыть десприптор env:
+
+```
+donePkt2(env);
+```
+
+### Пример
+
+Функция 
+
+```
+bool parsePacket2ProtobufMessage(void **retMessage, void *env, int inputFormat, const std::string &packet, const std::string &forceMessage );
+```
+
+возвращает в retMessage созданный ей объект google::protobuf::Message (он указан как void, а не google::protobuf::Message, чтобы не включать заголовки protobuf)
+
+Если в parsePacket2ProtobufMessage возникает ошибка, функция возврашает false, а значение *retMessage равно NULL.
+
+В случае успеха, protobuf сообщение создается метоом New()
+
+```
+  // Construct a new instance of the same type.  Ownership is passed to the
+  // caller.  (This is also defined in MessageLite, but is defined again here
+  // for return-type covariance.)
+  Message* New() const override = 0;
+```
+
+Нужно не забыть удалить объект
+
+```
+...
+delete message;
+```
+
+Параметр inputFormat может принимать значения:
+
+- INPUT_FORMAT_BINARY	 (0)
+- INPUT_FORMAT_HEX	 (1)
+
+INPUT_FORMAT_HEX означает, что пакет передается в строке не в бинарном виде, а в виде шестнадцатиричных чисел.
+
+Если значение параметра forceMessage- пустая строка, то функция пытается определить тип соответствующего пакету сообщения.
+
+Можно указать имя типа сообщения в формате package.message, например, в
+
+```
+iridium.IE_Packet
+```
+
+iridium- это имя package, а IE_Packet- имя message, объявленные в файле proto/animals.proto
+
+Функция
+
+```
+std::string parsePacket(
+	void *env, 
+	int inputFormat,
+	int outputFormat,
+	const std::string &packet,
+	const std::string &forceMessage
+);
+```
+
+возврашает не protobuf сообщение, а строку в одном из заданных форматов в параметре outputFormat
+
+- OUTPUT_FORMAT_JSON	(0)
+- OUTPUT_FORMAT_CSV		(1)
+- OUTPUT_FORMAT_TAB		(2)
+- OUTPUT_FORMAT_SQL		(3)
+- OUTPUT_FORMAT_SQL2	(4)
+- OUTPUT_FORMAT_PBTEXT	(5)
+- OUTPUT_FORMAT_DEBUG	(6)
+- OUTPUT_FORMAT_HEX		(7)
+- OUTPUT_FORMAT_BIN		(8)
+
+Пример:
+```
+#include <string>
+#include <iostream>
+
+#include "pkt2/str-pkt2.h"
+
+int main(int argc, char **argv) {
+	void* env = initPkt2("proto", 0);
+	std::string hexData = "01004e01001c9a0ba5f633303032333430363032333533343000011900005ab8f59303000b003e68a68143d40000000502001e0810003e01b21200004e812b4e160000390000221400829486247a0d1c09";
+	
+	std::cout << parsePacket(env, 1, 0, hexData, "") << std::endl;
+	donePkt2(env);
+}
+```
+
 ## Баги
 
 ```
