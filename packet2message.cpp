@@ -57,13 +57,18 @@ PacketParseEnvironment::PacketParseEnvironment
 	: packet(apacket), options_cache(optionscache)
 {
     bool found;
-    packet_root_variable = &(!force_message.empty()
-		? optionscache->getPacketVariable(force_message, &found)
-		: optionscache->find1(packet, &found));
+	if (force_message.empty()) {
+		packet_root_variable = &(optionscache->find1(packet, &found));
+	} else {
+		packet_root_variable = &(optionscache->getPacketVariable(force_message, &found));
+		// if (!found) packet_root_variable = &(optionscache->find1(packet, &found));
+	}
 	if (found)
         context = new JavascriptContext(optionscache, packet_root_variable, socket_address_src, socket_address_dst, packet);
-    else
+    else {
+		packet_root_variable = NULL;
 		context = NULL;
+	}
 }
 
 PacketParseEnvironment::~PacketParseEnvironment()
@@ -162,6 +167,7 @@ bool oncomposefield (
 	const FieldNameVariable *v = pv.getVariableByFieldNumber(field_number);
 	
 	std::string expr = v->var.get();
+	// if (!e->context) raise
 	e->context->expression = &expr;
 #ifdef ENABLE_LOG
 	LOG(INFO) << ERR_MESSAGE_TYPE_NOT_FOUND << " trying compose message " << message_descriptor->full_name() << " fron the packet data, message not found.";
@@ -211,6 +217,9 @@ google::protobuf::Message *Packet2Message::parsePacket
 	PacketParseEnvironment *env
 )
 {
+	if (!env->packet_root_variable)
+		return NULL;
+
 	// Create Javascript context with global object field.xxx
 	google::protobuf::Message *m = declarations->getMessage(env->packet_root_variable->message_type);
 	if (m)

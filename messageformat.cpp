@@ -187,11 +187,11 @@ std::string getFieldNames
 )
 {
 	bool found;
-	Pkt2PacketVariable v = options->getPacketVariable(messageTypeName, &found);
+	const Pkt2PacketVariable &v(options->getPacketVariable(messageTypeName, &found));
 	if (!found)
 		return 0;
 	for (std::vector<FieldNameVariable>::const_iterator it = v.fieldname_variables.begin(); it != v.fieldname_variables.end(); it++) {
-		retval.push_back(it->field_name);
+		retval.push_back(v.message_type + "." + it->field_name);
 	}
 	return v.message_type;
 }
