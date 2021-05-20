@@ -133,3 +133,22 @@ std::string parsePacket(
 		delete m;
 	return ss.str();
 }
+
+/**
+ * Parse packet by declaration
+ * @param retMessage return message of google::protobuf::Message type
+ * @param env packet declaratuions
+ * @param inputFormat 0- binary, 1- hex string
+ * @param packet data
+ * @param forceMessage "" If specifed, try only message type
+ * @return empty string if fails
+ */
+bool parsePacket2ProtobufMessage(
+	void **retMessage,
+	void *env, 
+	int inputFormat,
+	const std::string &packet,
+	const std::string &forceMessage
+) {
+	return parsePacket2Message((google::protobuf::Message **) retMessage, env, inputFormat, packet, forceMessage);
+}
