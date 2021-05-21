@@ -3,6 +3,7 @@
  */
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include "messagedecomposer.h"
 #include "errorcodes.h"
@@ -427,6 +428,7 @@ std::string MessageDecomposer::toString
 )
 {
 	std::stringstream ss;
+	ss << std::setprecision(10);
     switch (field->cpp_type())
     {
         case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
@@ -503,8 +505,10 @@ std::string MessageDecomposer::format
 		if (duk_peval_string(context->context, expr.c_str()) != 0)
 		{
 			// TODO error report
+			// std::cerr << "Error format variable " << value << " with expression: " << expr << std::endl;
 		}
-		return std::string(duk_safe_to_string(context->context, -1));
+		std::string r(duk_safe_to_string(context->context, -1));
+		return r;
 	}
 
 	return value;

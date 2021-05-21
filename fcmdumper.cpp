@@ -29,13 +29,6 @@
 
 #include "helper_fcm.h"
 
-#define SQL_POSTGRESQL_DROP "DROP TABLE IF EXISTS packet CASCADE;";
-#define SQL_POSTGRESQL_CREATE "CREATE TABLE packet (id BIGSERIAL PRIMARY KEY, tag INTEGER NOT NULL, \
-	time TIMESTAMP WITH TIME ZONE NOT NULL, value TEXT NOT NULL, \
-	src VARCHAR(16), srcport INTEGER, dst VARCHAR(16), dstport INTEGER);"
-#define SQL_POSTGRESQL_INSERT_PREFIX "INSERT INTO packet (tag, time, \
-	value, src, srcport, dst, dstport) VALUES(0, now(), "
-
 using namespace google::protobuf;
 
 #define CHECK_STMT(error_message) \
