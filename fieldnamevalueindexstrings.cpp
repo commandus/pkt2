@@ -237,7 +237,12 @@ std::string FieldNameValueIndexStrings::toStringJSON() {
 	ss << "{\"" << table << "\":{";
 	for (int i = 0; i < sz; i++)
 	{
-		ss << "\""<< values[i].field << "\": \"" << values[i].value << "\"";
+		ss << "\""<< values[i].field << "\": " ;
+			if ((values[i].field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
+				|| (!pkt2utilstring::isNumber(values[i].value)))
+				ss << "\"" << values[i].value << "\"";
+			else
+				ss << values[i].value;
 		if (i < sz - 1)
 			ss << ",";
 	}
