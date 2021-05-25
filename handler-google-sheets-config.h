@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "google-sheets.h"
 
 #define PROGRAM_NAME				"handler-google-sheets"
@@ -77,7 +78,9 @@ public:
 	GoogleSheets *google_sheets;
 	
 	char *path;
-};
 
+	std::map<std::string, std::string> tableAliases;
+	std::map<std::string, std::string> fieldAliases;
+};
 
 #endif
