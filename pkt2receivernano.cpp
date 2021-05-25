@@ -237,9 +237,10 @@ int pkt2_receiever_nano(Config *config)
 					(sockaddr *) packet.get_sockaddr_dst(),
 					std::string((const char *) packet.data(), (size_t) packet.length),
 					&options_cache,
-					config->force_message
+					config->force_message, &config->tableAliases, &config->fieldAliases
 			);
-			google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
+			google::protobuf::Message *m = packet2Message.parsePacket(&packet_env,
+				&config->tableAliases, &config->fieldAliases);
 			if (m == NULL)
 			{
 				control_message(config, socket_control, CONTROL_TYP_ERROR_CODE, 0, CONTROL_TYP_ERROR, "");

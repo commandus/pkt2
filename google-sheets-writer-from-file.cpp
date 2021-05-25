@@ -149,7 +149,8 @@ START:
 		std::string s((char *) data, packet_length);
 
 		google::protobuf::Message *message;
-		if (parsePacket2Message(&message, strpkt2env, config->input_mode, s, config->force_message)) {
+		if (parsePacket2Message(&message, strpkt2env, config->input_mode, s, config->force_message,
+			&config->tableAliases, &config->fieldAliases)) {
 			if (config->allowed_messages.size())
 			{
 				if (std::find(config->allowed_messages.begin(), config->allowed_messages.end(), message->GetTypeName()) == config->allowed_messages.end())

@@ -122,6 +122,9 @@ int Config::parseCmd
 	struct arg_str *a_sheet = arg_str1("t", "sheet", "<name>", "Sheet name");
 	struct arg_int *a_format_number = arg_int0(NULL, "format", "<number>", "Default 0");
 
+	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
+	struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
+
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096");
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);
@@ -132,6 +135,7 @@ int Config::parseCmd
 		a_retries, a_retry_delay,
 		// OAuth, Google sheets
 		a_json, a_token_file, a_subject_email, a_spreadsheet, a_sheet, a_format_number,
+		a_table_alias, a_field_alias,
 		a_daemonize, a_verbosity, a_buffer_size, a_help, a_end 
 	};
 
@@ -236,6 +240,26 @@ int Config::parseCmd
 
 	for (int i = 0; i < a_allowed_packet_sizes->count; i++) {
 		allowed_packet_sizes.push_back(a_allowed_packet_sizes->ival[i]);
+	}
+
+	for (int i = 0; i < a_table_alias->count; i++) {
+		std::string line = a_table_alias->sval[i];
+		size_t p = line.find('=');
+		if (p == std::string::npos)
+			continue;
+		std::string n = line.substr(0, p);
+		std::string v = line.substr(p + 1);
+		tableAliases[n] = v;
+	}
+
+	for (int i = 0; i < a_field_alias->count; i++) {
+		std::string line = a_field_alias->sval[i];
+		size_t p = line.find('=');
+		if (p == std::string::npos)
+			continue;
+		std::string n = line.substr(0, p);
+		std::string v = line.substr(p + 1);
+		fieldAliases[n] = v;
 	}
 
 	scope = DEF_SCOPE;

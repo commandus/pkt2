@@ -112,7 +112,8 @@ START:
 			switch (config->mode)
 			{
 			case MODE_JSON:
-				put_json(config->stream, &options, &messageTypeNAddress, m);
+				put_json(config->stream, &options, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_CSV:
 				put_csv(config->stream, &options, &messageTypeNAddress, m);
@@ -121,10 +122,12 @@ START:
 				put_tab(config->stream, &options, &messageTypeNAddress, m);
 				break;
 			case MODE_SQL:
-				put_sql(config->stream, &options, &messageTypeNAddress, m);
+				put_sql(config->stream, &options, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_SQL2:
-				put_sql2(config->stream, &options, &messageTypeNAddress, m);
+				put_sql2(config->stream, &options, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_PB_TEXT:
 				put_protobuf_text(config->stream, &options, &messageTypeNAddress, m);

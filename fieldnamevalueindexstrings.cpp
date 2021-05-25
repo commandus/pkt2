@@ -100,33 +100,65 @@ void FieldNameValueIndexStrings::add
 		values.push_back(FieldNameValueString(index, field->cpp_type(), false, field->full_name(), value));
 }
 
+static std::string findAlias(
+	const std::map<std::string, std::string> *aliases,
+	const std::string &name
+) {
+	std::map<std::string, std::string>::const_iterator it;
+	if (aliases && (it = aliases->find(name)) != aliases->end())
+		return it->second;
+	else 
+		return name;
+}
+
 /**
  * After all message "parsed" get INSERT clause
  * @return String
  */
 void FieldNameValueIndexStrings::toStringInsert
 (
-	std::vector<std::string> *stmts
+	std::vector<std::string> *stmts,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 ) {
 	std::stringstream ss;
+	std::string tableName = findAlias(tableAliases, table);
+	// if alias set to empty string, skip table
+	if (tableName.empty())
+		return;
+
 	int sz = values.size();
-	ss << "INSERT INTO " << quote << pkt2utilstring::replace(table, ".", "_") << quote << "(";
+
+	ss << "INSERT INTO " << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
+	int fieldCount = 0;
 	for (int i = 0; i < sz; i++)
 	{
-		ss << quote << values[i].field << quote;
-		if (i < sz - 1)
+		std::string fieldName = findAlias(fieldAliases, values[i].field);
+		// if alias set to empty string, skip table
+		if (fieldName.empty())
+			continue;
+		if (fieldCount)
 			ss << ", ";
+		ss << quote << fieldName << quote;
+		fieldCount++;
 	}
+	if (fieldCount == 0)
+		return;
+
 	ss << ") VALUES (";
 	sz = values.size();
+	fieldCount = 0;
 	for (int i = 0; i < sz; i++)
 	{
-		if (values[i].field_type < google::protobuf::FieldDescriptor::CPPTYPE_STRING)
-			ss << values[i].value;
-		else
-			ss << string_quote << values[i].value << string_quote;
-		if (i < sz - 1)
+		if (findAlias(fieldAliases, values[i].field).empty())
+			continue;
+		if (fieldCount)
 			ss << ", ";
+		if ((values[i].field_type >= google::protobuf::FieldDescriptor::CPPTYPE_STRING) || (!pkt2utilstring::isNumber(values[i].value)))
+			ss << string_quote << values[i].value << string_quote;
+		else
+			ss << values[i].value;
+		fieldCount++;
 	}
 	ss << ");" << std::endl;
 	stmts->push_back(ss.str());
@@ -140,7 +172,9 @@ void FieldNameValueIndexStrings::toStringInsert
  */
 void FieldNameValueIndexStrings::toStringInsert2
 (
-		std::vector<std::string> *stmts
+	std::vector<std::string> *stmts,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	std::stringstream ssprefix;
@@ -164,7 +198,6 @@ void FieldNameValueIndexStrings::toStringInsert2
 
 	std::string prefix(ssprefix.str());
 	prefix = prefix.substr(0, prefix.size() - 1); // remove last ","
-
 	
 	// each non-index field
 	for (int i = 0; i < values.size(); i++)
@@ -231,20 +264,34 @@ std::string FieldNameValueIndexStrings::toStringTab() {
  * JSON
  * @return String
  */
-std::string FieldNameValueIndexStrings::toStringJSON() {
+std::string FieldNameValueIndexStrings::toStringJSON(
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+) {
+	std::string tableName = findAlias(tableAliases, table);
+	// if alias set to empty string, skip table
+	if (tableName.empty())
+		return "";
+
 	std::stringstream ss;
 	int sz = values.size();
-	ss << "{\"" << table << "\":{";
+
+	ss << "{\"" << tableName << "\":{";
+	int fieldCount = 0;
 	for (int i = 0; i < sz; i++)
 	{
-		ss << "\""<< values[i].field << "\": " ;
-			if ((values[i].field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
-				|| (!pkt2utilstring::isNumber(values[i].value)))
-				ss << "\"" << values[i].value << "\"";
-			else
-				ss << values[i].value;
-		if (i < sz - 1)
-			ss << ",";
+		std::string fieldName = findAlias(fieldAliases, values[i].field);
+		if (fieldName.empty())
+			continue;
+		if (fieldCount)
+			ss << ", ";
+		ss << "\""<< fieldName << "\": ";
+		if ((values[i].field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
+			|| (!pkt2utilstring::isNumber(values[i].value)))
+			ss << "\"" << values[i].value << "\"";
+		else
+			ss << values[i].value;
+		fieldCount++;
 	}
 	ss << "}}" << std::endl;
 	return ss.str();

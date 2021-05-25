@@ -61,12 +61,14 @@ int put_json
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
-	*output << vals.toStringJSON();
+	*output << vals.toStringJSON(tableAliases, fieldAliases);
 	return ERR_OK;
 }
 
@@ -81,13 +83,15 @@ int put_sql
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
-	vals.toStringInsert(&stmts);
+	vals.toStringInsert(&stmts, tableAliases, fieldAliases);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;
@@ -104,13 +108,15 @@ int put_sql2
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
-	vals.toStringInsert2(&stmts);
+	vals.toStringInsert2(&stmts, tableAliases, fieldAliases);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;

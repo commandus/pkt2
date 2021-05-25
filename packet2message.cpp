@@ -52,9 +52,12 @@ PacketParseEnvironment::PacketParseEnvironment
 	    struct sockaddr *socket_address_dst,
 		const std::string &apacket,
 		Pkt2OptionsCache *optionscache,
-		const std::string &force_message
+		const std::string &force_message,
+		const std::map<std::string, std::string> *atableAliases,
+		const std::map<std::string, std::string> *afieldAliases
 )
-	: packet(apacket), options_cache(optionscache)
+	: packet(apacket), options_cache(optionscache),
+		tableAliases(atableAliases), fieldAliases(afieldAliases)
 {
     bool found;
 	if (force_message.empty()) {
@@ -214,7 +217,9 @@ bool onmessageend
  */
 google::protobuf::Message *Packet2Message::parsePacket
 (
-	PacketParseEnvironment *env
+	PacketParseEnvironment *env,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	if (!env->packet_root_variable)

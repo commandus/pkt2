@@ -130,7 +130,8 @@ int main(int argc, char **argv)
     Pkt2OptionsCache options_cache(&declarations);
     Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
 
-    PacketParseEnvironment packet_env(NULL, NULL, packet, &options_cache, config->force_message);
+    PacketParseEnvironment packet_env(NULL, NULL, packet, &options_cache,
+		config->force_message, &config->tableAliases, &config->fieldAliases);
 
     google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
 

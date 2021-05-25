@@ -46,6 +46,9 @@ int Config::parseCmd
         struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Repeat each message. Default 1.");
         struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on repeats in seconds. Default 0");
 
+    	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
+	    struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
+
         struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
         struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
@@ -54,7 +57,9 @@ int Config::parseCmd
         void* argtable[] = {
         		a_proto_path, a_force_message,
         		a_packet, a_mode, a_input_file, a_message_out_url,
-				a_retries, a_retry_delay, a_verbosity,
+				a_retries, a_retry_delay,
+                a_table_alias, a_field_alias,
+                a_verbosity,
                 a_help, a_end
         };
 
@@ -127,6 +132,26 @@ int Config::parseCmd
 			retry_delay = *a_retry_delay->ival;
         else
 			retry_delay = 0;
+
+        for (int i = 0; i < a_table_alias->count; i++) {
+            std::string line = a_table_alias->sval[i];
+            size_t p = line.find('=');
+            if (p == std::string::npos)
+                continue;
+            std::string n = line.substr(0, p);
+            std::string v = line.substr(p + 1);
+            tableAliases[n] = v;
+        }
+
+        for (int i = 0; i < a_field_alias->count; i++) {
+            std::string line = a_field_alias->sval[i];
+            size_t p = line.find('=');
+            if (p == std::string::npos)
+                continue;
+            std::string n = line.substr(0, p);
+            std::string v = line.substr(p + 1);
+            fieldAliases[n] = v;
+        }
 
         arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
         return 0;

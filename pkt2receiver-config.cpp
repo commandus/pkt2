@@ -62,6 +62,10 @@ int Config::parseCmd
 	struct arg_int *a_retries = arg_int0("r", "repeat", "<n>", "Restart listen. Default 0.");
 	struct arg_int *a_retry_delay = arg_int0("y", "delay", "<seconds>", "Delay on restart in seconds. Default 60.");
 	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
+
+   	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
+    struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
+
 	struct arg_lit *a_daemonize = arg_lit0("d", "daemonize", "Start as daemon/service");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
@@ -73,6 +77,7 @@ int Config::parseCmd
 		a_proto_path, a_force_message, a_allowed_packet_sizes,
 		a_buffer_size,
 		a_retries, a_retry_delay, a_max_fd, 
+		a_table_alias, a_field_alias,
 		a_daemonize, a_verbosity,
 		a_help, a_end 
 	};
@@ -165,6 +170,26 @@ int Config::parseCmd
 	char wd[PATH_MAX];
 	path = getcwd(wd, PATH_MAX);	
 
+	for (int i = 0; i < a_table_alias->count; i++) {
+		std::string line = a_table_alias->sval[i];
+		size_t p = line.find('=');
+		if (p == std::string::npos)
+			continue;
+		std::string n = line.substr(0, p);
+		std::string v = line.substr(p + 1);
+		tableAliases[n] = v;
+	}
+
+	for (int i = 0; i < a_field_alias->count; i++) {
+		std::string line = a_field_alias->sval[i];
+		size_t p = line.find('=');
+		if (p == std::string::npos)
+			continue;
+		std::string n = line.substr(0, p);
+		std::string v = line.substr(p + 1);
+		fieldAliases[n] = v;
+	}
+	
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;
 }

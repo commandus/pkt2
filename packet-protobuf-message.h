@@ -2,6 +2,7 @@
 #define PACKET_PROTOBUF_MESSAGE_H_
 
 #include <string>
+#include <map>
 #include <netinet/in.h>
 
 #include <google/protobuf/message.h>
@@ -24,7 +25,9 @@ bool parsePacket2Message(
 	void *env, 
 	int inputFormat,
 	const std::string &packet,
-	const std::string &forceMessage
+	const std::string &forceMessage,
+	const std::map<std::string, std::string> *tableAliases = NULL,
+	const std::map<std::string, std::string> *fieldAliases = NULL
 );
 
 #endif

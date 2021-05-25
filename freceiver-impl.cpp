@@ -317,9 +317,11 @@ static int filePrint(Config *config)
 			(sockaddr *) packet.get_sockaddr_dst(),
 			std::string((const char *) packet.data(), (size_t) packet.length),
 			&options_cache,
-			""
+			"",
+			&config->tableAliases, &config->fieldAliases
 		);
-		google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
+		google::protobuf::Message *m = packet2Message.parsePacket(&packet_env,
+			&config->tableAliases, &config->fieldAliases);
 		if (!m)
 		{
 			LOG(ERROR) << ERR_PACKET_PARSE;
@@ -330,7 +332,8 @@ static int filePrint(Config *config)
 		switch (config->mode)
 		{
 			case MODE_JSON:
-				put_json(&std::cout, &options_cache, &messageTypeNAddress, m);
+				put_json(&std::cout, &options_cache, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_CSV:
 				put_csv(&std::cout, &options_cache, &messageTypeNAddress, m);
@@ -339,10 +342,12 @@ static int filePrint(Config *config)
 				put_tab(&std::cout, &options_cache, &messageTypeNAddress, m);
 				break;
 			case MODE_SQL:
-				put_sql(&std::cout, &options_cache, &messageTypeNAddress, m);
+				put_sql(&std::cout, &options_cache, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_SQL2:
-				put_sql2(&std::cout, &options_cache, &messageTypeNAddress, m);
+				put_sql2(&std::cout, &options_cache, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_PB_TEXT:
 				put_protobuf_text(&std::cout, &options_cache, &messageTypeNAddress, m);

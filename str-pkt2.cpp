@@ -75,7 +75,9 @@ std::string parsePacket(
 	int inputFormat,
 	int outputFormat,
 	const std::string &packet,
-	const std::string &forceMessage
+	const std::string &forceMessage,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	google::protobuf::Message *m;
@@ -89,7 +91,7 @@ std::string parsePacket(
 	switch (outputFormat)
 	{
 	case MODE_JSON:
-		put_json(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_json(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
 		break;
 	case MODE_CSV:
 		put_csv(&ss, e->options_cache, &messageTypeNAddress, m);
@@ -98,10 +100,10 @@ std::string parsePacket(
 		put_tab(&ss, e->options_cache, &messageTypeNAddress, m);
 		break;
 	case MODE_SQL:
-		put_sql(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_sql(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
 		break;
 	case MODE_SQL2:
-		put_sql2(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_sql2(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
 		break;
 	case MODE_PB_TEXT:
 		put_protobuf_text(&ss, e->options_cache, &messageTypeNAddress, m);
@@ -148,7 +150,10 @@ bool parsePacket2ProtobufMessage(
 	void *env, 
 	int inputFormat,
 	const std::string &packet,
-	const std::string &forceMessage
+	const std::string &forceMessage,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 ) {
-	return parsePacket2Message((google::protobuf::Message **) retMessage, env, inputFormat, packet, forceMessage);
+	return parsePacket2Message((google::protobuf::Message **) retMessage, env, inputFormat, packet, 
+		forceMessage, tableAliases, fieldAliases);
 }

@@ -18,13 +18,14 @@ bool parsePacket2Message(
 	void *env, 
 	int inputFormat,
 	const std::string &packet,
-	const std::string &forceMessage
+	const std::string &forceMessage,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	struct sockaddr_in s, d;
 	memset(&s, 0, sizeof(sockaddr_in));
 	memset(&d, 0, sizeof(sockaddr_in));
-
 	
 	const std::string *data;
 	std::string bdata;
@@ -41,7 +42,7 @@ bool parsePacket2Message(
 	}
 	
 	PacketParseEnvironment packet_env((struct sockaddr *) &s, (struct  sockaddr *) &d, *data, 
-		((EnvPkt2*) env)->options_cache, forceMessage);
+		((EnvPkt2*) env)->options_cache, forceMessage, tableAliases, fieldAliases);
 	*retMessage = ((EnvPkt2*) env)->packet2Message->parsePacket(&packet_env);
 	return *retMessage != NULL;
 }
