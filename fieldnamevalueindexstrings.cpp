@@ -188,7 +188,6 @@ void FieldNameValueIndexStrings::toStringInsert2
 	// values (index first)
 	for (int i = 1; i < index2values.size(); i++)
 	{
-		
 		if ((values[index2values[i]].field_type < google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
 			&& (!values[index2values[i]].sql_string))
 			ssprefix << values[index2values[i]].value << ",";
@@ -202,21 +201,28 @@ void FieldNameValueIndexStrings::toStringInsert2
 	// each non-index field
 	for (int i = 0; i < values.size(); i++)
 	{
+		std::string fieldName = findAlias(fieldAliases, values[i].field);
+		// if alias set to empty string, skip table
+		if (fieldName.empty())
+			continue;
+
 		std::stringstream ss;
 		if (std::find(index2values.begin(), index2values.end(), i) != index2values.end())
 			continue;
 
-		if ((values[i].field_type < google::protobuf::FieldDescriptor::CPPTYPE_STRING) && (!values[i].sql_string))
+		if ((values[i].field_type >= google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
+			|| (!pkt2utilstring::isNumber(values[i].value))
+			|| values[i].sql_string)
 		{
-			ss << "INSERT INTO " << quote << sql2tableNumeric << quote << "(" << sql2names[0] << ","
-				<< prefix << ",'" << values[i].field << "'"
-				<< "," << values[i].value << ");" << std::endl;
+			ss << "INSERT INTO " << quote << sql2tableString << quote << "(" << sql2names[0] << ","
+				<< prefix << ",'" << fieldName << "'"
+				<< "," << string_quote << values[i].value << string_quote << ");" << std::endl;
 		}
 		else
 		{
-			ss << "INSERT INTO " << quote << sql2tableString << quote << "(" << sql2names[0] << ","
-				<< prefix << ",'" << values[i].field << "'"
-				<< "," << string_quote << values[i].value << string_quote << ");" << std::endl;
+			ss << "INSERT INTO " << quote << sql2tableNumeric << quote << "(" << sql2names[0] << ","
+				<< prefix << ",'" << fieldName << "'"
+				<< "," << values[i].value << ");" << std::endl;
 		}
 		
 		stmts->push_back(ss.str());
@@ -227,10 +233,18 @@ void FieldNameValueIndexStrings::toStringInsert2
  * CSV line
  * @return String
  */
-std::string FieldNameValueIndexStrings::toStringCSV() {
+std::string FieldNameValueIndexStrings::toStringCSV(
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+) {
 	std::stringstream ss;
 	int sz = values.size();
-	ss << quote << table << quote << ",";
+	std::string tableName = findAlias(tableAliases, table);
+	// if alias set to empty string, skip table
+	if (tableName.empty())
+		return "";
+
+	ss << quote << tableName << quote << ", ";
 	sz = values.size();
 	for (int i = 0; i < sz; i++)
 	{
@@ -246,10 +260,17 @@ std::string FieldNameValueIndexStrings::toStringCSV() {
  * Tab delimited line
  * @return String
  */
-std::string FieldNameValueIndexStrings::toStringTab() {
+std::string FieldNameValueIndexStrings::toStringTab(
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+) {
 	std::stringstream ss;
 	int sz = values.size();
-	ss << quote << table << quote << "\t";
+	std::string tableName = findAlias(tableAliases, table);
+	// if alias set to empty string, skip table
+	if (tableName.empty())
+		return "";
+	ss << quote << tableName << quote << "\t";
 	for (int i = 0; i < sz; i++)
 	{
 		ss << values[i].value;

@@ -83,7 +83,7 @@ int put
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString2);
 	if (config->verbosity > 1)
-		std::cerr << vals.toStringTab();
+		std::cerr << vals.toStringTab(&config->tableAliases, &config->fieldAliases);
 	
 	int count = vals.values.size();
 	ValueRange newcells;

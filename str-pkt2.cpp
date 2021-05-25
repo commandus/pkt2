@@ -94,10 +94,12 @@ std::string parsePacket(
 		put_json(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
 		break;
 	case MODE_CSV:
-		put_csv(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_csv(&ss, e->options_cache, &messageTypeNAddress, m,
+			tableAliases, fieldAliases);
 		break;
 	case MODE_TAB:
-		put_tab(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_tab(&ss, e->options_cache, &messageTypeNAddress, m,
+			tableAliases, fieldAliases);
 		break;
 	case MODE_SQL:
 		put_sql(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
@@ -123,12 +125,14 @@ std::string parsePacket(
 	case 11:	
 		ss << headerFields(e, messageTypeNAddress.message_type, ", ")
 			<< std::endl;
-		put_csv(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_csv(&ss, e->options_cache, &messageTypeNAddress, m,
+			tableAliases, fieldAliases);
 		break;			
 	case 12:	
 		ss << headerFields(e, messageTypeNAddress.message_type, "\t")
 			<< std::endl;
-		put_tab(&ss, e->options_cache, &messageTypeNAddress, m);
+		put_tab(&ss, e->options_cache, &messageTypeNAddress, m,
+			tableAliases, fieldAliases);
 		break;			
 	}
 	if (m) 

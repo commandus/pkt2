@@ -152,12 +152,14 @@ int put_csv
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
-	*output << vals.toStringCSV();
+	*output << vals.toStringCSV(tableAliases, fieldAliases);
 	return ERR_OK;
 }
 
@@ -172,12 +174,14 @@ int put_tab
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
-	*output << vals.toStringTab();
+	*output << vals.toStringTab(tableAliases, fieldAliases);
 	return ERR_OK;
 }
 

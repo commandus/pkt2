@@ -336,10 +336,12 @@ static int filePrint(Config *config)
 					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_CSV:
-				put_csv(&std::cout, &options_cache, &messageTypeNAddress, m);
+				put_csv(&std::cout, &options_cache, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_TAB:
-				put_tab(&std::cout, &options_cache, &messageTypeNAddress, m);
+				put_tab(&std::cout, &options_cache, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_SQL:
 				put_sql(&std::cout, &options_cache, &messageTypeNAddress, m,

@@ -119,13 +119,19 @@ public:
 	 * CSV line
 	 * @return String
 	 */
-	std::string toStringCSV();
+	std::string toStringCSV(
+		const std::map<std::string, std::string> *tableAliases,
+		const std::map<std::string, std::string> *fieldAliases
+	);
 
 	/**
 	 * Tab delimited line
 	 * @return String
 	 */
-	std::string toStringTab();
+	std::string toStringTab(
+		const std::map<std::string, std::string> *tableAliases,
+		const std::map<std::string, std::string> *fieldAliases
+	);
 
 	/**
 	 * JSON

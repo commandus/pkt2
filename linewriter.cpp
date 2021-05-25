@@ -116,10 +116,12 @@ START:
 					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_CSV:
-				put_csv(config->stream, &options, &messageTypeNAddress, m);
+				put_csv(config->stream, &options, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_TAB:
-				put_tab(config->stream, &options, &messageTypeNAddress, m);
+				put_tab(config->stream, &options, &messageTypeNAddress, m,
+					&config->tableAliases, &config->fieldAliases);
 				break;
 			case MODE_SQL:
 				put_sql(config->stream, &options, &messageTypeNAddress, m,

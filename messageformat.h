@@ -87,7 +87,9 @@ int put_csv
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 );
 
 /**
@@ -101,7 +103,9 @@ int put_tab
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 );
 
 /**
