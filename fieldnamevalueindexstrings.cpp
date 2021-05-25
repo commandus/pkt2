@@ -188,11 +188,13 @@ void FieldNameValueIndexStrings::toStringInsert2
 	// values (index first)
 	for (int i = 1; i < index2values.size(); i++)
 	{
-		if ((values[index2values[i]].field_type < google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
-			&& (!values[index2values[i]].sql_string))
-			ssprefix << values[index2values[i]].value << ",";
-		else
+		if ((values[index2values[i]].field_type >= google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
+			|| (!pkt2utilstring::isNumber(values[index2values[i]].value))
+			|| values[index2values[i]].sql_string
+			)
 			ssprefix << string_quote << values[index2values[i]].value << string_quote << ",";
+		else
+			ssprefix << values[index2values[i]].value << ",";
 	}
 
 	std::string prefix(ssprefix.str());
