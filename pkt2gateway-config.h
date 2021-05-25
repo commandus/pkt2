@@ -2,6 +2,7 @@
 #define PKT2GATEWAY_CONFIG_H     1
 
 #include <string>
+#include <map>
 
 #define PROGRAM_NAME			"pkt2gateway"
 #define PROGRAM_DESCRIPTION		"Send packets from command line or binary file"
@@ -44,6 +45,8 @@ public:
 	int stop_request;				///< 0- process, 1- stop request, 2- reload request
 	size_t buffer_size;
 	
+	std::map<std::string, std::string> tableAliases;
+	std::map<std::string, std::string> fieldAliases;
 };
 
 

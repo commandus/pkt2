@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <ostream>
 
 #define PROGRAM_NAME             "handlerline"
@@ -48,6 +49,9 @@ public:
 	std::ostream *stream;
 	
 	char *path;
+
+	std::map<std::string, std::string> tableAliases;
+	std::map<std::string, std::string> fieldAliases;
 };
 
 #endif

@@ -28,13 +28,18 @@ public:
     const Pkt2OptionsCache *options_cache;
     const Pkt2PacketVariable *packet_root_variable;
 	JavascriptContext *context;
+	const std::map<std::string, std::string> *tableAliases;
+	const std::map<std::string, std::string> *fieldAliases;
+
 	PacketParseEnvironment
 	(
 		struct sockaddr *socket_address_src,
 		struct sockaddr *socket_address_dst,
 		const std::string &packet,
 		Pkt2OptionsCache *options_cache,
-		const std::string &force_message
+		const std::string &force_message,
+		const std::map<std::string, std::string> *tableAliases = NULL,
+		const std::map<std::string, std::string> *fieldAliases = NULL
 	);
 	~PacketParseEnvironment();
     std::string getFullFieldName();
@@ -69,7 +74,9 @@ public:
 	 */
 	google::protobuf::Message *parsePacket
 	(
-		PacketParseEnvironment *env
+		PacketParseEnvironment *env,
+		const std::map<std::string, std::string> *tableAliases = NULL,
+		const std::map<std::string, std::string> *fieldAliases = NULL
 	);
 };
 

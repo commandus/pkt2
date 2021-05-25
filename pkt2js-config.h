@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <stdint.h>
 
 #define PROGRAM_NAME             "pkt2js"
@@ -66,6 +67,9 @@ public:
 	uint64_t count_packet_in;
 	uint64_t count_packet_out;
 	char *path;
+
+	std::map<std::string, std::string> tableAliases;
+	std::map<std::string, std::string> fieldAliases;
 };
 
 

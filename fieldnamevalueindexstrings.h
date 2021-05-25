@@ -10,6 +10,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
+#include <map>
 
 #include "output-message.h"
 #include "errorcodes.h"
@@ -98,7 +99,9 @@ public:
 	 */
 	void toStringInsert
 	(
-		std::vector<std::string> *stmts
+		std::vector<std::string> *stmts,
+		const std::map<std::string, std::string> *tableAliases,
+		const std::map<std::string, std::string> *fieldAliases
 	);
 
 	/**
@@ -107,7 +110,9 @@ public:
 	 */
 	void toStringInsert2
 	(
-		std::vector<std::string> *stmts
+		std::vector<std::string> *stmts,
+		const std::map<std::string, std::string> *tableAliases,
+		const std::map<std::string, std::string> *fieldAliases
 	);
 
 	/**
@@ -126,7 +131,10 @@ public:
 	 * JSON
 	 * @return String
 	 */
-	std::string toStringJSON();
+	std::string toStringJSON(
+		const std::map<std::string, std::string> *tableAliases,
+		const std::map<std::string, std::string> *fieldAliases
+	);
 	
 	/**
 	* @brief return value

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include <stdint.h>
 #include <libpq-fe.h>
 
@@ -62,6 +63,9 @@ public:
 	std::string message_url;
 	
 	char *path;
+
+	std::map<std::string, std::string> tableAliases;
+	std::map<std::string, std::string> fieldAliases;
 };
 
 /**

@@ -1,3 +1,5 @@
+#include <map>
+
 #include "packet2message.h"
 #include "utilprotobuf.h"
 #include "messagedecomposer.h"
@@ -36,7 +38,9 @@ int put_json
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 );
 
 /**
@@ -50,7 +54,9 @@ int put_sql
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 );
 
 /**
@@ -64,7 +70,9 @@ int put_sql2
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
-	const google::protobuf::Message *message
+	const google::protobuf::Message *message,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 );
 
 /**

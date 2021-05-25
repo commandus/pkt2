@@ -2,6 +2,7 @@
 #define CONFIG_H     1
 
 #include <string>
+#include <map>
 #include <stdint.h>
 
 #define PROGRAM_NAME				"freceiver"
@@ -60,6 +61,8 @@ public:
 	
 	char *path;	
 
+	std::map<std::string, std::string> tableAliases;
+	std::map<std::string, std::string> fieldAliases;
 };
 
 #endif // ifndef CONFIG_H
