@@ -248,3 +248,11 @@ google::protobuf::Message *Packet2Message::parsePacket
 
 	return m;
 }
+
+google::protobuf::Message *Packet2Message::getMessageByName
+(
+	const std::string &messageType
+)
+{
+	return declarations->getMessage(messageType);
+}

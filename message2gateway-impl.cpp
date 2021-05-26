@@ -88,7 +88,8 @@ int run_stream
 
 	IstreamInputStream isistream(strm);
     CodedInputStream input(&isistream);
-    input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
+    // deprecated input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
+	input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT);
 
     while (!config->stop_request)
     {

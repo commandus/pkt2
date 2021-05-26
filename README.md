@@ -1849,10 +1849,14 @@ PID файлы создаются только при наличии прав н
 
 то есть демон нужно запускать от имени root.
 
-## Отладка
+## Отладка, clang
 
 ```
 ./configure CFLAGS='-g -O0' CXXFLAGS='-g -O0'
+```
+
+```
+./configure CC=clang CXX=clang++
 ```
 
 ## protoc

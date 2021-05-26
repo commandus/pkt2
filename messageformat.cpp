@@ -1,6 +1,6 @@
 #include "messageformat.h"
 
-#include "fieldnamevalueindexstrings.h"
+#include "utilstring.h"
 
 static int format_number;
 
@@ -120,6 +120,57 @@ int put_sql2
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;
+}
+
+int create_sql
+(
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	Packet2Message *packet2Message,
+	const std::string &messageType,
+	SQL_DIALECT sqldialect,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+)
+{
+	std::string tableName = findAlias(tableAliases, messageType);
+	// if alias set to empty string, skip table
+	if (tableName.empty())
+		return 0;
+
+	google::protobuf::Message *message = packet2Message->getMessageByName(messageType);
+	if (message) {
+		FieldNameValueIndexStrings vals(options, messageType);
+		MessageDecomposer md(&vals, messageType, options, message, addFieldValueString);
+		vals.toCreateSQLTableFields(output, tableName, sqldialect, fieldAliases);
+	}
+	return 0;
+}
+
+int create_sql2
+(
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	Packet2Message *packet2Message,
+	const std::string &messageType,
+	SQL_DIALECT sqldialect,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+)
+{
+	std::string tableName = findAlias(tableAliases, messageType);
+	// if alias set to empty string, skip table
+	std::string quote("\"");	// TODO MySQL exceptions for spaces and reserved words
+	if (tableName.empty())
+		return 0;
+
+	google::protobuf::Message *m = packet2Message->getMessageByName(messageType);
+	if (m) {
+		
+	}
+	*output << "CREATE TABLE \"" << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
+	*output << ");";
+	return 0;
 }
 
 /**

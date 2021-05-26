@@ -66,19 +66,18 @@ IMEI imei =
 
 gps_coord_t gpscoord_yak = 
 {
-	latitude_g: 62,
-	latitude_m: 2,
-	latitude_s: 0,
-	latitude_s1: 0,
-	latitude_ns: 'N',
-
-	longitude_g: 129,
-	longitude_m: 43,
-	longitude_s: 0,
-	longitude_s1: 0,
-	longitude_ew: 'E',
-	hdop: 9,
-	pdop: 10
+	.latitude_g = 62,
+	.latitude_m = 2,
+	.latitude_s = 0,
+	.latitude_s1 = 0,
+	.latitude_ns = 'N',
+	.longitude_g = 129,
+	.longitude_m = 43,
+	.longitude_s = 0,
+	.longitude_s1 = 0,
+	.longitude_ew = 'E',
+	.hdop = 9,
+	.pdop = 10
 };
 
 void fill_time5

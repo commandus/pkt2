@@ -259,6 +259,7 @@ handlerline_SOURCES = \
 	utilfile.cpp utilstring.cpp utilinet.cpp third_party/duk/duktape.c javascript-context.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pbjson.cpp \
+	packet2message.cpp packet-protobuf-message.cpp messagecomposer.cpp \
 	messageformat.cpp \
 	$(common_src)
 
@@ -291,6 +292,7 @@ handler_fcm_SOURCES = \
 	messageformat.cpp \
 	helper_fcm.cpp \
 	pkt2.pb.cpp pkt2optionscache.cpp pkt2packetvariable.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
+	packet2message.cpp messagecomposer.cpp \
 	$(common_src)
 
 handler_fcm_LDADD = $(LIB_PROTOBUF) -lglog -lnanomsg -lssl -lcrypto -lcurl -lpq $(SNMPLIBS)
@@ -429,7 +431,7 @@ PKT2LIBSRC = \
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cpp \
 	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c \
-	env-pkt2.cpp packet-protobuf-message.cpp
+	env-pkt2.cpp packet-protobuf-message.cpp 
 
 #
 # pkt2js

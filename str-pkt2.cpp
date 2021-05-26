@@ -74,6 +74,7 @@ std::string parsePacket(
 	void *env, 
 	int inputFormat,
 	int outputFormat,
+	int sqlDialect,
 	const std::string &packet,
 	const std::string &forceMessage,
 	const std::map<std::string, std::string> *tableAliases,
@@ -160,4 +161,37 @@ bool parsePacket2ProtobufMessage(
 ) {
 	return parsePacket2Message((google::protobuf::Message **) retMessage, env, inputFormat, packet, 
 		forceMessage, tableAliases, fieldAliases);
+}
+
+/**
+ * Retirn CREATE tanle SQL clause
+ * @param env packet declaratuions
+ * @param messageName Protobuf full type name (including packet)
+ * @param outputFormat 3- sql, 4- Sql
+ * @param sqlDialect 0- PostgeSQL, 1- MySQL, 1- Firebird
+ * @param tableAliases <Protobuf full type name>=<alias (SQL table name)>
+ * @param fieldAliases <Protobuf message fiekd name>=<alias (SQL column name)>
+ * @return empty string if fails
+ */
+std::string createTableSQLClause(
+	void *env, 
+	const std::string &messageName,
+	int outputFormat,
+	int sqlDialect,
+	const std::map<std::string, std::string> *tableAliases = NULL,
+	const std::map<std::string, std::string> *fieldAliases = NULL
+) {
+	EnvPkt2* e = (EnvPkt2*) env; 
+	
+	std::stringstream ss;
+	switch (outputFormat)
+	{
+	case MODE_SQL:
+		create_sql(&ss, e->options_cache, e->packet2Message, messageName, (SQL_DIALECT) sqlDialect, tableAliases, fieldAliases);
+		break;
+	case MODE_SQL2:
+		create_sql2(&ss, e->options_cache, e->packet2Message, messageName, (SQL_DIALECT) sqlDialect, tableAliases, fieldAliases);
+		break;
+	}
+	return ss.str();
 }

@@ -46,3 +46,20 @@ bool parsePacket2Message(
 	*retMessage = ((EnvPkt2*) env)->packet2Message->parsePacket(&packet_env);
 	return *retMessage != NULL;
 }
+
+/**
+ * Get message by type name
+ * @param retMessage return message (NULL if fail)
+ * @param env packet declaratuions
+ * @param messageType,
+ * @return false if fails
+ */
+bool getMessageByName(
+	google::protobuf::Message **retMessage,
+	void *env, 
+	const std::string &messageType
+)
+{
+	*retMessage = ((EnvPkt2*) env)->packet2Message->getMessageByName(messageType);
+	return *retMessage != NULL;
+}

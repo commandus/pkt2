@@ -7,6 +7,7 @@
 
 #include "fieldnamevalueindexstrings.h"
 #include <algorithm>
+
 #include "utilstring.h"
 
 static const std::string sql2tableNumeric = "num";
@@ -100,7 +101,7 @@ void FieldNameValueIndexStrings::add
 		values.push_back(FieldNameValueString(index, field->cpp_type(), false, field->full_name(), value));
 }
 
-static std::string findAlias(
+std::string findAlias(
 	const std::map<std::string, std::string> *aliases,
 	const std::string &name
 ) {
@@ -162,6 +163,63 @@ void FieldNameValueIndexStrings::toStringInsert
 	}
 	ss << ");" << std::endl;
 	stmts->push_back(ss.str());
+}
+
+/**
+ * put CREATE TABLE clause inyo output parameter
+ * @param output return cluase
+ * @param tableName table name
+ * @param sqldialect SQL dialect 0..2
+ * @param fieldAliases message field aliases
+ * @return String
+ */
+void FieldNameValueIndexStrings::toCreateSQLTableFields
+(
+	std::ostream *output,
+	const std::string &tableName,
+	int sqldialect,
+	const std::map<std::string, std::string> *fieldAliases
+) {
+	std::string quote("\"");	// TODO MySQL exceptions for spaces and reserved words
+	*output << "CREATE TABLE \"" << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
+
+	int sz = values.size();
+
+	int fieldCount = 0;
+	for (int i = 0; i < sz; i++)
+	{
+		std::string fieldName = findAlias(fieldAliases, values[i].field);
+		// if alias set to empty string, skip table
+		if (fieldName.empty())
+			continue;
+		if (fieldCount)
+			*output << ", ";
+		*output << quote << fieldName << quote << " ";
+		switch (values[i].field_type) {
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+				*output << "integer";
+				break;
+			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+				*output << "double";
+				break;
+			case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+			case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+				*output << "integer";
+				break;
+		default:
+			// >= google::protobuf::FieldDescriptor::CPPTYPE_STRING)
+			*output << "TEXT";
+		}
+		fieldCount++;
+	}
+	if (fieldCount == 0)
+		return;
+
+	*output << ");";
 }
 
 // 		values.push_back(FieldNameValueString(index, field_type, field, string_quote + replace(value, string_quote, string_quote + string_quote) + string_quote));

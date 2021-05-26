@@ -63,7 +63,8 @@ int snmpInit
 #else
 	// TODO call in the main loop
 	// agent_check_and_process(1); // 0 == don't block
-#endif	
+#endif
+	return 0;
 }
 
 void snmpDone
