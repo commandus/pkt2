@@ -1,8 +1,12 @@
+#ifndef MESSAGE_FORMAT_H_
+#define MESSAGE_FORMAT_H_
+
 #include <map>
 
 #include "packet2message.h"
 #include "utilprotobuf.h"
 #include "messagedecomposer.h"
+#include "fieldnamevalueindexstrings.h"
 
 // output modes
 #define MODE_JSON			0
@@ -12,6 +16,13 @@
 #define MODE_SQL2			4
 #define MODE_PB_TEXT		5
 #define MODE_PRINT_DBG		6
+
+// Copy decraration from pkt2.proto
+enum SQL_DIALECT : int {
+  SQL_POSTGRESQL = 0,
+  SQL_MYSQL = 1,
+  SQL_FIREBIRD = 2
+};
 
 void set_format_number(int value);
 
@@ -153,3 +164,27 @@ std::string getFieldNames
 	Pkt2OptionsCache *options,
 	const std::string &messageTypeName
 );
+
+int create_sql
+(
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	Packet2Message *packet2Message,
+	const std::string &messageType,
+	SQL_DIALECT sqldialect,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+);
+
+int create_sql2
+(
+	std::ostream *output,
+	Pkt2OptionsCache *options,
+	Packet2Message *packet2Message,
+	const std::string &messageType,
+	SQL_DIALECT sqldialect,
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
+);
+
+#endif

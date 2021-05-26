@@ -78,6 +78,17 @@ public:
 		const std::map<std::string, std::string> *tableAliases = NULL,
 		const std::map<std::string, std::string> *fieldAliases = NULL
 	);
+
+	/**
+	 * @brief Get Protobuf message by name
+	 * @param message packet.message or "" (no force)
+	 * @return Protobuf message
+	 */
+	google::protobuf::Message *getMessageByName
+	(
+		const std::string &messageType
+	);
+
 };
 
 #endif /* PACKET2MESSAGE_H_ */

@@ -30,4 +30,17 @@ bool parsePacket2Message(
 	const std::map<std::string, std::string> *fieldAliases = NULL
 );
 
+/**
+ * Get message by type name
+ * @param retMessage return message (NULL if fail)
+ * @param env packet declaratuions
+ * @param messageType,
+ * @return false if fails
+ */
+bool getMessageByName(
+	google::protobuf::Message **retMessage,
+	void *env, 
+	const std::string &messageType
+);
+
 #endif

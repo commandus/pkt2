@@ -1,8 +1,6 @@
 /*
  * fieldnamevalueindexstrings.h
  */
-
-
 #ifndef FIELDNAMEVALUEINDEXSTRINGS_H_
 #define FIELDNAMEVALUEINDEXSTRINGS_H_
 
@@ -16,6 +14,7 @@
 #include "errorcodes.h"
 #include "utilprotobuf.h"
 #include "pkt2optionscache.h"
+#include "messageformat.h"
 
 #include "messagedecomposer.h"
 
@@ -151,7 +150,27 @@ public:
 		const std::string &name_suffix
 	);
 
+	/**
+	 * put CREATE TABLE clause inyo output parameter
+	 * @param output return cluase
+	 * @param tableName table name
+	 * @param sqldialect SQL dialect 0..2
+	 * @param fieldAliases message field aliases
+	 * @return String
+	 */
+	void toCreateSQLTableFields
+	(
+		std::ostream *output,
+		const std::string &tableName,
+		int sqldialect,
+		const std::map<std::string, std::string> *fieldAliases
+	);
 
 };
+
+std::string findAlias(
+	const std::map<std::string, std::string> *aliases,
+	const std::string &name
+);
 
 #endif /* FIELDNAMEVALUEINDEXSTRINGS_H_ */
