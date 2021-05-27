@@ -2173,11 +2173,6 @@ https://docs.google.com/spreadsheets/d/<spreadhseet-id>/edit#...
 
 [Как создать проект Google Cloud Platform](https://developers.google.com/workspace/guides/create-project)
 
-AIzaSyA92_tPgoNvOcFNuWFeoDtLEr3_8WumC6E
-
-573715694574-jdpkus5toluvplcureeo28367c8suis7.apps.googleusercontent.com
-gcPKhht5fzcNrB9vSh5sIbb5
-
 #### Удаление (смена) пароля сертификата с приватным ключом сервиса Google Sheets
 
 ```

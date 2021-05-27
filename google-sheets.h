@@ -25,7 +25,8 @@ int loadGoogleToken
 	const std::string &scope,
 	const std::string &audience,
 	int expires,
-	std::string &retval
+	std::string &retval,
+	int verbosity
 );
 
 
@@ -74,6 +75,8 @@ typedef void (*on_token_bearer)
   * @brief read/write Google spreadsheet cells values
   */
 class GoogleSheets {
+private:
+	int verbosity;
 protected:	
 	/**
 	  * Re-generate token
@@ -91,7 +94,8 @@ public:
 		const std::string &scope,
 		const std::string &audience,
 		on_token_bearer onTokenbearer,
-		void *env
+		void *env,
+		int verbosity
 	);
 	
 	void setOnTokenBearer(
