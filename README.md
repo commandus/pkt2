@@ -2097,7 +2097,7 @@ CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARC
 Или передать JSON из другой программы:
 
 ```
-cat 1.js | ./js2sheet -i 1.js -e <e-mail> -s <spreadheet-id> -t <sheet-name>
+cat 1.js | ./js2sheet -e <e-mail> -s <spreadheet-id> -t <sheet-name>
 ```
 Электронная таблица (книга, spreasheet) имеет идентификатор, который нужно скопировать из URL:
 
@@ -2112,7 +2112,7 @@ https://docs.google.com/spreadsheets/d/<spreadhseet-id>/edit#...
 
 По умолчанию .proto файлы находятся в папке ./proto/
 
-Для работы js2heet необходим файл ./cert/pkt2-sheet.json
+Для работы js2sheet необходим файл ./cert/pkt2-sheet.json для аутентфикации клиента.
 
 Файл pkt2-sheet.json содержит ключи для аутентификации клиента в сервисе Google Sheet.
 
