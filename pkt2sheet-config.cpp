@@ -74,7 +74,8 @@ Config::Config
 		scope,
 		audience,
 		&ontokenbearer,
-		this
+		this,
+		verbosity
 	);
 }
 

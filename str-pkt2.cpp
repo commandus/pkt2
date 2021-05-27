@@ -164,7 +164,7 @@ bool parsePacket2ProtobufMessage(
 }
 
 /**
- * Retirn CREATE tanle SQL clause
+ * Return CREATE table SQL clause
  * @param env packet declaratuions
  * @param messageName Protobuf full type name (including packet)
  * @param outputFormat 3- sql, 4- Sql
@@ -178,8 +178,8 @@ std::string createTableSQLClause(
 	const std::string &messageName,
 	int outputFormat,
 	int sqlDialect,
-	const std::map<std::string, std::string> *tableAliases = NULL,
-	const std::map<std::string, std::string> *fieldAliases = NULL
+	const std::map<std::string, std::string> *tableAliases,
+	const std::map<std::string, std::string> *fieldAliases
 ) {
 	EnvPkt2* e = (EnvPkt2*) env; 
 	

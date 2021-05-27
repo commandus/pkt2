@@ -36,7 +36,9 @@ void ontokenbearer
 		std::cerr << "New token bearer: " << value << " saved in " << config->token_file << std::endl;
 	}
 	else
-		std::cerr << "Error " << status << " getting token bearer: " << value << std::endl;;
+		std::cerr << "Error " << status << " getting token bearer: " << value 
+			<< " from " << config->token_file
+			<< std::endl;;
 }
 
 Config::Config
@@ -79,7 +81,8 @@ Config::Config
 		scope,
 		audience,
 		&ontokenbearer,
-		this
+		this,
+		verbosity
 	);
 }
 

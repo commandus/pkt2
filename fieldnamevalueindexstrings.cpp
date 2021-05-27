@@ -181,7 +181,7 @@ void FieldNameValueIndexStrings::toCreateSQLTableFields
 	const std::map<std::string, std::string> *fieldAliases
 ) {
 	std::string quote("\"");	// TODO MySQL exceptions for spaces and reserved words
-	*output << "CREATE TABLE \"" << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
+	*output << "CREATE TABLE " << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
 
 	int sz = values.size();
 

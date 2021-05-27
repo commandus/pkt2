@@ -2084,7 +2084,99 @@ CREATE TABLE str (message VARCHAR(255), time INTEGER, device INTEGER, field VARC
 "3328";"3008";"2017-06-26 09:46:00+09";"300234060235340";"iridium.IE_IOHeader.recvtime";"26.06.2017 09:46"
 ```
 
-### handler-google-sheets
+### handler-google-sheets, js2heet
+
+Предназначены для записи данных в Google Sheet
+
+Чтение JSON из файла. Нужно перелать имя файла в опции -i:
+
+```
+./js2sheet -e <e-mail> -s <spreadheet-id> -t <sheet-name>
+```
+
+Или передать JSON из другой программы:
+
+```
+cat 1.js | ./js2sheet -i 1.js -e <e-mail> -s <spreadheet-id> -t <sheet-name>
+```
+Электронная таблица (книга, spreasheet) имеет идентификатор, который нужно скопировать из URL:
+
+```
+https://docs.google.com/spreadsheets/d/<spreadhseet-id>/edit#...
+```
+
+Электронная таблица (книга) должна быть доступной пользователям Google Worksheet (быть в домене Google).
+
+Параметр sheet-name укзывает на таблицу в книге ("закладку"). Чтобы избежать возможных трудностей с кодировкой,
+рекомендутся закладки называть латинскими буквами и цифрами без пробелов и других знаков.
+
+По умолчанию .proto файлы находятся в папке ./proto/
+
+Для работы js2heet необходим файл ./cert/pkt2-sheet.json
+
+Файл pkt2-sheet.json содержит ключи для аутентификации клиента в сервисе Google Sheet.
+
+Ниже описано, как получить этот файл и предоставить права доступа к электронной таблице.
+
+#### Предоставление доступа приложению js2sheet к Google Sheet в домене Google Workplce
+
+Нужен доступ к 
+
+- проектам Google Cloud Platform (консоль GC)
+- Google Admin панели управления  Google Workplace (домену Google)
+
+
+В консоли необходимо создать проект и добавить в него Google Sheet API, а
+в Google Admin- добавить клиента и предоставить ему доступные действия
+
+Создайте проект и добавьте в проект Google Sheets API:
+
+- Создайте проект Google Cloud Platform в [Google Cloud Platform Console](https://console.cloud.google.com)
+- Выберите проект, выберите API Overview, и нажмите кнопку сверху "+ Enable APIs and services"
+- Выберите Google Sheets API
+- Нажмите Enable
+
+Позднее понадобится идентификатор клиента в Google Admin - управлении Google Workplace.
+
+Сконфигурируйте экран согласия
+
+- В проекте выберите меню слева Credentials
+- Сконфигурируйте экран согласия - нажмите кнопку "Configure consent screen"
+- На третьем диалоге выберите все scope, начинающиеся с Google Sheets
+
+Создайте Credentials
+
+- Нажмите кнопку сверху "+ Create credentials"
+- Выберите API key
+- На закладке Keys нажмите кнопку "Add key" - "Create a new key"
+- Выберите формат JSON. Браузер начнет скачивание файла *.json
+- Сохраните скачанный файл в папке cert под именем (по умолчанию) pkt2-sheets.json
+
+Предоставление прав в домене Google Works делается в два шага:
+
+- добавить клинта
+- предоставить клиенту доступные области действия
+
+Добавьте клиента API по идентификатору в Google Admin (домене):
+
+- Зайдите [Google Admin](https://admin.google.com/)
+- Выберите меню Безопасность - Управление API - Управление правами доступа сторонних приложений
+- Нажмите Настроить новое приложение - .. Или Идентификатор Клиента
+
+Добавьте области действия клиенту API:
+
+- Выберите меню Безопасность - Управление API - Делегирование доступа к данным в домене
+- Нажмите Настроить делегирование доступа к данным в домене
+- Нажмите кнопку Добавить
+- Введите идентификатор клиента
+- Укажите области действия https://www.googleapis.com/auth/spreadsheets, https://www.googleapis.com/auth/drive ([другие области](https://developers.google.com/sheets/api/guides/authorizing))
+
+[Как создать проект Google Cloud Platform](https://developers.google.com/workspace/guides/create-project)
+
+AIzaSyA92_tPgoNvOcFNuWFeoDtLEr3_8WumC6E
+
+573715694574-jdpkus5toluvplcureeo28367c8suis7.apps.googleusercontent.com
+gcPKhht5fzcNrB9vSh5sIbb5
 
 #### Удаление (смена) пароля сертификата с приватным ключом сервиса Google Sheets
 

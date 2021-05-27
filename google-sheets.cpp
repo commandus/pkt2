@@ -487,28 +487,53 @@ int loadGoogleToken
 	const std::string &scope,
 	const std::string &audience,
 	int expires,
-	std::string &retval
+	std::string &retval,
+	int verbosity
 )
 {
 	std::string jwt;
 	int r = getJWT(service_account, subject_email, pemkey, scope, audience, expires, jwt);
 	if (r != 0)
 	{
+		if (verbosity > 2) {
+			std::cerr << "Error " << r << " GWT" << std::endl;
+		}
 		retval = jwt;
 		return r;
 	}
 	std::string json;
-	
-	int res = curl_post0(GOOGLE_TOKEN_URL,
-			"grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + jwt, json);
+
+	std::string rq = "grant_type=urn%3Aietf%3Aparams%3Aoauth%3Agrant-type%3Ajwt-bearer&assertion=" + jwt;
+
+	if (verbosity > 2) {
+		std::cerr << "POST " << GOOGLE_TOKEN_URL << " " << rq << std::endl;
+	}
+
+	int res = curl_post0(GOOGLE_TOKEN_URL, rq, json);
+
+	Json::Reader reader;
+	Json::Value v;
+
 	if (res != 200)
 	{
 		retval = curl_easy_strerror((CURLcode) res);
+		if (verbosity > 2) {
+			std::cerr << "Error code " << res << " " 
+				<< retval << ", description: " << json << std::endl;
+		}
+		if (reader.parse(json, v))
+		{
+			retval = v.get("error_description", "UTF-8").asString();
+		}
+		else
+		{
+			retval = json;
+			r = -1;
+		}
+
 		return res;
 	}
 	
-	Json::Reader reader;
-	Json::Value v;
 	if (reader.parse(json, v))
 	{
 	    retval = v.get("access_token", "UTF-8").asString();
@@ -517,7 +542,7 @@ int loadGoogleToken
     {
 	    retval = "Parse error " + json;
 	 	r = -1;
-	 }
+	}
 	return r;
 }
 
@@ -667,9 +692,10 @@ GoogleSheets::GoogleSheets
 	const std::string &scope,
 	const std::string &audience,
 	on_token_bearer onTokenbearer,
-	void *environ
+	void *environ,
+	int averbosity
 )
-	: env(environ), ontokenbearer(onTokenbearer)
+	: env(environ), ontokenbearer(onTokenbearer), verbosity(averbosity)
 {
 	sheet_id = spreadsheet;
 	token = tokenbearer;	
@@ -678,8 +704,27 @@ GoogleSheets::GoogleSheets
 	genTokenParams.push_back(pemkey);
 	genTokenParams.push_back(scope);
 	genTokenParams.push_back(audience);
-	if (token.empty())
+
+	if (verbosity > 2) {
+		std::cerr 
+			<< "service_account: " << service_account << std::endl
+			<< "subject_email: " << subject_email << std::endl
+			<< "pemkey: " << pemkey << std::endl
+			<< "scope: " << scope << std::endl
+			<< "audience: " << audience << std::endl
+			<< std::endl;
+	}
+	
+	if (token.empty()) {
+		if (verbosity > 2) {
+			std::cerr << "Token is empty " << std::endl;
+		}
 		genToken();
+	} else {
+		if (verbosity > 2) {
+			std::cerr << "Token: " << token << std::endl;
+		}
+	}
 }
 
 GoogleSheets::~GoogleSheets() 
@@ -705,12 +750,23 @@ void GoogleSheets::setOnTokenBearer
   */
 bool GoogleSheets::genToken()
 {
+	if (verbosity > 2) {
+		std::cerr << "Re-generate Google token.." << std::endl;
+	}
+	
 	if (genTokenParams.size() < 5)
 	{
+		if (verbosity > 2) {
+			std::cerr << "Insufficient Google token parameters " << genTokenParams.size() << ", must have 5" << std::endl;
+		}
 		if (ontokenbearer)
 			ontokenbearer(env, token, -1);
 		return false;
 	}
+	if (verbosity > 2) {
+		std::cerr << "Loading Google token.." << std::endl;
+	}
+
 	int r = loadGoogleToken(
 		genTokenParams[0],
 		genTokenParams[1],
@@ -718,7 +774,8 @@ bool GoogleSheets::genToken()
 		genTokenParams[3],
 		genTokenParams[4],
 		3600,
-		token
+		token,
+		verbosity
 	);
 	
 	if (ontokenbearer)
@@ -842,8 +899,19 @@ bool GoogleSheets::token_get(
 {
 	std::string response;
 	int r = curl_get(token, url, response);
+	if (verbosity > 2) {
+		std::cerr << "Token: " << token 
+			<< ", url: " << url 
+			<< ", response: " << response 
+			<< ", code: " << r 
+			<< std::endl;
+	}
+
 	if (checkJSONErrorCode(response) != 200)
 	{
+		if (verbosity > 2) {
+			std::cerr << "re-generate token.." << std::endl; 
+		}
 		genToken();
 		r = curl_get(token, url, response);
 	}

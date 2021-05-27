@@ -168,7 +168,7 @@ int create_sql2
 	if (m) {
 		
 	}
-	*output << "CREATE TABLE \"" << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
+	*output << "CREATE TABLE " << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << " (";
 	*output << ");";
 	return 0;
 }
