@@ -97,7 +97,7 @@ third_party/bitstream/bitstream.h third_party/bitstream/varint.h \
 messageformat.h messageemitterline.h pkt2receiver-check.h handler-fcm-config.h fcm-writer.h \
 fcmdumper.h pkt2dumpfcm-config.h helper_fcm.h third_party/argtable3/argtable3.h \
 pkt2js-config.h pkt2js-impl.h str-pkt2.h pkt2sheet-config.h js2sheet-config.h google-sheets-writer-from-js.h \
-env-pkt2.h packet-protobuf-message.h
+env-pkt2.h packet-protobuf-message.h database-config.h
 
 huff_src = huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp \
 	huff/internalnode.cpp  huff/leafnode.cpp  huff/node.cpp  huff/devdecoder.cpp \
@@ -431,7 +431,7 @@ PKT2LIBSRC = \
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp \
 	pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cpp \
 	utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c \
-	env-pkt2.cpp packet-protobuf-message.cpp 
+	env-pkt2.cpp packet-protobuf-message.cpp database-config.cpp
 
 #
 # pkt2js
