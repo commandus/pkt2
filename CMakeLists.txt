@@ -1,3 +1,5 @@
+set(CMAKE_TOOLCHAIN_FILE "D:/bin/scripts/buildsystems/vcpkg.cmake")
+
 cmake_minimum_required(VERSION 2.8)
 # OPTION(WITH_DEBUG_MODE "Build with debug mode" ON)
 
@@ -10,8 +12,17 @@ set(CMAKE_CXX_STANDARD_REQUIRED on)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
+                  
 set(LIBS ${LIBS})
+
+#find_package(protobuf CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
+
+#find_package(Argtable3 CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE argtable3 argtable3_static)
+
+#find_package(nanomsg CONFIG REQUIRED)
+#target_link_libraries(main PRIVATE nanomsg)
 
 add_custom_command(
 	OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/pkt2.pb.cc ${CMAKE_CURRENT_SOURCE_DIR}/pkt2.pb.h
@@ -26,8 +37,9 @@ add_custom_command(
 # make link to /home/andrei/lib/grpc/third_party/protobuf/src
 # ln -s /home/andrei/lib/grpc/third_party/protobuf/src protobuf
 #
-#set (PROTOBUF_ROOT third_party/protobuf)
-set (PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+#set(PROTOBUF_ROOT third_party/protobuf)
+#set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
 
 include_directories(. ${PROTOBUF_ROOT} third_party )
 
@@ -67,7 +79,7 @@ set(PROTO_LITE_SRC
   ${PROTOBUF_ROOT}/google/protobuf/repeated_field.cc                            
   ${PROTOBUF_ROOT}/google/protobuf/wire_format_lite.cc                          
   ${PROTOBUF_ROOT}/google/protobuf/io/coded_stream.cc                           
-  ${PROTOBUF_ROOT}/google/protobuf/io/coded_stream_inl.h                        
+ # ${PROTOBUF_ROOT}/google/protobuf/io/coded_stream_inl.h                        
   ${PROTOBUF_ROOT}/google/protobuf/io/strtod.cc                                 
   ${PROTOBUF_ROOT}/google/protobuf/io/zero_copy_stream.cc                       
   ${PROTOBUF_ROOT}/google/protobuf/io/zero_copy_stream_impl_lite.cc
@@ -77,8 +89,8 @@ set(PROTO_SRC
   ${PROTO_LITE_SRC}
   ${PROTOBUF_ROOT}/google/protobuf/any.pb.cc                                    
   ${PROTOBUF_ROOT}/google/protobuf/api.pb.cc                                    
-  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.cc                          
-  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.h                           
+#  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.cc                          
+#  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.h                           
   ${PROTOBUF_ROOT}/google/protobuf/any.cc                                       
   ${PROTOBUF_ROOT}/google/protobuf/descriptor.cc                                
   ${PROTOBUF_ROOT}/google/protobuf/descriptor_database.cc                       

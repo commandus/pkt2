@@ -1,6 +1,10 @@
 #include <string>
 #include <iostream>
 #include <signal.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
+#endif
 
 #include <google/protobuf/message.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
@@ -22,28 +26,38 @@ void signalHandler(int signal)
 		std::cerr << MSG_INTERRUPTED;
 		cont = false;
 		break;
+#if defined(_WIN32) || defined(_WIN64)
+#else
 	case SIGHUP:
 		std::cerr << MSG_RELOAD_CONFIG_REQUEST << " nothing to do";
 		break;
+#endif
 	default:
 		std::cerr << MSG_SIGNAL << signal;
 	}
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 void setSignalHandler(int signal)
 {
-        struct sigaction action;
-        memset(&action, 0, sizeof(struct sigaction));
-        action.sa_handler = &signalHandler;
-        sigaction(signal, &action, NULL);
+	struct sigaction action;
+	memset(&action, 0, sizeof(struct sigaction));
+	action.sa_handler = &signalHandler;
+	sigaction(signal, &action, NULL);
 }
+#endif
 
 int main(int args, char **argv)
 {
     // Signal handler
+#if defined(_WIN32) || defined(_WIN64)
+#else
     setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
-	example1::TemperaturePkt m;
+#endif
+
+ 	example1::TemperaturePkt m;
 	std::ostream *ostrm = &std::cout;
 
 	google::protobuf::io::OstreamOutputStream strm(ostrm);

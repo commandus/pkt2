@@ -8,8 +8,12 @@
 #include <sstream>
 #include <cstring>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <Winsock2.h>
+#else
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#endif
 
 #include "glog/logging.h"
 #include "platform.h"
