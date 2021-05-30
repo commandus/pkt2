@@ -1,7 +1,7 @@
 #define VERSION "0.1"
 
-#ifdef _WIN32
-#include "win.h"
+#if defined(_WIN32) || defined(_WIN64)
+#include <windows.h>
 #else
 #include <time.h>
 #endif
@@ -25,7 +25,7 @@
 #define ENDIAN_HOST pkt2::ENDIAN_LITTLE_ENDIAN
 #define ENDIAN_NEED_SWAP(v) ((v != pkt2::ENDIAN_NO_MATTER) && (v != ENDIAN_HOST))
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_WIN64)
 #define SLEEP(seconds) \
     Sleep(seconds *1000);
 

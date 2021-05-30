@@ -7,9 +7,7 @@
 
 #include "protobuf-declarations.h"
 
-#include <string>
 #include <iostream>
-#include <vector>
 
 #include "pbjson.hpp"
 #include "pkt2.pb.h"
@@ -17,7 +15,6 @@
 #include "utilstring.h"
 
 #ifdef _MSC_VER
-#include <windows.h>
 #define PATH_DELIMITER "\\"
 #else
 #include <ftw.h>

@@ -1,7 +1,12 @@
 #ifndef UTILPROTOBUF_H
 #define UTILPROTOBUF_H
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <Winsock2.h>
+#else
 #include <sys/socket.h>
+#endif
+
 #include <string>
 #include <map>
 #include <google/protobuf/descriptor.h>

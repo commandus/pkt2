@@ -1,7 +1,13 @@
 #ifndef INPUT_PACKET_H
 #define INPUT_PACKET_H     1
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <Windows.h>
+
+#else
 #include <sys/socket.h>
+#endif
+
 #include <google/protobuf/message.h>
 #include "output-message.h"
 

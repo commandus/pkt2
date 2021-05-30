@@ -9,6 +9,9 @@
 #include <wchar.h>
 #include <stdio.h>
 #define PATH_DELIMITER "\\"
+#ifndef PATH_MAX
+#define PATH_MAX MAX_PATH
+#endif
 #else
 #include <sys/param.h>
 #include <fcntl.h>
@@ -47,7 +50,7 @@
 #endif
 
 #ifdef _MSC_VER
-bool pkt2utilfile::rmAllDir(const char *path)
+static bool rmAllDir(const char *path)
 {
 	if (&path == NULL)
 		return false;
@@ -252,7 +255,7 @@ bool pkt2utilfile::rmFile(const std::string &fn)
  */
 std::string pkt2utilfile::getFilePathFromDescriptor(int fd)
 {
-	char filePath[MAXPATHLEN];
+	char filePath[PATH_MAX];
 	if (fcntl(fd, F_GETPATH, filePath) != -1)
 		return std::string(filePath);
 	else
