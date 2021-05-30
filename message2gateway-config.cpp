@@ -1,7 +1,11 @@
 #include "message2gateway-config.h"
 #include <limits.h>
 #include <stdlib.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <Windows.h>
+#else
 #include <unistd.h>
+#endif
 #include "argtable3/argtable3.h"
 
 #define DEF_PROTO_PATH				"proto"

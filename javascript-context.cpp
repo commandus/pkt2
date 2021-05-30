@@ -1,7 +1,13 @@
 /**
  * @file javascript-context.cpp
  */
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include <Ws2ipdef.h>
+#else
 #include <arpa/inet.h>
+#endif
+
 #include "javascript-context.h"
 #include "utilprotobuf.h"
 #include "utilstring.h"

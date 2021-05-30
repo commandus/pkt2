@@ -4,11 +4,15 @@
 #include <algorithm>
 #include <string.h>
 #include <stdio.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <Winsock2.h>
+#else
 #include <unistd.h>
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#endif
+#include <sys/types.h>
 
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
