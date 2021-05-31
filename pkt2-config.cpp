@@ -1,8 +1,13 @@
 #include "pkt2-config.h"
-#include <unistd.h>
-#include <linux/limits.h>
 #include <stdlib.h>
 #include "argtable3/argtable3.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#include <linux/limits.h>
+#endif
+
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_QUEUE_OUT               "ipc:///tmp/message.pkt2"

@@ -1,10 +1,13 @@
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <nanomsg/bus.h>
 
+#include <nanomsg/bus.h>
 #include <glog/logging.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#endif
 
 #include "platform.h"
 #include "mqtt-receivernano.h"

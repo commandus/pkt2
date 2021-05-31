@@ -1,17 +1,21 @@
 #include <iostream>
 #include <string.h>
 #include <stdio.h>
+#include <nanomsg/bus.h>
+#include <fstream>
+#include <sstream>
+
+#include <glog/logging.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <nanomsg/bus.h>
-#include <fstream>
-#include <sstream>
-
-#include <glog/logging.h>
+#endif
 
 #include "platform.h"
 #include "freceiver-impl.h"

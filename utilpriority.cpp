@@ -4,7 +4,9 @@
 #include <string.h>
 #include <sys/time.h>
 #include <errno.h>
-#ifndef WIN32
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <sys/resource.h>
 #include <sys/mman.h>
 #endif

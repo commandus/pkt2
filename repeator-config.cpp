@@ -1,7 +1,12 @@
 #include "repeator-config.h"
 #include <iostream>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
 #include <limits.h>
+#endif
+
 #include "argtable3/argtable3.h"
 
 #include "utilstring.h"

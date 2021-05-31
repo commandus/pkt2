@@ -1,8 +1,13 @@
 #include "js2sheet-config.h"
 #include <iostream>
 #include <limits.h>
-#include <unistd.h>
 #include <stdlib.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#endif
+
 #include "argtable3/argtable3.h"
 #include "utilstring.h"
 #include "errorcodes.h"

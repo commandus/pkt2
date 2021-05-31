@@ -3,10 +3,6 @@
  */
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <iostream>
 #include <string>
 #include <ostream>
@@ -15,6 +11,14 @@
 #include <algorithm>
 
 #include <glog/logging.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#endif
 
 #include "google-sheets-writer-from-js.h"
 #include "errorcodes.h"

@@ -7,16 +7,19 @@
 #include <fstream>
 #include <string.h>
 #include <stdio.h>
+
+#include <glog/logging.h>
+#include <google/protobuf/message.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
-#include <glog/logging.h>
-
-#include <google/protobuf/message.h>
+#endif
 
 #include "messageemitterline.h"
 #include "messageemitter-config.h"

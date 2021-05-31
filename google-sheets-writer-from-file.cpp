@@ -3,11 +3,6 @@
  */
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -17,6 +12,15 @@
 #include <glog/logging.h>
 
 #include <google/protobuf/message.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#endif
 
 #include "google-sheets-writer-from-file.h"
 #include "output-message.h"

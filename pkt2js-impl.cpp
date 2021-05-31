@@ -1,14 +1,18 @@
 #include <algorithm>
 #include <string.h>
 #include <stdio.h>
+
+#include <glog/logging.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
-
-#include <glog/logging.h>
+#endif
 
 #include "pkt2js-impl.h"
 #include "str-pkt2.h"

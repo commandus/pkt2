@@ -1,8 +1,13 @@
 #include "freceiver-config.h"
-#include <unistd.h>
 #include <limits.h>
 #include <cstring>
 #include <stdlib.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#endif
+
 #include "argtable3/argtable3.h"
 
 #define DEF_QUEUE                "ipc:///tmp/packet.pkt2"

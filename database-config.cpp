@@ -5,7 +5,9 @@
 #include <fstream>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#endif
 #include <cstdlib>
 #include <vector>
 

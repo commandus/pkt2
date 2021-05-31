@@ -2,9 +2,13 @@
 
 #include "argtable3/argtable3.h"
 #include <limits.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include <strings.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#endif
 
 #include "errorcodes.h"
 

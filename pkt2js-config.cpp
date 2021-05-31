@@ -1,9 +1,13 @@
 #include "argtable3/argtable3.h"
 #include <limits.h>
-#include <unistd.h>
 #include <stdlib.h>
 #include "pkt2js-config.h"
 #include "errorcodes.h"
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#endif
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_BUFFER_SIZE 	         4096

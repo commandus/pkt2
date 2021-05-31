@@ -7,12 +7,16 @@
 #include <errno.h>
 #include <stdlib.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif
+
 #include "argtable3/argtable3.h"
 
 #include "platform.h"

@@ -3,16 +3,19 @@
  */
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
 #include <algorithm>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#endif
 
 #include <nanomsg/nn.h>
 #include <nanomsg/bus.h>

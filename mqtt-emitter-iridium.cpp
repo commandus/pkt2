@@ -8,10 +8,13 @@
 #include <errno.h>
 #include <stdlib.h>
 
-#include <unistd.h>
+#include <MQTTClient.h>
+
 #include "argtable3/argtable3.h"
 
-#include <MQTTClient.h>
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#endif
 
 #include "platform.h"
 #include "errorcodes.h"

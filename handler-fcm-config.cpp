@@ -1,10 +1,14 @@
 #include "handler-fcm-config.h"
 #include <limits.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "argtable3/argtable3.h"
 #include <strings.h>
 #include <libpq-fe.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#endif
 
 #include "errorcodes.h"
 

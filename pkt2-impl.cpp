@@ -7,19 +7,23 @@
 #include <fstream>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <dirent.h>
-#include <signal.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <arpa/inet.h>
 
 #include <cstdlib>
 #include <vector>
 
 #include <glog/logging.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <unistd.h>
+#include <dirent.h>
+#include <signal.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#endif
 
 #include "platform.h"
 #include "duk/duktape.h"

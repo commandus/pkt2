@@ -5,20 +5,23 @@
 #include <signal.h>
 #include <string.h>
 
+#include <nanomsg/nn.h>
+#include <nanomsg/bus.h>
+
+#include <glog/logging.h>
+#include <google/protobuf/message.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#endif
+
 #include "argtable3/argtable3.h"
-
-#include <nanomsg/nn.h>
-#include <nanomsg/bus.h>
-
-#include <glog/logging.h>
-
-#include <google/protobuf/message.h>
 
 #include "platform.h"
 #include "pkt2gateway-config.h"

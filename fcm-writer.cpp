@@ -4,11 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netdb.h>
-#include <arpa/inet.h>
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -24,6 +20,14 @@
 
 #include <curl/curl.h>
 #include <libpq-fe.h>
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#endif
 
 #include "fcm-writer.h"
 #include "helper_fcm.h"
