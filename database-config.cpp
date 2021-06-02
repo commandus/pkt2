@@ -17,7 +17,7 @@
 
 #include "utilstring.h"
 #include "errorcodes.h"
-
+#include "messageformat.h"
 /**
  * @brief Javascript error handler
  * @param env JavascriptContext object
@@ -35,14 +35,34 @@ static void duk_fatal_handler_process_descriptors(
 }
 
 ConfigDatabase::ConfigDatabase() 
-	: connectionString(""), login(""), password("")
+	: name(""), type(""), connectionString(""), login(""), password("")
 {
 	
 }
 
-std::string ConfigDatabase::toString() {
+int ConfigDatabase::getDialect() const
+{
+	if (type == "postgresql")
+		return SQL_POSTGRESQL;
+	else
+		if (type == "mysql")
+			return SQL_MYSQL;
+		else
+			if (type == "firebird")
+				return SQL_FIREBIRD;
+			else
+				if (type == "sqlite3")
+					return SQL_SQLITE;
+				else
+					return SQL_SQLITE;
+}
+
+std::string ConfigDatabase::toString() const
+{
 	std::stringstream ss;
 	ss << "{"
+		<< "\"name\": \"" << name << "\", "
+		<< "\"type\": \"" << type << "\", "
 		<< "\"connection\": \"" << connectionString << "\", "
 		<< "\"login\": \"" << login << "\", "
 		<< "\"password\": \"" << password << "\"";
@@ -75,7 +95,7 @@ std::string ConfigDatabase::toString() {
 		ss << "]";
 	}
 
-	ss << "}" << std::endl;
+	ss << "}";
 	return ss.str();
 }
 
@@ -103,6 +123,12 @@ void ConfigDatabases::load(const std::string &value)
 			ConfigDatabase cfg;
 			if (duk_get_prop_index(context, -1, i)) 
 			{
+				if (duk_get_prop_string(context, -1, "name"))
+					cfg.name = duk_get_string(context, -1);
+				duk_pop(context);
+				if (duk_get_prop_string(context, -1, "type"))
+					cfg.type = duk_get_string(context, -1);
+				duk_pop(context);
 				if (duk_get_prop_string(context, -1, "connection"))
 					cfg.connectionString = duk_get_string(context, -1);
 				duk_pop(context);
@@ -181,7 +207,8 @@ void ConfigDatabases::load(const std::string &value)
 	duk_destroy_heap(context);
 }
 
-std::string ConfigDatabases::toString() {
+std::string ConfigDatabases::toString() const
+{
 	std::stringstream ss;
 	ss << "[";
 	bool isNext = false;
@@ -195,4 +222,16 @@ std::string ConfigDatabases::toString() {
 	}
 	ss << "]";
 	return ss.str();
+}
+
+const ConfigDatabase* ConfigDatabases::findByName(
+	const std::string &name
+) const
+{
+	for (std::vector<ConfigDatabase>::const_iterator it(dbs.begin()); it != dbs.end(); it++ ) {
+		if (it->name == name) {
+			return &(*it);
+		}
+	}
+	return NULL;
 }

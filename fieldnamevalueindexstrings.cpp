@@ -165,6 +165,101 @@ void FieldNameValueIndexStrings::toStringInsert
 	stmts->push_back(ss.str());
 }
 
+std::string getSqlDialectTypeName(
+	google::protobuf::FieldDescriptor::CppType fieldType,
+	int sqldialect
+)
+{
+	if (sqldialect == SQL_SQLITE) {
+		switch (fieldType) {
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+				return "integer";
+			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:				
+			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+				return "double";
+			case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+			case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+				return "integer";
+		default:
+			// >= google::protobuf::FieldDescriptor::CPPTYPE_STRING)
+			return "TEXT";
+		}
+	}
+
+	if (sqldialect == SQL_MYSQL) {
+		switch (fieldType) {
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+				return "int";
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+				return "bigint";
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+				return "unsigned int";
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+				return "unsigned bigint";
+			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+				return "float";
+			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+				return "double";
+			case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+			case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+				return "int";
+		default:
+			// >= google::protobuf::FieldDescriptor::CPPTYPE_STRING)
+			return "TEXT";
+		}
+	}
+
+	if (sqldialect == SQL_POSTGRESQL) {
+		switch (fieldType) {
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+				return "integer";
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+				return "bigint";
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+				return "bigint";
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+				return "numeric(20)";
+			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+				return "float";
+			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+				return "double precision";
+			case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+			case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+				return "integer";
+		default:
+			// >= google::protobuf::FieldDescriptor::CPPTYPE_STRING)
+			return "TEXT";
+		}
+	}
+
+	if (sqldialect == SQL_FIREBIRD) {
+		switch (fieldType) {
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
+				return "integer";
+			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
+				return "bigint";
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
+			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
+				return "bigint";
+			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
+				return "float";
+			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
+				return "double precision";
+			case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
+			case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
+				return "integer";
+		default:
+			// >= google::protobuf::FieldDescriptor::CPPTYPE_STRING)
+			return "BLOB sub_type 1";
+		}
+	}
+
+	return "";
+}
+
 /**
  * put CREATE TABLE clause inyo output parameter
  * @param output return cluase
@@ -195,25 +290,7 @@ void FieldNameValueIndexStrings::toCreateSQLTableFields
 		if (fieldCount)
 			*output << ", ";
 		*output << quote << fieldName << quote << " ";
-		switch (values[i].field_type) {
-			case google::protobuf::FieldDescriptor::CPPTYPE_INT32:
-			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
-			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
-			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
-				*output << "integer";
-				break;
-			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
-			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
-				*output << "double";
-				break;
-			case google::protobuf::FieldDescriptor::CPPTYPE_BOOL:
-			case google::protobuf::FieldDescriptor::CPPTYPE_ENUM:
-				*output << "integer";
-				break;
-		default:
-			// >= google::protobuf::FieldDescriptor::CPPTYPE_STRING)
-			*output << "TEXT";
-		}
+		*output << getSqlDialectTypeName(values[i].field_type, sqldialect);
 		fieldCount++;
 	}
 	if (fieldCount == 0)

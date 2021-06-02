@@ -21,9 +21,10 @@
 enum SQL_DIALECT : int {
   SQL_POSTGRESQL = 0,
   SQL_MYSQL = 1,
-  SQL_FIREBIRD = 2
+  SQL_FIREBIRD = 2,
+  SQL_SQLITE = 3
 };
-
+  
 void set_format_number(int value);
 
 /**
