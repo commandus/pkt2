@@ -60,6 +60,8 @@ int Config::parseCmd
 
 	struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096");
 
+	struct arg_int *a_sql_dialect = arg_int0(NULL, "sql-dialect", "<number>", "POSTGRESQL = 0, MYSQL = 1, FIREBIRD = 2, SQLITE = 3");
+
    	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
     struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
 
@@ -70,7 +72,7 @@ int Config::parseCmd
 		a_proto_path, a_file_name, a_message_url, a_allowed_messages,
 		a_retries, a_retry_delay,
 		a_daemonize, a_verbosity,
-		a_mode, a_format_number, a_buffer_size,
+		a_mode, a_format_number, a_buffer_size, a_sql_dialect,
 		a_table_alias, a_field_alias,
 		a_help, a_end 
 	};
@@ -151,6 +153,8 @@ int Config::parseCmd
 		buffer_size = *a_buffer_size->ival;
 	else
 		buffer_size = DEF_BUFFER_SIZE;
+
+	sql_dialect = *a_sql_dialect->ival;
 
 	char wd[PATH_MAX];
 	path = getcwd(wd, PATH_MAX);	

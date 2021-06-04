@@ -206,10 +206,10 @@ int run
 			switch (config->mode)
 			{
 			case MODE_SQL:
-				vals.toStringInsert(&stmts, &config->tableAliases, &config->fieldAliases);
+				vals.toStringInsert(&stmts, &config->tableAliases, &config->fieldAliases, config->sql_dialect);
 				break;
 			case MODE_SQL2:
-				vals.toStringInsert2(&stmts, &config->tableAliases, &config->fieldAliases);
+				vals.toStringInsert2(&stmts, &config->tableAliases, &config->fieldAliases, config->sql_dialect);
 				break;
 			default:
 				break;

@@ -120,7 +120,8 @@ void FieldNameValueIndexStrings::toStringInsert
 (
 	std::vector<std::string> *stmts,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	int sqlDialect
 ) {
 	std::stringstream ss;
 	std::string tableName = findAlias(tableAliases, table);
@@ -130,7 +131,12 @@ void FieldNameValueIndexStrings::toStringInsert
 
 	int sz = values.size();
 
-	ss << "INSERT INTO " << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
+	std::string sqlquote;
+	if (sqlDialect = SQL_MYSQL)
+		sqlquote = "`";
+	else
+		sqlquote = "\"";
+	ss << "INSERT INTO " << sqlquote << pkt2utilstring::replace(tableName, ".", "_") << sqlquote << "(";
 	int fieldCount = 0;
 	for (int i = 0; i < sz; i++)
 	{
@@ -140,7 +146,7 @@ void FieldNameValueIndexStrings::toStringInsert
 			continue;
 		if (fieldCount)
 			ss << ", ";
-		ss << quote << fieldName << quote;
+		ss << sqlquote << fieldName << sqlquote;
 		fieldCount++;
 	}
 	if (fieldCount == 0)
@@ -309,10 +315,18 @@ void FieldNameValueIndexStrings::toStringInsert2
 (
 	std::vector<std::string> *stmts,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	int sqlDialect
 )
 {
 	std::stringstream ssprefix;
+
+	std::string sqlquote;
+	if (sqlDialect = SQL_MYSQL)
+		sqlquote = "`";
+	else
+		sqlquote = "\"";
+
 	// index first
 	for (int i = 1; i < index2values.size(); i++)
 	{
@@ -351,13 +365,13 @@ void FieldNameValueIndexStrings::toStringInsert2
 			|| (!pkt2utilstring::isNumber(values[i].value))
 			|| values[i].sql_string)
 		{
-			ss << "INSERT INTO " << quote << sql2tableString << quote << "(" << sql2names[0] << ","
+			ss << "INSERT INTO " << sqlquote << sql2tableString << sqlquote << "(" << sql2names[0] << ","
 				<< prefix << ",'" << fieldName << "'"
 				<< "," << string_quote << values[i].value << string_quote << ");" << std::endl;
 		}
 		else
 		{
-			ss << "INSERT INTO " << quote << sql2tableNumeric << quote << "(" << sql2names[0] << ","
+			ss << "INSERT INTO " << sqlquote << sql2tableNumeric << sqlquote << "(" << sql2names[0] << ","
 				<< prefix << ",'" << fieldName << "'"
 				<< "," << values[i].value << ");" << std::endl;
 		}

@@ -103,10 +103,10 @@ std::string parsePacket(
 			tableAliases, fieldAliases);
 		break;
 	case MODE_SQL:
-		put_sql(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
+		put_sql(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, sqlDialect);
 		break;
 	case MODE_SQL2:
-		put_sql2(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
+		put_sql2(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, sqlDialect);
 		break;
 	case MODE_PB_TEXT:
 		put_protobuf_text(&ss, e->options_cache, &messageTypeNAddress, m);

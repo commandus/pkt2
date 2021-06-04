@@ -56,6 +56,8 @@ int Config::parseCmd
 	struct arg_int *a_max_fd = arg_int0(NULL, "maxfd", "<number>", "Set max file descriptors. 0- use default (1024).");
 	struct arg_lit *a_verbosity = arg_litn("v", "verbosity", 0, 3, "Verbosity level. 3- debug");
 
+	struct arg_int *a_sql_dialect = arg_int0(NULL, "sql-dialect", "<number>", "POSTGRESQL = 0, MYSQL = 1, FIREBIRD = 2, SQLITE = 3");
+
 	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
 	struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
 
@@ -66,7 +68,7 @@ int Config::parseCmd
 			a_cmd_text, a_filename_in, a_packet_size, a_message_url, 
 			a_print_mode, a_proto_path,
 			a_buffer_size, a_retries, a_retry_delay,
-			a_daemonize, a_max_fd,
+			a_daemonize, a_max_fd, a_sql_dialect,
 			a_table_alias, a_field_alias,
 			a_verbosity,
 			a_help, a_end 
@@ -83,7 +85,7 @@ int Config::parseCmd
 	// Parse the command line as defined by argtable[]
 	nerrors = arg_parse(argc, argv, argtable);
 
-	// special case: '--help' takes precedence over error reporting
+	// special case: '--help' takes sql_dialect = *a_sql_dialect->ival;precedence over error reporting
 	if ((a_help->count) || nerrors)
 	{
 			if (nerrors)
@@ -153,6 +155,8 @@ int Config::parseCmd
 		retry_delay = *a_retry_delay->ival;
 	else
 		retry_delay = 60;
+
+	sql_dialect = *a_sql_dialect->ival;
 
 	for (int i = 0; i < a_table_alias->count; i++) {
 		std::string line = a_table_alias->sval[i];

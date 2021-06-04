@@ -349,11 +349,11 @@ static int filePrint(Config *config)
 				break;
 			case MODE_SQL:
 				put_sql(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, config->sql_dialect);
 				break;
 			case MODE_SQL2:
 				put_sql2(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, config->sql_dialect);
 				break;
 			case MODE_PB_TEXT:
 				put_protobuf_text(&std::cout, &options_cache, &messageTypeNAddress, m);

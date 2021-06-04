@@ -35,7 +35,8 @@ static void duk_fatal_handler_process_descriptors(
 }
 
 ConfigDatabase::ConfigDatabase() 
-	: name(""), type(""), connectionString(""), login(""), password("")
+	: name(""), type(""), connectionString(""), login(""), password(""),
+		db(""), port(0)
 {
 	
 }

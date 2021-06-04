@@ -68,7 +68,8 @@ int put_sql
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	int sqlDialect
 );
 
 /**
@@ -84,7 +85,8 @@ int put_sql2
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	int sqlDialect
 );
 
 /**

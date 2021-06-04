@@ -85,13 +85,14 @@ int put_sql
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	int sqlDialect
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
-	vals.toStringInsert(&stmts, tableAliases, fieldAliases);
+	vals.toStringInsert(&stmts, tableAliases, fieldAliases, sqlDialect);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;
@@ -110,13 +111,14 @@ int put_sql2
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	int sqlDialect
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
-	vals.toStringInsert2(&stmts, tableAliases, fieldAliases);
+	vals.toStringInsert2(&stmts, tableAliases, fieldAliases, sqlDialect);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;
