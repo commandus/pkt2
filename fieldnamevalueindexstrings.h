@@ -100,7 +100,8 @@ public:
 	(
 		std::vector<std::string> *stmts,
 		const std::map<std::string, std::string> *tableAliases,
-		const std::map<std::string, std::string> *fieldAliases
+		const std::map<std::string, std::string> *fieldAliases,
+		int sqlDialect
 	);
 
 	/**
@@ -111,7 +112,8 @@ public:
 	(
 		std::vector<std::string> *stmts,
 		const std::map<std::string, std::string> *tableAliases,
-		const std::map<std::string, std::string> *fieldAliases
+		const std::map<std::string, std::string> *fieldAliases,
+		int sqlDialect
 	);
 
 	/**
