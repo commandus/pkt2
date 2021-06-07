@@ -202,9 +202,9 @@ std::string getSqlDialectTypeName(
 			case google::protobuf::FieldDescriptor::CPPTYPE_INT64:
 				return "bigint";
 			case google::protobuf::FieldDescriptor::CPPTYPE_UINT32:
-				return "unsigned int";
+				return "int unsigned";
 			case google::protobuf::FieldDescriptor::CPPTYPE_UINT64:
-				return "unsigned bigint";
+				return "bigint unsigned";
 			case google::protobuf::FieldDescriptor::CPPTYPE_FLOAT:
 				return "float";
 			case google::protobuf::FieldDescriptor::CPPTYPE_DOUBLE:
@@ -281,7 +281,12 @@ void FieldNameValueIndexStrings::toCreateSQLTableFields
 	int sqldialect,
 	const std::map<std::string, std::string> *fieldAliases
 ) {
-	std::string quote("\"");	// TODO MySQL exceptions for spaces and reserved words
+	std::string quote;
+	if (sqldialect == SQL_MYSQL)
+		quote = "`";	// MySQL exceptions for spaces and reserved words
+	else
+		quote = "\"";
+
 	*output << "CREATE TABLE " << quote << pkt2utilstring::replace(tableName, ".", "_") << quote << "(";
 
 	int sz = values.size();

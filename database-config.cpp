@@ -66,7 +66,8 @@ std::string ConfigDatabase::toString() const
 		<< "\"type\": \"" << type << "\", "
 		<< "\"connection\": \"" << connectionString << "\", "
 		<< "\"login\": \"" << login << "\", "
-		<< "\"password\": \"" << password << "\"";
+		<< "\"password\": \"" << password << "\", "
+		<< "\"db\": \"" << db << "\"";
 
 	if (tableAliases.size()) {
 		ss << ", \"table_aliases\": [";
@@ -138,6 +139,9 @@ void ConfigDatabases::load(const std::string &value)
 				duk_pop(context);
 				if (duk_get_prop_string(context, -1, "password"))
 					cfg.password = duk_get_string(context, -1);
+				duk_pop(context);
+				if (duk_get_prop_string(context, -1, "db"))
+					cfg.db = duk_get_string(context, -1);
 				duk_pop(context);
 
 				duk_get_prop_string(context, -1, "table_aliases");
