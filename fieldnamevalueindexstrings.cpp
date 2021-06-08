@@ -132,7 +132,7 @@ void FieldNameValueIndexStrings::toStringInsert
 	int sz = values.size();
 
 	std::string sqlquote;
-	if (sqlDialect = SQL_MYSQL)
+	if (sqlDialect == SQL_MYSQL)
 		sqlquote = "`";
 	else
 		sqlquote = "\"";
@@ -327,7 +327,7 @@ void FieldNameValueIndexStrings::toStringInsert2
 	std::stringstream ssprefix;
 
 	std::string sqlquote;
-	if (sqlDialect = SQL_MYSQL)
+	if (sqlDialect == SQL_MYSQL)
 		sqlquote = "`";
 	else
 		sqlquote = "\"";
