@@ -343,7 +343,11 @@ void pushMessage
 			
 		// extract field from the parent packet
 		const pkt2::Field &fld = packet_variable->packet.fields(z);
-		const std::string &field_packet = packet.substr(fld .offset(), fld .size());
+		std::string field_packet;
+		if (fld.offset() < packet.size())
+			field_packet = packet.substr(fld.offset(), fld.size());
+		else
+			field_packet = "";
 		pushMessage(ctx, options_cache, &packet_var, field_packet);
 		duk_put_prop_string(ctx, -2, fd->name().c_str());
 	}
