@@ -4,6 +4,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include <WinSock2.h>
 #include <Ws2ipdef.h>
+#include <ws2tcpip.h>
 #else
 #include <arpa/inet.h>
 #endif

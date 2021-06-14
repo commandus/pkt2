@@ -1,5 +1,10 @@
 #include "str-pkt2.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
+#endif
+
 #include <sstream>
 #include <iomanip>
 

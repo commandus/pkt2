@@ -15,6 +15,10 @@
 #include "javascript-context.h"
 #include "utilprotobuf.h"
 
+#if defined(_WIN32) || defined(_WIN64)
+#undef GetMessage
+#endif
+
 using namespace google::protobuf;
 
 #define	DUK_DEBUG(context) \

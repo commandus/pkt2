@@ -4,7 +4,7 @@
  */
 #include <iostream>
 
-#ifdef _MSC_VER
+#if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #include <wchar.h>
 #include <stdio.h>
@@ -49,7 +49,7 @@
 
 #endif
 
-#ifdef _MSC_VER
+#if defined(_WIN32) || defined(_WIN64)
 static bool rmAllDir(const char *path)
 {
 	if (&path == NULL)
@@ -113,6 +113,7 @@ size_t pkt2utilfile::filesInPath
 (
 	const std::string &path,
 	const std::string &suffix,
+	int flags,
 	std::vector<std::string> *retval
 )
 {
@@ -255,9 +256,13 @@ bool pkt2utilfile::rmFile(const std::string &fn)
  */
 std::string pkt2utilfile::getFilePathFromDescriptor(int fd)
 {
+#if defined(_WIN32) || defined(_WIN64)
+	return "";
+#else
 	char filePath[PATH_MAX];
 	if (fcntl(fd, F_GETPATH, filePath) != -1)
 		return std::string(filePath);
 	else
 		return "";
+#endif
 }

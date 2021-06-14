@@ -4,8 +4,8 @@
 #include <sstream>
 #include <algorithm>
 
-#ifdef _MSC_VER
-#include <windows.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
 #define PATH_DELIMITER "\\"
 #else
 #include <ftw.h>

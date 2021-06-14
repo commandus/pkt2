@@ -29,13 +29,17 @@
 #include <algorithm>
 #include <sstream>
 
-#ifdef ENABLE_LOG
-#include <glog/logging.h>
-#endif
-
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
+
+#ifdef ENABLE_LOG
+#include <glog/logging.h>
+#endif
 
 #include "pkt2.pb.h"
 #include "packet2message.h"

@@ -12,7 +12,10 @@
 #include <streambuf>
 #include <iomanip>
 
-#include <arpa/inet.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <ws2ipdef.h>
+#include <ws2tcpip.h>
+#endif
 
 /// http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
 // trim from start
