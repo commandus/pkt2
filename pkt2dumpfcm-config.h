@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <libpq-fe.h>
 
+#include "pg-connect.h"
+
 #define PROGRAM_NAME             "pkt2dumpfcm"
 #define PROGRAM_DESCRIPTION      "Send notification to registered mobile devices over FireBase Cloud Messaging"
 
@@ -48,16 +50,7 @@ public:
 	std::string test_data_hex;
 
 	// PostgreSQL
-	std::string dbconn;
-	std::string dboptionsfile;
-	std::string dbname;
-	std::string dbuser;
-	std::string dbpassword;
-	std::string dbhost;
-	std::string dbport;
-	std::string dbsocket;
-	std::string dbcharset;
-	int dbclientflags;
+	PGConfig pgconnect;
 
 	int buffer_size;
 	bool daemonize;
@@ -68,10 +61,5 @@ public:
 	
 	char *path;
 };
-
-/**
- * Establish configured database connection
- */
-PGconn *dbconnect(Config *config);
 
 #endif

@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <libpq-fe.h>
 
+#include "pg-connect.h"
+
 #define PROGRAM_NAME             "pkt2dumppq"
 #define PROGRAM_DESCRIPTION      "PostgreSQL packet dumper"
 
@@ -39,16 +41,7 @@ public:
 	uint32_t verbosity;
 
 	// PostgreSQL
-	std::string dbconn;
-	std::string dboptionsfile;
-	std::string dbname;
-	std::string dbuser;
-	std::string dbpassword;
-	std::string dbhost;
-	std::string dbport;
-	std::string dbsocket;
-	std::string dbcharset;
-	int dbclientflags;
+	PGConfig pgconnect;
 
 	int buffer_size;
 	bool daemonize;
@@ -59,10 +52,5 @@ public:
 	
 	char *path;
 };
-
-/**
- * Establish configured database connection
- */
-PGconn *dbconnect(Config *config);
 
 #endif

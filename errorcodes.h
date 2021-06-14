@@ -114,6 +114,9 @@
 #define ERRCODE_HELP_REQUESTED					-62
 #define ERRCODE_GOOGLE_SHEET_WRITE				-63
 
+#define ERRCODE_INVALID_PATH			        -64
+#define ERRCODE_INVALID_PROTO_PATH			    -65
+
 
 #define ERR_COMMAND								"Invalid command line options or help requested."
 #define ERR_PARSE_COMMAND						"Error parse command line options, possible cause is insufficient memory."
@@ -189,6 +192,9 @@
 #define ERR_HELP_REQUESTED						"Help requested " 
 
 #define ERR_GOOGLE_SHEET_WRITE					"Error write data to the Google sheet "
+
+#define ERR_INVALID_PATH                        "Invalid path"
+#define ERR_INVALID_PROTO_PATH                  "Invalid proto path"
 
 std:: string getErrorDescription(int code);
 

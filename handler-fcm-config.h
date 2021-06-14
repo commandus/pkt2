@@ -3,7 +3,8 @@
 
 #include <string>
 #include <vector>
-#include <libpq-fe.h>
+
+#include "pg-connect.h"
 
 #define PROGRAM_NAME             	"handlerfcm"
 #define PROGRAM_DESCRIPTION			"FireBase Cloud messaging printer"
@@ -59,21 +60,6 @@ public:
 	// FireBase server key
 	std::string server_key;
 	// PostgreSQL
-	std::string dbconn;
-	std::string dboptionsfile;
-	std::string dbname;
-	std::string dbuser;
-	std::string dbpassword;
-	std::string dbhost;
-	std::string dbport;
-	std::string dbsocket;
-	std::string dbcharset;
-	int dbclientflags;
+	PGConfig pgconnect;
 };
-
-	/**
-	* Establish configured database connection
-	*/
-	PGconn *dbconnect(Config *config);
-
 #endif
