@@ -7,6 +7,8 @@
 #include <stdint.h>
 #include <libpq-fe.h>
 
+#include "pg-connect.h"
+
 #define PROGRAM_NAME             "handlerpq"
 #define PROGRAM_DESCRIPTION      "PostgreSQLreceiver"
 
@@ -43,16 +45,7 @@ public:
 	std::vector <std::string> allowed_messages;
 	
 	// PostgreSQL
-	std::string dbconn;
-	std::string dboptionsfile;
-	std::string dbname;
-	std::string dbuser;
-	std::string dbpassword;
-	std::string dbhost;
-	std::string dbport;
-	std::string dbsocket;
-	std::string dbcharset;
-	int dbclientflags;
+	PGConfig pgconnect;
 
 	int buffer_size;
 	int mode;				///< default 4- SQL(2)
@@ -69,10 +62,5 @@ public:
 
 	int sql_dialect;
 };
-
-/**
- * Establish configured database connection
- */
-PGconn *dbconnect(Config *config);
 
 #endif

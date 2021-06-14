@@ -11,6 +11,7 @@
 #endif
 
 #include "errorcodes.h"
+#include "pg-connect.h"
 
 #define DEF_DB_PATH					"db"
 #define DEF_MODE					0664
@@ -78,10 +79,10 @@ int Config::parseCmd
 		
 		struct arg_int *a_buffer_size = arg_int0("b", "buffer", "<size>", "Receiver buffer size. Default 4096. 0- dymanic.");
 
-	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
-	struct arg_end *a_end = arg_end(20);
+		struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
+		struct arg_end *a_end = arg_end(20);
 
-	void* argtable[] = {
+		void* argtable[] = {
 			a_packet_url, 
 			a_retries, a_retry_delay,
 			a_daemonize, a_max_fd, a_verbosity,
@@ -139,35 +140,35 @@ int Config::parseCmd
 	else
 		max_fd = 0;
 
-	dbconn = *a_conninfo->sval;
+	pgconnect.dbconn = *a_conninfo->sval;
 	if (a_host->count)
-		dbhost = *a_host->sval;
+		pgconnect.dbhost = *a_host->sval;
 	else
-		dbhost = DEF_DB_HOST;
+		pgconnect.dbhost = DEF_DB_HOST;
 
 	if (a_dbport->count)
-		dbport = *a_dbport->sval;
+		pgconnect.dbport = *a_dbport->sval;
 	else
-		dbport = DEF_DB_PORT;
+		pgconnect.dbport = DEF_DB_PORT;
 
-	dboptionsfile = *a_optionsfile->filename;
-	dbname = *a_database->sval;
-	dbuser = *a_user->sval;
-	dbpassword = *a_password->sval;
+	pgconnect.dboptionsfile = *a_optionsfile->filename;
+	pgconnect.dbname = *a_database->sval;
+	pgconnect.dbuser = *a_user->sval;
+	pgconnect.dbpassword = *a_password->sval;
 	if (a_dbsocket->count)
-		dbsocket = *a_dbsocket->sval;
+		pgconnect.dbsocket = *a_dbsocket->sval;
 	else
-		dbsocket = DEF_DATABASESOCKET;
+		pgconnect.dbsocket = DEF_DATABASESOCKET;
 
 	if (a_dbcharset->count)
-		dbcharset = *a_dbcharset->sval;
+		pgconnect.dbcharset = *a_dbcharset->sval;
 	else
-		dbcharset = DEF_DATABASECHARSET;
+		pgconnect.dbcharset = DEF_DATABASECHARSET;
 
 	if (a_dbclientflags->count)
-		dbclientflags = *a_dbclientflags->ival;
+		pgconnect.dbclientflags = *a_dbclientflags->ival;
 	else
-		dbclientflags = DEF_DATABASECLIENTFLAGS;
+		pgconnect.dbclientflags = DEF_DATABASECLIENTFLAGS;
 
 	if (a_buffer_size->count)
 		buffer_size = *a_buffer_size->ival;
@@ -179,16 +180,4 @@ int Config::parseCmd
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return ERR_OK;
-}
-
-/**
- * Establish configured database connection
- */
-PGconn *dbconnect(Config *config)
-{
-	if (!config->dbconn.empty())
-		return PQconnectdb(config->dbconn.c_str());
-	else
-		return PQsetdbLogin(config->dbhost.c_str(), config->dbport.c_str(), config->dboptionsfile.c_str(),
-			NULL, config->dbname.c_str(), config->dbuser.c_str(), config->dbpassword.c_str());
 }

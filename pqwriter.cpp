@@ -29,6 +29,7 @@
 
 #include "errorcodes.h"
 #include "utilprotobuf.h"
+#include "pg-connect.h"
 
 #include "pkt2optionscache.h"
 
@@ -80,7 +81,7 @@ int execSQL
 		const std::vector<std::string> &stmts
 )
 {
-	PGconn *conn = dbconnect(config);
+	PGconn *conn = dbconnect(&config->pgconnect);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;

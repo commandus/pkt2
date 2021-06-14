@@ -20,6 +20,7 @@
 
 #include <curl/curl.h>
 #include <libpq-fe.h>
+#include "pg-connect.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #else
@@ -74,7 +75,7 @@ static int getDeviceTimeZone
 	if (imei.empty())
 		return defaultTimeZoneSecs;
 
-	PGconn *conn = dbconnect(config);
+	PGconn *conn = dbconnect(&config->pgconnect);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
@@ -114,7 +115,7 @@ static int getDeviceTimeZone
 
     res = PQexec(conn, "END");
 	CHECK_STMT("commit transaction")
-	PQclear(res); \
+	PQclear(res);
 	PQfinish(conn);
 	return t;
 }
@@ -137,7 +138,7 @@ static int getTokenNNameList(
 	std::string q = "SELECT dev.instance, device_description.device_name FROM device_description, dev WHERE dev.userid = device_description.owner \
 	AND device_description.current = 't' AND device_description.imei = '" +  imei + "'";
 
-	PGconn *conn = dbconnect(config);
+	PGconn *conn = dbconnect(&config->pgconnect);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;

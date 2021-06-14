@@ -180,7 +180,14 @@ int Config::parseCmd
 
 	// get real path
 	char b[PATH_MAX];
-	proto_path = std::string(realpath(proto_path.c_str(), b));
+	char *pp = realpath(proto_path.c_str(), b);
+	if (pp)
+		proto_path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PROTO_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PROTO_PATH;
+	}
 
 	if (a_filename_input->count)
 		filename_input = *a_filename_input->sval;

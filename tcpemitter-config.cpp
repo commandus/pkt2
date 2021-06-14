@@ -2,12 +2,16 @@
 #include <limits.h>
 #include <stdlib.h>
 
+#include <iostream>
+
 #if defined(_WIN32) || defined(_WIN64)
 #else
 #include <unistd.h>
 #endif
 
 #include "argtable3/argtable3.h"
+
+#include "errorcodes.h"
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_QUEUE_OUT               "ipc:///tmp/message.pkt2"
@@ -104,7 +108,14 @@ int Config::parseCmd
 
 	// get real path
 	char b[PATH_MAX];
-	proto_path = std::string(realpath(proto_path.c_str(), b));
+	char *pp = realpath(proto_path.c_str(), b);
+	if (pp)
+		proto_path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PROTO_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PROTO_PATH;
+	}
 
 	if (a_input_file->count)
 		file_name = *a_input_file->filename;

@@ -1,6 +1,7 @@
 #include "handlerlmdb-config.h"
 #include <limits.h>
 #include <stdlib.h>
+#include <iostream>
 #include "argtable3/argtable3.h"
 
 #include "errorcodes.h"
@@ -97,7 +98,14 @@ int Config::parseCmd
 
 	// get real path
 	char b[PATH_MAX];
-	proto_path = std::string(realpath(proto_path.c_str(), b));
+	char *pp = realpath(proto_path.c_str(), b);
+	if (pp)
+		proto_path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PROTO_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PROTO_PATH;
+	}
 
 	if (a_message_url->count)
 		message_url = *a_message_url->sval;
@@ -131,7 +139,14 @@ int Config::parseCmd
 		path = *a_db_path->sval;
 	else
 		path = DEF_DB_PATH;
-	path = std::string(realpath(path.c_str(), b));
+	pp = realpath(path.c_str(), b);
+	if (pp)
+		path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PATH;
+	}
 
 	if (a_mode->count)
 		mode = *a_mode->ival;

@@ -25,6 +25,7 @@
 #endif
 
 #include "pqdumper.h"
+#include "pg-connect.h"
 
 #include "errorcodes.h"
 #include "utilstring.h"
@@ -55,7 +56,7 @@ int execSQL
 	const std::string &stmt
 )
 {
-	PGconn *conn = dbconnect(config);
+	PGconn *conn = dbconnect(&config->pgconnect);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
@@ -90,9 +91,9 @@ int run
 	}
 	if (config->verbosity > 2)
 	{
-		std::cerr << "Database host: " << config->dbhost 
-			<< " port: " << config->dbport 
-			<< " user: " << config->dbuser << " db: " << config->dbname << std::endl;
+		std::cerr << "Database host: " << config->pgconnect.dbhost 
+			<< " port: " << config->pgconnect.dbport 
+			<< " user: " << config->pgconnect.dbuser << " db: " << config->pgconnect.dbname << std::endl;
 	}
 	
 	START:

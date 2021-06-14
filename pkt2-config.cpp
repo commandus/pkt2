@@ -1,5 +1,7 @@
 #include "pkt2-config.h"
 #include <stdlib.h>
+#include <iostream>
+
 #include "argtable3/argtable3.h"
 
 #if defined(_WIN32) || defined(_WIN64)
@@ -8,6 +10,7 @@
 #include <linux/limits.h>
 #endif
 
+#include "errorcodes.h"
 
 #define DEF_PROTO_PATH				"proto"
 #define DEF_QUEUE_OUT               "ipc:///tmp/message.pkt2"
@@ -86,7 +89,14 @@ int Config::parseCmd
 		file_name = *a_input_file->filename;
 	else
 		file_name = DEF_CFG;	
-	file_name = std::string(realpath(file_name.c_str(), b));
+	char *pp = realpath(file_name.c_str(), b);
+	if (pp)
+		file_name = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PATH;
+	}
 
 	if (a_path->count)
 		path = *a_path->filename;
@@ -98,6 +108,14 @@ int Config::parseCmd
 
 	// get real path
 	path = std::string(realpath(path.c_str(), b));
+	pp = realpath(path.c_str(), b);
+	if (pp)
+		path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PATH;
+	}
 
 	mode_output = a_output->count;
 

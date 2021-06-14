@@ -2,6 +2,7 @@
 #include <signal.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cstring>
 
 #ifdef ENABLE_LOG
 #include <glog/logging.h>

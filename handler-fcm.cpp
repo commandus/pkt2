@@ -21,7 +21,6 @@
 #include <glog/logging.h>
 
 #include <curl/curl.h>
-#include <libpq-fe.h>
 
 #include "platform.h"
 #include "daemonize.h"
@@ -117,15 +116,6 @@ int main
 		LOG(ERROR) << getErrorDescription(config->error());
 		exit(config->error());
 	}
-
-	// check database connection
-	PGconn *conn = dbconnect(config);
-	if (PQstatus(conn) != CONNECTION_OK)
-	{
-		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
-		exit(ERRCODE_DATABASE_NO_CONNECTION);
-	}
-	PQfinish(conn);
 
     INIT_LOGGING(PROGRAM_NAME)
 

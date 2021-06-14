@@ -2,6 +2,9 @@
 #include <limits.h>
 #include <cstring>
 #include <stdlib.h>
+#include <iostream>
+
+#include "errorcodes.h"
 
 #if defined(_WIN32) || defined(_WIN64)
 #else
@@ -88,14 +91,14 @@ int Config::parseCmd
 	// special case: '--help' takes sql_dialect = *a_sql_dialect->ival;precedence over error reporting
 	if ((a_help->count) || nerrors)
 	{
-			if (nerrors)
-					arg_print_errors(stderr, a_end, PROGRAM_NAME);
-			printf("Usage: %s\n", PROGRAM_NAME);
-			arg_print_syntax(stdout, argtable, "\n");
-			printf("%s\n", PROGRAM_DESCRIPTION);
-			arg_print_glossary(stdout, argtable, "  %-25s %s\n");
-			arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
-			return 1;
+		if (nerrors)
+			arg_print_errors(stderr, a_end, PROGRAM_NAME);
+		printf("Usage: %s\n", PROGRAM_NAME);
+		arg_print_syntax(stdout, argtable, "\n");
+		printf("%s\n", PROGRAM_DESCRIPTION);
+		arg_print_glossary(stdout, argtable, "  %-25s %s\n");
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return 1;
 	}
 
 	file_mode = FILE_MODE_BIN;
@@ -111,7 +114,6 @@ int Config::parseCmd
 		if (strcmp(*a_cmd_text->sval, "2") == 0)
 			file_mode = FILE_MODE_TEXT_INT;
 	}
-
 	if (a_filename_in->count)
 		filename_in = std::string(*a_filename_in->filename);
 	else
@@ -134,7 +136,14 @@ int Config::parseCmd
 
 	// get real path
 	char b[PATH_MAX];
-	proto_path = std::string(realpath(proto_path.c_str(), b));
+	char *pp = realpath(proto_path.c_str(), b);
+	if (pp)
+		proto_path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PROTO_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PROTO_PATH;
+	}
 
 	if (a_print_mode->count)
 		mode = *a_print_mode->ival;
@@ -179,7 +188,6 @@ int Config::parseCmd
 	}
 
 	verbosity = a_verbosity->count;
-	
 	daemonize = a_daemonize->count > 0;
 
 	if (a_max_fd->count)

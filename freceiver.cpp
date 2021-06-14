@@ -82,12 +82,12 @@ int main
 	config = new Config(argc, argv);
 	if (!config)
 	{
-		LOG(ERROR) << ERR_PARSE_COMMAND;
+		std::cerr << ERR_PARSE_COMMAND << std::endl;
 		exit(ERRCODE_PARSE_COMMAND);
 	}
     if (config->error() != 0)
 	{
-		LOG(ERROR) << ERR_COMMAND;
+		std::cerr << ERR_COMMAND << std::endl;
 		exit(ERRCODE_COMMAND);
 	}
 

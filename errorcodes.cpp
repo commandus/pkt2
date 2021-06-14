@@ -114,6 +114,10 @@ std:: string getErrorDescription(int code)
 			return ERR_HELP_REQUESTED;
 		case ERRCODE_GOOGLE_SHEET_WRITE:
 			return ERR_GOOGLE_SHEET_WRITE;
+		case ERRCODE_INVALID_PATH:
+			return ERR_INVALID_PATH;
+		case ERRCODE_INVALID_PROTO_PATH:
+			return ERR_INVALID_PROTO_PATH;
 		default:
 			return "";
 	}

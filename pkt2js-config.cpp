@@ -1,6 +1,7 @@
 #include "argtable3/argtable3.h"
 #include <limits.h>
 #include <stdlib.h>
+#include <iostream>
 #include "pkt2js-config.h"
 #include "errorcodes.h"
 
@@ -167,7 +168,14 @@ int Config::parseCmd
 
 	// get real path
 	char b[PATH_MAX];
-	proto_path = std::string(realpath(proto_path.c_str(), b));
+	char *pp = realpath(proto_path.c_str(), b);
+	if (pp)
+		proto_path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PROTO_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PROTO_PATH;
+	}
 
 	if (a_force_message->count)
 		force_message = *a_force_message->sval;

@@ -31,6 +31,7 @@
 #include "input-packet.h"
 
 #include "helper_fcm.h"
+#include "pg-connect.h"
 
 using namespace google::protobuf;
 
@@ -74,7 +75,7 @@ static int getTokenNNameList(
 		return ERRCODE_DECOMPOSE_FATAL;
 	}
 	
-	PGconn *conn = dbconnect(config);
+	PGconn *conn = dbconnect(&config->pgconnect);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;

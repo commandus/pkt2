@@ -2,6 +2,7 @@
 #include <iostream>
 #include <limits.h>
 #include <stdlib.h>
+#include <iostream>
 
 #if defined(_WIN32) || defined(_WIN64)
 #else
@@ -185,7 +186,14 @@ int Config::parseCmd
 
 	// get real path
 	char b[PATH_MAX];
-	proto_path = std::string(realpath(proto_path.c_str(), b));
+	char *pp = realpath(proto_path.c_str(), b);
+	if (pp)
+		proto_path = std::string(pp);
+	else {
+		std::cerr << ERR_INVALID_PROTO_PATH << std::endl;
+		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
+		return ERRCODE_INVALID_PROTO_PATH;
+	}
 
 	if (a_message_url->count)
 		message_url = *a_message_url->sval;

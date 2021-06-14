@@ -24,6 +24,7 @@
 #include "daemonize.h"
 #include "handlerpq-config.h"
 #include "pqwriter.h"
+#include "pg-connect.h"
 
 #include "errorcodes.h"
 
@@ -122,7 +123,7 @@ int main
     INIT_LOGGING(PROGRAM_NAME)
 
 	// check database connection
-	PGconn *conn = dbconnect(config);
+	PGconn *conn = dbconnect(&config->pgconnect);
 	if (PQstatus(conn) != CONNECTION_OK)
 	{
 		LOG(ERROR) << ERR_DATABASE_NO_CONNECTION;
