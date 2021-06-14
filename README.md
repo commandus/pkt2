@@ -1848,14 +1848,44 @@ PID файлы создаются только при наличии прав н
 
 то есть демон нужно запускать от имени root.
 
-## Отладка, clang
+## Опции configure, cmake
+
+Отладка
 
 ```
 ./configure CFLAGS='-g -O0' CXXFLAGS='-g -O0'
 ```
 
+или
+
+```
+./configure --enable-debug
+```
+
+clang
+
 ```
 ./configure CC=clang CXX=clang++
+```
+
+```
+mkdir build
+cd build
+export CC=/usr/bin/clang
+export CXX=/usr/bin/clang++
+cmake ..
+```
+
+Включить MQTT (нужна библиотека Paho MQTT)
+
+```
+./configure --enable-mqtt
+```
+
+Включить SNMP (нужна библиотека snmp)
+
+```
+./configure --enable-snmp
 ```
 
 ## protoc
@@ -2399,6 +2429,8 @@ sudo update-alternatives --config java
 
 ## Зависимости
 
+- libpq-dev
+
 Большинство библиотек устанавливается последовательностью:
 ```
 ./autogen.sh
@@ -2411,7 +2443,7 @@ make clean
 sudo ldconfig
 ```
 
-OpenSSL рекомендуется устанавливать весрии 1.0.2g (из protobuf удалена, но есть в mqtt и curl)
+OpenSSL рекомендуется устанавливать версии 1.0.2g (из protobuf удалена, но есть в mqtt и curl)
 ```
 sudo apt install libcurl4-openssl-dev libpq-dev
 git clone git://git.sv.gnu.org/libunwind.git
@@ -2437,7 +2469,6 @@ curl может зависеть от другой версии libcrypto.a
 PROTOBUF_OLD_GCC_COMPAT =
 ```
 [In the GCC 5.1 release libstdc++ introduced a new library ABI that includes new implementations of std::string and std::list](https://gcc.gnu.org/onlinedocs/libstdc++/manual/using_dual_abi.html)
-
 
 ### Сборка nanomsg и protobuf
 

@@ -25,6 +25,24 @@ esac],
 
 AM_CONDITIONAL(DEBUG, test x"$debug" = x"true")
 
+AC_ARG_ENABLE([snmp],
+[  --enable-snmp    Turn on SNMP],
+[case "${enableval}" in
+  yes) enable_snmp=true ;;
+  no)  enable_snmp=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-snmp]) ;;
+esac],[enable_snmp=false])
+AM_CONDITIONAL([ENABLE_SNMP], [test x$enable_snmp = xtrue])
+
+AC_ARG_ENABLE([mqtt],
+[  --enable-mqtt    Turn on MQTT],
+[case "${enableval}" in
+  yes) enable_mqtt=true ;;
+  no)  enable_mqtt=false ;;
+  *) AC_MSG_ERROR([bad value ${enableval} for --enable-mqtt]) ;;
+esac],[enable_mqtt=false])
+AM_CONDITIONAL([ENABLE_MQTT], [test x$enable_mqtt = xtrue])
+
 # Header only https://github.com/tplgy/cppcodec
 CPPFLAGS="$CPPFLAGS -Icppcodec"
 

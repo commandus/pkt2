@@ -1,11 +1,19 @@
-set(CMAKE_TOOLCHAIN_FILE "D:/bin/scripts/buildsystems/vcpkg.cmake")
-
 cmake_minimum_required(VERSION 2.8)
-# OPTION(WITH_DEBUG_MODE "Build with debug mode" ON)
 
 project(pkt2)
 set(pkt2_VERSION_MAJOR 0)
 set(pkt2_VERSION_MINOR 1)
+
+set(CMAKE_TOOLCHAIN_FILE "D:/bin/scripts/buildsystems/vcpkg.cmake")
+
+#
+# make link to /home/andrei/lib/grpc/third_party/protobuf/src
+# ln -s /home/andrei/lib/grpc/third_party/protobuf/src protobuf
+#
+# set(PROTOBUF_ROOT third_party/protobuf)
+# set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+# set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
@@ -32,14 +40,6 @@ add_custom_command(
 
 # set(CC /usr/bin/clang)
 # set(CXX /usr/bin/clang+)
-
-#
-# make link to /home/andrei/lib/grpc/third_party/protobuf/src
-# ln -s /home/andrei/lib/grpc/third_party/protobuf/src protobuf
-#
-#set(PROTOBUF_ROOT third_party/protobuf)
-#set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
-set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
 
 include_directories(. ${PROTOBUF_ROOT} third_party )
 
@@ -79,18 +79,16 @@ set(PROTO_LITE_SRC
   ${PROTOBUF_ROOT}/google/protobuf/repeated_field.cc                            
   ${PROTOBUF_ROOT}/google/protobuf/wire_format_lite.cc                          
   ${PROTOBUF_ROOT}/google/protobuf/io/coded_stream.cc                           
- # ${PROTOBUF_ROOT}/google/protobuf/io/coded_stream_inl.h                        
   ${PROTOBUF_ROOT}/google/protobuf/io/strtod.cc                                 
   ${PROTOBUF_ROOT}/google/protobuf/io/zero_copy_stream.cc                       
   ${PROTOBUF_ROOT}/google/protobuf/io/zero_copy_stream_impl_lite.cc
-)
+ # ${PROTOBUF_ROOT}/google/protobuf/io/coded_stream_inl.h                        
+ )
 
 set(PROTO_SRC
   ${PROTO_LITE_SRC}
   ${PROTOBUF_ROOT}/google/protobuf/any.pb.cc                                    
   ${PROTOBUF_ROOT}/google/protobuf/api.pb.cc                                    
-#  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.cc                          
-#  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.h                           
   ${PROTOBUF_ROOT}/google/protobuf/any.cc                                       
   ${PROTOBUF_ROOT}/google/protobuf/descriptor.cc                                
   ${PROTOBUF_ROOT}/google/protobuf/descriptor_database.cc                       
@@ -166,12 +164,26 @@ set(PROTO_SRC
   ${PROTOBUF_ROOT}/google/protobuf/util/message_differencer.cc                  
   ${PROTOBUF_ROOT}/google/protobuf/util/time_util.cc                            
   ${PROTOBUF_ROOT}/google/protobuf/util/type_resolver_util.cc
+#  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.cc                          
+#  ${PROTOBUF_ROOT}/google/protobuf/stubs/mathlimits.h                           
 )
 
 set(PKT2LIBSRC
 	str-pkt2.cpp pbjson.cpp packet2message.cpp pkt2packetvariable.cpp javascript-context.cpp error-printer.cpp
 	messageformat.cpp messagecomposer.cpp messagedecomposer.cpp fieldnamevalueindexstrings.cpp pkt2optionscache.cpp
-  protobuf-declarations.cpp pkt2.pb.cc utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c
+  pkt2optionscache.cpp protobuf-declarations.cpp pkt2.pb.cc
+  utilfile.cpp utilstring.cpp utilprotobuf.cpp third_party/duk/duktape.c
+  env-pkt2.cpp packet-protobuf-message.cpp database-config.cpp
+)
+
+set(PKT2LIBUTILSRC
+	errorcodes.cpp daemonize.cpp
+	jsoncpp.cpp
+	utilpriority.cpp utilinet.cpp
+	NanoMessage.cpp input-packet.cpp
+	google-sheets.cpp sslhelper.cpp helper_fcm.cpp
+	pg-connect.cpp
+  third_party/argtable3/argtable3.c
 )
 
 set(cpp_pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp 
@@ -180,6 +192,146 @@ set(cpp_pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp daemonize.cpp
   ${PROTO_SRC}
 )
 
+add_library(
+  pkt2 STATIC
+  ${PKT2LIBSRC}
+  ${PROTO_SRC}
+)
+
+add_library(
+  pkt2util STATIC
+  ${PKT2LIBUTILSRC}
+)
+
+target_include_directories(pkt2util PUBLIC /usr/include/postgresql)
+
 add_definitions(-DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON)
-add_executable(pkt2js ${cpp_pkt2js})
-target_link_libraries(pkt2js glog unwind z)
+
+# pkt2
+# add_executable(pkt2 pkt2.cpp pkt2-config.cpp pkt2-impl.cpp)
+# target_link_libraries(pkt2 glog)
+
+set(HUFF_SRC
+  huff/huffcode.cpp huff/huffmanmodifieddecoder.cpp huff/huffmanmodifiedencoder.cpp
+	huff/internalnode.cpp huff/leafnode.cpp huff/node.cpp huff/devdecoder.cpp
+	third_party/bitstream/bitstream.cpp
+)
+
+# tcpreceiver
+add_executable(tcpreceiver
+  tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp get_rss.c 
+  ${HUFF_SRC}
+)
+target_include_directories(tcpreceiver PUBLIC huff)
+target_link_libraries(tcpreceiver glog unwind nanomsg pkt2 pkt2util)
+
+# tcptransmitter
+add_executable(tcptransmitter
+  tcptransmitter.cpp tcptransmitter-config.cpp
+)
+target_link_libraries(tcptransmitter glog unwind nanomsg pkt2 pkt2util)
+
+# tcpemitter
+add_executable(tcpemitter
+  tcpemitter.cpp tcpemitter-config.cpp tcpemitterline.cpp
+)
+target_link_libraries(tcpemitter glog pkt2 pkt2util)
+
+# pkt2receiver-check
+add_executable(pkt2receiver-check
+  pkt2receiver-check.cpp pkt2receiver-check-config.cpp
+)
+target_link_libraries(pkt2receiver-check glog unwind nanomsg pkt2 pkt2util)
+
+# repeator
+add_executable(repeator
+  repeator.cpp repeator-config.cpp
+)
+target_link_libraries(repeator glog unwind nanomsg pkt2 pkt2util)
+
+# messageemitter
+add_executable(messageemitter
+  messageemitter.cpp messageemitter-config.cpp messageemitterline.cpp
+)
+target_link_libraries(messageemitter glog unwind nanomsg pkt2 pkt2util)
+
+# pkt2receiver
+add_executable(pkt2receiver
+  pkt2receiver.cpp pkt2receiver-config.cpp pkt2receivernano.cpp
+)
+target_link_libraries(pkt2receiver glog unwind nanomsg pkt2 pkt2util)
+
+# handlerline
+add_executable(handlerline
+  handlerline.cpp linewriter.cpp handlerline-config.cpp
+)
+target_link_libraries(handlerline glog unwind nanomsg pkt2 pkt2util)
+
+# handlerlmdb
+add_executable(handlerlmdb
+  handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp
+)
+target_link_libraries(handlerlmdb glog unwind nanomsg pkt2 pkt2util lmdb)
+
+# handler-fcm
+add_executable(handler-fcm
+  handler-fcm.cpp fcm-writer.cpp handler-fcm-config.cpp
+)
+target_link_libraries(handler-fcm glog unwind nanomsg ssl crypto curl pq pkt2 pkt2util)
+
+# handler-google-sheets
+add_executable(handler-google-sheets
+  handler-google-sheets.cpp google-sheets-writer.cpp handler-google-sheets-config.cpp
+)
+target_link_libraries(handler-google-sheets glog unwind nanomsg curl pq pkt2 pkt2util ssl crypto)
+
+# pkt2dumppq
+add_executable(pkt2dumppq
+  pkt2dumppq.cpp pqdumper.cpp pkt2dumppq-config.cpp
+)
+target_link_libraries(pkt2dumppq glog unwind nanomsg pq pkt2 pkt2util)
+
+# pkt2dumpfcm
+add_executable(pkt2dumpfcm
+  pkt2dumpfcm.cpp fcmdumper.cpp pkt2dumpfcm-config.cpp
+)
+target_link_libraries(pkt2dumpfcm glog unwind nanomsg curl pq pkt2 pkt2util ssl crypto)
+target_include_directories(pkt2dumpfcm PUBLIC /home/andrei/lib/firebase_cpp_sdk/include)
+
+# pkt2gateway
+add_executable(pkt2gateway
+  pkt2gateway.cpp pkt2gateway-config.cpp
+)
+target_link_libraries(pkt2gateway glog unwind nanomsg pkt2 pkt2util)
+
+# handlerpq
+add_executable(handlerpq
+  handlerpq.cpp handlerpq-config.cpp pqwriter.cpp pg-connect.cpp
+)
+target_link_libraries(handlerpq glog unwind nanomsg pkt2 pkt2util pq)
+
+# freceiver
+add_executable(freceiver
+  freceiver.cpp freceiver-config.cpp freceiver-impl.cpp
+)
+target_link_libraries(freceiver glog unwind nanomsg pkt2 pkt2util)
+
+# pkt2js
+add_executable(pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp )
+target_link_libraries(pkt2js glog pkt2 pkt2util)
+
+# message2gateway
+add_executable(message2gateway message2gateway.cpp message2gateway-impl.cpp message2gateway-config.cpp )
+target_link_libraries(message2gateway protoc glog nanomsg pkt2 pkt2util)
+
+# protoc-gen-pkt2
+add_executable(protoc-gen-pkt2 protoc-gen-pkt2.cpp pkt2_code_generator.cpp )
+target_link_libraries(protoc-gen-pkt2 protoc pkt2)
+
+# js2sheet
+add_executable(js2sheet js2sheet.cpp js2sheet-config.cpp google-sheets-writer-from-js.cpp )
+target_link_libraries(js2sheet glog protoc pkt2 pkt2util curl crypto)
+
+# pkt2sheet
+add_executable(pkt2sheet pkt2sheet.cpp pkt2sheet-config.cpp google-sheets-writer-from-file.cpp )
+target_link_libraries(pkt2sheet glog protoc pkt2 pkt2util curl ssl crypto)
