@@ -416,7 +416,7 @@ js2sheet_SOURCES = \
 	js2sheet.cpp js2sheet-config.cpp google-sheets-writer-from-js.cpp \
 	$(common_src)
 
-js2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) $(LIBS_PKT2) -lcurl -lcrypto 
+js2sheet_LDADD = -lglog -lunwind $(LIB_PROTOBUF) $(LIBS_PKT2) -lcurl -lcrypto -lssl
 js2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 
 #
