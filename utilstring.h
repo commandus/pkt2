@@ -6,8 +6,13 @@
 #include <sstream>
 #include <vector>
 #include <stdint.h>
-#include <sys/socket.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include <ws2def.h>
+#else
+#include <sys/socket.h>
+#endif
 namespace pkt2utilstring {
 
 // trim from start

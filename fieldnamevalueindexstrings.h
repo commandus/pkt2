@@ -3,8 +3,10 @@
  */
 #ifndef FIELDNAMEVALUEINDEXSTRINGS_H_
 #define FIELDNAMEVALUEINDEXSTRINGS_H_
-
+#if defined(_WIN32) || defined(_WIN64)
+#else
 #include <unistd.h>
+#endif
 #include <string>
 #include <sstream>
 #include <vector>

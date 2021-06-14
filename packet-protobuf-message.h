@@ -3,7 +3,11 @@
 
 #include <string>
 #include <map>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
 #include <netinet/in.h>
+#endif
 
 #include <google/protobuf/message.h>
 
