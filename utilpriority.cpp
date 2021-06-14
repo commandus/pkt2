@@ -1,12 +1,14 @@
-#include <sched.h>
-#include <unistd.h>
 #include <stdio.h> 
 #include <string.h>
-#include <sys/time.h>
 #include <errno.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#define SCHED_FIFO	0
 #else
+#include <sched.h>
+#include <unistd.h>
+#include <sys/time.h>
+
 #include <sys/resource.h>
 #include <sys/mman.h>
 #endif
@@ -29,7 +31,7 @@ int pkt2utilpriority::setPriority(
 	int dive
 )
 {
-#ifdef WIN32
+#if defined(_WIN32) || defined(_WIN64)
 	// TODO
 #else
 	if (dive)

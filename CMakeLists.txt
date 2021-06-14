@@ -12,8 +12,8 @@ set(CMAKE_TOOLCHAIN_FILE "D:/bin/scripts/buildsystems/vcpkg.cmake")
 #
 # set(PROTOBUF_ROOT third_party/protobuf)
 # set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
-set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
-# set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
+# set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED on)

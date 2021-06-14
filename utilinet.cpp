@@ -2,10 +2,36 @@
 
 #include <string.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#include <ws2def.h>
+#include <ws2ipdef.h>
+
+struct ifaddrs {
+    struct ifaddrs* ifa_next;    /* Next item in list */
+    char* ifa_name;    /* Name of interface */
+    unsigned int     ifa_flags;   /* Flags from SIOCGIFFLAGS */
+    struct sockaddr* ifa_addr;    /* Address of interface */
+    struct sockaddr* ifa_netmask; /* Netmask of interface */
+
+    struct sockaddr_storage in_addrs;
+    struct sockaddr_storage in_netmasks;
+
+    char		   ad_name[16];
+    size_t		   speed;
+};
+
+void getifaddrs(struct ifaddrs** ifAddrStruct)
+{
+        // TODO
+}
+#else
 #include <sys/types.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#endif
 
 static std::string ipv4ToString(struct in_addr value)
 {
@@ -28,8 +54,8 @@ std::map<std::string, std::string> pkt2utilinet::getIP4Addresses(enum IPADDRRANG
             continue;
         if (ifa->ifa_addr->sa_family == AF_INET)
         {
-            std::string interface(ifa->ifa_name);
-            if (interface == "lo")
+            std::string iface(ifa->ifa_name);
+            if (iface == "lo")
             	continue;
             switch (range)
             {
@@ -39,11 +65,11 @@ std::map<std::string, std::string> pkt2utilinet::getIP4Addresses(enum IPADDRRANG
 					uint32_t g = ((sockaddr_in *) ifa->ifa_netmask)->sin_addr.s_addr;
 					struct in_addr a;
 					a.s_addr = m | (~g);
-					r[interface] = ipv4ToString(a);
+					r[iface] = ipv4ToString(a);
 				}
             	break;
             default:
-            	r[interface] = std::string(ipv4ToString(((struct sockaddr_in *)ifa->ifa_addr)->sin_addr));
+            	r[iface] = std::string(ipv4ToString(((struct sockaddr_in *)ifa->ifa_addr)->sin_addr));
             	break;
             }
         }

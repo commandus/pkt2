@@ -2,8 +2,7 @@
 #define INPUT_PACKET_H     1
 
 #if defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
-
+#include <WinSock2.h>
 #else
 #include <sys/socket.h>
 #endif

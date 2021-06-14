@@ -15,13 +15,12 @@
 #include <arpa/inet.h>
 #endif
 
-#include "glog/logging.h"
 #include "platform.h"
 #include "NanoMessage.h"
 
 
-#ifdef _MSC_VER
-#define ERRNO nn_errno
+#if defined(_WIN32) || defined(_WIN64)
+#define ERRNO nn_errno()
 #else
 #define ERRNO errno
 #endif

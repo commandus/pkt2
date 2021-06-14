@@ -6,8 +6,7 @@
  */
 
 #include "sslhelper.h"
-#ifdef _MSC_VER
-#include <Windows.h>
+#if defined(_WIN32) || defined(_WIN64)
 #endif
 #include <stdint.h>
 #include <openssl/bio.h>
