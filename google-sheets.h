@@ -86,16 +86,16 @@ protected:
 public:
 	GoogleSheets
 	(
-		const std::string &sheetid,
-		const std::string tokenbearer,
+		const std::string &spreadsheet,
+		const std::string &tokenbearer,
 		const std::string &service_account,
 		const std::string &subject_email,
 		const std::string &pemkey,
 		const std::string &scope,
 		const std::string &audience,
 		on_token_bearer onTokenbearer,
-		void *env,
-		int verbosity
+		void *environ,
+		int averbosity
 	);
 	
 	void setOnTokenBearer(
