@@ -685,7 +685,7 @@ std::string ValueRange::toJSON() const
 GoogleSheets::GoogleSheets
 (
 	const std::string &spreadsheet,
-	const std::string tokenbearer,
+	const std::string &tokenbearer,
 	const std::string &service_account,
 	const std::string &subject_email,
 	const std::string &pemkey,
@@ -737,7 +737,7 @@ GoogleSheets::~GoogleSheets()
   */
 void GoogleSheets::setOnTokenBearer
 (
-	void *environ,
+	void *env,
 	on_token_bearer value
 )
 {
