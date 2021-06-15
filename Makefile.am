@@ -427,7 +427,7 @@ libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
 libpkt2_a_CXXFLAGS = -D LIB_PBJSON $(PROTO_CXXFLAGS) -I$(INCS) -fPIC $(PROTOBUF_OLD_GCC_COMPAT)
 
 libpkt2util_a_SOURCES = $(PKT2LIBUTILSRC)
-libpkt2util_a_CXXFLAGS = -I/usr/include/postgresql -I$(INCS) -fPIC $(PROTOBUF_OLD_GCC_COMPAT)
+libpkt2util_a_CXXFLAGS = -I/usr/include/postgresql -I$(INCS) -fPIC $(PROTO_CXXFLAGS) $(PROTOBUF_OLD_GCC_COMPAT)
 
 #
 #	Shared library

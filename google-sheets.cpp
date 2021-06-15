@@ -737,7 +737,7 @@ GoogleSheets::~GoogleSheets()
   */
 void GoogleSheets::setOnTokenBearer
 (
-	void *env,
+	void *environ,
 	on_token_bearer value
 )
 {

@@ -15,6 +15,9 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include <ws2ipdef.h>
 #include <ws2tcpip.h>
+#else
+#include <netinet/in.h>
+#include <arpa/inet.h>
 #endif
 
 /// http://stackoverflow.com/questions/216823/whats-the-best-way-to-trim-stdstring
