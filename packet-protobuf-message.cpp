@@ -29,16 +29,11 @@ bool parsePacket2Message(
 	
 	const std::string *data;
 	std::string bdata;
-	switch (inputFormat) {
-	case 1:	// hex
-		if (packet.length()) {
-			bdata = pkt2utilstring::hex2string(packet);
-			data = &bdata;
-		}
-		break;
-	default:	// binary
+	if (inputFormat == 1 && packet.length()) {	// hex
+		bdata = pkt2utilstring::hex2string(packet);
+		data = &bdata;
+	} else {
 		data = &packet;
-		break;
 	}
 	
 	PacketParseEnvironment packet_env((struct sockaddr *) &s, (struct  sockaddr *) &d, *data, 

@@ -5,6 +5,9 @@
 #include "errorcodes.h"
 #include "bin2ascii.h"
 
+// prevent enless loop
+#define MAX_FLD_ALLOWED 3000
+
 static double parse_double(const std::string &v)
 {
 	return atof(v.c_str());
@@ -162,6 +165,8 @@ int MessageComposer::composeField
                         value = b64_encode(value);
                     ref->AddString(message, field, value);
                     i++;
+                    if (i > MAX_FLD_ALLOWED)
+                        break;  // prevent enless loop
                 }
             }
             else
@@ -181,6 +186,8 @@ int MessageComposer::composeField
                 while (compose(field, mf, true, i))
 				{
                 	i++;
+                    if (i > MAX_FLD_ALLOWED)
+                        break;  // prevent enless loop
 				}
             }
             else
@@ -198,6 +205,8 @@ int MessageComposer::composeField
                     {
                         ref->AddEnumValue(message, field, parse_int32_t(value));
                         i++;
+                    if (i > MAX_FLD_ALLOWED)
+                        break;  // prevent enless loop
                     }
                 }
                 else
@@ -224,14 +233,14 @@ bool MessageComposer::compose
     onMessageBegin(env, field, message, repeated, index);
     const google::protobuf::Descriptor *message_descriptor = message->GetDescriptor();
     if (!message_descriptor)
-        return ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
+        return false;   // ERRCODE_DECOMPOSE_NO_MESSAGE_DESCRIPTOR;
     size_t count = message_descriptor->field_count();
     for (size_t i = 0; i != count; ++i)
     {
         const google::protobuf::FieldDescriptor *field = message_descriptor->field(i);
         if (composeField(message, field))
         {
-            return ERRCODE_DECOMPOSE_FATAL;
+            return false; // ERRCODE_DECOMPOSE_FATAL;
         }
     }
     onMessageEnd(env, message, repeated, index);

@@ -161,7 +161,8 @@ bool Pkt2PacketVariable::validTags
 ) const
 {
 	// TODO if (data.size() < packet_size)
-	if (data.size() != packet_size)
+	size_t sz = data.size();
+	if (sz == 0 || sz != packet_size)
 	{
 		return false;
 	}
