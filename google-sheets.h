@@ -99,7 +99,7 @@ public:
 	);
 	
 	void setOnTokenBearer(
-		void *env,
+		void *environ,
 		on_token_bearer value
 	);
 
