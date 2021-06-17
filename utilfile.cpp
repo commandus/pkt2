@@ -50,6 +50,12 @@
 #endif
 
 #if defined(_WIN32) || defined(_WIN64)
+
+char* realpath(const char* path, char* resolved_path) {
+	GetFullPathNameA(path, PATH_MAX, resolved_path, NULL);
+	return resolved_path;
+}
+
 static bool rmAllDir(const char *path)
 {
 	if (&path == NULL)

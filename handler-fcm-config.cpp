@@ -3,10 +3,13 @@
 #include <stdlib.h>
 #include <iostream>
 #include "argtable3/argtable3.h"
-#include <strings.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include "platform.h"
+#include <direct.h>
+#include "utilfile.h"
 #else
+#include <strings.h>
 #include <unistd.h>
 #endif
 

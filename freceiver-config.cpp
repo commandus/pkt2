@@ -9,6 +9,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include "platform.h"
 #include <direct.h>
+#include "utilfile.h"
 #else
 #include <unistd.h>
 #endif

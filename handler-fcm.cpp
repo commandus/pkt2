@@ -64,6 +64,8 @@ void runner()
 	}
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 void signalHandler(int signal)
 {
 	switch(signal)
@@ -89,6 +91,7 @@ void setSignalHandler(int signal)
 	action.sa_handler = &signalHandler;
 	sigaction(signal, &action, NULL);
 }
+#endif
 
 /**
  * @return 0
@@ -100,9 +103,12 @@ int main
 	char *argv[]
 )
 {
+#if defined(_WIN32) || defined(_WIN64)
+#else
     // Signal handler
     setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
+#endif
     reslt = 0;
 
 	// In windows, this will init the winsock stuff

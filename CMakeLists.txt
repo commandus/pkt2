@@ -253,31 +253,31 @@ target_link_libraries(repeator glog unwind nanomsg pkt2 pkt2util)
 add_executable(messageemitter
   messageemitter.cpp messageemitter-config.cpp messageemitterline.cpp
 )
-target_link_libraries(messageemitter glog unwind nanomsg pkt2 pkt2util)
+target_link_libraries(messageemitter glog nanomsg pkt2 pkt2util)
 
 # pkt2receiver
 add_executable(pkt2receiver
   pkt2receiver.cpp pkt2receiver-config.cpp pkt2receivernano.cpp
 )
-target_link_libraries(pkt2receiver glog unwind nanomsg pkt2 pkt2util)
+target_link_libraries(pkt2receiver glog nanomsg pkt2 pkt2util)
 
 # handlerline
 add_executable(handlerline
   handlerline.cpp linewriter.cpp handlerline-config.cpp
 )
-target_link_libraries(handlerline glog unwind nanomsg pkt2 pkt2util)
+target_link_libraries(handlerline glog nanomsg pkt2 pkt2util)
 
 # handlerlmdb
 add_executable(handlerlmdb
   handlerlmdb.cpp lmdbwriter.cpp handlerlmdb-config.cpp
 )
-target_link_libraries(handlerlmdb glog unwind nanomsg pkt2 pkt2util lmdb)
+target_link_libraries(handlerlmdb glog nanomsg pkt2 pkt2util lmdb)
 
 # handler-fcm
 add_executable(handler-fcm
   handler-fcm.cpp fcm-writer.cpp handler-fcm-config.cpp
 )
-target_link_libraries(handler-fcm glog unwind nanomsg ssl crypto curl pq pkt2 pkt2util)
+target_link_libraries(handler-fcm glog nanomsg ssl crypto curl pq pkt2 pkt2util)
 
 # handler-google-sheets
 add_executable(handler-google-sheets
@@ -314,7 +314,7 @@ target_link_libraries(handlerpq glog nanomsg pkt2 pkt2util pq)
 add_executable(freceiver
   freceiver.cpp freceiver-config.cpp freceiver-impl.cpp
 )
-target_link_libraries(freceiver glog nanomsg pkt2 pkt2util)
+target_link_libraries(freceiver glog nanomsg pkt2 pkt2util Ws2_32)
 
 # pkt2js
 add_executable(pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp )
