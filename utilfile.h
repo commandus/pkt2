@@ -6,6 +6,11 @@
 
 #include <string>
 #include <vector>
+
+#if defined(_WIN32) || defined(_WIN64)
+char* realpath(const char* path, char* resolved_path);
+#endif
+
 namespace pkt2utilfile {
 	bool rmDir(const std::string &path);
 	bool rmFile(const std::string &fn);
