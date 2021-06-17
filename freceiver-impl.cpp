@@ -8,6 +8,8 @@
 #include <glog/logging.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#define close closesocket
 #else
 #include <unistd.h>
 #include <sys/socket.h>

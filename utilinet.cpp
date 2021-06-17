@@ -5,8 +5,6 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include <WinSock2.h>
 #include <WS2tcpip.h>
-#include <ws2def.h>
-#include <ws2ipdef.h>
 
 struct ifaddrs {
     struct ifaddrs* ifa_next;    /* Next item in list */

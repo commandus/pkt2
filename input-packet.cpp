@@ -5,8 +5,6 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <WS2tcpip.h>
-#include <ws2def.h>
-#include <ws2ipdef.h>
 
 #else
 #include <netinet/in.h>

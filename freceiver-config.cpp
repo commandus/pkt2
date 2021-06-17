@@ -7,6 +7,8 @@
 #include "errorcodes.h"
 
 #if defined(_WIN32) || defined(_WIN64)
+#include "platform.h"
+#include <direct.h>
 #else
 #include <unistd.h>
 #endif

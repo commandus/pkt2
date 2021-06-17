@@ -302,19 +302,19 @@ target_include_directories(pkt2dumpfcm PUBLIC /home/andrei/lib/firebase_cpp_sdk/
 add_executable(pkt2gateway
   pkt2gateway.cpp pkt2gateway-config.cpp
 )
-target_link_libraries(pkt2gateway glog unwind nanomsg pkt2 pkt2util)
+target_link_libraries(pkt2gateway glog nanomsg pkt2 pkt2util)
 
 # handlerpq
 add_executable(handlerpq
   handlerpq.cpp handlerpq-config.cpp pqwriter.cpp pg-connect.cpp
 )
-target_link_libraries(handlerpq glog unwind nanomsg pkt2 pkt2util pq)
+target_link_libraries(handlerpq glog nanomsg pkt2 pkt2util pq)
 
 # freceiver
 add_executable(freceiver
   freceiver.cpp freceiver-config.cpp freceiver-impl.cpp
 )
-target_link_libraries(freceiver glog unwind nanomsg pkt2 pkt2util)
+target_link_libraries(freceiver glog nanomsg pkt2 pkt2util)
 
 # pkt2js
 add_executable(pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp )

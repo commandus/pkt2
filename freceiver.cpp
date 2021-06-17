@@ -5,6 +5,10 @@
 #include <glog/logging.h>
 #include <stdlib.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#endif
+
 #include "platform.h"
 #include "daemonize.h"
 #include "freceiver-config.h"
@@ -42,6 +46,8 @@ void run()
 	}
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 void signalHandler(int signal)
 {
 	switch(signal)
@@ -67,6 +73,7 @@ void setSignalHandler(int signal)
 	action.sa_handler = &signalHandler;
 	sigaction(signal, &action, NULL);
 }
+#endif
 
 int main
 (
@@ -75,8 +82,11 @@ int main
 )
 {
     // Signal handlers
+#if defined(_WIN32) || defined(_WIN64)
+#else
     setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
+#endif
     reslt = 0;
 
 	config = new Config(argc, argv);
