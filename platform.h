@@ -2,6 +2,7 @@
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
+#define PATH_MAX 260
 #else
 #include <time.h>
 #include <unistd.h>
@@ -27,6 +28,12 @@
 #define ENDIAN_NEED_SWAP(v) ((v != pkt2::ENDIAN_NO_MATTER) && (v != ENDIAN_HOST))
 
 #if defined(_WIN32) || defined(_WIN64)
+
+char* realpath(const char* path, char* resolved_path) {
+	GetFullPathNameA(path, PATH_MAX, resolved_path, NULL);
+	return resolved_path;
+}
+
 #define SLEEP(seconds) \
     Sleep(seconds *1000);
 

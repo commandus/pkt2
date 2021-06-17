@@ -1,12 +1,19 @@
 #ifndef HELPER_SOCKET_H
 #define HELPER_SOCKET_H 1
 
-#include <string.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include <WS2tcpip.h>
+#define SHUT_RDWR SD_BOTH
+#else
 #include <unistd.h>
-#include <errno.h>
 #include <netdb.h>
 #include <sys/socket.h>
 #include <bits/socket.h>
+#endif
+
+#include <string.h>
+#include <errno.h>
 #include <iostream>
 #include <string>
 #include "errorcodes.h"
@@ -64,7 +71,7 @@ int open_socket
 	}
 
 	int optval = 1;
-	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
+	setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const char *) &optval, sizeof(optval));
 
 	struct addrinfo *res;
 	if (get_addr_info(host, port, &res))
