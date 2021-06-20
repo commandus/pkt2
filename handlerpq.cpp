@@ -18,6 +18,11 @@
 #include <iostream>
 
 #include <glog/logging.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
+#endif
+
 #include <libpq-fe.h>
 
 #include "platform.h"

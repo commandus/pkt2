@@ -4,7 +4,10 @@
 #include <algorithm>
 #include <string.h>
 #include <stdio.h>
+#include <glog/logging.h>
+
 #if defined(_WIN32) || defined(_WIN64)
+#define close closesocket
 #include <Winsock2.h>
 #else
 #include <unistd.h>
@@ -16,8 +19,6 @@
 
 #include <nanomsg/nn.h>
 #include <nanomsg/pubsub.h>
-
-#include <glog/logging.h>
 
 #include <google/protobuf/message.h>
 

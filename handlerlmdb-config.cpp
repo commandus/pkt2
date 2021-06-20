@@ -6,6 +6,15 @@
 
 #include "errorcodes.h"
 
+
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include <direct.h>
+#include "platform.h"
+#include "utilfile.h"
+#else
+#endif
+
 #define DEF_DB_PATH					"db"
 #define DEF_MODE					0664
 #define DEF_FLAGS					0

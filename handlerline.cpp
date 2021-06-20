@@ -19,6 +19,11 @@
 
 #include <glog/logging.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
+#endif
+
 #include "platform.h"
 #include "daemonize.h"
 #include "handlerline-config.h"

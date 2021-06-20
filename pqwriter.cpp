@@ -16,6 +16,7 @@
 #include <google/protobuf/message.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#define close closesocket
 #else
 #include <unistd.h>
 #include <sys/socket.h>

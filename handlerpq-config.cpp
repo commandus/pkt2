@@ -4,10 +4,12 @@
 #include <iostream>
 
 #include "argtable3/argtable3.h"
-#include <strings.h>
-
 #if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include "platform.h"
+#include "utilfile.h"
 #else
+#include <strings.h>
 #include <unistd.h>
 #endif
 
