@@ -2,6 +2,12 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <iostream>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include "platform.h"
+#include "utilfile.h"
+#else
+#endif
 
 #include "argtable3/argtable3.h"
 

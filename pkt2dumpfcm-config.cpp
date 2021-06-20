@@ -3,10 +3,13 @@
 #include "argtable3/argtable3.h"
 #include <limits.h>
 #include <stdlib.h>
-#include <strings.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#include <direct.h>
+#include "platform.h"
 #else
+#include <strings.h>
 #include <unistd.h>
 #endif
 

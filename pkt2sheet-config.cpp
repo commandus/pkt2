@@ -3,6 +3,9 @@
 #include <stdlib.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <direct.h>
+#include "platform.h"
+#include "utilfile.h"
 #else
 #include <limits.h>
 #include <unistd.h>

@@ -5,6 +5,9 @@
 #include <glog/logging.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <io.h>
+#define read _read
+#define write _write
 #else
 #include <unistd.h>
 #include <sys/socket.h>

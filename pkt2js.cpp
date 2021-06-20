@@ -8,6 +8,11 @@
 #include <glog/logging.h>
 #endif
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
+#endif
+
 #include "platform.h"
 #include "daemonize.h"
 #include "errorcodes.h"

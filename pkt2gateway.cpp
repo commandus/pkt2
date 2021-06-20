@@ -12,6 +12,7 @@
 #include <google/protobuf/message.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
 #else
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -43,14 +44,19 @@ void signalHandler(int signal)
 		cont = false;
 		std::cerr << MSG_INTERRUPTED;
 		break;
+#if defined(_WIN32) || defined(_WIN64)
+#else
 	case SIGHUP:
 		std::cerr << MSG_RELOAD_CONFIG_REQUEST << " nothing to do";
 		break;
+#endif
 	default:
 		break;
 	}
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 void setSignalHandler(int signal)
 {
         struct sigaction action;
@@ -58,6 +64,7 @@ void setSignalHandler(int signal)
         action.sa_handler = &signalHandler;
         sigaction(signal, &action, NULL);
 }
+#endif
 
 /**
  * Read packet as string from the file, stdin ot command line
@@ -97,9 +104,12 @@ int main(int argc, char **argv)
 {
 	config = new Config(argc, argv);
     // Signal handler
+
+#if defined(_WIN32) || defined(_WIN64)
+#else
     setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
-
+#endif
 	if (!config)
 		exit(ERRCODE_PARSE_COMMAND);
     if (config->error() != 0)
