@@ -3,6 +3,7 @@
 #if defined(_WIN32) || defined(_WIN64)
 #include <windows.h>
 #define PATH_MAX 260
+#include <utilstring.h>
 #else
 #include <time.h>
 #include <unistd.h>

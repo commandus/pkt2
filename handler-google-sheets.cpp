@@ -18,6 +18,10 @@
 #include <iostream>
 #include <fstream>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#endif
+
 #include <glog/logging.h>
 
 #include "platform.h"
@@ -62,6 +66,8 @@ void runner()
 	}
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 void signalHandler(int signal)
 {
 	switch(signal)
@@ -87,6 +93,7 @@ void setSignalHandler(int signal)
 	action.sa_handler = &signalHandler;
 	sigaction(signal, &action, NULL);
 }
+#endif
 
 /**
  * @returns @see errorcodes.h
@@ -98,9 +105,12 @@ int main
 )
 {
     // Signal handler
+#if defined(_WIN32) || defined(_WIN64)
+#else
     setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
-    reslt = 0;
+#endif
+	reslt = 0;
 
 	// In windows, this will init the winsock stuff
 	curl_global_init(CURL_GLOBAL_ALL);

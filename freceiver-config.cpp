@@ -7,9 +7,10 @@
 #include "errorcodes.h"
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
 #include "platform.h"
-#include <direct.h>
 #include "utilfile.h"
+#include <direct.h>
 #else
 #include <unistd.h>
 #endif

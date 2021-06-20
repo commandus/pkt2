@@ -5,6 +5,8 @@
 #include <iostream>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include "platform.h"
+#include "utilfile.h"
 #else
 #include <unistd.h>
 #endif
@@ -87,7 +89,7 @@ Config::Config
 		scope,
 		audience,
 		&ontokenbearer,
-		this,
+		(void *) this,
 		verbosity
 	);
 }

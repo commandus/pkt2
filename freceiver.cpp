@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <signal.h>
-
 #include <iostream>
 #include <glog/logging.h>
 #include <stdlib.h>
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <WinSock2.h>
+#else
 #endif
 
 #include "platform.h"
