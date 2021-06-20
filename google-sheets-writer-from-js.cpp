@@ -13,6 +13,8 @@
 #include <glog/logging.h>
 
 #if defined(_WIN32) || defined(_WIN64)
+#include <io.h>
+#define read _read
 #else
 #include <unistd.h>
 #include <sys/types.h>

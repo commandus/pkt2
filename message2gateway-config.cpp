@@ -3,7 +3,10 @@
 #include <stdlib.h>
 #include <iostream>
 #if defined(_WIN32) || defined(_WIN64)
-#include <Windows.h>
+#include <WinSock2.h>
+#include <direct.h>
+#include "platform.h"
+#include "utilfile.h"
 #else
 #include <unistd.h>
 #endif

@@ -692,10 +692,10 @@ GoogleSheets::GoogleSheets
 	const std::string &scope,
 	const std::string &audience,
 	on_token_bearer onTokenbearer,
-	void *environ,
+	void *aenv,
 	int averbosity
 )
-	: env(environ), ontokenbearer(onTokenbearer), verbosity(averbosity)
+	: env(aenv), ontokenbearer(onTokenbearer), verbosity(averbosity)
 {
 	sheet_id = spreadsheet;
 	token = tokenbearer;	

@@ -3,6 +3,10 @@
 
 #include <iostream>
 #include <glog/logging.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#else
+#endif
 #include <stdlib.h>
 
 #include "platform.h"
@@ -51,15 +55,20 @@ void signalHandler(int signal)
 		stopNWait();
 		done();
 		break;
+#if defined(_WIN32) || defined(_WIN64)
+#else
 	case SIGHUP:
 		std::cerr << MSG_RELOAD_CONFIG_REQUEST;
 		reload(config);
 		break;
+#endif
 	default:
 		std::cerr << MSG_SIGNAL << signal;
 	}
 }
 
+#if defined(_WIN32) || defined(_WIN64)
+#else
 void setSignalHandler(int signal)
 {
         struct sigaction action;
@@ -67,6 +76,7 @@ void setSignalHandler(int signal)
         action.sa_handler = &signalHandler;
         sigaction(signal, &action, NULL);
 }
+#endif
 
 int main
 (
@@ -75,9 +85,12 @@ int main
 )
 {
     // Signal handler
-    setSignalHandler(SIGINT);
+#if defined(_WIN32) || defined(_WIN64)
+#else
+	setSignalHandler(SIGINT);
 	setSignalHandler(SIGHUP);
-    reslt = 0;
+#endif
+	reslt = 0;
 
 	config = new Config(argc, argv);
 	if (!config)

@@ -94,7 +94,7 @@ public:
 		const std::string &scope,
 		const std::string &audience,
 		on_token_bearer onTokenbearer,
-		void *environ,
+		void *env,
 		int averbosity
 	);
 	

@@ -1,15 +1,20 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <glog/logging.h>
 
+#if defined(_WIN32) || defined(_WIN64)
+#include <WinSock2.h>
+#define close closesocket
+#else
 #include <sys/socket.h>
-#include <sys/types.h>
 #include <arpa/inet.h>
+#endif
+
+#include <sys/types.h>
 
 #include <nanomsg/nn.h>
 #include <nanomsg/bus.h>
-
-#include <glog/logging.h>
 
 #include <google/protobuf/message.h>
 #include <google/protobuf/io/zero_copy_stream_impl.h>
