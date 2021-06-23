@@ -35,7 +35,7 @@ static void duk_fatal_handler_process_descriptors(
 }
 
 ConfigDatabase::ConfigDatabase() 
-	: name(""), type(""), connectionString(""), login(""), password(""),
+	: id(0), name(""), type(""), connectionString(""), login(""), password(""),
 		db(""), port(0)
 {
 	
@@ -62,6 +62,7 @@ std::string ConfigDatabase::toString() const
 {
 	std::stringstream ss;
 	ss << "{"
+		<< "\"id\": " << id << ", "
 		<< "\"name\": \"" << name << "\", "
 		<< "\"type\": \"" << type << "\", "
 		<< "\"connection\": \"" << connectionString << "\", "
@@ -125,6 +126,10 @@ void ConfigDatabases::load(const std::string &value)
 			ConfigDatabase cfg;
 			if (duk_get_prop_index(context, -1, i)) 
 			{
+				if (duk_get_prop_string(context, -1, "id"))
+					cfg.id = duk_get_int(context, -1);
+				duk_pop(context);
+
 				if (duk_get_prop_string(context, -1, "name"))
 					cfg.name = duk_get_string(context, -1);
 				duk_pop(context);

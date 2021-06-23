@@ -1,5 +1,5 @@
 AC_PREREQ([2.63])
-AC_INIT([pkt2], [0.1], [andrei.i.ivanov@commandus.com])
+AC_INIT([pkt2], [0.2], [andrei.i.ivanov@commandus.com])
 AM_INIT_AUTOMAKE([1.11 foreign no-define subdir-objects no-dependencies])
 AC_CONFIG_FILES([Makefile tests/Makefile])
 AC_CONFIG_SRCDIR([pkt2receiver.cpp])
