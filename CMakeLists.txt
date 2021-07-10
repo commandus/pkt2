@@ -12,8 +12,8 @@ set(CMAKE_TOOLCHAIN_FILE "D:/bin/scripts/buildsystems/vcpkg.cmake")
 #
 # set(PROTOBUF_ROOT third_party/protobuf)
 # set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
-# set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
-set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
+set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+#set(PROTOBUF_ROOT "D:/bin/buildtrees/protobuf/src/a5c431386a-c9deea9e31.clean/src")
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED on)
@@ -217,6 +217,11 @@ set(HUFF_SRC
 	third_party/bitstream/bitstream.cpp
 )
 
+add_executable(pkt2emscripten
+  ${PKT2LIBSRC}
+  ${PROTO_SRC}
+)
+
 # tcpreceiver
 add_executable(tcpreceiver
   tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp get_rss.c 
@@ -314,7 +319,8 @@ target_link_libraries(handlerpq glog nanomsg pkt2 pkt2util pq)
 add_executable(freceiver
   freceiver.cpp freceiver-config.cpp freceiver-impl.cpp
 )
-target_link_libraries(freceiver glog nanomsg pkt2 pkt2util Ws2_32)
+target_link_libraries(freceiver glog nanomsg pkt2 pkt2util)
+# Ws2_32
 
 # pkt2js
 add_executable(pkt2js pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp )
@@ -330,7 +336,7 @@ target_link_libraries(protoc-gen-pkt2 protoc pkt2)
 
 # js2sheet
 add_executable(js2sheet js2sheet.cpp js2sheet-config.cpp google-sheets-writer-from-js.cpp )
-target_link_libraries(js2sheet glog protoc pkt2 pkt2util curl crypto)
+target_link_libraries(js2sheet glog protoc pkt2 pkt2util curl ssl crypto)
 
 # pkt2sheet
 add_executable(pkt2sheet pkt2sheet.cpp pkt2sheet-config.cpp google-sheets-writer-from-file.cpp )

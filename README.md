@@ -1850,6 +1850,8 @@ PID файлы создаются только при наличии прав н
 
 ## Опции configure, cmake
 
+## automake
+
 Отладка
 
 ```
@@ -1886,6 +1888,62 @@ cmake ..
 
 ```
 ./configure --enable-snmp
+```
+
+### cmake
+
+Включить только сборку статической библиотеки
+```
+mkdir build
+cd build
+cmake ..
+cmake --build . --target pkt2
+```
+
+## Emcrypten
+
+Установите emsdk
+
+```
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest - или
+python ./emsdk.py install latest
+./emsdk activate latest
+```
+
+Если нет сертификата, проверьте версию python, установите сертификаты
+```
+pip3 install --upgrade certifi
+```
+
+Если это не помогает, добавьте строки в питон скрипт
+```
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+```
+Включите окружение
+```
+source ~/git/emsdk/emsdk_env.sh --build=Release
+```
+Проверьте
+```
+mkdir hello
+cd hello
+cat << EOF > hello.c
+#include <stdio.h>
+int main(int argc, char ** argv) {
+  printf("Hello, world!\n");
+}
+EOF
+emcc hello.c -o hello.html
+emrun --no_browser --port 8080 .
+```
+
+```
+mkdir build
+cd build
+emcmake cmake ..
 ```
 
 ## protoc
