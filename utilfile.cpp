@@ -22,10 +22,14 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fts.h>
 #include <string.h>
 #include <errno.h>
 #include <cstdio>
+
+#if defined(EMSCRIPTEN)
+#else
+#include <fts.h>
+#endif
 
 #define PATH_DELIMITER "/"
 
@@ -166,15 +170,6 @@ bool pkt2utilfile::rmDir(const std::string &path)
 	return nftw(path.c_str(), rmnode,  64, FTW_DEPTH) == 0;
 }
 
-static int compareFile
-(
-		const FTSENT **a,
-		const FTSENT **b
-)
-{
-	return strcmp((*a)->fts_name, (*b)->fts_name);
-}
-
 /**
  * Return list of files in specified path
  * @param path
@@ -204,11 +199,12 @@ size_t pkt2utilfile::filesInPath
 	}
 	int parent_len = strlen(pathlist[0]) + 1;	///< Arggh. Remove '/' path delimiter(I mean it 'always' present). Not sure is it works fine. It's bad, I know.
 
+    size_t count = 0;
+#if defined(EMSCRIPTEN)
+#else
 	FTS* file_system = fts_open(pathlist, FTS_LOGICAL | FTS_NOSTAT, NULL);
-
     if (!file_system)
     	return 0;
-    size_t count = 0;
     FTSENT* parent;
 	while((parent = fts_read(file_system)))
 	{
@@ -247,6 +243,7 @@ size_t pkt2utilfile::filesInPath
 		}
 	}
 	fts_close(file_system);
+#endif
 	return count;
 }
 

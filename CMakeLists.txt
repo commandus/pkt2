@@ -116,7 +116,7 @@ set(PROTO_SRC
   ${PROTOBUF_ROOT}/google/protobuf/unknown_field_set.cc                         
   ${PROTOBUF_ROOT}/google/protobuf/wire_format.cc                               
   ${PROTOBUF_ROOT}/google/protobuf/wrappers.pb.cc                               
-  ${PROTOBUF_ROOT}/google/protobuf/io/gzip_stream.cc                            
+  #${PROTOBUF_ROOT}/google/protobuf/io/gzip_stream.cc                            
   ${PROTOBUF_ROOT}/google/protobuf/io/printer.cc                                
   ${PROTOBUF_ROOT}/google/protobuf/io/tokenizer.cc                              
   ${PROTOBUF_ROOT}/google/protobuf/io/zero_copy_stream_impl.cc                  
@@ -197,6 +197,14 @@ add_library(
   ${PKT2LIBSRC}
   ${PROTO_SRC}
 )
+
+if(CMAKE_CXX_COMPILER MATCHES "/em\\+\\+(-[a-zA-Z0-9.])?$")
+  message("C++ compiler: Emscripten")
+  set(CMAKE_EXECUTABLE_SUFFIX ".wasm.js")
+  set_target_properties(pkt2 PROPERTIES LINK_FLAGS "-s WASM=1 -s EXPORTED_FUNCTIONS='[initPkt2,donePkt2,parsePacket,parsePacket2ProtobufMessage,headerFields,createTableSQLClause]'")
+else()
+  message("C++ compiler: ${CMAKE_CXX_COMPILER_ID}")
+endif()
 
 add_library(
   pkt2util STATIC

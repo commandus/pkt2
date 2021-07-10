@@ -1944,6 +1944,7 @@ emrun --no_browser --port 8080 .
 mkdir build
 cd build
 emcmake cmake ..
+make pkt2
 ```
 
 ## protoc
