@@ -217,11 +217,6 @@ set(HUFF_SRC
 	third_party/bitstream/bitstream.cpp
 )
 
-add_executable(pkt2emscripten
-  ${PKT2LIBSRC}
-  ${PROTO_SRC}
-)
-
 # tcpreceiver
 add_executable(tcpreceiver
   tcpreceiver.cpp tcpreceiver-config.cpp tcpreceivernano.cpp get_rss.c 
