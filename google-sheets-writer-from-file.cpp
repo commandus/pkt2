@@ -87,7 +87,7 @@ int put
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString2);
 	if (config->verbosity > 1)
-		std::cerr << vals.toStringTab(&config->tableAliases, &config->fieldAliases);
+		std::cerr << vals.toStringTab(&config->tableAliases, &config->fieldAliases, &config->properties);
 	
 	int count = vals.values.size();
 	ValueRange newcells;
@@ -154,7 +154,7 @@ START:
 
 		google::protobuf::Message *message;
 		if (parsePacket2Message(&message, strpkt2env, config->input_mode, s, config->force_message,
-			&config->tableAliases, &config->fieldAliases)) {
+			&config->tableAliases, &config->fieldAliases, &config->properties)) {
 			if (config->allowed_messages.size())
 			{
 				if (std::find(config->allowed_messages.begin(), config->allowed_messages.end(), message->GetTypeName()) == config->allowed_messages.end())

@@ -121,6 +121,7 @@ void FieldNameValueIndexStrings::toStringInsert
 	std::vector<std::string> *stmts,
 	const std::map<std::string, std::string> *tableAliases,
 	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties,
 	int sqlDialect
 ) {
 	std::stringstream ss;
@@ -279,7 +280,8 @@ void FieldNameValueIndexStrings::toCreateSQLTableFields
 	std::ostream *output,
 	const std::string &tableName,
 	int sqldialect,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 ) {
 	std::string quote;
 	if (sqldialect == SQL_MYSQL)
@@ -321,6 +323,7 @@ void FieldNameValueIndexStrings::toStringInsert2
 	std::vector<std::string> *stmts,
 	const std::map<std::string, std::string> *tableAliases,
 	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties,
 	int sqlDialect
 )
 {
@@ -391,7 +394,8 @@ void FieldNameValueIndexStrings::toStringInsert2
  */
 std::string FieldNameValueIndexStrings::toStringCSV(
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 ) {
 	std::stringstream ss;
 	int sz = values.size();
@@ -418,7 +422,8 @@ std::string FieldNameValueIndexStrings::toStringCSV(
  */
 std::string FieldNameValueIndexStrings::toStringTab(
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 ) {
 	std::stringstream ss;
 	int sz = values.size();
@@ -443,7 +448,8 @@ std::string FieldNameValueIndexStrings::toStringTab(
  */
 std::string FieldNameValueIndexStrings::toStringJSON(
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 ) {
 	std::string tableName = findAlias(tableAliases, table);
 	// if alias set to empty string, skip table

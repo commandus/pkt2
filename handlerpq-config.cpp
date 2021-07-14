@@ -89,6 +89,7 @@ int Config::parseCmd
 
    	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
     struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
+	struct arg_str *a_properties = arg_strn("P", "properties", "<property=name>", 0, 100, "set property");
 
 	struct arg_int *a_sql_dialect = arg_int0(NULL, "sql-dialect", "<number>", "POSTGRESQL = 0, MYSQL = 1, FIREBIRD = 2, SQLITE = 3");
 
@@ -102,7 +103,7 @@ int Config::parseCmd
 			a_daemonize, a_verbosity,
 			a_conninfo, a_user, a_database, a_password, a_host, a_dbport, a_optionsfile, a_dbsocket, a_dbcharset, a_dbclientflags,
 			a_mode, a_format_number, a_buffer_size, a_sql_dialect,
-			a_table_alias, a_field_alias,
+			a_table_alias, a_field_alias, a_properties,
 			a_help, a_end
 	};
 
@@ -238,6 +239,16 @@ int Config::parseCmd
 		std::string n = line.substr(0, p);
 		std::string v = line.substr(p + 1);
 		fieldAliases[n] = v;
+	}
+
+	for (int i = 0; i < a_properties->count; i++) {
+		std::string line = a_properties->sval[i];
+		size_t p = line.find('=');
+		if (p == std::string::npos)
+			continue;
+		std::string n = line.substr(0, p);
+		std::string v = line.substr(p + 1);
+		properties[n] = v;
 	}
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));

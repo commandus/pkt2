@@ -201,17 +201,17 @@ int run
 			MessageDecomposer md(&vals, messageTypeNAddress.message_type, &options, m, addFieldValueString);
 			if (config->verbosity > 2)
 			{
-				LOG(INFO) << MSG_MESSAGE_JSON << vals.toStringJSON(&config->tableAliases, &config->fieldAliases);
+				LOG(INFO) << MSG_MESSAGE_JSON << vals.toStringJSON(&config->tableAliases, &config->fieldAliases, &config->properties);
 			}
 			
 			stmts.clear();
 			switch (config->mode)
 			{
 			case MODE_SQL:
-				vals.toStringInsert(&stmts, &config->tableAliases, &config->fieldAliases, config->sql_dialect);
+				vals.toStringInsert(&stmts, &config->tableAliases, &config->fieldAliases, &config->properties, config->sql_dialect);
 				break;
 			case MODE_SQL2:
-				vals.toStringInsert2(&stmts, &config->tableAliases, &config->fieldAliases, config->sql_dialect);
+				vals.toStringInsert2(&stmts, &config->tableAliases, &config->fieldAliases, &config->properties, config->sql_dialect);
 				break;
 			default:
 				break;

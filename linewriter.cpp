@@ -118,23 +118,23 @@ START:
 			{
 			case MODE_JSON:
 				put_json(config->stream, &options, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, &config->properties);
 				break;
 			case MODE_CSV:
 				put_csv(config->stream, &options, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, &config->properties);
 				break;
 			case MODE_TAB:
 				put_tab(config->stream, &options, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, &config->properties);
 				break;
 			case MODE_SQL:
 				put_sql(config->stream, &options, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases, config->sql_dialect);
+					&config->tableAliases, &config->fieldAliases, &config->properties, config->sql_dialect);
 				break;
 			case MODE_SQL2:
 				put_sql2(config->stream, &options, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases, config->sql_dialect);
+					&config->tableAliases, &config->fieldAliases, &config->properties, config->sql_dialect);
 				break;
 			case MODE_PB_TEXT:
 				put_protobuf_text(config->stream, &options, &messageTypeNAddress, m);

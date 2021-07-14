@@ -324,10 +324,10 @@ static int filePrint(Config *config)
 			std::string((const char *) packet.data(), (size_t) packet.length),
 			&options_cache,
 			"",
-			&config->tableAliases, &config->fieldAliases
+			&config->tableAliases, &config->fieldAliases, &config->properties
 		);
 		google::protobuf::Message *m = packet2Message.parsePacket(&packet_env,
-			&config->tableAliases, &config->fieldAliases);
+			&config->tableAliases, &config->fieldAliases, &config->properties);
 		if (!m)
 		{
 			LOG(ERROR) << ERR_PACKET_PARSE;
@@ -339,23 +339,23 @@ static int filePrint(Config *config)
 		{
 			case MODE_JSON:
 				put_json(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, &config->properties);
 				break;
 			case MODE_CSV:
 				put_csv(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, &config->properties);
 				break;
 			case MODE_TAB:
 				put_tab(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases);
+					&config->tableAliases, &config->fieldAliases, &config->properties);
 				break;
 			case MODE_SQL:
 				put_sql(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases, config->sql_dialect);
+					&config->tableAliases, &config->fieldAliases, &config->properties, config->sql_dialect);
 				break;
 			case MODE_SQL2:
 				put_sql2(&std::cout, &options_cache, &messageTypeNAddress, m,
-					&config->tableAliases, &config->fieldAliases, config->sql_dialect);
+					&config->tableAliases, &config->fieldAliases, &config->properties, config->sql_dialect);
 				break;
 			case MODE_PB_TEXT:
 				put_protobuf_text(&std::cout, &options_cache, &messageTypeNAddress, m);

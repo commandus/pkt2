@@ -141,6 +141,7 @@ int Config::parseCmd
 
    	struct arg_str *a_table_alias = arg_strn("T", "table-alias", "<alias=message>", 0, 100, "set table alias for message");
     struct arg_str *a_field_alias = arg_strn("F", "field-alias", "<alias=field>", 0, 100, "set field alias");
+	struct arg_str *a_properties = arg_strn("P", "properties", "<property=name>", 0, 100, "set property");
 
 	struct arg_lit *a_help = arg_lit0("h", "help", "Show this help");
 	struct arg_end *a_end = arg_end(20);
@@ -153,7 +154,7 @@ int Config::parseCmd
 		a_json, a_token_file, a_subject_email, a_spreadsheet, a_sheet,
 		a_format_number,
 		a_daemonize, a_verbosity, a_mode, a_buffer_size, 
-		a_table_alias, a_field_alias,
+		a_table_alias, a_field_alias, a_properties,
 		a_help, a_end 
 	};
 
@@ -281,6 +282,16 @@ int Config::parseCmd
 		std::string n = line.substr(0, p);
 		std::string v = line.substr(p + 1);
 		fieldAliases[n] = v;
+	}
+
+	for (int i = 0; i < a_properties->count; i++) {
+		std::string line = a_properties->sval[i];
+		size_t p = line.find('=');
+		if (p == std::string::npos)
+			continue;
+		std::string n = line.substr(0, p);
+		std::string v = line.substr(p + 1);
+		properties[n] = v;
 	}
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));

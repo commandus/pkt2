@@ -86,7 +86,7 @@ START:
 		}
 		std::string s((char *) data, packet_length);
 		std::string outstr = parsePacket(strpkt2env, config->input_mode, config->output_mode,
-			0, s, config->force_message, &config->tableAliases, &config->fieldAliases);
+			0, s, config->force_message, &config->tableAliases, &config->fieldAliases, &config->properties);
 		if (!outstr.empty()) {
 			int sent = write(fdout, outstr.c_str(), outstr.size());
 			if (sent < 0) {

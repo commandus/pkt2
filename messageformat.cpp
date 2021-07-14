@@ -63,12 +63,13 @@ int put_json
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
-	*output << vals.toStringJSON(tableAliases, fieldAliases);
+	*output << vals.toStringJSON(tableAliases, fieldAliases, properties);
 	return ERR_OK;
 }
 
@@ -86,13 +87,14 @@ int put_sql
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
 	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties,
 	int sqlDialect
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
-	vals.toStringInsert(&stmts, tableAliases, fieldAliases, sqlDialect);
+	vals.toStringInsert(&stmts, tableAliases, fieldAliases, properties, sqlDialect);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;
@@ -112,13 +114,14 @@ int put_sql2
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
 	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties,
 	int sqlDialect
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
 	std::vector<std::string> stmts;
-	vals.toStringInsert2(&stmts, tableAliases, fieldAliases, sqlDialect);
+	vals.toStringInsert2(&stmts, tableAliases, fieldAliases, properties, sqlDialect);
 	for (std::vector<std::string>::const_iterator it(stmts.begin()); it != stmts.end(); ++it)
 		*output << *it;
 	return ERR_OK;
@@ -132,7 +135,8 @@ int create_sql
 	const std::string &messageType,
 	SQL_DIALECT sqldialect,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	std::string tableName = findAlias(tableAliases, messageType);
@@ -144,7 +148,7 @@ int create_sql
 	if (message) {
 		FieldNameValueIndexStrings vals(options, messageType);
 		MessageDecomposer md(&vals, messageType, options, message, addFieldValueString);
-		vals.toCreateSQLTableFields(output, tableName, sqldialect, fieldAliases);
+		vals.toCreateSQLTableFields(output, tableName, sqldialect, fieldAliases, properties);
 	}
 	return 0;
 }
@@ -157,7 +161,8 @@ int create_sql2
 	const std::string &messageType,
 	SQL_DIALECT sqldialect,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	std::string tableName = findAlias(tableAliases, messageType);
@@ -207,12 +212,13 @@ int put_csv
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type, "\"", "\"");
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
-	*output << vals.toStringCSV(tableAliases, fieldAliases);
+	*output << vals.toStringCSV(tableAliases, fieldAliases, properties);
 	return ERR_OK;
 }
 
@@ -229,12 +235,13 @@ int put_tab
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	FieldNameValueIndexStrings vals(options, messageTypeNAddress->message_type);
 	MessageDecomposer md(&vals, messageTypeNAddress->message_type, options, message, addFieldValueString);
-	*output << vals.toStringTab(tableAliases, fieldAliases);
+	*output << vals.toStringTab(tableAliases, fieldAliases, properties);
 	return ERR_OK;
 }
 

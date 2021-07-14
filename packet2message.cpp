@@ -58,10 +58,11 @@ PacketParseEnvironment::PacketParseEnvironment
 		Pkt2OptionsCache *optionscache,
 		const std::string &force_message,
 		const std::map<std::string, std::string> *atableAliases,
-		const std::map<std::string, std::string> *afieldAliases
+		const std::map<std::string, std::string> *afieldAliases,
+		const std::map<std::string, std::string> *aproperties
 )
 	: packet(apacket), options_cache(optionscache),
-		tableAliases(atableAliases), fieldAliases(afieldAliases)
+		tableAliases(atableAliases), fieldAliases(afieldAliases), properties(aproperties)
 {
     bool found;
 	if (force_message.empty()) {
@@ -223,7 +224,8 @@ google::protobuf::Message *Packet2Message::parsePacket
 (
 	PacketParseEnvironment *env,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	if (!env->packet_root_variable)

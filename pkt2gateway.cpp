@@ -144,7 +144,7 @@ int main(int argc, char **argv)
     Packet2Message packet2Message(&declarations, &options_cache, config->verbosity);
 
     PacketParseEnvironment packet_env(NULL, NULL, packet, &options_cache,
-		config->force_message, &config->tableAliases, &config->fieldAliases);
+		config->force_message, &config->tableAliases, &config->fieldAliases, &config->properties);
 
     google::protobuf::Message *m = packet2Message.parsePacket(&packet_env);
 

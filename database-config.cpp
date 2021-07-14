@@ -98,6 +98,20 @@ std::string ConfigDatabase::toString() const
 		ss << "]";
 	}
 
+	if (properties.size()) {
+		ss << ", \"properties\": [";
+		bool isNext = false;
+		for (std::map<std::string, std::string>::const_iterator it(properties.begin()); it != properties.end(); it++) {
+			if (isNext) {
+				ss << ", ";
+			} else {
+				isNext = true;
+			}
+			ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
+		}
+		ss << "]";
+	}
+
 	ss << "}";
 	return ss.str();
 }
@@ -208,6 +222,37 @@ void ConfigDatabases::load(const std::string &value)
 					}
 				}
 				duk_pop(context);
+
+				duk_get_prop_string(context, -1, "properties");
+				if (duk_is_array(context, -1)) 
+				{
+					duk_size_t sz = duk_get_length(context, -1);
+					for (duk_size_t v = 0; v < sz; v++) 
+					{
+						if (duk_get_prop_index(context, -1, v)) 
+						{
+							if (duk_is_array(context, -1)) {
+								duk_size_t sz2 = duk_get_length(context, -1);
+								if (sz2 >= 2) {
+									std::string n;
+									std::string v;
+									if (duk_get_prop_index(context, -1, 0)) {
+										n = duk_get_string(context, -1);
+										duk_pop(context);
+									}
+									if (duk_get_prop_index(context, -1, 1)) {
+										v = duk_get_string(context, -1);
+										duk_pop(context);
+									}
+									cfg.properties[n] = v;
+								}
+							}
+						}
+						duk_pop(context);
+					}
+				}
+				duk_pop(context);
+
 			}
 			duk_pop(context);
 			dbs.push_back(cfg);

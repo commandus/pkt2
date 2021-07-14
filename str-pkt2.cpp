@@ -83,11 +83,12 @@ std::string parsePacket(
 	const std::string &packet,
 	const std::string &forceMessage,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 )
 {
 	google::protobuf::Message *m;
-	if (!parsePacket2Message(&m, env, inputFormat, packet, forceMessage))
+	if (!parsePacket2Message(&m, env, inputFormat, packet, forceMessage, tableAliases, fieldAliases, properties))
 		return "";
 
 	EnvPkt2* e = (EnvPkt2*) env; 
@@ -97,21 +98,21 @@ std::string parsePacket(
 	switch (outputFormat)
 	{
 	case MODE_JSON:
-		put_json(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases);
+		put_json(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, properties);
 		break;
 	case MODE_CSV:
 		put_csv(&ss, e->options_cache, &messageTypeNAddress, m,
-			tableAliases, fieldAliases);
+			tableAliases, fieldAliases, properties);
 		break;
 	case MODE_TAB:
 		put_tab(&ss, e->options_cache, &messageTypeNAddress, m,
-			tableAliases, fieldAliases);
+			tableAliases, fieldAliases, properties);
 		break;
 	case MODE_SQL:
-		put_sql(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, sqlDialect);
+		put_sql(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, properties, sqlDialect);
 		break;
 	case MODE_SQL2:
-		put_sql2(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, sqlDialect);
+		put_sql2(&ss, e->options_cache, &messageTypeNAddress, m, tableAliases, fieldAliases, properties, sqlDialect);
 		break;
 	case MODE_PB_TEXT:
 		put_protobuf_text(&ss, e->options_cache, &messageTypeNAddress, m);
@@ -132,13 +133,13 @@ std::string parsePacket(
 		ss << headerFields(e, messageTypeNAddress.message_type, ", ")
 			<< std::endl;
 		put_csv(&ss, e->options_cache, &messageTypeNAddress, m,
-			tableAliases, fieldAliases);
+			tableAliases, fieldAliases, properties);
 		break;			
 	case 12:	
 		ss << headerFields(e, messageTypeNAddress.message_type, "\t")
 			<< std::endl;
 		put_tab(&ss, e->options_cache, &messageTypeNAddress, m,
-			tableAliases, fieldAliases);
+			tableAliases, fieldAliases, properties);
 		break;			
 	}
 	if (m) 
@@ -153,6 +154,9 @@ std::string parsePacket(
  * @param inputFormat 0- binary, 1- hex string
  * @param packet data
  * @param forceMessage "" If specifed, try only message type
+ * @param tableAliases protobuf message to datanase table map
+ * @param fieldAliases protobuf message attribute to datanase column map
+ * @param properties "session environment variables", e.g addr, eui, time, timestamp
  * @return empty string if fails
  */
 bool parsePacket2ProtobufMessage(
@@ -162,10 +166,11 @@ bool parsePacket2ProtobufMessage(
 	const std::string &packet,
 	const std::string &forceMessage,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 ) {
 	return parsePacket2Message((google::protobuf::Message **) retMessage, env, inputFormat, packet, 
-		forceMessage, tableAliases, fieldAliases);
+		forceMessage, tableAliases, fieldAliases, properties);
 }
 
 /**
@@ -184,7 +189,8 @@ std::string createTableSQLClause(
 	int outputFormat,
 	int sqlDialect,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 ) {
 	EnvPkt2* e = (EnvPkt2*) env; 
 	
@@ -192,10 +198,10 @@ std::string createTableSQLClause(
 	switch (outputFormat)
 	{
 	case MODE_SQL:
-		create_sql(&ss, e->options_cache, e->packet2Message, messageName, (SQL_DIALECT) sqlDialect, tableAliases, fieldAliases);
+		create_sql(&ss, e->options_cache, e->packet2Message, messageName, (SQL_DIALECT) sqlDialect, tableAliases, fieldAliases, properties);
 		break;
 	case MODE_SQL2:
-		create_sql2(&ss, e->options_cache, e->packet2Message, messageName, (SQL_DIALECT) sqlDialect, tableAliases, fieldAliases);
+		create_sql2(&ss, e->options_cache, e->packet2Message, messageName, (SQL_DIALECT) sqlDialect, tableAliases, fieldAliases, properties);
 		break;
 	}
 	return ss.str();
