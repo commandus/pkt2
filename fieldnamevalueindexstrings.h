@@ -103,6 +103,7 @@ public:
 		std::vector<std::string> *stmts,
 		const std::map<std::string, std::string> *tableAliases,
 		const std::map<std::string, std::string> *fieldAliases,
+		const std::map<std::string, std::string> *properties,
 		int sqlDialect
 	);
 
@@ -115,6 +116,7 @@ public:
 		std::vector<std::string> *stmts,
 		const std::map<std::string, std::string> *tableAliases,
 		const std::map<std::string, std::string> *fieldAliases,
+		const std::map<std::string, std::string> *properties,
 		int sqlDialect
 	);
 
@@ -124,7 +126,8 @@ public:
 	 */
 	std::string toStringCSV(
 		const std::map<std::string, std::string> *tableAliases,
-		const std::map<std::string, std::string> *fieldAliases
+		const std::map<std::string, std::string> *fieldAliases,
+		const std::map<std::string, std::string> *properties
 	);
 
 	/**
@@ -133,7 +136,8 @@ public:
 	 */
 	std::string toStringTab(
 		const std::map<std::string, std::string> *tableAliases,
-		const std::map<std::string, std::string> *fieldAliases
+		const std::map<std::string, std::string> *fieldAliases,
+		const std::map<std::string, std::string> *properties
 	);
 
 	/**
@@ -142,7 +146,8 @@ public:
 	 */
 	std::string toStringJSON(
 		const std::map<std::string, std::string> *tableAliases,
-		const std::map<std::string, std::string> *fieldAliases
+		const std::map<std::string, std::string> *fieldAliases,
+		const std::map<std::string, std::string> *properties
 	);
 	
 	/**
@@ -167,7 +172,8 @@ public:
 		std::ostream *output,
 		const std::string &tableName,
 		int sqldialect,
-		const std::map<std::string, std::string> *fieldAliases
+		const std::map<std::string, std::string> *fieldAliases,
+		const std::map<std::string, std::string> *properties
 	);
 
 };

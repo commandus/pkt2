@@ -52,7 +52,8 @@ int put_json
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 );
 
 /**
@@ -69,6 +70,7 @@ int put_sql
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
 	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties,
 	int sqlDialect
 );
 
@@ -85,7 +87,8 @@ int put_sql2
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *fieldAliases,\
+	const std::map<std::string, std::string> *properties,
 	int sqlDialect
 );
 
@@ -103,7 +106,8 @@ int put_csv
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 );
 
 /**
@@ -119,7 +123,8 @@ int put_tab
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 );
 
 /**
@@ -176,7 +181,8 @@ int create_sql
 	const std::string &messageType,
 	SQL_DIALECT sqldialect,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 );
 
 int create_sql2
@@ -187,7 +193,8 @@ int create_sql2
 	const std::string &messageType,
 	SQL_DIALECT sqldialect,
 	const std::map<std::string, std::string> *tableAliases,
-	const std::map<std::string, std::string> *fieldAliases
+	const std::map<std::string, std::string> *fieldAliases,
+	const std::map<std::string, std::string> *properties
 );
 
 #endif

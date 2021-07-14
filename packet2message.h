@@ -30,6 +30,7 @@ public:
 	JavascriptContext *context;
 	const std::map<std::string, std::string> *tableAliases;
 	const std::map<std::string, std::string> *fieldAliases;
+	const std::map<std::string, std::string> *properties;
 
 	PacketParseEnvironment
 	(
@@ -39,7 +40,8 @@ public:
 		Pkt2OptionsCache *options_cache,
 		const std::string &force_message,
 		const std::map<std::string, std::string> *tableAliases = NULL,
-		const std::map<std::string, std::string> *fieldAliases = NULL
+		const std::map<std::string, std::string> *fieldAliases = NULL,
+		const std::map<std::string, std::string> *properties = NULL
 	);
 	~PacketParseEnvironment();
     std::string getFullFieldName();
@@ -76,7 +78,8 @@ public:
 	(
 		PacketParseEnvironment *env,
 		const std::map<std::string, std::string> *tableAliases = NULL,
-		const std::map<std::string, std::string> *fieldAliases = NULL
+		const std::map<std::string, std::string> *fieldAliases = NULL,
+		const std::map<std::string, std::string> *properties = NULL
 	);
 
 	/**

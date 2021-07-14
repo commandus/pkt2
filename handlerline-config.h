@@ -52,6 +52,7 @@ public:
 
 	std::map<std::string, std::string> tableAliases;
 	std::map<std::string, std::string> fieldAliases;
+	std::map<std::string, std::string> properties;
 
 	int sql_dialect;
 };
