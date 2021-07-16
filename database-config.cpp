@@ -127,7 +127,7 @@ void ConfigDatabase::setProperties
 		std::map<std::string, std::string>::const_iterator f = values.find(it->first);
 		if (f != values.end()) {
 			if (!f->second.empty()) {
-				retval[f->second] = it->second;
+				retval[it->second] = f->second;
 			}
 		}
 	}
