@@ -116,6 +116,25 @@ std::string ConfigDatabase::toString() const
 	return ss.str();
 }
 
+void ConfigDatabase::setProperties
+(
+	std::map<std::string, std::string> &retval,
+	const std::map<std::string, std::string> &values
+) const
+{
+	// copy only values lsted in aliases, and replace key to the alias name
+	for (std::map<std::string, std::string>::const_iterator it(properties.begin()); it != properties.end(); it++) {
+		std::map<std::string, std::string>::const_iterator f = values.find(it->first);
+		if (f != values.end()) {
+			if (!f->second.empty()) {
+				retval[f->second] = it->second;
+			}
+		}
+	}
+}
+
+// --------------------------- ConfigDatabases
+
 ConfigDatabases::ConfigDatabases(const std::string &filename)
 {
 	std::string v = pkt2utilstring::file2string(filename);

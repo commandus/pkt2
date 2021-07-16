@@ -10,8 +10,11 @@
 
 #include "utilstring.h"
 
+#define PROPERTY_INT_TIME "time"
+
 static const std::string sql2tableNumeric = "num";
 static const std::string sql2tableString = "str";
+// SQL mode 2 key fields
 static const std::string sql2names[] = {"message", "time", "device", "field", "value"};
 
 FieldNameValueString::FieldNameValueString
@@ -150,6 +153,18 @@ void FieldNameValueIndexStrings::toStringInsert
 		ss << sqlquote << fieldName << sqlquote;
 		fieldCount++;
 	}
+
+	// add property name if exists
+	if (properties) {
+		for (std::map<std::string, std::string>::const_iterator it(properties->begin()); it != properties->end(); it++)
+		{
+			if (fieldCount)
+				ss << ", ";
+			ss << sqlquote << it->first << sqlquote;
+			fieldCount++;
+		}
+	}
+
 	if (fieldCount == 0)
 		return;
 
@@ -162,12 +177,28 @@ void FieldNameValueIndexStrings::toStringInsert
 			continue;
 		if (fieldCount)
 			ss << ", ";
+			
 		if ((values[i].field_type >= google::protobuf::FieldDescriptor::CPPTYPE_STRING) || (!pkt2utilstring::isNumber(values[i].value)))
 			ss << string_quote << values[i].value << string_quote;
 		else
 			ss << values[i].value;
 		fieldCount++;
 	}
+
+	// add property value if exists
+	if (properties) {
+		for (std::map<std::string, std::string>::const_iterator it(properties->begin()); it != properties->end(); it++)
+		{
+			if (fieldCount)
+				ss << ", ";
+			if ((it->first == PROPERTY_INT_TIME) && pkt2utilstring::isNumber(it->second))
+				ss << it->second;
+			else
+				ss << string_quote << it->second << string_quote;
+			fieldCount++;
+		}
+	}
+
 	ss << ");" << std::endl;
 	stmts->push_back(ss.str());
 }
@@ -309,6 +340,25 @@ void FieldNameValueIndexStrings::toCreateSQLTableFields
 	if (fieldCount == 0)
 		return;
 
+	if (properties) {
+		for (std::map<std::string, std::string>::const_iterator it(properties->begin()); it != properties->end(); it++)
+		{
+			if (it->second.empty())
+				continue;
+			if (fieldCount)
+				*output << ", ";
+			*output << quote << it->second << quote << " ";
+			// force string type
+			google::protobuf::FieldDescriptor::CppType cpptype;
+			if (it->first == PROPERTY_INT_TIME)
+				cpptype = google::protobuf::FieldDescriptor::CPPTYPE_UINT32;
+			else
+				cpptype = google::protobuf::FieldDescriptor::CPPTYPE_STRING;
+			*output << getSqlDialectTypeName(cpptype, sqldialect);
+			fieldCount++;
+		}
+	}
+
 	*output << ");";
 }
 
@@ -386,6 +436,11 @@ void FieldNameValueIndexStrings::toStringInsert2
 		
 		stmts->push_back(ss.str());
 	}
+
+	// add properties if exists
+	if (properties) {
+		// TODO
+	}
 }
 
 /**
@@ -412,6 +467,20 @@ std::string FieldNameValueIndexStrings::toStringCSV(
 		if (i < sz - 1)
 			ss << ", ";
 	}
+
+	if (properties) 
+	{
+		bool addColon = sz > 0;
+		for (std::map<std::string, std::string>::const_iterator it(properties->begin()); it != properties->end(); it++)
+		{
+			if (addColon)
+				ss << ", ";
+			else
+				addColon = true;
+			ss << it->second;
+		}
+	}
+
 	ss << std::endl;
 	return ss.str();
 };
@@ -438,6 +507,20 @@ std::string FieldNameValueIndexStrings::toStringTab(
 		if (i < sz - 1)
 			ss << "\t";
 	}
+
+	if (properties) 
+	{
+		bool addColon = sz > 0;
+		for (std::map<std::string, std::string>::const_iterator it(properties->begin()); it != properties->end(); it++)
+		{
+			if (addColon)
+				ss << "\t";
+			else
+				addColon = true;
+			ss << it->second;
+		}
+	}
+
 	ss << std::endl;
 	return ss.str();
 }
@@ -468,7 +551,7 @@ std::string FieldNameValueIndexStrings::toStringJSON(
 			continue;
 		if (fieldCount)
 			ss << ", ";
-		ss << "\""<< fieldName << "\": ";
+		ss << "\"" << fieldName << "\": ";
 		if ((values[i].field_type == google::protobuf::FieldDescriptor::CPPTYPE_STRING) 
 			|| (!pkt2utilstring::isNumber(values[i].value)))
 			ss << "\"" << values[i].value << "\"";
@@ -476,6 +559,22 @@ std::string FieldNameValueIndexStrings::toStringJSON(
 			ss << values[i].value;
 		fieldCount++;
 	}
+	if (properties)
+	{
+		bool addColon = fieldCount > 0;
+		for (std::map<std::string, std::string>::const_iterator it(properties->begin()); it != properties->end(); it++)
+		{
+			if (addColon)
+				ss << ", ";
+			addColon = true;
+			ss << "\"" << it->first << "\": ";
+			if ((it->first == PROPERTY_INT_TIME) && pkt2utilstring::isNumber(it->second))
+				ss << it->second;
+			else
+				ss << "\"" << it->second << "\"";
+		}
+	}
+
 	ss << "}}" << std::endl;
 	return ss.str();
 }
