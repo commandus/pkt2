@@ -177,7 +177,6 @@ void FieldNameValueIndexStrings::toStringInsert
 			continue;
 		if (fieldCount)
 			ss << ", ";
-			
 		if ((values[i].field_type >= google::protobuf::FieldDescriptor::CPPTYPE_STRING) || (!pkt2utilstring::isNumber(values[i].value)))
 			ss << string_quote << values[i].value << string_quote;
 		else

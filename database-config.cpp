@@ -1,7 +1,6 @@
 /**
  * Database backend config helper classes
  */
-#include <iostream>
 #include <fstream>
 #include <string.h>
 #include <stdio.h>
@@ -126,7 +125,7 @@ void ConfigDatabase::setProperties
 	for (std::map<std::string, std::string>::const_iterator it(properties.begin()); it != properties.end(); it++) {
 		std::map<std::string, std::string>::const_iterator f = values.find(it->first);
 		if (f != values.end()) {
-			if (!f->second.empty()) {
+			if (!it->second.empty()) {
 				retval[it->second] = f->second;
 			}
 		}
