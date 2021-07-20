@@ -1905,7 +1905,8 @@ cmake --build . --target pkt2
 ```
 git clone https://github.com/emscripten-core/emsdk.git
 cd emsdk
-./emsdk install latest - или
+./emsdk install latest
+# или
 python ./emsdk.py install latest
 ./emsdk activate latest
 ```
@@ -1915,11 +1916,29 @@ python ./emsdk.py install latest
 pip3 install --upgrade certifi
 ```
 
-Если это не помогает, добавьте строки в питон скрипт
+Если нет python3, нужно его установить:
+```
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt-get install python3.6
+```
+и включить Python 3.6 вместо версии 2.7 (python) или 3.5 (python3) по умолчанию:
+```
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.5 20
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3.6 30
+sudo update-alternatives --config python
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.5 20
+sudo update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.6 30
+sudo update-alternatives --config python3
+sudo update-alternatives --install /usr/bin/python-config python-config /usr/bin/python3.6-config 30
+```
+
+Если это не помогает, добавьте строки в скрипт emsdk.py:
 ```
 import ssl
 ssl._create_default_https_context = ssl._create_unverified_context
 ```
+
 Включите окружение
 ```
 source ~/git/emsdk/emsdk_env.sh --build=Release
