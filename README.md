@@ -1898,7 +1898,7 @@ cmake ..
 cmake --build . --target pkt2
 ```
 
-## Emcrypten
+## Emscrypten
 
 Установите emsdk
 
