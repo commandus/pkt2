@@ -193,9 +193,10 @@ void duk_fatal_handler_process_descriptors(
 	const char *msg
 )
 {
-	fprintf(stderr, "Javascript error: %s\n", (msg ? msg : ""));
+	fprintf(stderr, "Fatal JavaScript error: %s\n", (msg ? msg : ""));
 	fflush(stderr);
-	abort();
+	// 20210726
+	// abort();
 }
 
 class CfgCommon

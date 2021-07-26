@@ -134,12 +134,13 @@ void duk_fatal_handler_javascript_context(
 	if (env && ((JavascriptContext *) env)->expression)
 	{
 		JavascriptContext *jenv = (JavascriptContext *) env;
-		fprintf(stderr, "Javascript error: %s in \n%s\n", (msg ? msg : ""), jenv->expression->c_str());
+		fprintf(stderr, "Fatal JavaScript error: %s in \n%s\n", (msg ? msg : ""), jenv->expression->c_str());
 	}
 	else
-		fprintf(stderr, "Javascript error: %s\n", (msg ? msg : ""));
+		fprintf(stderr, "Fatal JavasScript error: %s\n", (msg ? msg : ""));
 	fflush(stderr);
-	abort();
+	// 20210726
+	// abort();
 }
 
 /**
