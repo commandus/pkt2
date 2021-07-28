@@ -140,10 +140,15 @@ ConfigDatabases::ConfigDatabases(const std::string &filename)
 	load(v);
 }
 	
-void ConfigDatabases::load(const std::string &value) 
+int ConfigDatabases::load
+(
+	const std::string &value
+) 
 {
 	duk_context *context = duk_create_heap(NULL, NULL, NULL, this, duk_fatal_handler_process_descriptors);
-	duk_eval_string(context, value.c_str());
+	if (int r = duk_peval_string(context, value.c_str()) != 0) {
+		return r;
+	}
 	duk_pop(context);  // ignore result
 
 	duk_push_global_object(context);
@@ -278,6 +283,7 @@ void ConfigDatabases::load(const std::string &value)
 	}
 	duk_pop(context);
 	duk_destroy_heap(context);
+	return 0;
 }
 
 std::string ConfigDatabases::toString() const

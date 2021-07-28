@@ -196,7 +196,7 @@ void duk_fatal_handler_process_descriptors(
 	fprintf(stderr, "Fatal JavaScript error: %s\n", (msg ? msg : ""));
 	fflush(stderr);
 	// 20210726
-	// abort();
+	abort();
 }
 
 class CfgCommon
@@ -1418,10 +1418,11 @@ public:
 		const std::string &config_file_name
 	)
 	{
+		int r;
 		path = a_path;
 
 		std::string v = pkt2utilstring::file2string(config_file_name);
-		duk_eval_string(context, v.c_str());
+		r = duk_peval_string(context, v.c_str());
 		duk_pop(context);  // ignore result
 		
 		cfgListenerTcp.clear();
@@ -1437,7 +1438,7 @@ public:
 		CfgScripts.clear();
 		
 		load_config();
-		return 0;
+		return r;
 	}
 	
 	int init()

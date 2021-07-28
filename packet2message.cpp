@@ -135,7 +135,8 @@ std::string extractVariable
 {
 	std::string expr = variable.var.get();
 	context->expression = &expr;
-	duk_eval_string(context->context, expr.c_str());
+	if (duk_peval_string(context->context, expr.c_str()) != 0)
+		return "";
     return duk_safe_to_string(context->context, -1);
 }
 
@@ -180,8 +181,8 @@ bool oncomposefield (
 #ifdef ENABLE_LOG
 	LOG(INFO) << ERR_MESSAGE_TYPE_NOT_FOUND << " trying compose message " << message_descriptor->full_name() << " fron the packet data, message not found.";
 #endif
-	duk_eval_string(e->context->context, expr.c_str());
-	retval = duk_safe_to_string(e->context->context, -1);
+	if (duk_peval_string(e->context->context, expr.c_str()) == 0)
+		retval = duk_safe_to_string(e->context->context, -1);
 	return false;
 }
 

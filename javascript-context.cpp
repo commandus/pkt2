@@ -140,7 +140,7 @@ void duk_fatal_handler_javascript_context(
 		fprintf(stderr, "Fatal JavasScript error: %s\n", (msg ? msg : ""));
 	fflush(stderr);
 	// 20210726
-	// abort();
+	abort();
 }
 
 /**
