@@ -2364,7 +2364,7 @@ http://askubuntu.com/questions/80013/how-to-pin-eclipse-to-the-unity-launcher
 Сборка:
 
 ```
-apt install libcurl4-openssl-dev protobuf-compiler libgoogle-glog-dev libsnmp-dev libnanomsg-dev libprotoc-dev
+apt install libcurl4-openssl-dev protobuf-compiler libgoogle-glog-dev libsnmp-dev libnanomsg-dev libprotoc-dev libpq-dev
 tar xvfz pkt2-0.1.tar.gz
 cd pkt2-0.1
 ./configure
