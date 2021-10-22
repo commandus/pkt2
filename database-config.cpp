@@ -34,7 +34,7 @@ static void duk_fatal_handler_process_descriptors(
 }
 
 ConfigDatabase::ConfigDatabase() 
-	: id(0), name(""), type(""), connectionString(""), login(""), password(""),
+	: id(0), name(""), type(""), active(true), connectionString(""), login(""), password(""),
 		db(""), port(0)
 {
 	
@@ -64,6 +64,7 @@ std::string ConfigDatabase::toString() const
 		<< "\"id\": " << id << ", "
 		<< "\"name\": \"" << name << "\", "
 		<< "\"type\": \"" << type << "\", "
+        << "\"active\": " << (active ? "true" : "false" ) << ", "
 		<< "\"connection\": \"" << connectionString << "\", "
 		<< "\"login\": \"" << login << "\", "
 		<< "\"password\": \"" << password << "\", "
@@ -173,6 +174,9 @@ int ConfigDatabases::load
 				if (duk_get_prop_string(context, -1, "type"))
 					cfg.type = duk_get_string(context, -1);
 				duk_pop(context);
+                if (duk_get_prop_string(context, -1, "active"))
+                    cfg.active = duk_get_boolean(context, true);
+                duk_pop(context);
 				if (duk_get_prop_string(context, -1, "connection"))
 					cfg.connectionString = duk_get_string(context, -1);
 				duk_pop(context);
