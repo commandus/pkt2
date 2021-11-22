@@ -2386,7 +2386,7 @@ http://askubuntu.com/questions/80013/how-to-pin-eclipse-to-the-unity-launcher
 Сборка:
 
 ```
-sudo apt install libcurl4-openssl-dev protobuf-compiler libgoogle-glog-dev libsnmp-dev libnanomsg-dev libprotoc-dev libpq-dev libunwind-dev
+apt install libcurl4-openssl-dev protobuf-compiler libgoogle-glog-dev libsnmp-dev libnanomsg-dev libprotoc-dev libpq-dev
 tar xvfz pkt2-0.1.tar.gz
 cd pkt2-0.1
 ./configure
@@ -2546,7 +2546,6 @@ OpenSSL рекомендуется устанавливать версии 1.0.2
 ```
 sudo apt install libcurl4-openssl-dev libpq-dev
 git clone git://git.sv.gnu.org/libunwind.git
-# sudo apt install libunwind-dev
 git clone git@github.com:google/glog.git
 git clone git@github.com:jedisct1/libsodium.git
 git clone git@github.com:google/protobuf.git
