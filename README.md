@@ -1850,6 +1850,26 @@ PID файлы создаются только при наличии прав н
 
 ## automake
 
+Если нужно созжать две статические библиотеки как зависмость для другого проекта lorawan-network-server,
+пропустите сборку утилит и тестов:
+
+```
+./autogen.sh
+./configure
+make pkt2.pb.h libpkt2.a libpkt2util.a
+```
+
+pkt2.pb.h требуется для генерации файлов из  Protobuf описания расширения Protobuf.
+
+Иначе делайте полную сборку.
+
+Указать компилятору флаги:
+
+```
+./configure CFLAGS='-g -O0' CXXFLAGS='-g -O0'
+```
+
+
 Отладка
 
 ```
@@ -1862,11 +1882,13 @@ PID файлы создаются только при наличии прав н
 ./configure --enable-debug
 ```
 
-clang
+Чтобы использовать компилятор clang в automake:
 
 ```
 ./configure CC=clang CXX=clang++
 ```
+
+Чтобы использовать компилятор clang в cmake:
 
 ```
 mkdir build
@@ -2489,7 +2511,7 @@ extend google.protobuf.FieldOptions {
 
 ## Установка среды
 
-cmake нужен для сбрки nanomsg
+cmake нужен для сбрки nanomsg (если не установлен из пакета)
 
 ```
 sudo apt install autoconf libtool make g++ unzip cmake git curl wget
