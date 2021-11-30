@@ -65,6 +65,9 @@
   type(type const &);\
   GTEST_DISALLOW_ASSIGN_(type)
 
+
+#ifndef GOOGLE_PROTOBUF_STUBS_SCOPED_PTR_H_
+
 namespace google {
 namespace protobuf {
 	template <typename T>
@@ -104,3 +107,5 @@ namespace protobuf {
 	};
 }
 }
+
+#endif
