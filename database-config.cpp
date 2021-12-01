@@ -175,7 +175,7 @@ int ConfigDatabases::load
 					cfg.type = duk_get_string(context, -1);
 				duk_pop(context);
                 if (duk_get_prop_string(context, -1, "active"))
-                    cfg.active = duk_get_boolean(context, true);
+                    cfg.active = duk_get_boolean(context, -1);
                 duk_pop(context);
 				if (duk_get_prop_string(context, -1, "connection"))
 					cfg.connectionString = duk_get_string(context, -1);
