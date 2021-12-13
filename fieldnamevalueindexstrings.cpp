@@ -10,7 +10,7 @@
 
 #include "utilstring.h"
 
-#define PROPERTY_INT_TIME	"time"
+#define PROPERTY_INT_TIME	"received"
 
 static const std::string sql2tableNumeric = "num";
 static const std::string sql2tableString = "str";
@@ -190,12 +190,10 @@ void FieldNameValueIndexStrings::toStringInsert
 		{
 			if (fieldCount)
 				ss << ", ";
-			/*	
 			if ((it->first == PROPERTY_INT_TIME) && pkt2utilstring::isNumber(it->second))
 				ss << it->second;
 			else
-			*/
-			ss << string_quote << it->second << string_quote;
+				ss << string_quote << it->second << string_quote;
 			fieldCount++;
 		}
 	}
