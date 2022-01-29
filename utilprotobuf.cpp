@@ -365,6 +365,8 @@ google::protobuf::Message *readDelimitedMessage
 {
 	google::protobuf::io::ArrayInputStream isistream(buffer, size);
 	google::protobuf::io::CodedInputStream input(&isistream);
+
+#include "google/protobuf/port_def.inc"
 #if PROTOBUF_VERSION < 300600
 	input.SetTotalBytesLimit(MAX_PROTO_TOTAL_BYTES_LIMIT, -1);
 #else	
