@@ -2530,12 +2530,13 @@ sudo update-alternatives --config java
 
 ### Windows
 
-Для Windows перед установкой зависимостей желательно поставить vcpkg:
+Для Windows перед установкой зависимостей желательно поставить vcpkg и интегрировать его с Visual Studio:
 
 ```
 git clone https://github.com/Microsoft/vcpkg.git
 cd vcpkg
 bootstrap-vcpkg.bat
+.\vcpkg\vcpkg integrate install
 ```
 
 Установите protobuf
@@ -2565,6 +2566,7 @@ set(PROTOBUF_ROOT "C:/git/vcpkg/buildtrees/protobuf/src/v3.18.0-296107ec8b.clean
 mkdir build
 cd build
 cmake ..
+# or cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_TOOLCHAIN_FILE=C:/git/vcpkg/scripts/buildsystems/vcpkg.cmake ..
 ```
 
 Если нет cmake, установите его:
