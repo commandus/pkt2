@@ -2528,6 +2528,61 @@ sudo update-alternatives --config java
 
 ## Зависимости
 
+### Windows
+
+Для Windows перед установкой зависимостей желательно поставить vcpkg и интегрировать его с Visual Studio:
+
+```
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+bootstrap-vcpkg.bat
+.\vcpkg\vcpkg integrate install
+```
+
+Установите protobuf
+
+В Windows 
+```
+vcpkg install protobuf
+```
+
+Pатем в CMakeLists.txt замените строку
+
+set(PROTOBUF_ROOT /home/andrei/lib/grpc/third_party/protobuf/src)
+
+на
+
+set(PROTOBUF_ROOT "C:/git/vcpkg/buildtrees/protobuf/src/v3.18.0-296107ec8b.clean/src")
+
+где C:/git/vcpkg/buildtrees/protobuf/src/- это путь к исходным файлам, скачанным vcpkg для компиляции.
+
+Скопируйте protoc.exe и *.dll в папку, указанную в переменной окружения PATH.
+
+Это нужно, так как комилятор protoc вызывается из CMakeFLists.txt
+
+Запустите cmake в новой папке build:
+
+```
+mkdir build
+cd build
+cmake ..
+# or cmake -DVCPKG_TARGET_TRIPLET=x64-windows -DCMAKE_TOOLCHAIN_FILE=C:/git/vcpkg/scripts/buildsystems/vcpkg.cmake ..
+```
+
+Если нет cmake, установите его:
+
+```
+winget install -e --id Kitware.CMake
+```
+
+Откройте pkt2.sln в Visual Studio
+
+Выберите в решении проект pkt2 и соберите только его, а не все решение.
+
+В папке build/Release/
+
+## Linux
+
 - libpq-dev
 
 Большинство библиотек устанавливается последовательностью:
