@@ -33,106 +33,6 @@ static void duk_fatal_handler_process_descriptors(
 	abort();
 }
 
-ConfigDatabase::ConfigDatabase() 
-	: id(0), name(""), type(""), active(true), connectionString(""), login(""), password(""),
-		db(""), port(0)
-{
-	
-}
-
-int ConfigDatabase::getDialect() const
-{
-	if (type == "postgresql")
-		return SQL_POSTGRESQL;
-	else
-		if (type == "mysql")
-			return SQL_MYSQL;
-		else
-			if (type == "firebird")
-				return SQL_FIREBIRD;
-			else
-				if (type == "sqlite3")
-					return SQL_SQLITE;
-				else
-					return SQL_SQLITE;
-}
-
-std::string ConfigDatabase::toString() const
-{
-	std::stringstream ss;
-	ss << "{"
-		<< "\"id\": " << id << ", "
-		<< "\"name\": \"" << name << "\", "
-		<< "\"type\": \"" << type << "\", "
-        << "\"active\": " << (active ? "true" : "false" ) << ", "
-		<< "\"connection\": \"" << connectionString << "\", "
-		<< "\"login\": \"" << login << "\", "
-		<< "\"password\": \"" << password << "\", "
-		<< "\"db\": \"" << db << "\"";
-
-	if (tableAliases.size()) {
-		ss << ", \"table_aliases\": [";
-		bool isNext = false;
-		for (std::map<std::string, std::string>::const_iterator it(tableAliases.begin()); it != tableAliases.end(); it++) {
-			if (isNext) {
-				ss << ", ";
-			} else {
-				isNext = true;
-			}
-			ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
-		}
-		ss << "]";
-	}
-
-	if (fieldAliases.size()) {
-		ss << ", \"field_aliases\": [";
-		bool isNext = false;
-		for (std::map<std::string, std::string>::const_iterator it(fieldAliases.begin()); it != fieldAliases.end(); it++) {
-			if (isNext) {
-				ss << ", ";
-			} else {
-				isNext = true;
-			}
-			ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
-		}
-		ss << "]";
-	}
-
-	if (properties.size()) {
-		ss << ", \"properties\": [";
-		bool isNext = false;
-		for (std::map<std::string, std::string>::const_iterator it(properties.begin()); it != properties.end(); it++) {
-			if (isNext) {
-				ss << ", ";
-			} else {
-				isNext = true;
-			}
-			ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
-		}
-		ss << "]";
-	}
-
-	ss << "}";
-	return ss.str();
-}
-
-void ConfigDatabase::setProperties
-(
-	std::map<std::string, std::string> &retval,
-	const std::map<std::string, std::string> &values
-) const
-{
-	// copy only values lsted in aliases, and replace key to the alias name
-	for (std::map<std::string, std::string>::const_iterator it(properties.begin()); it != properties.end(); it++) {
-		std::map<std::string, std::string>::const_iterator f = values.find(it->first);
-		if (f != values.end()) {
-			if (!it->second.empty()) {
-				retval[it->second] = f->second;
-			}
-		}
-	}
-}
-
 // --------------------------- ConfigDatabases
 
 ConfigDatabases::ConfigDatabases(const std::string &filename)
@@ -162,7 +62,11 @@ int ConfigDatabases::load
 		for (duk_size_t i = 0; i < n; i++) 
 		{
 			ConfigDatabase cfg;
-			if (duk_get_prop_index(context, -1, i)) 
+            cfg.id = 0;
+            cfg.active = true;
+            cfg.port = 0;
+
+            if (duk_get_prop_index(context, -1, i))
 			{
 				if (duk_get_prop_string(context, -1, "id"))
 					cfg.id = duk_get_int(context, -1);
@@ -290,6 +194,84 @@ int ConfigDatabases::load
 	return 0;
 }
 
+int ConfigDatabases::getDialect(int index) const
+{
+    const ConfigDatabase &db = dbs.at(index);
+    if (db.type == "postgresql")
+        return SQL_POSTGRESQL;
+    else
+    if (db.type == "mysql")
+        return SQL_MYSQL;
+    else
+    if (db.type == "firebird")
+        return SQL_FIREBIRD;
+    else
+    if (db.type == "sqlite3")
+        return SQL_SQLITE;
+    else
+        return SQL_SQLITE;
+}
+
+std::string ConfigDatabases::toString(int index) const
+{
+    const ConfigDatabase &db = dbs.at(index);
+    std::stringstream ss;
+    ss << "{"
+       << "\"id\": " << db.id << ", "
+       << "\"name\": \"" << db.name << "\", "
+       << "\"type\": \"" << db.type << "\", "
+       << "\"active\": " << (db.active ? "true" : "false" ) << ", "
+       << "\"connection\": \"" << db.connectionString << "\", "
+       << "\"login\": \"" << db.login << "\", "
+       << "\"password\": \"" << db.password << "\", "
+       << "\"db\": \"" << db.db << "\"";
+
+    if (db.tableAliases.size()) {
+        ss << ", \"table_aliases\": [";
+        bool isNext = false;
+        for (std::map<std::string, std::string>::const_iterator it(db.tableAliases.begin()); it != db.tableAliases.end(); it++) {
+            if (isNext) {
+                ss << ", ";
+            } else {
+                isNext = true;
+            }
+            ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
+        }
+        ss << "]";
+    }
+
+    if (db.fieldAliases.size()) {
+        ss << ", \"field_aliases\": [";
+        bool isNext = false;
+        for (std::map<std::string, std::string>::const_iterator it(db.fieldAliases.begin()); it != db.fieldAliases.end(); it++) {
+            if (isNext) {
+                ss << ", ";
+            } else {
+                isNext = true;
+            }
+            ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
+        }
+        ss << "]";
+    }
+
+    if (db.properties.size()) {
+        ss << ", \"properties\": [";
+        bool isNext = false;
+        for (std::map<std::string, std::string>::const_iterator it(db.properties.begin()); it != db.properties.end(); it++) {
+            if (isNext) {
+                ss << ", ";
+            } else {
+                isNext = true;
+            }
+            ss << "[\"" << it->first << "\", \"" << it->second << "\"]";
+        }
+        ss << "]";
+    }
+
+    ss << "}";
+    return ss.str();
+}
+
 std::string ConfigDatabases::toString() const
 {
 	std::stringstream ss;
@@ -301,7 +283,7 @@ std::string ConfigDatabases::toString() const
 		} else {
 			isNext = true;
 		}
-		ss << dbs[i].toString() << std::endl;
+		ss << toString(i) << std::endl;
 	}
 	ss << "]";
 	return ss.str();
@@ -318,3 +300,22 @@ const ConfigDatabase* ConfigDatabases::findByName(
 	}
 	return NULL;
 }
+
+void ConfigDatabases::setProperties(
+    std::map<std::string, std::string> &retval,
+    const std::map<std::string, std::string> &values,
+    int index
+) const
+{
+    const ConfigDatabase &db = dbs.at(index);
+    // copy only values lsted in aliases, and replace key to the alias name
+    for (std::map<std::string, std::string>::const_iterator it(db.properties.begin()); it != db.properties.end(); it++) {
+        std::map<std::string, std::string>::const_iterator f = values.find(it->first);
+        if (f != values.end()) {
+            if (!it->second.empty()) {
+                retval[it->second] = f->second;
+            }
+        }
+    }
+}
+
