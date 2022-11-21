@@ -395,7 +395,6 @@ repeator_CXXFLAGS = $(COMMON_CPP_FLAGS)
 pkt2js_SOURCES = \
 	pkt2js.cpp pkt2js-config.cpp pkt2js-impl.cpp \
 	$(PKT2LIBSRC) $(common_src)
-
 pkt2js_LDADD = -lglog -lunwind $(LIB_PROTOBUF) $(LIBS_PKT2)
 pkt2js_CXXFLAGS = $(COMMON_CPP_FLAGS) -DHAVE_PTHREAD=1 -DHAVE_ZLIB=1 -DLIB_PBJSON=1 $(PROTO_CXXFLAGS) -Ithird_party/protobuf
 
@@ -424,10 +423,11 @@ js2sheet_CXXFLAGS = $(COMMON_CPP_FLAGS) -D LIB_PBJSON $(PROTO_CXXFLAGS)
 #
 lib_LIBRARIES = libpkt2.a libpkt2util.a
 libpkt2_a_SOURCES = str-pkt2.cpp $(PKT2LIBSRC)
-libpkt2_a_CXXFLAGS = -D LIB_PBJSON $(PROTO_CXXFLAGS) -I$(INCS) -fPIC $(PROTOBUF_OLD_GCC_COMPAT)
+libpkt2_a_CXXFLAGS = -D LIB_PBJSON $(PROTO_CXXFLAGS) $(INCS) -fPIC $(PROTOBUF_OLD_GCC_COMPAT)
+libpkt2_a_CFLAGS = -fPIC
 
 libpkt2util_a_SOURCES = $(PKT2LIBUTILSRC)
-libpkt2util_a_CXXFLAGS = -I/usr/include/postgresql -I$(INCS) -fPIC $(PROTO_CXXFLAGS) $(PROTOBUF_OLD_GCC_COMPAT)
+libpkt2util_a_CXXFLAGS = -I/usr/include/postgresql $(INCS) -fPIC $(PROTO_CXXFLAGS) $(PROTOBUF_OLD_GCC_COMPAT)
 
 #
 #	Shared library
