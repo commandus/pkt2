@@ -16,8 +16,7 @@ void set_format_number(int value)
  * @param message message to print
  * @return 0 - success
  */
-int put_debug
-(
+int put_debug(
 	std::ostream *output,
 	MessageTypeNAddress *messageTypeNAddress,
 	const google::protobuf::Message *message
@@ -37,8 +36,7 @@ int put_debug
  *
  * @see FieldNameValueIndexStrings
  */
-void addFieldValueString
-(
+void addFieldValueString(
 	MessageDecomposer *decomposer,
 	void *env,
 	const google::protobuf::Descriptor *message_descriptor,
@@ -56,8 +54,7 @@ void addFieldValueString
  * @brief Print packet to the stdout as JSON
  * @return 0
  */
-int put_json
-(
+int put_json(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -79,8 +76,7 @@ int put_json
  * @param message message Protobuf message
  * @return 0- success
  */
-int put_sql
-(
+int put_sql(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -106,8 +102,7 @@ int put_sql
  * @param message message
  * @return 0
  */
-int put_sql2
-(
+int put_sql2(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -127,8 +122,7 @@ int put_sql2
 	return ERR_OK;
 }
 
-int create_sql
-(
+int create_sql(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	Packet2Message *packet2Message,
@@ -153,8 +147,7 @@ int create_sql
 	return 0;
 }
 
-int create_sql2
-(
+int create_sql2(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	Packet2Message *packet2Message,
@@ -186,8 +179,7 @@ int create_sql2
  * @param message message
  * @return 0
  */
-int put_protobuf_text
-(
+int put_protobuf_text(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -205,8 +197,7 @@ int put_protobuf_text
  * @param message message
  * @return
  */
-int put_csv
-(
+int put_csv(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -228,8 +219,7 @@ int put_csv
  * @param message message
  * @return
  */
-int put_tab
-(
+int put_tab(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -249,8 +239,7 @@ int put_tab
  * @brief return field names
  * @return 0 if message type is unknown
  */
-std::string getFieldNames
-(
+std::string getFieldNames(
 	std::vector <std::string> &retval,
 	Pkt2OptionsCache *options,
 	const std::string &messageTypeName
