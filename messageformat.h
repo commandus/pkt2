@@ -19,13 +19,15 @@
 
 // Copy decraration from pkt2.proto
 enum SQL_DIALECT : int {
-  SQL_POSTGRESQL = 0,
-  SQL_MYSQL = 1,
-  SQL_FIREBIRD = 2,
-  SQL_SQLITE = 3
+	SQL_POSTGRESQL = 0,
+	SQL_MYSQL = 1,
+	SQL_FIREBIRD = 2,
+	SQL_SQLITE = 3
 };
   
-void set_format_number(int value);
+void set_format_number(
+	int value
+);
 
 /**
  * @brief Print message packet to the stdout
@@ -42,11 +44,10 @@ int put_debug
 );
 
 /**
- * @brief Print packet to the stdout as CSV
+ * @brief Print packet to the stdout as JSON
  * @return 0
  */
-int put_json
-(
+int put_json(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -62,8 +63,7 @@ int put_json
  * @param message message Protobuf message
  * @return 0- success
  */
-int put_sql
-(
+int put_sql(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -80,8 +80,7 @@ int put_sql
  * @param message message
  * @return 0- success
  */
-int put_sql2
-(
+int put_sql2(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -99,8 +98,7 @@ int put_sql2
  * @param message message
  * @return 0- success
  */
-int put_csv
-(
+int put_csv(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -116,8 +114,7 @@ int put_csv
  * @param message message
  * @return 0- success
  */
-int put_tab
-(
+int put_tab(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -133,8 +130,7 @@ int put_tab
  * @param message message
  * @return 0
  */
-int put_protobuf_text
-(
+int put_protobuf_text(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	MessageTypeNAddress *messageTypeNAddress,
@@ -151,8 +147,7 @@ int put_protobuf_text
  *
  * @see FieldNameValueIndexStrings
  */
-void addFieldValueString
-(
+void addFieldValueString(
 	MessageDecomposer *decomposer,
 	void *env,
 	const google::protobuf::Descriptor *message_descriptor,
@@ -166,15 +161,13 @@ void addFieldValueString
  * @brief return field names
  * @return message type
  */
-std::string getFieldNames
-(
+std::string getFieldNames(
 	std::vector <std::string> &retval,
 	Pkt2OptionsCache *options,
 	const std::string &messageTypeName
 );
 
-int create_sql
-(
+int create_sql(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	Packet2Message *packet2Message,
@@ -185,8 +178,7 @@ int create_sql
 	const std::map<std::string, std::string> *properties
 );
 
-int create_sql2
-(
+int create_sql2(
 	std::ostream *output,
 	Pkt2OptionsCache *options,
 	Packet2Message *packet2Message,
