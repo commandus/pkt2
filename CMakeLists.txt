@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.9)
 
 project(pkt2)
 set(pkt2_VERSION_MAJOR 0)
@@ -29,8 +29,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
                   
 set(LIBS ${LIBS})
 
-#find_package(protobuf CONFIG REQUIRED)
-#target_link_libraries(main PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
+if (CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  find_package(protobuf CONFIG REQUIRED)
+  # target_link_libraries(main PRIVATE protobuf::libprotoc protobuf::libprotobuf)
+endif ()
 
 #find_package(Argtable3 CONFIG REQUIRED)
 #target_link_libraries(main PRIVATE argtable3 argtable3_static)
